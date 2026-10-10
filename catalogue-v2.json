@@ -267,69 +267,251 @@
      "titre": "Lumière et photométrie",
      "docs": [
       {
-       "titre": "l'essentiel du chapitre",
-       "type": "Cours",
-       "fichier": "99682ce04c159986efa88a3d.bin",
-       "taille": 1192665,
-       "pages": 19
+       "titre": "Prérequis",
+       "type": "Fiche",
+       "fichier": "adeb8c776e4e4c14d3e19e63.bin",
+       "taille": 121263,
+       "pages": 3,
+       "rubrique": "Pour commencer"
       },
       {
-       "titre": "bilan",
-       "type": "Fiche",
-       "fichier": "03b4fc577774adfe98be0edf.bin",
-       "taille": 174654,
-       "pages": 3
+       "titre": "l'essentiel du chapitre",
+       "type": "Cours",
+       "fichier": "6e577eafee4fe972207ce03a.bin",
+       "taille": 850136,
+       "pages": 10,
+       "rubrique": "Cours"
+      },
+      {
+       "titre": "activité 1. spectres et sources lumineuses du hall turbine",
+       "type": "Activité",
+       "fichier": "ddd139f98ccdeaed92f0f912.bin",
+       "taille": 342953,
+       "pages": 5,
+       "rubrique": "Activités"
+      },
+      {
+       "titre": "activité 1. spectres et sources lumineuses du hall turbine - coups de pouce",
+       "type": "Activité",
+       "fichier": "f3da31e2e77f90fb596ad66c.bin",
+       "taille": 75690,
+       "pages": 1,
+       "rubrique": "Activités"
+      },
+      {
+       "titre": "Corrigé élève activité 1",
+       "type": "Corrigé",
+       "fichier": "a2f39dc1f9d3927921676d89.bin",
+       "taille": 98263,
+       "pages": 3,
+       "corrige": {
+        "id": "et-lumiere-et-photometrie-corrige-eleve-activite-1",
+        "wk": "jnY9WtDX0HNtyviQoQLD6e9pUo2irfTHEpsIGbmxuIOATLL8xe2/AWCgx7ExtudwnbNBsKDdrOLiyGB2"
+       },
+       "rubrique": "Activités"
+      },
+      {
+       "titre": "activité 2. relamping de la salle des machines",
+       "type": "Activité",
+       "fichier": "9e1890089ca3117db517d2ae.bin",
+       "taille": 336242,
+       "pages": 5,
+       "rubrique": "Activités"
+      },
+      {
+       "titre": "activité 2. relamping de la salle des machines - coups de pouce",
+       "type": "Activité",
+       "fichier": "5781eb22dfab06958955a21e.bin",
+       "taille": 78696,
+       "pages": 1,
+       "rubrique": "Activités"
+      },
+      {
+       "titre": "Corrigé élève activité 2",
+       "type": "Corrigé",
+       "fichier": "1b17f73bc19dc1c4c21fb6f5.bin",
+       "taille": 100016,
+       "pages": 2,
+       "corrige": {
+        "id": "et-lumiere-et-photometrie-corrige-eleve-activite-2",
+        "wk": "4wSBPYj0u2YFs6QH9sBNvM1NgKZoT3bVcw9RVd5NIHrcC6WlhCgtiMxS/3j6PMoHOhj4q1tXgb5FCWX6"
+       },
+       "rubrique": "Activités"
+      },
+      {
+       "titre": "activité 3. contrôle de l'éclairement au luxmètre",
+       "type": "Activité",
+       "fichier": "1d62c9d6e408255e7a2b89e8.bin",
+       "taille": 222318,
+       "pages": 4,
+       "rubrique": "Activités"
+      },
+      {
+       "titre": "activité 3. contrôle de l'éclairement au luxmètre - coups de pouce",
+       "type": "Activité",
+       "fichier": "96df9e064d661fb4f5190ada.bin",
+       "taille": 72911,
+       "pages": 1,
+       "rubrique": "Activités"
+      },
+      {
+       "titre": "Corrigé élève activité 3",
+       "type": "Corrigé",
+       "fichier": "153eebd2fec0593dec8a2d68.bin",
+       "taille": 125027,
+       "pages": 3,
+       "corrige": {
+        "id": "et-lumiere-et-photometrie-corrige-eleve-activite-3",
+        "wk": "y/775uc9CgfAOxnprGoVGXnoehtaPsV8+47gTTKPr8tVQQKi8sDvDlVGRsVNNWcJRIdlgYTcim2IwkRm"
+       },
+       "rubrique": "Activités"
       },
       {
        "titre": "fiche animation à compléter",
        "type": "Fiche",
-       "fichier": "adbc3897c23ec9184f9539b4.bin",
-       "taille": 126209,
-       "pages": 3
+       "fichier": "8b2663038e7bb98fe4c15d30.bin",
+       "taille": 139028,
+       "pages": 2,
+       "rubrique": "Animation"
       },
       {
-       "titre": "Prérequis",
+       "titre": "animation lumière et photométrie",
+       "type": "Animation",
+       "lien": "animations/et/animation-lumiere-et-photometrie.html",
+       "rubrique": "Animation"
+      },
+      {
+       "titre": "simulation banc photométrique",
+       "type": "Animation",
+       "lien": "animations/et/simulation-banc-photometrique.html",
+       "rubrique": "Animation"
+      },
+      {
+       "titre": "Exercice 1",
+       "type": "Exercices",
+       "fichier": "0e5fa7f4e43cbdc5bd8541c3.bin",
+       "taille": 144511,
+       "pages": 2,
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 1 - coups de pouce",
+       "type": "Exercices",
+       "fichier": "c1eeb66075ea0849f30443c1.bin",
+       "taille": 72408,
+       "pages": 1,
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Corrigé élève exercice 1",
+       "type": "Corrigé",
+       "fichier": "03c08343594b05e99c38bf3e.bin",
+       "taille": 93221,
+       "pages": 2,
+       "corrige": {
+        "id": "et-lumiere-et-photometrie-corrige-eleve-exercice-1",
+        "wk": "kvajiEhDNcyfUxjX+5+Dezd1Xo3lAfwoSND6H7QtlucRNIu0H+aymq/4G0UwTLFq9xP63QWdwvElZJtf"
+       },
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 2",
+       "type": "Exercices",
+       "fichier": "59307465508e54605d33fadb.bin",
+       "taille": 166749,
+       "pages": 1,
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 2 - coups de pouce",
+       "type": "Exercices",
+       "fichier": "b89a6deed735136cca246de1.bin",
+       "taille": 70785,
+       "pages": 1,
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Corrigé élève exercice 2",
+       "type": "Corrigé",
+       "fichier": "66d709780681ad827697ff22.bin",
+       "taille": 84559,
+       "pages": 2,
+       "corrige": {
+        "id": "et-lumiere-et-photometrie-corrige-eleve-exercice-2",
+        "wk": "ugyXo7rdvvudI469HEOJhlPU0ss47dJUW/Dpx0BuNAdTusBMzQgclxN8I+SWwOFNIPfT/aU0w1BrIghT"
+       },
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 3",
+       "type": "Exercices",
+       "fichier": "e55cca69339fc01ed598ff89.bin",
+       "taille": 93288,
+       "pages": 1,
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 3 - coups de pouce",
+       "type": "Exercices",
+       "fichier": "c255977e7a7875c36ddf4da6.bin",
+       "taille": 73660,
+       "pages": 1,
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Corrigé élève exercice 3",
+       "type": "Corrigé",
+       "fichier": "d20d266983c7a9c691e75d53.bin",
+       "taille": 85032,
+       "pages": 2,
+       "corrige": {
+        "id": "et-lumiere-et-photometrie-corrige-eleve-exercice-3",
+        "wk": "nIC3yzd/+YArxbJ+1LZBZaQrVbgAzvYcKBc5hbRRIJeGhb1riS0P734Xa9IQDYEPUee7ygOfaCIattSP"
+       },
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 4",
+       "type": "Exercices",
+       "fichier": "6e64959d7107c28a0ddacc21.bin",
+       "taille": 131867,
+       "pages": 2,
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 4 - coups de pouce",
+       "type": "Exercices",
+       "fichier": "6f33e17be9065270ead02493.bin",
+       "taille": 70151,
+       "pages": 1,
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Corrigé élève exercice 4",
+       "type": "Corrigé",
+       "fichier": "ef4576c10e7f2078351948db.bin",
+       "taille": 95345,
+       "pages": 2,
+       "corrige": {
+        "id": "et-lumiere-et-photometrie-corrige-eleve-exercice-4",
+        "wk": "A2WqXynwlkEBOMtepmiMOSU7PzA5j9H4QGKLFQJvkfkm/i5C3KRckE4WM+KlL1dFuemH/3vno0EdeD1/"
+       },
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "bilan",
        "type": "Fiche",
-       "fichier": "bf4a69a1ad7c6bbb2f271cf7.bin",
-       "taille": 136846,
-       "pages": 4
+       "fichier": "528408a31113b7081841fec5.bin",
+       "taille": 111651,
+       "pages": 2,
+       "rubrique": "Réviser"
       },
       {
        "titre": "cartes de révision",
        "type": "Cartes",
        "nombre": 10,
-       "lien": "cartes.html?c=et&ch=lumiere-et-photometrie"
-      },
-      {
-       "titre": "activité 1. spectres et sources lumineuses du hall turbine",
-       "type": "Activité",
-       "fichier": "570e651e59f117c66a1c9850.bin",
-       "taille": 319974,
-       "pages": 5
-      },
-      {
-       "titre": "activité 2. relamping de la salle des machines",
-       "type": "Activité",
-       "fichier": "d4a7b417a7a6ab88babc81e6.bin",
-       "taille": 314463,
-       "pages": 5
-      },
-      {
-       "titre": "activité 3. contrôle de l'éclairement au luxmètre",
-       "type": "Activité",
-       "fichier": "3b6b22a134bdcb2bacaceef8.bin",
-       "taille": 298617,
-       "pages": 6
-      },
-      {
-       "titre": "animation lumière et photométrie",
-       "type": "Animation",
-       "lien": "animations/et/animation-lumiere-et-photometrie.html"
-      },
-      {
-       "titre": "simulation banc photométrique",
-       "type": "Animation",
-       "lien": "animations/et/simulation-banc-photometrique.html"
+       "lien": "cartes.html?c=et&ch=lumiere-et-photometrie",
+       "rubrique": "Réviser"
       }
      ]
     }
