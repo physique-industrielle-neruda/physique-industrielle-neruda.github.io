@@ -83,57 +83,167 @@
      "titre": "Les chaînes de mesure",
      "docs": [
       {
-       "titre": "l'essentiel du chapitre",
-       "type": "Cours",
-       "fichier": "b814aa21a2a23b2b994bd63a.bin",
-       "taille": 845836,
-       "pages": 13
-      },
-      {
-       "titre": "bilan",
-       "type": "Fiche",
-       "fichier": "4bd97d8b2dd90dc8ded45eb8.bin",
-       "taille": 148739,
-       "pages": 4
-      },
-      {
        "titre": "Prérequis",
        "type": "Fiche",
        "fichier": "58872f67ea535a888c05e7ee.bin",
        "taille": 125302,
-       "pages": 4
+       "pages": 4,
+       "rubrique": "Pour commencer"
+      },
+      {
+       "titre": "Essentiel du chapitre",
+       "type": "Cours",
+       "fichier": "1814c955c71e579e30951032.bin",
+       "taille": 713951,
+       "pages": 8,
+       "rubrique": "Cours"
+      },
+      {
+       "titre": "Activité 1 – Boucle 4-20 mA du pressuriseur",
+       "type": "Activité",
+       "fichier": "8d9e6dcfb23143129f7d00ed.bin",
+       "taille": 351206,
+       "pages": 5,
+       "rubrique": "Activités"
+      },
+      {
+       "titre": "Activité 1 – Boucle 4-20 mA du pressuriseur - coups de pouce",
+       "type": "Activité",
+       "fichier": "485843a8827ff4266e0f80f0.bin",
+       "taille": 87494,
+       "pages": 2,
+       "rubrique": "Activités"
+      },
+      {
+       "titre": "Activité 2 – Numérisation d'une mesure de température",
+       "type": "Activité",
+       "fichier": "eeddbc14e992013aca0f5db4.bin",
+       "taille": 309711,
+       "pages": 5,
+       "rubrique": "Activités"
+      },
+      {
+       "titre": "Activité 2 – Numérisation d'une mesure de température - coups de pouce",
+       "type": "Activité",
+       "fichier": "ee791c57b85d37762fadc8c8.bin",
+       "taille": 85535,
+       "pages": 2,
+       "rubrique": "Activités"
+      },
+      {
+       "titre": "Activité 3 – Temps de réponse et précision d'une sonde Pt100",
+       "type": "Activité",
+       "fichier": "5b9f1412ab611df557d04627.bin",
+       "taille": 204123,
+       "pages": 4,
+       "rubrique": "Activités"
+      },
+      {
+       "titre": "Activité 3 – Temps de réponse et précision d'une sonde Pt100 - coups de pouce",
+       "type": "Activité",
+       "fichier": "fb15eceb5a059e0dcf377306.bin",
+       "taille": 79281,
+       "pages": 1,
+       "rubrique": "Activités"
+      },
+      {
+       "titre": "Fiche animation",
+       "type": "Fiche",
+       "fichier": "7edc303056c1615f11fbc769.bin",
+       "taille": 143218,
+       "pages": 2,
+       "rubrique": "Animation"
+      },
+      {
+       "titre": "Animation – Révision de la chaîne de mesure",
+       "type": "Animation",
+       "lien": "animations/et/animation-revision-de-la-chaine-de-mesure.html",
+       "rubrique": "Animation"
+      },
+      {
+       "titre": "Simulation – Banc de la chaîne de mesure",
+       "type": "Animation",
+       "lien": "animations/et/simulation-banc-de-la-chaine-de-mesure.html",
+       "rubrique": "Animation"
+      },
+      {
+       "titre": "Exercice 1",
+       "type": "Exercices",
+       "fichier": "0ad533dccc56eabe2c9ba98c.bin",
+       "taille": 120142,
+       "pages": 1,
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 1 - coups de pouce",
+       "type": "Exercices",
+       "fichier": "8375920e1af5f40b38073f54.bin",
+       "taille": 73572,
+       "pages": 1,
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 2",
+       "type": "Exercices",
+       "fichier": "8fc79f362c9badfb3b3485b6.bin",
+       "taille": 105488,
+       "pages": 1,
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 2 - coups de pouce",
+       "type": "Exercices",
+       "fichier": "10c8663fb7facbfbf2550087.bin",
+       "taille": 70536,
+       "pages": 1,
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 3",
+       "type": "Exercices",
+       "fichier": "17bfd84b40c9fbb2049ff778.bin",
+       "taille": 139218,
+       "pages": 1,
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 3 - coups de pouce",
+       "type": "Exercices",
+       "fichier": "8a5c3a0ec4c9cd78185a58a2.bin",
+       "taille": 71614,
+       "pages": 1,
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 4",
+       "type": "Exercices",
+       "fichier": "aaa9e732cfc351a693be5165.bin",
+       "taille": 152744,
+       "pages": 1,
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 4 - coups de pouce",
+       "type": "Exercices",
+       "fichier": "2355f72722a66144c3c7a15c.bin",
+       "taille": 70235,
+       "pages": 1,
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Bilan",
+       "type": "Fiche",
+       "fichier": "8662a0ed13b4b7e74b8803c6.bin",
+       "taille": 117248,
+       "pages": 2,
+       "rubrique": "Réviser"
       },
       {
        "titre": "cartes de révision",
        "type": "Cartes",
        "nombre": 10,
-       "lien": "cartes.html?c=et&ch=les-chaines-de-mesure"
-      },
-      {
-       "titre": "activité 1. boucle 4-20 mA du pressuriseur",
-       "type": "Activité",
-       "fichier": "8caedc62de42dd53fb71eadf.bin",
-       "taille": 330182,
-       "pages": 6
-      },
-      {
-       "titre": "activité 2. numérisation d'une mesure de température",
-       "type": "Activité",
-       "fichier": "df6f5a5f82f5dfb9b29d90ac.bin",
-       "taille": 265746,
-       "pages": 5
-      },
-      {
-       "titre": "activité 3. temps de réponse d'une sonde Pt100",
-       "type": "Activité",
-       "fichier": "e27a2cc11999cec0df61b0bf.bin",
-       "taille": 165224,
-       "pages": 4
-      },
-      {
-       "titre": "simulation chaîne de mesure",
-       "type": "Animation",
-       "lien": "animations/et/simulation-chaine-de-mesure.html"
+       "lien": "cartes.html?c=et&ch=les-chaines-de-mesure",
+       "rubrique": "Réviser"
       }
      ]
     },
@@ -317,8 +427,8 @@
       {
        "titre": "activité 3. contrôle de l'éclairement au luxmètre",
        "type": "Activité",
-       "fichier": "1d62c9d6e408255e7a2b89e8.bin",
-       "taille": 222318,
+       "fichier": "8cebdc7f73c66a7267ce7bbe.bin",
+       "taille": 222316,
        "pages": 4,
        "rubrique": "Activités"
       },
@@ -333,8 +443,8 @@
       {
        "titre": "fiche animation à compléter",
        "type": "Fiche",
-       "fichier": "8b2663038e7bb98fe4c15d30.bin",
-       "taille": 139028,
+       "fichier": "c19cd54d199755a20984860d.bin",
+       "taille": 139033,
        "pages": 2,
        "rubrique": "Animation"
       },

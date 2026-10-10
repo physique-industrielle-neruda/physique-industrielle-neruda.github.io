@@ -290,7 +290,7 @@ function buildCtrl() {
     h = sel('lamp', 'Lampe', Object.fromEntries(Object.entries(LAMPS).map(([k, v]) => [k, v.n])), o.lamp)
       + slider('d', 'Distance lampe – cellule d', 'm', 0.2, 2, 0.01, o.d)
       + slider('a', 'Inclinaison de la cellule', '°', 0, 90, 5, o.a)
-      + `<label class="chk"><input type="checkbox" id="s-amb" ${o.amb ? 'checked' : ''}> Éclairage de la salle allumé</label>`
+      + `<label class="chk"><input type="checkbox" id="s-amb" ${o.amb ? 'checked' : ''}> Stores levés (lumière du jour)</label>`
       + `<div class="row"><button class="btn" id="note" type="button">Noter le relevé</button><button class="btn ghost" id="swapPlot" type="button">${st.lplot === 'd' ? 'Tracer E = f(1/d²)' : 'Tracer E = f(d)'}</button></div>`;
   } else {
     h = slider('L', 'Longueur du local', 'm', 5, 120, 1, o.L) + slider('W', 'Largeur du local', 'm', 4, 60, 1, o.W)
@@ -401,7 +401,7 @@ function draw() {
     $('#pins').innerHTML = pins.map((p, i) => `<span class="pin">${i + 1} · d = ${fmt(p.d, 2)} m · E = ${fmt(p.E, 0)} lx<button type="button" data-i="${i}" aria-label="Supprimer">×</button></span>`).join('');
     $('#pins').querySelectorAll('button').forEach((b) => b.addEventListener('click', () => { st.pins.splice(+b.dataset.i, 1); draw(); }));
     $('#stats').innerHTML = stat('Distance d', fmt(o.d, 2) + ' m') + stat('1/d²', fmt(1 / o.d ** 2, 2) + ' m⁻²') + stat('Éclairement lu', fmt(E, 0) + ' lx')
-      + stat('Lumière ambiante', o.amb ? 'salle allumée' : 'pièce occultée') + stat('Inclinaison', fmt(o.a, 0) + '°') + stat('E × d²', fmt(E * o.d ** 2, 1));
+      + stat('Lumière ambiante', o.amb ? 'stores levés' : 'stores baissés') + stat('Inclinaison', fmt(o.a, 0) + '°') + stat('E × d²', fmt(E * o.d ** 2, 1));
     geo = { kind: 'l', f, inv };
   } else {
     const o = st.h, S = o.L * o.W, E = o.n * o.F * o.U * o.M / S;
@@ -459,14 +459,14 @@ const PARTS = [
       { q: 'Pour l\'atelier, il faut un IRC ≥ 80 et la meilleure efficacité. Quelle source choisir ?', opts: ['Sodium haute pression', 'Lampe halogène', 'Iodures métalliques', 'DEL blanche 4 000 K'], a: 3, ex: 'La DEL 4 000 K a un IRC de 80 et une efficacité de 100 à 200 lm/W. Le sodium a un IRC trop faible, l\'halogène une efficacité trop faible, les iodures un IRC de 65.' },
     ] },
   { title: 'C · Luxmètre', mode: 'l', set: { ...DEF.l },
-    intro: 'Module « Luxmètre ». Lampe DEL 8,5 W sur le banc, pièce occultée (lumière ambiante : 3 lx, à retrancher).',
+    intro: 'Module « Luxmètre ». Lampe DEL 8,5 W sur le banc, stores baissés (lumière ambiante : 3 lx, à retrancher).',
     qs: [
       { q: 'Cellule face à la lampe à d = 0,50 m : relever l\'éclairement, puis retrancher l\'éclairement ambiant (3 lx).', u: 'lx', a: 244, tol: 6, ex: 'Le luxmètre affiche ≈ 247 lx, soit E ≈ 244 lx dû à la lampe.' },
       { q: 'Régler d = 1,00 m. Relever E (corrigé). Par combien l\'éclairement a-t-il été divisé quand la distance a doublé ?', set: { d: 1.0 }, u: '', a: 4, tol: 0.2, ex: 'E ≈ 61 lx : 244 / 61 = 4. L\'éclairement est inversement proportionnel au carré de la distance.' },
       { q: 'Noter au moins 5 relevés entre 0,3 m et 1,5 m, puis tracer E = f(1/d²). Calculer l\'intensité lumineuse I = E × d² de la lampe.', u: 'cd', a: 61, tol: 2.5, hint: 'Les points sont alignés : I est le coefficient directeur de la droite E = I / d².', ex: 'E × d² ≈ 61 dans tous les cas : I ≈ 61 cd.' },
       { star: true, q: 'En supposant la lampe isotrope, calculer son flux lumineux Φ = 4π × I.', u: 'lm', a: 767, tol: 15, ex: 'Φ = 4π × 61 ≈ 767 lm, à comparer aux 806 lm annoncés (écart ≈ 5 % : la lampe n\'est pas parfaitement isotrope).' },
       { star: true, q: 'À d = 0,50 m, incliner la cellule de 60°. Relever l\'éclairement corrigé.', set: { d: 0.5, a: 60 }, u: 'lx', a: 122, tol: 6, ex: 'E ≈ 122 lx : environ la moitié (cos 60° = 0,5). Pour un contrôle de poste, la cellule doit être posée à plat sur le plan de travail.' },
-      { q: 'Cocher « Éclairage de la salle allumé ». Que faut-il faire pour étudier la lampe seule ?', opts: ['Rien, la salle n\'influence pas la mesure.', 'Mesurer la lumière ambiante seule (lampe éteinte) et la retrancher, ou occulter la salle.', 'Rapprocher la cellule à 0,1 m.'], a: 1, ex: 'Le luxmètre mesure toute la lumière reçue. On occulte la salle ou on retranche l\'éclairement ambiant mesuré lampe éteinte.' },
+      { q: 'Cocher « Stores levés ». Que faut-il faire pour étudier la lampe seule ?', opts: ['Rien, la lumière du jour n\'influence pas la mesure.', 'Mesurer la lumière ambiante seule (lampe éteinte) et la retrancher, ou baisser les stores.', 'Rapprocher la cellule à 0,1 m.'], a: 1, ex: 'Le luxmètre mesure toute la lumière reçue. On baisse les stores ou on retranche l\'éclairement ambiant mesuré lampe éteinte.' },
     ] },
   { title: 'D · Éclairage d\'un local', mode: 'h', set: { ...DEF.h },
     intro: 'Module « Local ». Salle des machines : plancher 100 m × 40 m, 80 projecteurs à DEL de 150 W et 21 000 lm, U = 0,65, M = 0,8. Exigence : 200 lx.',

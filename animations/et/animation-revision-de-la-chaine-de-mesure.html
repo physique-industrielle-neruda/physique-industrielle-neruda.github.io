@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Révision de la chaîne de mesure</title>
+<script>
+window.MathJax = { tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] },
+  chtml: { scale: 1.02 }, options: { enableMenu: false } };
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-chtml.js"></script>
+<style>
+:root{
+  --bg:#F4F6F9; --panel:#ffffff; --ink:#16202e; --muted:#5b6778; --line:#d5dce6; --grid:#e7ecf2;
+  --navy:#1F3864; --accent:#C55A11; --blue:#2E75B6; --green:#3F7A3A; --slate:#5A6577;
+  --ok:#1f8a4c; --okbg:#e6f5ec; --bad:#b4372b; --badbg:#fbeceb; --chip:#eef2f7; --h1:#1F3864;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f141b; --panel:#171e28; --ink:#e6ebf2; --muted:#9aa6b6; --line:#2a3442; --grid:#202a36;
+  --navy:#6ea2ff; --accent:#ff8a4c; --blue:#6ea2ff; --green:#5fd08f;
+  --ok:#5fd08f; --okbg:#15301f; --bad:#ff8173; --badbg:#3a1b18; --chip:#202a36; --h1:#e6ebf2; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#0f141b; --panel:#171e28; --ink:#e6ebf2; --muted:#9aa6b6; --line:#2a3442; --grid:#202a36;
+  --navy:#6ea2ff; --accent:#ff8a4c; --blue:#6ea2ff; --green:#5fd08f;
+  --ok:#5fd08f; --okbg:#15301f; --bad:#ff8173; --badbg:#3a1b18; --chip:#202a36; --h1:#e6ebf2; color-scheme:dark }
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.5}
+.wrap{max-width:1100px;margin:0 auto;padding:18px 16px 48px;display:flex;flex-direction:column;gap:16px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+h1{color:var(--h1);font-size:clamp(1.45rem,3vw,1.95rem);margin:2px 0 4px}
+.sub{color:var(--muted);margin:0}
+.duree{padding:10px 14px;border-left:4px solid var(--accent);background:var(--chip);border-radius:0 8px 8px 0}
+.duree b{color:var(--accent)}
+nav.parts{display:flex;flex-wrap:wrap;gap:6px}
+nav.parts a{font-size:.85rem;text-decoration:none;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:4px 12px}
+nav.parts a:hover{border-color:var(--blue)}
+section.part{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.part > h2{margin:0;background:#1F3864;color:#fff;font-size:1.05rem;padding:10px 16px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.part > h2 span{font-weight:400;opacity:.85;font-size:.9rem}
+.inner{padding:14px 16px;display:flex;flex-direction:column;gap:14px}
+.rappel{background:color-mix(in srgb,var(--blue) 10%,var(--panel));border-left:4px solid var(--blue);padding:8px 12px;border-radius:0 8px 8px 0;font-size:.93rem}
+.rappel b.t{color:var(--blue);display:block;margin-bottom:2px;text-transform:uppercase;font-size:.78rem;letter-spacing:.06em}
+.widget{border:1px dashed var(--line);border-radius:10px;padding:12px;display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:14px;align-items:start}
+@media (max-width:760px){.widget{grid-template-columns:minmax(0,1fr)}}
+.widget .ctl{display:flex;flex-direction:column;gap:10px}
+.lbl{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.slider{display:grid;grid-template-columns:1fr auto;gap:2px 8px;align-items:center}
+.slider output{font-variant-numeric:tabular-nums;font-weight:700}
+.slider input{grid-column:1/-1;width:100%;accent-color:var(--accent)}
+.stat{background:var(--chip);border-radius:8px;padding:6px 10px;display:flex;justify-content:space-between;gap:8px;font-variant-numeric:tabular-nums}
+.stat b{color:var(--accent)}
+svg{width:100%;height:auto;display:block}
+svg text{font-family:Arial,Helvetica,sans-serif}
+.q{border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:8px}
+.q.star{border-style:dashed}
+.q .qt{display:flex;gap:8px;align-items:baseline}
+.q .num{font-weight:700;color:var(--navy);white-space:nowrap}
+.q .fac{color:var(--accent);font-style:italic;font-size:.85rem;white-space:nowrap}
+.ans{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.ans input[type=text]{font:inherit;width:120px;padding:5px 8px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);font-variant-numeric:tabular-nums}
+.ans select{font:inherit;padding:5px 6px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);max-width:100%}
+.opts{display:flex;flex-direction:column;gap:4px}
+.opts label{display:flex;gap:8px;align-items:flex-start;cursor:pointer}
+.opts input{accent-color:var(--blue);margin-top:4px}
+.match{display:grid;grid-template-columns:minmax(0,1fr) 190px;gap:6px 10px;align-items:center}
+@media (max-width:560px){.match{grid-template-columns:minmax(0,1fr)}}
+.btn{font:inherit;font-size:.88rem;font-weight:700;border:1px solid var(--navy);background:var(--navy);color:#fff;border-radius:7px;padding:5px 14px;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--navy)}
+.linkbtn{font:inherit;font-size:.85rem;background:none;border:0;color:var(--blue);text-decoration:underline;cursor:pointer;padding:0}
+.fb{border-radius:8px;padding:6px 10px;font-size:.92rem}
+.fb.ok{background:var(--okbg);color:var(--ok)}
+.fb.bad{background:var(--badbg);color:var(--bad)}
+.fb.sol{background:var(--chip);color:var(--ink)}
+.unit{color:var(--muted)}
+footer{color:var(--muted);font-size:.85rem;text-align:center}
+.cartes{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="eyebrow">BTS ET · Physique industrielle · Les chaînes de mesure</div>
+  <h1>Révision : la chaîne de mesure, du capteur à l'automate</h1>
+  <p class="sub">Une installation unique : les mesures du circuit primaire d'une tranche nucléaire. Six étapes, dans l'ordre du cours.</p>
+</header>
+<div class="duree"><b>Durée : 45 min environ, 1 h au maximum.</b> Fais les questions dans l'ordre. Les questions marquées <b>★ (facultatif)</b> sont pour ceux qui ont le temps. Reporte chaque réponse sur ta <b>fiche animation</b> : c'est ta trace écrite. Rien n'est envoyé au professeur.</div>
+<nav class="parts" aria-label="Étapes">
+  <a href="#p1">1 · Architecture</a><a href="#p2">2 · Signal 4-20 mA</a><a href="#p3">3 · Analogique / numérique</a><a href="#p4">4 · Le CAN</a><a href="#p5">5 · Temps de réponse</a><a href="#p6">6 · Précision</a>
+</nav>
+
+<section class="part" id="p1"><h2>Étape 1 – Architecture d'une chaîne de mesure <span>≈ 5 min</span></h2><div class="inner">
+  <div class="rappel"><b class="t">Rappel</b>Capteur → transmetteur → ligne → carte d'entrée (CAN) → automate.</div>
+  <div data-q="1"></div><div data-q="2"></div><div data-q="3"></div>
+</div></section>
+
+<section class="part" id="p2"><h2>Étape 2 – Signaux normalisés et mise à l'échelle <span>≈ 15 min</span></h2><div class="inner">
+  <div class="rappel"><b class="t">Rappel</b>\(I = 4 + 16\times\dfrac{X - X_{\min}}{\mathrm{EM}}\) avec \(\mathrm{EM} = X_{\max} - X_{\min}\) et I en mA. Sur la carte : \(U = R\times I\) avec \(R = 250\ \Omega\).</div>
+  <div class="widget">
+    <svg id="sv2" viewBox="0 0 520 300" role="img" aria-label="Droite de mise à l'échelle du transmetteur de niveau"></svg>
+    <div class="ctl">
+      <div class="lbl">Transmetteur de niveau d'une bâche (0 m → 8 m)</div>
+      <div class="slider"><label for="h2">Hauteur d'eau h</label><output id="oh2">4,0 m</output><input id="h2" type="range" min="0" max="8" step="0.1" value="4"></div>
+      <div class="stat"><span>Courant envoyé</span><b id="oi2">12,00 mA</b></div>
+      <div class="stat"><span>Tension sur 250 Ω</span><b id="ou2">3,00 V</b></div>
+      <label class="opts"><span><input type="checkbox" id="cut2"> Couper le câble</span></label>
+      <div class="stat"><span>Automate</span><b id="oa2">mesure valide</b></div>
+    </div>
+  </div>
+  <div data-q="4"></div><div data-q="5"></div><div data-q="6"></div><div data-q="7"></div><div data-q="8"></div><div data-q="9"></div>
+</div></section>
+
+<section class="part" id="p3"><h2>Étape 3 – Signal analogique ou numérique ? <span>≈ 10 min</span></h2><div class="inner">
+  <div class="rappel"><b class="t">Rappel</b>Un signal numérique est échantillonné (marches de durée \(T_e\)) et quantifié. Son spectre répète le motif du signal analogique tous les \(f_e\).</div>
+  <svg id="sv3" viewBox="0 0 900 430" role="img" aria-label="Deux enregistrements temporels A et B et deux spectres C et D"></svg>
+  <div data-q="10"></div><div data-q="11"></div><div data-q="12"></div>
+</div></section>
+
+<section class="part" id="p4"><h2>Étape 4 – Le CAN : bits, quantum, fréquence d'échantillonnage <span>≈ 15 min</span></h2><div class="inner">
+  <div class="rappel"><b class="t">Rappel</b>\(2^n\) valeurs ; quantum \(q = \dfrac{PE}{2^n}\) ; résolution \(q_X = \dfrac{\mathrm{EM}}{2^n}\) ; Shannon : \(f_e > 2\,f_{\max}\).</div>
+  <div class="widget">
+    <svg id="sv4" viewBox="0 0 520 260" role="img" aria-label="Signal analogique et signal quantifié par le CAN"></svg>
+    <div class="ctl">
+      <div class="lbl">Carte d'entrée 4-20 mA (PE = 16 mA)</div>
+      <div class="slider"><label for="n4">Nombre de bits n</label><output id="on4">3 bits</output><input id="n4" type="range" min="2" max="12" step="1" value="3"></div>
+      <div class="stat"><span>Nombre de valeurs</span><b id="ov4">8</b></div>
+      <div class="stat"><span>Quantum q</span><b id="oq4">2 000 µA</b></div>
+      <div class="hint" style="font-size:.85rem;color:var(--muted)">Le tracé montre un signal lent ; au-delà de 8 bits, les marches deviennent invisibles à l'écran.</div>
+    </div>
+  </div>
+  <div data-q="13"></div><div data-q="14"></div><div data-q="15"></div><div data-q="16"></div><div data-q="17"></div><div data-q="18"></div>
+</div></section>
+
+<section class="part" id="p5"><h2>Étape 5 – Temps de réponse d'une sonde <span>≈ 10 min</span></h2><div class="inner">
+  <div class="rappel"><b class="t">Rappel</b>Premier ordre : τ à 63 % de la variation ; \(t_{5\%}\) à 95 % ; \(t_{5\%} = 3\,\tau\).</div>
+  <div class="widget">
+    <svg id="sv5" viewBox="0 0 520 300" role="img" aria-label="Réponse d'une sonde à un échelon de 20 °C à 60 °C" style="cursor:crosshair;touch-action:none"></svg>
+    <div class="ctl">
+      <div class="lbl">Essai : sonde plongée à t = 0 dans un bain à 60 °C (départ 20 °C)</div>
+      <div class="stat"><span>Curseur : t</span><b id="ot5">—</b></div>
+      <div class="stat"><span>Curseur : θ</span><b id="oth5">—</b></div>
+      <div class="hint" style="font-size:.85rem;color:var(--muted)">Déplace le pointeur (ou le doigt) sur la courbe pour lire t et θ.</div>
+    </div>
+  </div>
+  <div data-q="19"></div><div data-q="20"></div><div data-q="21"></div>
+</div></section>
+
+<section class="part" id="p6"><h2>Étape 6 – Précision d'une chaîne de mesure <span>≈ 8 min</span></h2><div class="inner">
+  <div class="rappel"><b class="t">Rappel</b>Pt100 classe A : \(\pm(0{,}15 + 0{,}002\,\theta)\) en °C. Erreur maximale de la chaîne = somme des erreurs des éléments.</div>
+  <div data-q="22"></div><div data-q="23"></div><div data-q="24"></div>
+</div></section>
+
+<div class="duree cartes"><span><b>Pour finir :</b> révise avec les 10 cartes de révision du chapitre (rubrique « Réviser » du site).</span></div>
+<footer>BTS ET · Physique industrielle · Animation de révision — aucune réponse n'est enregistrée ni envoyée.</footer>
+</div>
+
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+const fr=(x,d)=>x.toLocaleString("fr-FR",{minimumFractionDigits:d,maximumFractionDigits:d});
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const NS="http://www.w3.org/2000/svg";
+function el(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;}
+function txt(parent,x,y,s,attrs){const t=el("text",Object.assign({x,y,"font-size":12,fill:css("--muted")},attrs||{}),parent);t.textContent=s;return t;}
+function num(s){ if(s==null) return NaN; s=String(s).trim().replace(/\s/g,"").replace(",","."); return s===""?NaN:Number(s); }
+
+/* ------------------------------------------------------------ QUESTIONS */
+const Q={
+ 1:{t:"Associe chaque fonction à l'élément de la chaîne qui la réalise.",type:"match",
+    items:[["transforme la grandeur physique en grandeur électrique","capteur"],["fabrique le signal normalisé 4-20 mA","transmetteur"],["transforme le signal en nombre binaire","carte d'entrée (CAN)"],["compare la mesure aux seuils d'alarme","automate"]],
+    choices:["capteur","transmetteur","carte d'entrée (CAN)","automate"],
+    sol:"capteur → grandeur électrique ; transmetteur → signal normalisé ; carte d'entrée (CAN) → nombre binaire ; automate → seuils d'alarme."},
+ 2:{t:"Une sonde Pt100 délivre…",type:"qcm",opts:["une résistance qui augmente avec la température","un courant 4-20 mA","une tension de quelques millivolts"],ok:0,
+    hint:"La Pt100 est un capteur : elle ne fabrique pas de signal normalisé.",sol:"Une résistance (100 Ω à 0 °C), qui augmente avec la température."},
+ 3:{t:"Un thermocouple délivre…",type:"qcm",star:true,opts:["une résistance","une petite tension (quelques mV)","un courant 4-20 mA"],ok:1,
+    hint:"Deux métaux soudés : il apparaît une petite force électromotrice.",sol:"Une petite tension, de quelques millivolts."},
+ 4:{t:"Coche tous les signaux normalisés délivrés par les transmetteurs.",type:"multi",opts:["4-20 mA","0-24 V","0-10 V","1-5 V","0-20 V","−10 / +10 V"],ok:[0,2,3,5],
+    hint:"Il y a un courant et trois tensions.",sol:"4-20 mA ; 0-10 V ; −10/+10 V ; 1-5 V."},
+ 5:{t:"Transmetteur de niveau réglé de 0 m à 8 m. Calcule le courant envoyé pour h = 6 m. Vérifie avec le curseur.",type:"num",unit:"mA",val:16,tol:0.06,
+    hint:"\\(I = 4 + 16\\times\\dfrac{6-0}{8}\\).",sol:"\\(I = 4 + 16\\times\\dfrac{6}{8} = 4 + 12 = 16\\ \\text{mA}\\)."},
+ 6:{t:"L'automate reçoit 7,2 mA. Calcule la hauteur d'eau.",type:"num",unit:"m",val:1.6,tol:0.03,
+    hint:"\\(h = 0 + 8\\times\\dfrac{I-4}{16}\\) : commence par \\(I - 4\\).",sol:"\\(h = 8\\times\\dfrac{7{,}2-4}{16} = 8\\times 0{,}2 = 1{,}6\\ \\text{m}\\)."},
+ 7:{t:"Calcule la tension aux bornes de la résistance de 250 Ω de la carte quand I = 16 mA.",type:"num",star:true,unit:"V",val:4,tol:0.03,
+    hint:"\\(U = R\\times I\\) avec I en ampères : 16 mA = 0,016 A.",sol:"\\(U = 250\\times 0{,}016 = 4{,}0\\ \\text{V}\\)."},
+ 8:{t:"Coche « Couper le câble ». L'automate lit 0 mA. Cela signifie…",type:"qcm",opts:["que la bâche est vide","une panne de la boucle (câble coupé, transmetteur hors service)","que la bâche est pleine"],ok:1,
+    hint:"Une bâche vide donne 4 mA (zéro vivant).",sol:"Une panne : un courant inférieur à 3,6 mA ne peut pas être une mesure."},
+ 9:{t:"Pourquoi la longueur du câble ne fausse-t-elle pas un signal 4-20 mA ?",type:"qcm",star:true,opts:["Le câble n'a pas de résistance.","La boucle est un circuit série : le courant est le même partout.","Le courant est trop faible pour être perdu."],ok:1,
+    hint:"Pense à la loi des nœuds dans une boucle sans dérivation.",sol:"Dans un circuit série, le courant est le même en tout point de la boucle."},
+ 10:{t:"Quel enregistrement temporel est le signal numérique ?",type:"qcm",opts:["A","B"],ok:0,
+    hint:"Cherche les marches : instants réguliers et valeurs limitées.",sol:"A : il est fait de marches (échantillonné et quantifié)."},
+ 11:{t:"Le spectre D est celui d'un signal numérique. Lis sa fréquence d'échantillonnage.",type:"num",unit:"Hz",val:500,tol:5,
+    hint:"Le motif (une raie de 50 Hz) se répète : repère le centre de chaque paire de raies.",sol:"Les paires sont centrées sur 500, 1 000, 1 500 Hz : \\(f_e = 500\\ \\text{Hz}\\)."},
+ 12:{t:"Sur l'enregistrement A, chaque marche dure 0,1 s. Calcule la fréquence d'échantillonnage.",type:"num",star:true,unit:"Hz",val:10,tol:0.05,
+    hint:"\\(f_e = \\dfrac{1}{T_e}\\).",sol:"\\(f_e = \\dfrac{1}{0{,}1} = 10\\ \\text{Hz}\\)."},
+ 13:{t:"Combien de valeurs distingue un CAN de 10 bits ? Vérifie avec le curseur.",type:"num",unit:"valeurs",val:1024,tol:0.5,
+    hint:"Calcule \\(2^{10}\\).",sol:"\\(2^{10} = 1\\,024\\) valeurs."},
+ 14:{t:"Calcule le quantum d'un CAN de 10 bits de pleine échelle 16 mA.",type:"num",unit:"µA",val:15.6,tol:0.15,
+    hint:"\\(q = \\dfrac{16\\ \\text{mA}}{1\\,024}\\), puis multiplie par 1 000 pour avoir des µA.",sol:"\\(q = \\dfrac{16}{1\\,024} = 0{,}015\\,6\\ \\text{mA} = 15{,}6\\ \\mu\\text{A}\\)."},
+ 15:{t:"Transmetteur réglé de 0 °C à 200 °C, CAN de 12 bits. Calcule la résolution en °C.",type:"num",star:true,unit:"°C",val:0.0488,tol:0.0015,
+    hint:"\\(q_\\theta = \\dfrac{\\mathrm{EM}}{2^{12}} = \\dfrac{200}{4\\,096}\\).",sol:"\\(q_\\theta = \\dfrac{200}{4\\,096} \\approx 0{,}049\\ \\text{°C}\\)."},
+ 16:{t:"On veut une résolution de 0,5 bar sur un transmetteur 0 → 100 bar. Quel est le nombre minimal de bits du CAN ?",type:"num",unit:"bits",val:8,tol:0.01,
+    hint:"Nombre de points : \\(N = \\dfrac{100}{0{,}5}\\). Puis plus petit n tel que \\(2^n \\geq N\\).",sol:"N = 200 points ; \\(2^7 = 128\\) ne suffit pas, \\(2^8 = 256\\) convient : 8 bits."},
+ 17:{t:"La plus grande fréquence d'un signal de vibration vaut 60 Hz. Calcule la fréquence d'échantillonnage minimale.",type:"num",unit:"Hz",val:120,tol:0.5,
+    hint:"Condition de Shannon : \\(f_e > 2\\,f_{\\max}\\).",sol:"\\(f_e > 2\\times 60 = 120\\ \\text{Hz}\\)."},
+ 18:{t:"Ce signal de 60 Hz est échantillonné à 100 Hz. Quelle fréquence l'automate voit-il ?",type:"num",star:true,unit:"Hz",val:40,tol:0.5,
+    hint:"Repliement : l'automate voit l'écart entre \\(f_e\\) et la fréquence du signal.",sol:"100 − 60 = 40 Hz : c'est le repliement de spectre."},
+ 19:{t:"La sonde passe de 20 °C à 60 °C. Calcule la température atteinte à 63 % de la variation.",type:"num",unit:"°C",val:45.2,tol:0.15,
+    hint:"\\(\\theta = 20 + 0{,}63\\times(60 - 20)\\).",sol:"\\(\\theta = 20 + 0{,}63\\times 40 = 45{,}2\\ \\text{°C}\\)."},
+ 20:{t:"Avec le curseur, lis la constante de temps τ de la sonde.",type:"num",unit:"s",val:2.5,tol:0.2,
+    hint:"Cherche la date où la courbe atteint 45,2 °C.",sol:"La courbe atteint 45,2 °C à t ≈ 2,5 s : τ ≈ 2,5 s."},
+ 21:{t:"Calcule le temps de réponse à 5 % de la sonde. Vérifie sur la courbe (95 % : 58 °C).",type:"num",unit:"s",val:7.5,tol:0.35,
+    hint:"\\(t_{5\\%} = 3\\,\\tau\\).",sol:"\\(t_{5\\%} = 3\\times 2{,}5 = 7{,}5\\ \\text{s}\\) ; la courbe atteint 58 °C vers 7,5 s."},
+ 22:{t:"Calcule la précision d'une sonde Pt100 de classe A à 100 °C (donne la valeur sans le ±).",type:"num",unit:"°C",val:0.35,tol:0.006,
+    hint:"\\(0{,}15 + 0{,}002\\times 100\\).",sol:"\\(\\pm(0{,}15 + 0{,}002\\times 100) = \\pm 0{,}35\\ \\text{°C}\\)."},
+ 23:{t:"Avec cette sonde : transmetteur ± 0,2 % d'une étendue de 50 °C, carte ± 0,02 °C. Calcule l'erreur maximale de la chaîne (sans le ±).",type:"num",star:true,unit:"°C",val:0.47,tol:0.006,
+    hint:"Transmetteur : 0,2 % de 50 °C = 0,1 °C. Puis additionne les trois erreurs.",sol:"0,35 + 0,10 + 0,02 = ± 0,47 °C."},
+ 24:{t:"Une chaîne affiche la température au centième de degré, mais peut se tromper de 2 °C. Elle a…",type:"qcm",star:true,opts:["une bonne résolution et une mauvaise précision","une mauvaise résolution et une bonne précision","une bonne résolution et une bonne précision"],ok:0,
+    hint:"Résolution = plus petite variation visible ; précision = écart possible avec la vraie valeur.",sol:"Bonne résolution (0,01 °C) mais mauvaise précision (± 2 °C)."}
+};
+
+function typeset(node){ if(window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([node]).catch(()=>{}); }
+
+function render(n){
+  const q=Q[n], host=document.querySelector(`[data-q="${n}"]`); if(!host) return;
+  const box=document.createElement("div"); box.className="q"+(q.star?" star":"");
+  box.innerHTML=`<div class="qt"><span class="num">Q${n}${q.star?" ★":""}</span><span>${q.t}${q.star?' <span class="fac">(facultatif)</span>':""}</span></div>`;
+  const ans=document.createElement("div"); ans.className="ans";
+  let get;
+  if(q.type==="num"){
+    ans.innerHTML=`<input type="text" inputmode="decimal" aria-label="Réponse Q${n}"> <span class="unit">${q.unit}</span>`;
+    const inp=ans.querySelector("input"); get=()=>num(inp.value);
+    inp.addEventListener("keydown",e=>{if(e.key==="Enter")check();});
+  } else if(q.type==="qcm"||q.type==="multi"){
+    const o=document.createElement("div"); o.className="opts";
+    q.opts.forEach((s,i)=>{const l=document.createElement("label");l.innerHTML=`<input type="${q.type==="qcm"?"radio":"checkbox"}" name="q${n}" value="${i}"> <span>${s}</span>`;o.appendChild(l);});
+    box.appendChild(o);
+    get=()=>[...o.querySelectorAll("input")].filter(x=>x.checked).map(x=>+x.value);
+  } else if(q.type==="match"){
+    const m=document.createElement("div"); m.className="match";
+    q.items.forEach(([lab],i)=>{const s=document.createElement("span");s.textContent="• "+lab;const sel=document.createElement("select");sel.setAttribute("aria-label",lab);
+      sel.innerHTML='<option value="">— choisir —</option>'+q.choices.map(c=>`<option>${c}</option>`).join("");m.appendChild(s);m.appendChild(sel);});
+    box.appendChild(m);
+    get=()=>[...m.querySelectorAll("select")].map(s=>s.value);
+  }
+  const b=document.createElement("button"); b.className="btn"; b.type="button"; b.textContent="Vérifier";
+  const sb=document.createElement("button"); sb.className="linkbtn"; sb.type="button"; sb.textContent="Voir la réponse"; sb.hidden=true;
+  ans.appendChild(b); ans.appendChild(sb); box.appendChild(ans);
+  const fb=document.createElement("div"); fb.className="fb"; fb.hidden=true; fb.setAttribute("role","status"); box.appendChild(fb);
+  let tries=0;
+  function show(cls,html){fb.className="fb "+cls;fb.innerHTML=html;fb.hidden=false;typeset(fb);}
+  function check(){
+    const v=get(); let ok=false, empty=false;
+    if(q.type==="num"){ empty=isNaN(v); ok=!empty && Math.abs(v-q.val)<=q.tol; }
+    else if(q.type==="qcm"){ empty=!v.length; ok=v.length===1&&v[0]===q.ok; }
+    else if(q.type==="multi"){ empty=!v.length; ok=v.length===q.ok.length&&q.ok.every(i=>v.includes(i)); }
+    else if(q.type==="match"){ empty=v.some(x=>!x); ok=v.every((x,i)=>x===q.items[i][1]); }
+    if(empty){show("bad","Donne d'abord une réponse.");return;}
+    if(ok){show("ok","✓ Juste ! "+(q.sol?`<span style="color:var(--ink)">${q.sol}</span>`:""));sb.hidden=true;return;}
+    tries++;
+    show("bad","✗ Pas encore. "+(q.hint?"Indice : "+q.hint:"Relis le rappel."));
+    if(tries>=2) sb.hidden=false;
+  }
+  b.addEventListener("click",check);
+  sb.addEventListener("click",()=>show("sol","Réponse : "+q.sol));
+  host.appendChild(box); typeset(box);
+}
+Object.keys(Q).forEach(k=>render(+k));
+
+/* ------------------------------------------------------------ WIDGET étape 2 */
+function draw2(){
+  const sv=$("sv2"); sv.innerHTML="";
+  const h=+$("h2").value, cut=$("cut2").checked;
+  const X=v=>60+v/8*430, Y=i=>260-i/22*240;
+  for(let v=0;v<=8;v++){el("line",{x1:X(v),y1:Y(0),x2:X(v),y2:Y(22),stroke:css("--grid")},sv);txt(sv,X(v)-4,Y(0)+16,String(v));}
+  for(let i=0;i<=20;i+=4){el("line",{x1:X(0),y1:Y(i),x2:X(8),y2:Y(i),stroke:css("--grid")},sv);txt(sv,X(0)-24,Y(i)+4,String(i));}
+  el("line",{x1:X(0),y1:Y(0),x2:X(8),y2:Y(0),stroke:css("--muted")},sv); el("line",{x1:X(0),y1:Y(0),x2:X(0),y2:Y(22),stroke:css("--muted")},sv);
+  txt(sv,X(8)-40,Y(0)+32,"h (m)",{fill:css("--ink")}); txt(sv,8,Y(22)+6,"I (mA)",{fill:css("--ink")});
+  el("line",{x1:X(0),y1:Y(4),x2:X(8),y2:Y(20),stroke:css("--blue"),"stroke-width":2.5},sv);
+  const I=cut?0:4+16*h/8;
+  if(!cut){
+    el("line",{x1:X(h),y1:Y(0),x2:X(h),y2:Y(I),stroke:css("--accent"),"stroke-dasharray":"5 4"},sv);
+    el("line",{x1:X(0),y1:Y(I),x2:X(h),y2:Y(I),stroke:css("--accent"),"stroke-dasharray":"5 4"},sv);
+    el("circle",{cx:X(h),cy:Y(I),r:5,fill:css("--accent")},sv);
+  } else { txt(sv,X(2.2),Y(1.2),"I = 0 mA : en dessous de 3,6 mA !",{fill:css("--bad"),"font-weight":"bold","font-size":14}); }
+  $("oh2").textContent=fr(h,1)+" m";
+  $("oi2").textContent=fr(I,2)+" mA";
+  $("ou2").textContent=fr(0.25*I,2)+" V";
+  $("oa2").textContent=cut?"ALARME : défaut capteur":"mesure valide";
+  $("oa2").style.color=cut?css("--bad"):css("--ok");
+}
+$("h2").addEventListener("input",draw2); $("cut2").addEventListener("change",draw2);
+
+/* ------------------------------------------------------------ étape 3 : figures fixes */
+function draw3(){
+  const sv=$("sv3"); sv.innerHTML="";
+  function frame(x0,y0,w,h,title){el("rect",{x:x0,y:y0,width:w,height:h,fill:"none",stroke:css("--line")},sv);txt(sv,x0,y0-6,title,{fill:css("--ink"),"font-weight":"bold"});}
+  // A : numérique, B : analogique (température lente)
+  const f=t=>50+30*Math.sin(2*Math.PI*t/2)+8*Math.sin(2*Math.PI*t/0.7);
+  const W=400,H=150;
+  [[20,30,"A",true],[470,30,"B",false]].forEach(([x0,y0,lab,dig])=>{
+    frame(x0,y0,W,H,"Enregistrement "+lab);
+    const X=t=>x0+t/2*W, Yv=v=>y0+H-(v-5)/90*H;
+    let d="";
+    if(dig){ const Te=0.1; for(let k=0;k<20;k++){const t=k*Te, v=Math.round(f(t)/4)*4; d+=(k?"L":"M")+X(t)+" "+Yv(v)+" L"+X(t+Te)+" "+Yv(v)+" "; el("circle",{cx:X(t),cy:Yv(v),r:2.6,fill:css("--blue")},sv);} }
+    else { for(let i=0;i<=400;i++){const t=i/200; d+=(i?"L":"M")+X(t)+" "+Yv(f(t))+" ";} }
+    el("path",{d,fill:"none",stroke:dig?css("--blue"):css("--accent"),"stroke-width":2},sv);
+    for(let t=0;t<=2;t+=0.5) txt(sv,X(t)-6,y0+H+16,fr(t,1));
+    txt(sv,x0+W-30,y0+H+32,"t (s)");
+  });
+  // C, D : spectres
+  const ys=250, hs=130, W2=860, x0=20;
+  const Xf=f=>x0+f/1600*W2;
+  frame(x0,ys,W2/2-30,hs,"Spectre C"); frame(x0+W2/2+20,ys,W2/2-20,hs,"Spectre D");
+  const XC=f=>x0+f/1600*(W2/2-30), XD=f=>x0+W2/2+20+f/1600*(W2/2-20);
+  function raie(X,f,col){el("line",{x1:X(f),y1:ys+hs,x2:X(f),y2:ys+30,stroke:col,"stroke-width":2.5},sv);el("circle",{cx:X(f),cy:ys+30,r:3.5,fill:col},sv);}
+  raie(XC,50,css("--accent"));
+  raie(XD,50,css("--blue")); [500,1000,1500].forEach(c=>{raie(XD,c-50,css("--blue"));raie(XD,c+50,css("--blue"));});
+  for(let f=0;f<=1600;f+=400){txt(sv,XC(f)-10,ys+hs+16,String(f));txt(sv,XD(f)-10,ys+hs+16,String(f));}
+  txt(sv,XC(1600)-40,ys+hs+32,"f (Hz)"); txt(sv,XD(1600)-40,ys+hs+32,"f (Hz)");
+}
+
+/* ------------------------------------------------------------ WIDGET étape 4 */
+function draw4(){
+  const sv=$("sv4"); sv.innerHTML=""; const n=+$("n4").value, N=2**n;
+  const X=t=>40+t*460, Y=v=>230-v*200;
+  el("rect",{x:40,y:30,width:460,height:200,fill:"none",stroke:css("--line")},sv);
+  const s=t=>0.5+0.42*Math.sin(2*Math.PI*t*1.3)+0.04*Math.sin(2*Math.PI*t*7);
+  let d=""; for(let i=0;i<=400;i++){const t=i/400; d+=(i?"L":"M")+X(t)+" "+Y(s(t))+" ";}
+  el("path",{d,fill:"none",stroke:css("--accent"),"stroke-width":1.6},sv);
+  let dq=""; const M=120; for(let k=0;k<M;k++){const t=k/M, v=Math.min(N-1,Math.floor(s(t)*N))/N + 0.5/N; dq+=(k?"L":"M")+X(t)+" "+Y(v)+" L"+X((k+1)/M)+" "+Y(v)+" ";}
+  el("path",{d:dq,fill:"none",stroke:css("--blue"),"stroke-width":2},sv);
+  txt(sv,44,24,"analogique",{fill:css("--accent"),"font-weight":"bold"}); txt(sv,140,24,"quantifié par le CAN",{fill:css("--blue"),"font-weight":"bold"});
+  txt(sv,4,Y(0)+4,"4 mA"); txt(sv,0,Y(1)+4,"20 mA");
+  $("on4").textContent=n+" bits"; $("ov4").textContent=N.toLocaleString("fr-FR");
+  const q=16000/N; $("oq4").textContent=(q>=100?fr(q,0):q>=10?fr(q,1):fr(q,2))+" µA";
+}
+$("n4").addEventListener("input",draw4);
+
+/* ------------------------------------------------------------ WIDGET étape 5 */
+const TAU=2.5;
+const th5=t=>60-40*Math.exp(-t/TAU);
+let hov=null;
+function draw5(){
+  const sv=$("sv5"); sv.innerHTML="";
+  const X=t=>50+t/15*450, Y=v=>270-(v-10)/55*250;
+  for(let t=0;t<=15;t+=0.5){el("line",{x1:X(t),y1:Y(10),x2:X(t),y2:Y(65),stroke:css("--grid"),"stroke-width":t%2.5===0?1.2:0.5},sv);}
+  for(let v=10;v<=65;v+=2.5){el("line",{x1:X(0),y1:Y(v),x2:X(15),y2:Y(v),stroke:css("--grid"),"stroke-width":v%10===0?1.2:0.5},sv);}
+  for(let t=0;t<=15;t+=2.5) txt(sv,X(t)-8,Y(10)+16,fr(t,1));
+  for(let v=10;v<=60;v+=10) txt(sv,X(0)-26,Y(v)+4,String(v));
+  txt(sv,X(15)-30,Y(10)+32,"t (s)",{fill:css("--ink")}); txt(sv,4,Y(65)+10,"θ (°C)",{fill:css("--ink")});
+  el("line",{x1:X(0),y1:Y(60),x2:X(15),y2:Y(60),stroke:css("--blue"),"stroke-dasharray":"6 4"},sv);
+  txt(sv,X(10.5),Y(60)-6,"bain : 60 °C",{fill:css("--blue")});
+  let d=""; for(let i=0;i<=300;i++){const t=i/300*15; d+=(i?"L":"M")+X(t)+" "+Y(th5(t))+" ";}
+  el("path",{d,fill:"none",stroke:css("--accent"),"stroke-width":2.5},sv);
+  if(hov!=null){const v=th5(hov);
+    el("line",{x1:X(hov),y1:Y(10),x2:X(hov),y2:Y(v),stroke:css("--navy"),"stroke-dasharray":"3 3"},sv);
+    el("line",{x1:X(0),y1:Y(v),x2:X(hov),y2:Y(v),stroke:css("--navy"),"stroke-dasharray":"3 3"},sv);
+    el("circle",{cx:X(hov),cy:Y(v),r:4.5,fill:css("--navy")},sv);
+    $("ot5").textContent=fr(hov,1)+" s"; $("oth5").textContent=fr(v,1)+" °C";}
+  return {X};
+}
+$("sv5").addEventListener("pointermove",ev=>{
+  const r=$("sv5").getBoundingClientRect(); const x=(ev.clientX-r.left)/r.width*520;
+  let t=(x-50)/450*15; t=Math.max(0,Math.min(15,Math.round(t*10)/10)); hov=t; draw5();
+});
+
+function drawAll(){draw2();draw3();draw4();draw5();}
+drawAll();
+if(window.matchMedia) matchMedia("(prefers-color-scheme: dark)").addEventListener("change",drawAll);
+</script>
+</body>
+</html>

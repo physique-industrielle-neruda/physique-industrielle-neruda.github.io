@@ -1,0 +1,534 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Banc chaîne de mesure</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<style>
+/* Un « banc de mesure » : vue de l'installation à gauche, pupitre de réglage et lectures à droite. */
+:root{
+  --bg:#f3f5f8; --panel:#ffffff; --ink:#16202e; --muted:#5b6778; --line:#d5dce6; --grid:#e7ecf2;
+  --trace:#d4561c; --input:#2f6fd6; --mark:#2f6fd6; --band:rgba(47,111,214,.10); --ok:#1f8a4c; --okbg:#e6f5ec; --bad:#b4372b; --badbg:#fbeceb;
+  --chip:#eef2f7; --accent:#d4561c; --ghost:#9aa6b6;
+  --f-display:"IBM Plex Sans Condensed","Arial Narrow",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f141b; --panel:#171e28; --ink:#e6ebf2; --muted:#9aa6b6; --line:#2a3442; --grid:#202a36;
+  --trace:#ff8a4c; --input:#6ea2ff; --mark:#6ea2ff; --band:rgba(110,162,255,.13); --ok:#5fd08f; --okbg:#15301f; --bad:#ff8173; --badbg:#3a1b18;
+  --chip:#202a36; --accent:#ff8a4c; --ghost:#5b6778; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#0f141b; --panel:#171e28; --ink:#e6ebf2; --muted:#9aa6b6; --line:#2a3442; --grid:#202a36;
+  --trace:#ff8a4c; --input:#6ea2ff; --mark:#6ea2ff; --band:rgba(110,162,255,.13); --ok:#5fd08f; --okbg:#15301f; --bad:#ff8173; --badbg:#3a1b18;
+  --chip:#202a36; --accent:#ff8a4c; --ghost:#5b6778; color-scheme:dark }
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5}
+.wrap{max-width:1240px;margin:0 auto;padding-inline:16px;padding-block:18px 40px;display:flex;flex-direction:column;gap:16px}
+header{display:flex;flex-direction:column;gap:4px}
+h1{font-family:var(--f-display);font-weight:700;font-size:clamp(1.45rem,3vw,2rem);margin:0;letter-spacing:.01em;text-wrap:balance}
+.eyebrow{font-family:var(--f-mono);font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.sub{color:var(--muted);margin:0;max-width:70ch}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;border-bottom:1px solid var(--line)}
+.tab{font:inherit;font-family:var(--f-display);font-weight:600;font-size:1rem;padding:8px 14px;border:1px solid transparent;border-bottom:0;border-radius:8px 8px 0 0;background:transparent;color:var(--muted);cursor:pointer;margin-bottom:-1px}
+.tab[aria-selected=true]{background:var(--panel);border-color:var(--line);color:var(--ink)}
+.bench{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:16px;align-items:start}
+@media (max-width:920px){.bench{grid-template-columns:minmax(0,1fr)}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px}
+.view{padding:12px;min-width:0;display:flex;flex-direction:column;gap:10px}
+.view h2,.panel h2{font-family:var(--f-display);font-size:1.05rem;margin:0;font-weight:600;letter-spacing:.02em}
+svg{width:100%;height:auto;display:block}
+svg.plot{touch-action:none;cursor:crosshair;border-radius:6px}
+svg.plot:focus{outline:none}svg.plot:focus-visible{outline:2px solid var(--mark);outline-offset:2px}
+.panel{padding:14px;display:flex;flex-direction:column;gap:14px}
+.group{display:flex;flex-direction:column;gap:8px}
+.lbl{font-size:.72rem;font-family:var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;border:1px solid var(--line);border-radius:7px;overflow:hidden}
+.seg button{font:inherit;font-size:.84rem;padding:7px 4px;border:0;background:transparent;color:var(--ink);cursor:pointer;line-height:1.2}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed=true]{background:var(--ink);color:var(--panel)}
+.slider{display:grid;grid-template-columns:1fr auto;gap:2px 8px;align-items:center}
+.slider label{font-size:.88rem}
+.slider output{font-family:var(--f-mono);font-size:.85rem;font-variant-numeric:tabular-nums}
+.slider input{grid-column:1/-1;width:100%;accent-color:var(--accent)}
+.check{font-size:.88rem;display:flex;gap:8px;align-items:flex-start;cursor:pointer}
+.check input{accent-color:var(--mark);margin-top:4px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.stat{background:var(--chip);border-radius:6px;padding:6px 8px;min-width:0}
+.stat.wide{grid-column:1/-1}
+.stat .k{font-size:.7rem;color:var(--muted);font-family:var(--f-mono);letter-spacing:.02em}
+.stat .v{font-family:var(--f-mono);font-size:.95rem;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.big{font-family:var(--f-mono);font-size:1.6rem;font-variant-numeric:tabular-nums;line-height:1.2}
+.status{border-radius:7px;padding:8px 10px;font-size:.9rem;font-weight:500}
+.status.ok{background:var(--okbg);color:var(--ok)}
+.status.bad{background:var(--badbg);color:var(--bad)}
+.btn{font:inherit;font-size:.88rem;font-weight:500;border:1px solid var(--ink);background:var(--ink);color:var(--panel);border-radius:7px;padding:7px 12px;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+.btn:disabled{opacity:.5;cursor:default}
+.btn:focus-visible,.seg button:focus-visible,.tab:focus-visible,input:focus-visible{outline:2px solid var(--mark);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.readout{font-family:var(--f-mono);font-size:.85rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.readout b{color:var(--ink);font-weight:500}
+.hint{font-size:.82rem;color:var(--muted);margin:0}
+.pins{display:flex;flex-wrap:wrap;gap:6px}
+.pin{font-family:var(--f-mono);font-size:.78rem;background:var(--chip);border-radius:999px;padding:3px 6px 3px 10px;display:inline-flex;gap:6px;align-items:center;font-variant-numeric:tabular-nums}
+.pin button{border:0;background:none;color:var(--muted);cursor:pointer;font-size:.9rem;padding:0 4px;line-height:1}
+details.rappel{background:var(--chip);border-radius:8px;padding:8px 12px}
+details.rappel summary{cursor:pointer;font-weight:600;font-family:var(--f-display);letter-spacing:.02em}
+details.rappel p,details.rappel li{font-size:.9rem;margin:.35em 0}
+details.rappel ul{padding-left:1.1em;margin:.3em 0}
+input[type=number]{font:inherit;font-family:var(--f-mono);color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:5px 8px;width:110px}
+.ax{stroke:var(--muted);stroke-width:1}
+.gr{stroke:var(--grid);stroke-width:1}
+.tick{fill:var(--muted);font-family:var(--f-mono);font-size:11px}
+.axl{fill:var(--muted);font-family:var(--f-body);font-size:12px}
+.lg{font-family:var(--f-body);font-size:12px}
+footer{color:var(--muted);font-size:.8rem}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <span class="eyebrow">BTS Électrotechnique · Maîtrise des procédés · Chaînes de mesure</span>
+  <h1>Banc de la chaîne de mesure — circuit primaire d'une tranche REP</h1>
+  <p class="sub">Trois postes de travail, un par activité : la transmission du signal entre le bâtiment réacteur et le contrôle-commande, la numérisation par la carte d'entrée de l'automate, et le temps de réponse d'une sonde de température.</p>
+</header>
+
+<nav class="tabs" role="tablist" aria-label="Postes du banc">
+  <button class="tab" role="tab" id="t1" aria-controls="p1" aria-selected="true">① Boucle de transmission</button>
+  <button class="tab" role="tab" id="t2" aria-controls="p2" aria-selected="false">② Numérisation (CAN)</button>
+  <button class="tab" role="tab" id="t3" aria-controls="p3" aria-selected="false">③ Temps de réponse d'une sonde</button>
+</nav>
+
+<!-- ========================= POSTE 1 ========================= -->
+<section id="p1" role="tabpanel" aria-labelledby="t1">
+<div class="bench">
+  <div class="card view">
+    <h2>Pression du pressuriseur : du transmetteur à la salle de commande</h2>
+    <svg id="loop" viewBox="0 0 760 250" role="img" aria-label="Schéma de la liaison entre le transmetteur et la carte d'entrée de l'automate"></svg>
+    <h2>Signal reçu par la carte d'entrée (oscilloscope, 40 ms)</h2>
+    <svg id="scope1" class="plot" viewBox="0 0 760 230" aria-label="Signal reçu en fonction du temps"></svg>
+    <details class="rappel"><summary>Rappel de cours</summary>
+      <ul>
+        <li>Le <b>capteur</b> transforme la grandeur physique (ici la pression) en une grandeur électrique ; le <b>transmetteur</b> la convertit en un <b>signal normalisé</b> transmissible à distance.</li>
+        <li>Mise à l'échelle 4-20 mA sur l'étendue de mesure 100 bar → 180 bar : \(I = 4 + 16\,\dfrac{P - 100}{180 - 100}\) avec \(I\) en mA et \(P\) en bar.</li>
+        <li>Mise à l'échelle 0-10 V : \(U = 10\,\dfrac{P - 100}{180 - 100}\) avec \(U\) en V.</li>
+        <li>Résistance d'un conducteur : \(R = \rho\,\dfrac{L}{S}\) avec \(\rho_{\text{Cu}} = 1{,}7\times10^{-8}\ \Omega\cdot\text{m}\). La ligne comporte deux conducteurs (aller et retour).</li>
+      </ul>
+    </details>
+  </div>
+  <aside class="card panel" aria-label="Réglages du poste 1">
+    <div class="group"><span class="lbl">Type de signal</span>
+      <div class="seg" id="sig"><button aria-pressed="true" data-v="mA">4-20 mA</button><button aria-pressed="false" data-v="V">0-10 V</button></div>
+    </div>
+    <div class="slider"><label for="P">Pression réelle P</label><output id="Po"></output><input id="P" type="range" min="100" max="180" step="0.5" value="155"></div>
+    <div class="slider"><label for="L">Longueur du câble L</label><output id="Lo"></output><input id="L" type="range" min="0" max="1000" step="50" value="300"></div>
+    <div class="group"><span class="lbl">Section des conducteurs</span>
+      <div class="seg" id="sec"><button aria-pressed="false" data-v="0.5">0,5 mm²</button><button aria-pressed="true" data-v="1.5">1,5 mm²</button></div>
+    </div>
+    <label class="check"><input type="checkbox" id="noise"> Parasites induits par les câbles de puissance voisins (50 Hz)</label>
+    <label class="check"><input type="checkbox" id="cut"> Couper la liaison (rupture d'un conducteur)</label>
+    <div class="group"><span class="lbl">Lectures</span>
+      <div class="stats">
+        <div class="stat"><div class="k">Signal émis</div><div class="v" id="r_e"></div></div>
+        <div class="stat"><div class="k">Résistance de ligne</div><div class="v" id="r_rl"></div></div>
+        <div class="stat wide"><div class="k">Signal reçu (min → max)</div><div class="v" id="r_r"></div></div>
+        <div class="stat wide" id="r_ub"><div class="k">Tension aux bornes de la résistance 250 Ω de la carte</div><div class="v" id="r_u"></div></div>
+      </div>
+    </div>
+    <div class="group"><span class="lbl">Salle de commande — pression affichée</span>
+      <div class="big" id="r_p"></div>
+      <div class="readout">Écart maximal avec la pression réelle : <b id="r_err"></b></div>
+      <div class="status ok" id="r_st"></div>
+    </div>
+    <p class="hint">Carte d'entrée tension : impédance d'entrée 10 kΩ. Carte d'entrée courant : le transmetteur se comporte comme une source de courant (résistance interne 1 MΩ). Alarme « défaut capteur » si I &lt; 3,6 mA.</p>
+  </aside>
+</div>
+</section>
+
+<!-- ========================= POSTE 2 ========================= -->
+<section id="p2" role="tabpanel" aria-labelledby="t2" hidden>
+<div class="bench">
+  <div class="card view">
+    <h2 id="p2title">Représentation temporelle</h2>
+    <svg id="tplot" class="plot" viewBox="0 0 760 300" aria-label="Signal en fonction du temps"></svg>
+    <div class="readout" id="tlegend"></div>
+    <div id="specwrap">
+      <h2>Représentation fréquentielle (spectres)</h2>
+      <svg id="splot" viewBox="0 0 760 290" aria-label="Spectres du signal analogique et du signal échantillonné"></svg>
+    </div>
+    <details class="rappel"><summary>Rappel de cours</summary>
+      <ul>
+        <li>Un signal <b>analogique</b> varie de façon continue dans le temps et peut prendre une infinité de valeurs. Un signal <b>numérique</b> n'est connu qu'à des instants réguliers (échantillonnage, période \(T_e = 1/f_e\)) et ne prend qu'un nombre fini de valeurs (quantification).</li>
+        <li>Un CAN de \(n\) bits fournit \(2^n\) valeurs. Quantum : \(q = \dfrac{\text{pleine échelle}}{2^n}\).</li>
+        <li>Condition de Shannon : \(f_e &gt; 2\,f_{\max}\). Sinon, il y a <b>repliement</b> : l'automate « voit » une fréquence apparente fausse.</li>
+      </ul>
+    </details>
+  </div>
+  <aside class="card panel" aria-label="Réglages du poste 2">
+    <div class="group"><span class="lbl">Signal numérisé</span>
+      <div class="seg" id="mode2"><button aria-pressed="true" data-v="T">Température branche chaude</button><button aria-pressed="false" data-v="V">Vibrations pompe primaire</button></div>
+    </div>
+    <div class="slider"><label for="nb">Nombre de bits n du CAN</label><output id="nbo"></output><input id="nb" type="range" min="2" max="16" step="1" value="12"></div>
+    <div class="slider"><label for="fe">Fréquence d'échantillonnage fe</label><output id="feo"></output><input id="fe" type="range" min="0" max="5" step="1" value="2"></div>
+    <div class="group"><span class="lbl">Affichage</span>
+      <label class="check"><input type="checkbox" id="showA" checked> Signal analogique</label>
+      <label class="check"><input type="checkbox" id="showS" checked> Échantillons</label>
+      <label class="check"><input type="checkbox" id="showR" checked> Signal numérique restitué par l'automate</label>
+    </div>
+    <div class="group"><span class="lbl">Caractéristiques</span>
+      <div class="stats" id="stats2"></div>
+    </div>
+    <div class="group" id="testbox"><span class="lbl">Conversion d'une valeur d'essai</span>
+      <div class="row"><label for="ttest">θ essai (°C)</label><input type="number" id="ttest" value="329" step="0.1" min="250" max="350"></div>
+      <div class="stats" id="stats2b"></div>
+    </div>
+    <p class="hint" id="hint2"></p>
+  </aside>
+</div>
+</section>
+
+<!-- ========================= POSTE 3 ========================= -->
+<section id="p3" role="tabpanel" aria-labelledby="t3" hidden>
+<div class="bench">
+  <div class="card view">
+    <h2>Essai indiciel : sonde Pt100 plongée dans un bain agité à 80 °C</h2>
+    <svg id="rplot" class="plot" viewBox="0 0 760 360" tabindex="0" aria-label="Température indiquée par la sonde en fonction du temps. Cliquer pour poser un repère."></svg>
+    <div class="readout" id="cur3">Survoler la courbe pour lire t et θ ; cliquer pour poser un repère.</div>
+    <div class="pins" id="pins3"></div>
+    <details class="rappel"><summary>Rappel de cours</summary>
+      <ul>
+        <li>Une sonde de température se comporte comme un <b>système du premier ordre</b> : soumise à un échelon de température, sa réponse démarre avec une pente maximale, sans retard ni dépassement.</li>
+        <li>La <b>constante de temps</b> \(\tau\) est la durée au bout de laquelle la sonde a parcouru 63 % de la variation totale.</li>
+        <li>Le <b>temps de réponse à 5 %</b> est atteint quand la sonde a parcouru 95 % de la variation : \(t_{5\%} = 3\,\tau\).</li>
+        <li>Sonde Pt100 : \(R = R_0\,(1 + \alpha\,\theta)\) avec \(R_0 = 100\ \Omega\) et \(\alpha = 3{,}85\times10^{-3}\ ^\circ\text{C}^{-1}\).</li>
+      </ul>
+    </details>
+  </div>
+  <aside class="card panel" aria-label="Réglages du poste 3">
+    <div class="group"><span class="lbl">Montage de la sonde</span>
+      <div class="seg" id="mont" style="grid-auto-flow:row"><button aria-pressed="true" data-v="A">A — sonde nue</button><button aria-pressed="false" data-v="B">B — doigt de gant + pâte conductrice</button><button aria-pressed="false" data-v="C">C — doigt de gant sans pâte (lame d'air)</button></div>
+    </div>
+    <div class="row"><button class="btn" id="go3">Plonger la sonde</button><button class="btn ghost" id="clr3">Effacer les essais</button></div>
+    <label class="check"><input type="checkbox" id="guides3"> Afficher les repères à 63 % et 95 % (vérification)</label>
+    <div class="group"><span class="lbl">Lectures en direct</span>
+      <div class="stats">
+        <div class="stat"><div class="k">Temps simulé</div><div class="v" id="r3t">0,0 s</div></div>
+        <div class="stat"><div class="k">θ indiquée</div><div class="v" id="r3th">20,0 °C</div></div>
+        <div class="stat wide"><div class="k">Résistance de la sonde</div><div class="v" id="r3R"></div></div>
+      </div>
+    </div>
+    <p class="hint">La sonde est à 20 °C ; à t = 0 elle est plongée d'un coup dans un bain d'eau agitée maintenu à 80 °C : la température d'entrée est un échelon de 60 °C. L'essai dure 30 s (accéléré à l'écran).</p>
+  </aside>
+</div>
+</section>
+
+<footer>Simulation pédagogique : modèles simplifiés, valeurs numériques choisies pour l'enseignement (elles ne sont pas celles d'une installation réelle).</footer>
+</div>
+
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+const NS = "http://www.w3.org/2000/svg";
+const fr = (x, d=2) => (isFinite(x) ? x.toLocaleString("fr-FR",{minimumFractionDigits:d,maximumFractionDigits:d}) : "—");
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+function el(tag, attrs={}, parent){ const e=document.createElementNS(NS,tag); for(const k in attrs) e.setAttribute(k,attrs[k]); if(parent) parent.appendChild(e); return e; }
+function txt(parent, x, y, s, attrs={}){ const t=el("text",Object.assign({x,y},attrs),parent); t.textContent=s; return t; }
+
+/* ---------- tabs ---------- */
+const tabs=[...document.querySelectorAll(".tab")];
+tabs.forEach(t=>t.addEventListener("click",()=>{ tabs.forEach(u=>{u.setAttribute("aria-selected",u===t); $(u.getAttribute("aria-controls")).hidden = u!==t;}); redrawAll(); }));
+function seg(id, cb){ const s=$(id); s.querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{ s.querySelectorAll("button").forEach(c=>c.setAttribute("aria-pressed",c===b)); cb(b.dataset.v); })); }
+
+/* ---------- generic plot frame ---------- */
+function frame(svg, o){
+  svg.innerHTML="";
+  const W=760, H=+svg.getAttribute("viewBox").split(" ")[3];
+  const m={l:62,r:18,t:o.top??14,b:44};
+  const X=v=>m.l+(v-o.xmin)/(o.xmax-o.xmin)*(W-m.l-m.r);
+  const Y=v=>H-m.b-(v-o.ymin)/(o.ymax-o.ymin)*(H-m.t-m.b);
+  const g=el("g",{},svg);
+  (o.xticks||[]).forEach(v=>{ el("line",{x1:X(v),x2:X(v),y1:m.t,y2:H-m.b,class:"gr"},g); txt(g,X(v),H-m.b+15,o.xfmt?o.xfmt(v):fr(v,o.xd??0),{class:"tick","text-anchor":"middle"}); });
+  (o.yticks||[]).forEach(v=>{ el("line",{x1:m.l,x2:W-m.r,y1:Y(v),y2:Y(v),class:"gr"},g); txt(g,m.l-6,Y(v)+4,o.yfmt?o.yfmt(v):fr(v,o.yd??0),{class:"tick","text-anchor":"end"}); });
+  el("line",{x1:m.l,x2:W-m.r,y1:H-m.b,y2:H-m.b,class:"ax"},g);
+  el("line",{x1:m.l,x2:m.l,y1:m.t,y2:H-m.b,class:"ax"},g);
+  if(o.xlabel) txt(g,W-m.r,H-8,o.xlabel,{class:"axl","text-anchor":"end"});
+  if(o.ylabel) txt(g,12,m.t+4,o.ylabel,{class:"axl",transform:`rotate(-90 12 ${m.t+4})`,"text-anchor":"end"});
+  return {X,Y,W,H,m,g};
+}
+function ticks(a,b,step){ const r=[]; for(let v=Math.ceil(a/step-1e-9)*step; v<=b+1e-9; v+=step) r.push(+v.toFixed(10)); return r; }
+function path(pts,F){ return pts.map((p,i)=>(i?"L":"M")+F.X(p[0]).toFixed(1)+" "+F.Y(p[1]).toFixed(1)).join(""); }
+
+/* ======================= POSTE 1 ======================= */
+const S1={sig:"mA",P:155,L:300,S:1.5,noise:false,cut:false};
+const RHO=1.7e-8, RIN=10e3, RINT=1e6, ENOISE=0.3;
+seg("sig",v=>{S1.sig=v;draw1();});
+seg("sec",v=>{S1.S=+v;draw1();});
+$("P").addEventListener("input",e=>{S1.P=+e.target.value;draw1();});
+$("L").addEventListener("input",e=>{S1.L=+e.target.value;draw1();});
+$("noise").addEventListener("change",e=>{S1.noise=e.target.checked;draw1();});
+$("cut").addEventListener("change",e=>{S1.cut=e.target.checked;draw1();});
+
+function model1(t){ // t en s ; renvoie {rec, Pdisp}
+  const Rl=2*RHO*S1.L/(S1.S*1e-6);
+  const e = S1.noise ? ENOISE*Math.sin(2*Math.PI*50*t) : 0;
+  if(S1.sig==="mA"){
+    const Is=4+16*(S1.P-100)/80;
+    const I = S1.cut ? 0 : Is + e/RINT*1000; // mA
+    return {Rl, sent:Is, rec:I, Pd:100+(I-4)*80/16, alarm:I<3.6};
+  } else {
+    const Us=10*(S1.P-100)/80;
+    const U = S1.cut ? e : Us*RIN/(RIN+Rl) + e;
+    return {Rl, sent:Us, rec:U, Pd:100+U*80/10, alarm:false};
+  }
+}
+function draw1(){
+  $("Po").textContent=fr(S1.P,1)+" bar"; $("Lo").textContent=S1.L+" m";
+  const N=400, pts=[]; let mn=Infinity,mx=-Infinity,pmn=Infinity,pmx=-Infinity,alarm=false, base;
+  for(let i=0;i<=N;i++){ const t=i/N*0.04; const r=model1(t); base=r; pts.push([t*1000,r.rec]); mn=Math.min(mn,r.rec); mx=Math.max(mx,r.rec); pmn=Math.min(pmn,r.Pd); pmx=Math.max(pmx,r.Pd); alarm=alarm||r.alarm; }
+  const u = S1.sig==="mA" ? "mA" : "V";
+  const dRec = S1.sig==="mA" ? 3 : 3;
+  $("r_e").textContent = fr(base.sent,dRec)+" "+u;
+  $("r_rl").textContent = fr(base.Rl,1)+" Ω";
+  $("r_r").textContent = fr(mn,dRec)===fr(mx,dRec) ? fr(mn,dRec)+" "+u : fr(mn,dRec)+" → "+fr(mx,dRec)+" "+u;
+  $("r_ub").hidden = S1.sig!=="mA";
+  if(S1.sig==="mA") $("r_u").textContent = fr(0.25*mn,3)===fr(0.25*mx,3) ? fr(0.25*mn,3)+" V" : fr(0.25*mn,3)+" → "+fr(0.25*mx,3)+" V";
+  const st=$("r_st");
+  if(alarm){ $("r_p").textContent="DÉFAUT"; $("r_err").textContent="mesure invalide"; st.className="status bad"; st.textContent="Alarme « défaut capteur » : courant inférieur à 3,6 mA. La mesure est déclarée invalide."; }
+  else {
+    $("r_p").textContent = fr(pmn,2)===fr(pmx,2) ? fr(pmn,2)+" bar" : fr(pmn,2)+" → "+fr(pmx,2)+" bar";
+    const err=Math.max(Math.abs(pmn-S1.P),Math.abs(pmx-S1.P));
+    $("r_err").textContent = fr(err,2)+" bar";
+    st.className="status ok";
+    st.textContent = S1.cut ? "Aucune alarme : la mesure semble valide." : "Mesure valide.";
+    if(S1.cut){ st.className="status bad"; st.textContent="Aucune alarme ! Une tension nulle correspond à une pression de 100 bar : l'automate croit la mesure valide."; }
+  }
+  drawLoop(base);
+  // oscilloscope
+  const sv=$("scope1");
+  let ymin,ymax,step;
+  if(S1.sig==="mA"){ ymin=0; ymax=22; step=4; } else { ymin=-1; ymax=11; step=2; }
+  const F=frame(sv,{xmin:0,xmax:40,ymin,ymax,xticks:ticks(0,40,5),yticks:ticks(ymin,ymax,step),xlabel:"t (ms)",ylabel:S1.sig==="mA"?"i reçu (mA)":"u reçue (V)"});
+  if(S1.sig==="mA"){ el("rect",{x:F.X(0),y:F.Y(3.6),width:F.X(40)-F.X(0),height:F.Y(0)-F.Y(3.6),fill:css("--badbg")},F.g); txt(F.g,F.X(39.5),F.Y(1.6),"zone de défaut (I < 3,6 mA)",{class:"lg","text-anchor":"end",fill:css("--bad")}); }
+  el("path",{d:path(pts,F),fill:"none",stroke:css("--trace"),"stroke-width":2},F.g);
+}
+function drawLoop(r){
+  const s=$("loop"); s.innerHTML="";
+  const ink=css("--ink"), muted=css("--muted"), line=css("--line"), chip=css("--chip"), acc=css("--trace"), bad=css("--bad"), pan=css("--panel");
+  const T=(x,y,str,a={})=>txt(s,x,y,str,Object.assign({class:"tick","text-anchor":"middle"},a));
+  el("rect",{x:8,y:8,width:268,height:234,rx:10,fill:"none",stroke:line,"stroke-dasharray":"5 4"},s);
+  txt(s,18,26,"BÂTIMENT RÉACTEUR",{class:"tick"});
+  el("rect",{x:548,y:8,width:204,height:234,rx:10,fill:"none",stroke:line,"stroke-dasharray":"5 4"},s);
+  txt(s,558,26,"BÂTIMENT ÉLECTRIQUE",{class:"tick"});
+  // pressuriseur
+  el("rect",{x:20,y:44,width:44,height:150,rx:22,fill:chip,stroke:muted},s);
+  T(42,214,"Pressuriseur",{class:"lg",fill:muted});
+  T(42,124,fr(S1.P,1),{class:"lg",fill:ink,"font-weight":"600"});
+  T(42,140,"bar",{class:"lg",fill:muted});
+  el("line",{x1:64,y1:91,x2:80,y2:91,stroke:muted,"stroke-width":3},s);
+  // capteur
+  el("rect",{x:80,y:58,width:72,height:66,rx:6,fill:chip,stroke:ink},s);
+  T(116,80,"Capteur",{class:"lg",fill:ink});
+  T(116,97,"membrane",{"font-size":"10"}); T(116,110,"+ jauges",{"font-size":"10"});
+  el("line",{x1:152,y1:91,x2:170,y2:91,stroke:ink,"stroke-width":1.5},s);
+  T(161,84,"mV",{"font-size":"10"});
+  // transmetteur
+  el("rect",{x:170,y:52,width:96,height:78,rx:6,fill:pan,stroke:ink,"stroke-width":1.5},s);
+  T(218,74,"Transmetteur",{class:"lg",fill:ink});
+  T(218,94,S1.sig==="mA"?"sortie 4-20 mA":"sortie 0-10 V",{"font-size":"10"});
+  T(218,114,fr(r.sent,2)+(S1.sig==="mA"?" mA":" V"),{fill:acc,"font-size":"11"});
+  // ligne
+  const y1=78,y2=104,cutx=410,x0=266,x1=572;
+  if(S1.cut){
+    el("line",{x1:x0,y1:y1,x2:cutx-10,y2:y1,stroke:ink,"stroke-width":2},s);
+    el("line",{x1:cutx+10,y1:y1,x2:x1,y2:y1,stroke:ink,"stroke-width":2},s);
+    el("path",{d:`M${cutx-8} ${y1-8}L${cutx+8} ${y1+8}M${cutx+8} ${y1-8}L${cutx-8} ${y1+8}`,stroke:bad,"stroke-width":2.5},s);
+  } else el("line",{x1:x0,y1:y1,x2:x1,y2:y1,stroke:ink,"stroke-width":2},s);
+  el("line",{x1:x0,y1:y2,x2:x1,y2:y2,stroke:ink,"stroke-width":2},s);
+  T(410,y1-10,`câble : ${S1.L} m ; ${fr(S1.S,1)} mm²`);
+  T(410,y2+18,`R ligne (aller + retour) = ${fr(r.Rl,1)} Ω`);
+  if(S1.sig==="mA" && !S1.cut){
+    [320,500].forEach(x=>{ el("path",{d:`M${x-7} ${y1-5}L${x+5} ${y1}L${x-7} ${y1+5}Z`,fill:acc},s); el("path",{d:`M${x+7} ${y2-5}L${x-5} ${y2}L${x+7} ${y2+5}Z`,fill:acc},s); });
+    txt(s,316,y1+16,"i",{class:"lg",fill:acc,"font-style":"italic"});
+  }
+  if(S1.noise){
+    let d=""; for(let x=320;x<=500;x+=2){ d+=(x===320?"M":"L")+x+" "+(140+4*Math.sin((x-320)/6)); }
+    el("path",{d,fill:"none",stroke:bad,"stroke-width":1.5},s);
+    el("rect",{x:315,y:156,width:190,height:44,rx:5,fill:chip,stroke:line},s);
+    T(410,174,"câbles de puissance 6,6 kV");
+    T(410,190,"parasites induits 50 Hz",{fill:bad});
+  }
+  // carte d'entrée
+  el("rect",{x:572,y:50,width:104,height:82,rx:6,fill:pan,stroke:ink,"stroke-width":1.5},s);
+  T(624,70,"Carte d'entrée",{class:"lg",fill:ink});
+  T(624,88,S1.sig==="mA"?"courant (250 Ω)":"tension (10 kΩ)",{"font-size":"10"});
+  T(624,106,"CAN → automate",{"font-size":"10"});
+  if(S1.sig==="mA"){ el("rect",{x:572,y:156,width:104,height:30,rx:5,fill:chip,stroke:line},s); T(624,176,"alim. 24 V (boucle)",{"font-size":"10"}); }
+  // écran
+  el("rect",{x:690,y:58,width:56,height:66,rx:6,fill:ink},s);
+  el("line",{x1:676,y1:91,x2:690,y2:91,stroke:ink,"stroke-width":1.5},s);
+  T(718,78,"écran",{fill:pan,"font-size":"10"});
+  T(718,100,r.alarm?"DÉF.":fr(r.Pd,1),{class:"lg",fill:r.alarm?bad:pan,"font-weight":"600"});
+  if(!r.alarm) T(718,115,"bar",{fill:pan,"font-size":"10"});
+  T(650,224,"Salle de commande",{class:"lg",fill:muted});
+}
+/* ======================= POSTE 2 ======================= */
+const FE_T=[0.25,0.5,1,2,5,10];
+const FE_V=[10,20,30,40,45,50,60,75,100,150,200,250,500,1000];
+const S2={mode:"T",n:12,fi:2};
+const F0=25; // Hz, vibration à 1500 tr/min
+seg("mode2",v=>{ S2.mode=v; const arr=v==="T"?FE_T:FE_V; $("fe").max=arr.length-1; S2.fi = v==="T"?2:8; $("fe").value=S2.fi; draw2(); });
+$("nb").addEventListener("input",e=>{S2.n=+e.target.value;draw2();});
+$("fe").addEventListener("input",e=>{S2.fi=+e.target.value;draw2();});
+["showA","showS","showR"].forEach(id=>$(id).addEventListener("change",draw2));
+$("ttest").addEventListener("input",draw2);
+const fmtHz=f=> (f<1? fr(f,2) : fr(f,0))+" Hz";
+function bin(N,n){ return N.toString(2).padStart(n,"0").replace(/(\d{4})(?=\d)/g,"$1 "); }
+function draw2(){
+  const n=S2.n, M=2**n;
+  $("nbo").textContent=n+" bits";
+  const arr=S2.mode==="T"?FE_T:FE_V, fe=arr[Math.min(S2.fi,arr.length-1)];
+  $("feo").textContent=fmtHz(fe);
+  $("specwrap").hidden = S2.mode==="T";
+  $("testbox").hidden = S2.mode!=="T";
+  const sv=$("tplot");
+  const showA=$("showA").checked, showS=$("showS").checked, showR=$("showR").checked;
+  let st="";
+  if(S2.mode==="T"){
+    $("p2title").textContent="Température de la branche chaude vue par l'automate (fenêtre de 40 s)";
+    const th=t=>329+0.3*Math.sin(2*Math.PI*t/20);
+    const q=16/M, qT=100/M;
+    const quant=v=>{ const I=4+16*(v-250)/100; let N=Math.floor((I-4)/q+1e-9); N=Math.max(0,Math.min(M-1,N)); return {I,N,v:250+N*qT}; };
+    const F=frame(sv,{xmin:0,xmax:40,ymin:328.4,ymax:329.6,xticks:ticks(0,40,5),yticks:ticks(328.4,329.6,0.2),yd:1,xlabel:"t (s)",ylabel:"θ (°C)"});
+    const ana=[]; for(let i=0;i<=800;i++){ const t=i/20; ana.push([t,th(t)]); }
+    if(showA) el("path",{d:path(ana,F),fill:"none",stroke:css("--trace"),"stroke-width":2},F.g);
+    const Te=1/fe, samp=[]; for(let k=0;k*Te<=40+1e-9;k++){ const t=k*Te; samp.push([t,quant(th(t)).v,th(t)]); }
+    if(showR){ let d=""; samp.forEach((p,i)=>{ const t2=Math.min(40,p[0]+Te); const yy=Math.max(328.4,Math.min(329.6,p[1])); d+=(i?"L":"M")+F.X(p[0]).toFixed(1)+" "+F.Y(yy).toFixed(1)+"L"+F.X(t2).toFixed(1)+" "+F.Y(yy).toFixed(1); }); el("path",{d,fill:"none",stroke:css("--input"),"stroke-width":2},F.g); }
+    if(showS) samp.forEach(p=>el("circle",{cx:F.X(p[0]),cy:F.Y(p[2]),r:3.2,fill:css("--panel"),stroke:css("--trace"),"stroke-width":1.6},F.g));
+    $("tlegend").innerHTML=`<b style="color:var(--trace)">━</b> signal analogique  <b style="color:var(--trace)">○</b> échantillons  <b style="color:var(--input)">━</b> valeur numérique restituée (bloquée jusqu'à l'échantillon suivant)`;
+    st=`<div class="stat"><div class="k">Nombre de valeurs 2ⁿ</div><div class="v">${M.toLocaleString("fr-FR")}</div></div>
+        <div class="stat"><div class="k">Période d'échantillonnage Te</div><div class="v">${fr(1/fe,2)} s</div></div>
+        <div class="stat wide"><div class="k">Pleine échelle du CAN</div><div class="v">4 → 20 mA, soit 16 mA ↔ 250 → 350 °C</div></div>
+        <div class="stat"><div class="k">Quantum q (courant)</div><div class="v">${q*1000>=1? fr(q*1000,2)+" µA": fr(q*1e6,1)+" nA"}</div></div>
+        <div class="stat"><div class="k">Quantum q (température)</div><div class="v">${qT>=0.01? fr(qT,3):fr(qT,5)} °C</div></div>`;
+    const tt=Math.max(250,Math.min(350,parseFloat(String($("ttest").value).replace(",","."))||329));
+    const r=quant(tt);
+    $("stats2b").innerHTML=`<div class="stat"><div class="k">Courant I</div><div class="v">${fr(r.I,3)} mA</div></div>
+      <div class="stat"><div class="k">Code N (décimal)</div><div class="v">${r.N}</div></div>
+      <div class="stat wide"><div class="k">Code N (binaire, ${n} bits)</div><div class="v">${bin(r.N,n)}</div></div>
+      <div class="stat wide"><div class="k">Température restituée par l'automate</div><div class="v">${fr(r.v,qT<0.01?4:3)} °C</div></div>`;
+    $("hint2").textContent="Le code N est la partie entière de (I − 4 mA)/q. La température restituée vaut 250 °C + N × q(température).";
+  } else {
+    $("p2title").textContent="Accélération mesurée sur le palier de la pompe primaire (fenêtre de 0,4 s)";
+    const a=t=>Math.sin(2*Math.PI*F0*t);
+    const PE=2.5, q=PE/M;
+    const quant=v=>{ let N=Math.floor((v+1.25)/q+1e-9); N=Math.max(0,Math.min(M-1,N)); return -1.25+N*q; };
+    const F=frame(sv,{xmin:0,xmax:0.4,ymin:-1.3,ymax:1.3,xticks:ticks(0,0.4,0.05),xd:2,yticks:ticks(-1.25,1.25,0.25).filter((v,i)=>i%2===0),yd:2,xlabel:"t (s)",ylabel:"signal (V)"});
+    const ana=[]; for(let i=0;i<=4000;i++){ const t=i/10000; ana.push([t,a(t)]); }
+    if(showA) el("path",{d:path(ana,F),fill:"none",stroke:css("--trace"),"stroke-width":1.5,opacity:.85},F.g);
+    const Te=1/fe, samp=[]; for(let k=0;k*Te<=0.4+1e-9;k++){ const t=k*Te; samp.push([t,quant(a(t)),a(t)]); }
+    if(showR) el("path",{d:path(samp,F),fill:"none",stroke:css("--input"),"stroke-width":2.2},F.g);
+    if(showS) samp.forEach(p=>el("circle",{cx:F.X(p[0]),cy:F.Y(p[2]),r:3.2,fill:css("--panel"),stroke:css("--trace"),"stroke-width":1.6},F.g));
+    $("tlegend").innerHTML=`<b style="color:var(--trace)">━</b> signal analogique  <b style="color:var(--trace)">○</b> échantillons  <b style="color:var(--input)">━</b> signal reconstitué par l'automate (échantillons reliés)`;
+    const k=Math.round(F0/fe), fapp=Math.abs(F0-k*fe);
+    const ok=fe>2*F0;
+    st=`<div class="stat"><div class="k">Fréquence du signal</div><div class="v">${F0} Hz</div></div>
+        <div class="stat"><div class="k">fe / 2</div><div class="v">${fr(fe/2,1)} Hz</div></div>
+        <div class="stat"><div class="k">Fréquence vue par l'automate</div><div class="v">${fr(fapp,1)} Hz</div></div>
+        <div class="stat"><div class="k">Quantum q</div><div class="v">${q>=0.001?fr(q*1000,2)+" mV":fr(q*1e6,1)+" µV"}</div></div>
+        <div class="stat wide"><div class="k">Condition de Shannon fe &gt; 2 f</div><div class="v" style="color:${ok?"var(--ok)":"var(--bad)"}">${ok?"respectée":"non respectée : repliement"}</div></div>`;
+    $("hint2").textContent="Pleine échelle du CAN : −1,25 V → +1,25 V. Fais varier fe et observe la fréquence du signal reconstitué.";
+    drawSpec(fe,fapp);
+  }
+  $("stats2").innerHTML=st;
+}
+function drawSpec(fe,fapp){
+  const sv=$("splot"); sv.innerHTML="";
+  const fmax=Math.max(100,2.5*fe);
+  const step = fmax<=150?10: fmax<=300?25: fmax<=600?50: fmax<=1300?100: 250;
+  const mk=(y0,title,lines,showNy)=>{
+    const W=760,h=110,m={l:62,r:18};
+    const X=f=>m.l+f/fmax*(W-m.l-m.r), Y=v=>y0+h-v*(h-22);
+    const g=el("g",{},sv);
+    ticks(0,fmax,step).forEach(f=>{ el("line",{x1:X(f),x2:X(f),y1:y0+8,y2:y0+h,class:"gr"},g); txt(g,X(f),y0+h+14,fr(f,0),{class:"tick","text-anchor":"middle"}); });
+    el("line",{x1:m.l,x2:W-m.r,y1:y0+h,y2:y0+h,class:"ax"},g);
+    el("line",{x1:m.l,x2:m.l,y1:y0+8,y2:y0+h,class:"ax"},g);
+    txt(g,m.l+6,y0+16,title,{class:"lg",fill:css("--ink"),"font-weight":"600"});
+    txt(g,W-m.r,y0+h+28,"f (Hz)",{class:"axl","text-anchor":"end"});
+    if(showNy){ el("line",{x1:X(fe/2),x2:X(fe/2),y1:y0+8,y2:y0+h,stroke:css("--muted"),"stroke-dasharray":"4 3"},g); txt(g,X(fe/2)+4,y0+30,"fe/2",{class:"tick"});
+                el("line",{x1:X(fe),x2:X(fe),y1:y0+8,y2:y0+h,stroke:css("--muted"),"stroke-dasharray":"1 3"},g); if(fe<=fmax) txt(g,X(fe)+4,y0+30,"fe",{class:"tick"}); }
+    lines.forEach(L=>{ if(L.f>fmax) return; el("line",{x1:X(L.f),x2:X(L.f),y1:Y(0),y2:Y(L.a),stroke:L.c,"stroke-width":3},g); el("circle",{cx:X(L.f),cy:Y(L.a),r:3.5,fill:L.c},g); });
+  };
+  mk(4,"Signal analogique",[{f:F0,a:1,c:css("--trace")}],false);
+  const L=[]; for(let k=0;k*fe-F0<=fmax;k++){ [k*fe-F0,k*fe+F0].forEach(f=>{ if(f>=0) L.push({f:Math.abs(f),a:1,c:Math.abs(Math.abs(f)-fapp)<1e-6?css("--input"):css("--ghost")}); }); }
+  mk(146,"Signal échantillonné (numérique)",L,true);
+}
+
+/* ======================= POSTE 3 ======================= */
+const TAU={A:1.5,B:3.0,C:7.0};
+const NAME={A:"A — sonde nue",B:"B — doigt de gant + pâte",C:"C — doigt de gant sans pâte"};
+const S3={m:"A",runs:[],cur:null,anim:null,tnow:0,pins:[],hover:null};
+seg("mont",v=>{S3.m=v;});
+const th3=(tau,t)=>80-60*Math.exp(-t/tau);
+const R100=th=>100*(1+3.85e-3*th);
+$("go3").addEventListener("click",()=>{
+  if(S3.anim) return;
+  const run={m:S3.m,tau:TAU[S3.m],tmax:0}; S3.runs.push(run); S3.cur=run; S3.pins=[]; renderPins();
+  const t0=performance.now(); $("go3").disabled=true;
+  const step=now=>{ run.tmax=Math.min(30,(now-t0)/1000*5); S3.tnow=run.tmax; draw3(); if(run.tmax<30) S3.anim=requestAnimationFrame(step); else { S3.anim=null; $("go3").disabled=false; } };
+  S3.anim=requestAnimationFrame(step);
+});
+$("clr3").addEventListener("click",()=>{ if(S3.anim){cancelAnimationFrame(S3.anim);S3.anim=null;$("go3").disabled=false;} S3.runs=[];S3.cur=null;S3.pins=[];S3.tnow=0;renderPins();draw3(); });
+$("guides3").addEventListener("change",draw3);
+let F3=null;
+function draw3(){
+  const sv=$("rplot");
+  F3=frame(sv,{xmin:0,xmax:30,ymin:10,ymax:90,xticks:ticks(0,30,2),yticks:ticks(10,90,10),xlabel:"t (s)",ylabel:"θ indiquée (°C)"});
+  // grille fine
+  ticks(0,30,0.5).forEach(v=>{ if(Math.abs(v%2)>1e-9) el("line",{x1:F3.X(v),x2:F3.X(v),y1:F3.Y(90),y2:F3.Y(10),stroke:css("--grid"),"stroke-width":.5},F3.g); });
+  ticks(10,90,2).forEach(v=>{ if(v%10) el("line",{x1:F3.X(0),x2:F3.X(30),y1:F3.Y(v),y2:F3.Y(v),stroke:css("--grid"),"stroke-width":.5},F3.g); });
+  // échelon d'entrée
+  el("path",{d:`M${F3.X(0)} ${F3.Y(20)}L${F3.X(0)} ${F3.Y(80)}L${F3.X(30)} ${F3.Y(80)}`,fill:"none",stroke:css("--input"),"stroke-width":1.5,"stroke-dasharray":"6 4"},F3.g);
+  txt(F3.g,F3.X(29.6),F3.Y(80)-8,"température du bain (entrée)",{class:"lg","text-anchor":"end",fill:css("--input")});
+  S3.runs.forEach(r=>{
+    const pts=[]; for(let i=0;i<=600;i++){ const t=i/600*r.tmax; pts.push([t,th3(r.tau,t)]); }
+    if(pts.length>1) el("path",{d:path(pts,F3),fill:"none",stroke:r===S3.cur?css("--trace"):css("--ghost"),"stroke-width":r===S3.cur?2.4:1.6},F3.g);
+    if(r!==S3.cur && r.tmax>0){ const tl=Math.min(r.tmax,1.3*r.tau); txt(F3.g,F3.X(tl)+6,F3.Y(th3(r.tau,tl))+14,"montage "+r.m,{class:"tick"}); }
+  });
+  if($("guides3").checked && S3.cur){
+    const tau=S3.cur.tau;
+    [[0.63,tau,"63 %"],[0.95,3*tau,"95 %"]].forEach(([p,tt,lab])=>{ const y=20+60*p;
+      el("line",{x1:F3.X(0),x2:F3.X(tt),y1:F3.Y(y),y2:F3.Y(y),stroke:css("--ok"),"stroke-dasharray":"3 3"},F3.g);
+      el("line",{x1:F3.X(tt),x2:F3.X(tt),y1:F3.Y(y),y2:F3.Y(10),stroke:css("--ok"),"stroke-dasharray":"3 3"},F3.g);
+      txt(F3.g,F3.X(0)+4,F3.Y(y)-4,lab,{class:"tick",fill:css("--ok")}); });
+  }
+  S3.pins.forEach((p,i)=>{ el("circle",{cx:F3.X(p[0]),cy:F3.Y(p[1]),r:4,fill:css("--input")},F3.g); txt(F3.g,F3.X(p[0])+6,F3.Y(p[1])-6,String(i+1),{class:"tick",fill:css("--input")}); });
+  if(S3.hover && S3.cur){ const [t,y]=S3.hover;
+    el("line",{x1:F3.X(t),x2:F3.X(t),y1:F3.Y(90),y2:F3.Y(10),stroke:css("--mark"),"stroke-width":1},F3.g);
+    el("line",{x1:F3.X(0),x2:F3.X(30),y1:F3.Y(y),y2:F3.Y(y),stroke:css("--mark"),"stroke-width":1},F3.g);
+    el("circle",{cx:F3.X(t),cy:F3.Y(y),r:4,fill:"none",stroke:css("--mark"),"stroke-width":1.5},F3.g); }
+  const thn = S3.cur ? th3(S3.cur.tau,S3.tnow) : 20;
+  $("r3t").textContent=fr(S3.tnow,1)+" s"; $("r3th").textContent=fr(thn,1)+" °C"; $("r3R").textContent=fr(R100(thn),2)+" Ω";
+}
+function pt3(ev){ const sv=$("rplot"); const b=sv.getBoundingClientRect(); const x=(ev.clientX-b.left)/b.width*760; let t=(x-F3.m.l)/(760-F3.m.l-F3.m.r)*30; t=Math.max(0,Math.min(30,t)); return t; }
+$("rplot").addEventListener("pointermove",ev=>{ if(!S3.cur){ return; } let t=Math.round(pt3(ev)*10)/10; t=Math.min(t,S3.cur.tmax); const y=th3(S3.cur.tau,t); S3.hover=[t,y];
+  $("cur3").innerHTML=`Curseur (montage ${S3.cur.m}) : t = <b>${fr(t,1)} s</b> ; θ = <b>${fr(y,1)} °C</b> ; R = <b>${fr(R100(y),2)} Ω</b>`; draw3(); });
+$("rplot").addEventListener("pointerleave",()=>{ S3.hover=null; draw3(); });
+$("rplot").addEventListener("click",()=>{ if(S3.hover){ S3.pins.push(S3.hover.slice()); renderPins(); draw3(); } });
+function renderPins(){ const c=$("pins3"); c.innerHTML=""; S3.pins.forEach((p,i)=>{ const s=document.createElement("span"); s.className="pin"; s.textContent=`${i+1} : t = ${fr(p[0],1)} s ; θ = ${fr(p[1],1)} °C`; const b=document.createElement("button"); b.setAttribute("aria-label","Retirer le repère "+(i+1)); b.textContent="×"; b.onclick=()=>{S3.pins.splice(i,1);renderPins();draw3();}; s.appendChild(b); c.appendChild(s); }); }
+
+/* ---------- init ---------- */
+function redrawAll(){ draw1(); draw2(); draw3(); }
+window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change",redrawAll);
+redrawAll();
+window.addEventListener("load",()=>{ if(window.renderMathInElement) renderMathInElement(document.body,{delimiters:[{left:"\\(",right:"\\)",display:false},{left:"\\[",right:"\\]",display:true}],throwOnError:false}); });
+</script>
+</body>
+</html>

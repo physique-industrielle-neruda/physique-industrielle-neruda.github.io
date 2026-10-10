@@ -217,7 +217,7 @@ const chk = (k, lab, v) => `<label class="chk"><input type="checkbox" data-c="${
 function build() {
   const p = st.p, o = st['p' + p]; let h = '';
   if (p === 1) h = slider('d', 'Distance lampe – cellule d', 'm', 0.2, 1.5, 0.01, o.d) + slider('a', 'Inclinaison de la cellule', '°', 0, 90, 15, o.a, 0)
-    + chk('lamp', 'Lampe allumée', o.lamp) + chk('salle', 'Éclairage de la salle allumé (stores levés)', o.salle) + chk('ombre', 'L\'opérateur se penche au-dessus de la cellule', o.ombre);
+    + chk('lamp', 'Lampe allumée', o.lamp) + chk('salle', 'Stores levés (lumière du jour)', o.salle) + chk('ombre', 'L\'opérateur se penche au-dessus de la cellule', o.ombre);
   else if (p === 2) h = `<label class="small" for="s-lamp" style="margin:0">Lampe montée sur le support</label><select id="s-lamp">${Object.entries(LAMPS).map(([k, L]) => `<option value="${k}" ${k === o.lamp ? 'selected' : ''}>${L.n}</option>`).join('')}</select>`
     + slider('d', 'Distance lampe – cellule d', 'm', 0.2, 1.5, 0.01, o.d) + chk('on', 'Lampe sous tension', o.on);
   else h = slider('h', 'Hauteur h du luminaire au-dessus du plan de travail', 'm', 0.8, 2.5, 0.01, o.h)
@@ -240,7 +240,7 @@ document.querySelectorAll('.modes button').forEach((b) => b.addEventListener('cl
 
 /* ---------------- relevés ---------------- */
 function current() {
-  if (st.p === 1) { const o = st.p1; return { poste: 1, txt: `d = ${fmt(o.d, 2)} m · inclinaison ${o.a}°${o.lamp ? '' : ' · lampe éteinte'}${o.salle ? ' · salle allumée' : ''}${o.ombre ? ' · ombre' : ''}`, E: display(E1()) }; }
+  if (st.p === 1) { const o = st.p1; return { poste: 1, txt: `d = ${fmt(o.d, 2)} m · inclinaison ${o.a}°${o.lamp ? '' : ' · lampe éteinte'}${o.salle ? ' · stores levés' : ''}${o.ombre ? ' · ombre' : ''}`, E: display(E1()) }; }
   if (st.p === 2) { const o = st.p2; return { poste: 2, txt: `${LAMPS[o.lamp].n.split(' – ')[0]} · d = ${fmt(o.d, 2)} m · P = ${fmt(P2(), 1)} W`, E: display(E2()) }; }
   const o = st.p3; return { poste: 3, txt: `h = ${fmt(o.h, 2)} m · point ${o.pt + 1}${o.gen ? ' · éclairage général' : ''}${o.ombre ? ' · ombre' : ''}`, E: display(E3(o.pt)) };
 }
@@ -274,7 +274,7 @@ function bench(d, a, on, shadow, salle, lampColor) {
   if (shadow) s += el('ellipse', { cx: xc - 40, cy: 160, rx: 34, ry: 60, fill: css('--muted'), opacity: 0.45 }) + el('text', { x: xc - 40, y: 92, 'text-anchor': 'middle' }, 'opérateur penché');
   s += el('text', { x: bx(0), y: 180, 'text-anchor': 'middle', class: 'lbl2' }, 'lampe') + el('text', { x: xc, y: 180, 'text-anchor': 'middle', class: 'lbl2' }, 'cellule');
   s += el('line', { x1: bx(0), x2: xc, y1: 380, y2: 380, stroke: css('--ink'), 'marker-end': '' }) + el('text', { x: (bx(0) + xc) / 2, y: 372, 'text-anchor': 'middle', class: 'lbl2' }, `d = ${fmt(d, 2)} m`);
-  if (salle) s += el('text', { x: 50, y: 40, class: 'lbl2' }, '☀ salle éclairée, stores levés');
+  if (salle) s += el('text', { x: 50, y: 40, class: 'lbl2' }, '☀ stores levés : lumière du jour');
   return s;
 }
 function draw() {

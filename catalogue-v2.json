@@ -83,57 +83,251 @@
      "titre": "Les chaînes de mesure",
      "docs": [
       {
-       "titre": "l'essentiel du chapitre",
-       "type": "Cours",
-       "fichier": "b814aa21a2a23b2b994bd63a.bin",
-       "taille": 845836,
-       "pages": 13
-      },
-      {
-       "titre": "bilan",
-       "type": "Fiche",
-       "fichier": "4bd97d8b2dd90dc8ded45eb8.bin",
-       "taille": 148739,
-       "pages": 4
-      },
-      {
        "titre": "Prérequis",
        "type": "Fiche",
        "fichier": "58872f67ea535a888c05e7ee.bin",
        "taille": 125302,
-       "pages": 4
+       "pages": 4,
+       "rubrique": "Pour commencer"
+      },
+      {
+       "titre": "Essentiel du chapitre",
+       "type": "Cours",
+       "fichier": "1814c955c71e579e30951032.bin",
+       "taille": 713951,
+       "pages": 8,
+       "rubrique": "Cours"
+      },
+      {
+       "titre": "Activité 1 – Boucle 4-20 mA du pressuriseur",
+       "type": "Activité",
+       "fichier": "8d9e6dcfb23143129f7d00ed.bin",
+       "taille": 351206,
+       "pages": 5,
+       "rubrique": "Activités"
+      },
+      {
+       "titre": "Activité 1 – Boucle 4-20 mA du pressuriseur - coups de pouce",
+       "type": "Activité",
+       "fichier": "485843a8827ff4266e0f80f0.bin",
+       "taille": 87494,
+       "pages": 2,
+       "rubrique": "Activités"
+      },
+      {
+       "titre": "Corrigé élève Activité 1 – Boucle 4-20 mA du pressuriseur",
+       "type": "Corrigé",
+       "fichier": "53e13a4c64118e1477ee38c8.bin",
+       "taille": 188889,
+       "pages": 3,
+       "corrige": {
+        "id": "et-les-chaines-de-mesure-corrige-eleve-activite-1-boucle-4-20-ma-du-pressur",
+        "wk": "36NSsnXY8jLMMFjqeSE46yStL2ILhjo5Gi8+tTtVjRIbytcYs8+0SyXg0Qx13TsEweiJx3dNxEHkBfBi"
+       },
+       "rubrique": "Activités"
+      },
+      {
+       "titre": "Activité 2 – Numérisation d'une mesure de température",
+       "type": "Activité",
+       "fichier": "eeddbc14e992013aca0f5db4.bin",
+       "taille": 309711,
+       "pages": 5,
+       "rubrique": "Activités"
+      },
+      {
+       "titre": "Activité 2 – Numérisation d'une mesure de température - coups de pouce",
+       "type": "Activité",
+       "fichier": "ee791c57b85d37762fadc8c8.bin",
+       "taille": 85535,
+       "pages": 2,
+       "rubrique": "Activités"
+      },
+      {
+       "titre": "Corrigé élève Activité 2 – Numérisation d'une mesure de température",
+       "type": "Corrigé",
+       "fichier": "8c7ba10e318b4ea6298b3b97.bin",
+       "taille": 125821,
+       "pages": 3,
+       "corrige": {
+        "id": "et-les-chaines-de-mesure-corrige-eleve-activite-2-numerisation-d-une-mesure",
+        "wk": "BFTrHZFQ6qMIJTx+Ztqypir9lkbK3gBPic0HNa8QKngy2A22GQHNN2jjbbb91ztJvpefsHCXuMeW2tzT"
+       },
+       "rubrique": "Activités"
+      },
+      {
+       "titre": "Activité 3 – Temps de réponse et précision d'une sonde Pt100",
+       "type": "Activité",
+       "fichier": "5b9f1412ab611df557d04627.bin",
+       "taille": 204123,
+       "pages": 4,
+       "rubrique": "Activités"
+      },
+      {
+       "titre": "Activité 3 – Temps de réponse et précision d'une sonde Pt100 - coups de pouce",
+       "type": "Activité",
+       "fichier": "fb15eceb5a059e0dcf377306.bin",
+       "taille": 79281,
+       "pages": 1,
+       "rubrique": "Activités"
+      },
+      {
+       "titre": "Corrigé élève Activité 3 – Temps de réponse et précision d'une sonde Pt100",
+       "type": "Corrigé",
+       "fichier": "8ebe5eb527a755274270df55.bin",
+       "taille": 120835,
+       "pages": 2,
+       "corrige": {
+        "id": "et-les-chaines-de-mesure-corrige-eleve-activite-3-temps-de-reponse-et-preci",
+        "wk": "TDTnm32W8I19d9lPf9v698XhU/+ThQjBrew+IKACBme0qoZuQoLMdKJZronAWB+H4Xk06GclLnQjQ2/W"
+       },
+       "rubrique": "Activités"
+      },
+      {
+       "titre": "Fiche animation",
+       "type": "Fiche",
+       "fichier": "7edc303056c1615f11fbc769.bin",
+       "taille": 143218,
+       "pages": 2,
+       "rubrique": "Animation"
+      },
+      {
+       "titre": "Animation – Révision de la chaîne de mesure",
+       "type": "Animation",
+       "lien": "animations/et/animation-revision-de-la-chaine-de-mesure.html",
+       "rubrique": "Animation"
+      },
+      {
+       "titre": "Simulation – Banc de la chaîne de mesure",
+       "type": "Animation",
+       "lien": "animations/et/simulation-banc-de-la-chaine-de-mesure.html",
+       "rubrique": "Animation"
+      },
+      {
+       "titre": "Exercice 1",
+       "type": "Exercices",
+       "fichier": "0ad533dccc56eabe2c9ba98c.bin",
+       "taille": 120142,
+       "pages": 1,
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 1 - coups de pouce",
+       "type": "Exercices",
+       "fichier": "8375920e1af5f40b38073f54.bin",
+       "taille": 73572,
+       "pages": 1,
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Corrigé élève Exercice 1",
+       "type": "Corrigé",
+       "fichier": "ce03bb669c2378031f253bf0.bin",
+       "taille": 101801,
+       "pages": 2,
+       "corrige": {
+        "id": "et-les-chaines-de-mesure-corrige-eleve-exercice-1",
+        "wk": "Yt780ITGVxmWT2YxRTKX6GgN6hWneSBnbjyGW/anNluqT8+pz0OYRTGb2ZKPmGjoKHVUiXXOGFd0ib2T"
+       },
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 2",
+       "type": "Exercices",
+       "fichier": "8fc79f362c9badfb3b3485b6.bin",
+       "taille": 105488,
+       "pages": 1,
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 2 - coups de pouce",
+       "type": "Exercices",
+       "fichier": "10c8663fb7facbfbf2550087.bin",
+       "taille": 70536,
+       "pages": 1,
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Corrigé élève Exercice 2",
+       "type": "Corrigé",
+       "fichier": "4c7274a55b9b947e449ab92a.bin",
+       "taille": 89432,
+       "pages": 2,
+       "corrige": {
+        "id": "et-les-chaines-de-mesure-corrige-eleve-exercice-2",
+        "wk": "h2HOGqNOCiPVuyxst/c7Tp9OIW36UWhWcRdACs6mR3VVdVoW/jyOLUWeJJqiPqjEGIhWkarEmKRx3p79"
+       },
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 3",
+       "type": "Exercices",
+       "fichier": "17bfd84b40c9fbb2049ff778.bin",
+       "taille": 139218,
+       "pages": 1,
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 3 - coups de pouce",
+       "type": "Exercices",
+       "fichier": "8a5c3a0ec4c9cd78185a58a2.bin",
+       "taille": 71614,
+       "pages": 1,
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Corrigé élève Exercice 3",
+       "type": "Corrigé",
+       "fichier": "cd73f542795581603754fdc3.bin",
+       "taille": 89554,
+       "pages": 2,
+       "corrige": {
+        "id": "et-les-chaines-de-mesure-corrige-eleve-exercice-3",
+        "wk": "1ywHNraaE2JAz5wR2x2BwvzdFZrMW1LgF9YxggXzkilmWysPvvoJmdgyqcP6350DiwXNjPeuCE93ZXm2"
+       },
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 4",
+       "type": "Exercices",
+       "fichier": "aaa9e732cfc351a693be5165.bin",
+       "taille": 152744,
+       "pages": 1,
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 4 - coups de pouce",
+       "type": "Exercices",
+       "fichier": "2355f72722a66144c3c7a15c.bin",
+       "taille": 70235,
+       "pages": 1,
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Corrigé élève Exercice 4",
+       "type": "Corrigé",
+       "fichier": "b10e5de787741c5d70e904af.bin",
+       "taille": 103851,
+       "pages": 2,
+       "corrige": {
+        "id": "et-les-chaines-de-mesure-corrige-eleve-exercice-4",
+        "wk": "xVp//5jCyToxbc+H6oh8XjM+T0pS5iyl458rbOwaCTsh0KfcBiV8z0l7C2L7M+gywXlm6Rz/XK30ESI2"
+       },
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Bilan",
+       "type": "Fiche",
+       "fichier": "8662a0ed13b4b7e74b8803c6.bin",
+       "taille": 117248,
+       "pages": 2,
+       "rubrique": "Réviser"
       },
       {
        "titre": "cartes de révision",
        "type": "Cartes",
        "nombre": 10,
-       "lien": "cartes.html?c=et&ch=les-chaines-de-mesure"
-      },
-      {
-       "titre": "activité 1. boucle 4-20 mA du pressuriseur",
-       "type": "Activité",
-       "fichier": "8caedc62de42dd53fb71eadf.bin",
-       "taille": 330182,
-       "pages": 6
-      },
-      {
-       "titre": "activité 2. numérisation d'une mesure de température",
-       "type": "Activité",
-       "fichier": "df6f5a5f82f5dfb9b29d90ac.bin",
-       "taille": 265746,
-       "pages": 5
-      },
-      {
-       "titre": "activité 3. temps de réponse d'une sonde Pt100",
-       "type": "Activité",
-       "fichier": "e27a2cc11999cec0df61b0bf.bin",
-       "taille": 165224,
-       "pages": 4
-      },
-      {
-       "titre": "simulation chaîne de mesure",
-       "type": "Animation",
-       "lien": "animations/et/simulation-chaine-de-mesure.html"
+       "lien": "cartes.html?c=et&ch=les-chaines-de-mesure",
+       "rubrique": "Réviser"
       }
      ]
     },
@@ -341,8 +535,8 @@
       {
        "titre": "activité 3. contrôle de l'éclairement au luxmètre",
        "type": "Activité",
-       "fichier": "1d62c9d6e408255e7a2b89e8.bin",
-       "taille": 222318,
+       "fichier": "8cebdc7f73c66a7267ce7bbe.bin",
+       "taille": 222316,
        "pages": 4,
        "rubrique": "Activités"
       },
@@ -357,20 +551,20 @@
       {
        "titre": "Corrigé élève activité 3",
        "type": "Corrigé",
-       "fichier": "153eebd2fec0593dec8a2d68.bin",
-       "taille": 125027,
+       "fichier": "cc28e184e56aa8e271aa1547.bin",
+       "taille": 125033,
        "pages": 3,
        "corrige": {
         "id": "et-lumiere-et-photometrie-corrige-eleve-activite-3",
-        "wk": "y/775uc9CgfAOxnprGoVGXnoehtaPsV8+47gTTKPr8tVQQKi8sDvDlVGRsVNNWcJRIdlgYTcim2IwkRm"
+        "wk": "bAObzrKPkAeWkp6Pg+5XtQakkKoUtsYJeUHYwUXuhZygUOTNTrpcb5qiM38Jw68RymwQPv8GhDVEw1XP"
        },
        "rubrique": "Activités"
       },
       {
        "titre": "fiche animation à compléter",
        "type": "Fiche",
-       "fichier": "8b2663038e7bb98fe4c15d30.bin",
-       "taille": 139028,
+       "fichier": "c19cd54d199755a20984860d.bin",
+       "taille": 139033,
        "pages": 2,
        "rubrique": "Animation"
       },

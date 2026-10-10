@@ -6,61 +6,61 @@
    "type": "Définition",
    "recto": "Rôle du capteur dans une chaîne de mesure ?",
    "verso": "Convertir la grandeur physique en <b>grandeur électrique</b>.",
-   "origine": "Cours §1.1 — Architecture d'une chaîne de mesure"
+   "origine": "Cours partie 1 — Architecture d'une chaîne de mesure"
   },
   {
    "type": "Définition",
    "recto": "Rôle du transmetteur ?",
    "verso": "Fournir un <b>signal normalisé</b> (ex. 4-20 mA) transmissible à distance.",
-   "origine": "Cours §1.1 — Architecture d'une chaîne de mesure"
+   "origine": "Cours partie 1 — Architecture d'une chaîne de mesure"
   },
   {
    "type": "Définition",
    "recto": "Qu'est-ce que le quantum d'un CAN ?",
    "verso": "La <b>plus petite variation</b> que le CAN peut distinguer.",
-   "origine": "Cours §4.2 — Quantification"
+   "origine": "Cours partie 4 — Le CAN"
   },
   {
    "type": "Formule",
    "recto": "Condition de Shannon : compléter $f_e > \\dots$",
    "verso": "$f_e > 2\\,f_{max}$",
-   "origine": "Cours §4.1 — Échantillonnage"
+   "origine": "Cours partie 4 — Condition de Shannon"
   },
   {
    "type": "Formule",
    "recto": "Premier ordre : compléter $t_{5\\%} \\approx \\dots$",
    "verso": "$t_{5\\%} \\approx 3\\,\\tau$",
-   "origine": "Cours §5.1 — Modèle du premier ordre"
+   "origine": "Cours partie 5 — Temps de réponse d'un capteur"
   },
   {
    "type": "Ordre de grandeur",
    "recto": "Résistance d'une sonde Pt100 à 0 °C ?",
    "verso": "<b>100 Ω</b>",
-   "origine": "Cours §1.2 — La sonde Pt100"
+   "origine": "Cours partie 1 — La sonde Pt100"
   },
   {
    "type": "Ordre de grandeur",
    "recto": "Transmetteur 4-20 mA : courant au minimum de l'étendue de mesure ?",
    "verso": "<b>4 mA</b>",
-   "origine": "Cours §2.2 — Étendue de mesure"
+   "origine": "Cours partie 2 — Mise à l'échelle 4-20 mA"
   },
   {
    "type": "Sens physique",
    "recto": "Le courant d'une boucle 4-20 mA dépend-il de la longueur du câble ?",
    "verso": "<b>Non</b> : circuit série, même courant partout.",
-   "origine": "Cours §2.3 — Avantages du 4-20 mA"
+   "origine": "Cours partie 2 — Pourquoi le 4-20 mA ?"
   },
   {
    "type": "Sens physique",
    "recto": "L'automate lit 0 mA sur une boucle 4-20 mA. Que signale ce courant ?",
    "verso": "Un <b>défaut</b> (câble coupé, transmetteur hors service).",
-   "origine": "Cours §2.3 — Avantages du 4-20 mA"
+   "origine": "Cours partie 2 — Le zéro vivant"
   },
   {
    "type": "Calcul mental",
    "recto": "Sonde avec $\\tau = 10$ s : temps de réponse à 5 % ?",
    "verso": "<b>30 s</b>",
-   "origine": "Cours §5.1 — Modèle du premier ordre"
+   "origine": "Cours partie 5 — Temps de réponse d'un capteur"
   }
  ]
 }
