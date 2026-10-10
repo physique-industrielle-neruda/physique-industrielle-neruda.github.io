@@ -1,0 +1,563 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Banc lumière et photométrie</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<style>
+/* Layout : un « banc de mesure » — enregistreur à gauche, pupitre de réglage à droite, cahier de questions dessous. */
+:root{
+  --bg:#f3f5f8; --panel:#ffffff; --ink:#16202e; --muted:#5b6778; --line:#d5dce6; --grid:#e7ecf2;
+  --trace:#d4561c; --input:#2f6fd6; --mark:#2f6fd6; --band:rgba(47,111,214,.10); --ok:#1f8a4c; --okbg:#e6f5ec; --bad:#b4372b; --badbg:#fbeceb;
+  --chip:#eef2f7; --accent:#d4561c;
+  --f-display:"IBM Plex Sans Condensed","Arial Narrow",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f141b; --panel:#171e28; --ink:#e6ebf2; --muted:#9aa6b6; --line:#2a3442; --grid:#202a36;
+  --trace:#ff8a4c; --input:#6ea2ff; --mark:#6ea2ff; --band:rgba(110,162,255,.13); --ok:#5fd08f; --okbg:#15301f; --bad:#ff8173; --badbg:#3a1b18;
+  --chip:#202a36; --accent:#ff8a4c; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#0f141b; --panel:#171e28; --ink:#e6ebf2; --muted:#9aa6b6; --line:#2a3442; --grid:#202a36;
+  --trace:#ff8a4c; --input:#6ea2ff; --mark:#6ea2ff; --band:rgba(110,162,255,.13); --ok:#5fd08f; --okbg:#15301f; --bad:#ff8173; --badbg:#3a1b18;
+  --chip:#202a36; --accent:#ff8a4c; color-scheme:dark }
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5}
+.wrap{max-width:1240px;margin:0 auto;padding-inline:16px;padding-block:18px 40px;display:flex;flex-direction:column;gap:16px}
+header{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 20px}
+h1{font-family:var(--f-display);font-weight:700;font-size:clamp(1.5rem,3vw,2rem);margin:0;letter-spacing:.01em;text-wrap:balance}
+.eyebrow{font-family:var(--f-mono);font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.bench{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:16px;align-items:start}
+@media (max-width:900px){.bench{grid-template-columns:minmax(0,1fr)}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px}
+.scope{padding:12px 12px 8px;min-width:0;display:flex;flex-direction:column;gap:8px}
+.scope-top{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}
+.readout{font-family:var(--f-mono);font-size:.85rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.readout b{color:var(--ink);font-weight:500}
+svg#plot{width:100%;height:auto;display:block;touch-action:none;cursor:crosshair;border-radius:6px}
+svg#plot:focus-visible{outline:2px solid var(--mark);outline-offset:2px}
+.pins{display:flex;flex-wrap:wrap;gap:6px}
+.pin{font-family:var(--f-mono);font-size:.78rem;background:var(--chip);border-radius:999px;padding:3px 6px 3px 10px;display:inline-flex;gap:6px;align-items:center;font-variant-numeric:tabular-nums}
+.pin button{border:0;background:none;color:var(--muted);cursor:pointer;font-size:.9rem;padding:0 4px;line-height:1}
+.hint{font-size:.82rem;color:var(--muted)}
+.panel{padding:14px;display:flex;flex-direction:column;gap:14px;position:relative}
+.panel h2,.notebook h2{font-family:var(--f-display);font-size:1.05rem;margin:0;font-weight:600;letter-spacing:.02em}
+.group{display:flex;flex-direction:column;gap:8px}
+.lbl{font-size:.72rem;font-family:var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+select,input[type=text]{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:6px 8px;width:100%}
+input[type=text]{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line);border-radius:7px;overflow:hidden}
+.seg button{font:inherit;font-size:.82rem;padding:6px 4px;border:0;background:transparent;color:var(--ink);cursor:pointer;line-height:1.2}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed=true]{background:var(--ink);color:var(--panel)}
+.slider{display:grid;grid-template-columns:1fr auto;gap:2px 8px;align-items:center}
+.slider label{font-size:.88rem}
+.slider output{font-family:var(--f-mono);font-size:.85rem;font-variant-numeric:tabular-nums}
+.slider input{grid-column:1/-1;width:100%;accent-color:var(--accent)}
+.checks{display:grid;grid-template-columns:1fr 1fr;gap:4px 10px}
+.checks label{font-size:.85rem;display:flex;gap:6px;align-items:flex-start;cursor:pointer}
+.checks input{accent-color:var(--mark);margin-top:3px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.stat{background:var(--chip);border-radius:6px;padding:6px 8px}
+.stat .k{font-size:.7rem;color:var(--muted);font-family:var(--f-mono)}
+.stat .v{font-family:var(--f-mono);font-size:.9rem;font-variant-numeric:tabular-nums}
+.btn{font:inherit;font-size:.88rem;font-weight:500;border:1px solid var(--ink);background:var(--ink);color:var(--panel);border-radius:7px;padding:7px 12px;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+.btn:focus-visible,.seg button:focus-visible,.tab:focus-visible{outline:2px solid var(--mark);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.locked{position:absolute;inset:0;background:var(--panel);border-radius:10px;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;font-size:.95rem}
+.notebook{padding:0;overflow:hidden}
+.tabs{display:flex;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+.tab{font:inherit;font-family:var(--f-display);font-weight:600;font-size:.98rem;padding:12px 16px;border:0;background:none;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-1px}
+.tab[aria-selected=true]{color:var(--ink);border-bottom-color:var(--accent)}
+.tabpanel{padding:16px}
+.parts{display:flex;flex-wrap:wrap;gap:6px;align-items:center;justify-content:space-between}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:.85rem;padding:5px 12px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer}
+.chip[aria-pressed=true]{background:var(--ink);color:var(--panel);border-color:var(--ink)}
+.score{font-family:var(--f-mono);font-size:.85rem}
+.situ{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;background:var(--chip);border-radius:8px;padding:10px 12px;margin-block:12px}
+.situ p{margin:0;max-width:75ch}
+ol.qs{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.q{border:1px solid var(--line);border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:8px}
+.q .qt{display:flex;gap:10px}
+.q .n{font-family:var(--f-mono);font-size:.8rem;color:var(--muted);min-width:2.2em;padding-top:2px}
+.q .ans{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding-left:calc(2.2em + 10px)}
+.q .ans input[type=text]{width:9em}
+.q .unit{font-family:var(--f-mono);font-size:.85rem;color:var(--muted)}
+.opts{display:flex;flex-direction:column;gap:4px;width:100%}
+.opts label{display:flex;gap:8px;align-items:flex-start;font-size:.92rem;cursor:pointer}
+.fb{margin-left:calc(2.2em + 10px);border-radius:6px;padding:8px 10px;font-size:.9rem}
+.fb.ok{background:var(--okbg);color:var(--ink);border-left:3px solid var(--ok)}
+.fb.bad{background:var(--badbg);color:var(--ink);border-left:3px solid var(--bad)}
+.q.done{border-color:color-mix(in srgb,var(--ok) 45%,var(--line))}
+.linkbtn{font:inherit;font-size:.82rem;border:0;background:none;color:var(--mark);cursor:pointer;padding:0;text-decoration:underline}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+@media (max-width:760px){.grid2{grid-template-columns:minmax(0,1fr)}}
+table.pts{border-collapse:collapse;font-family:var(--f-mono);font-size:.85rem;font-variant-numeric:tabular-nums;width:100%}
+table.pts th,table.pts td{border-bottom:1px solid var(--line);padding:4px 8px;text-align:right}
+table.pts th{color:var(--muted);font-weight:500}
+.tablewrap{overflow-x:auto}
+.recap{margin-top:20px;border-top:1px solid var(--line);padding-top:16px;display:flex;flex-direction:column;gap:10px}
+#recap{margin:0;background:var(--chip);border-radius:8px;padding:12px 14px;font-family:var(--f-mono);font-size:.85rem;white-space:pre-wrap;overflow-x:auto;font-variant-numeric:tabular-nums}
+.form{display:grid;grid-template-columns:auto 1fr auto;gap:8px 10px;align-items:center;max-width:460px}
+.form label{font-size:.9rem}
+.small{font-size:.82rem;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body style="margin:0">
+<style>
+/* compléments propres au banc lumière et photométrie */
+.modes{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line);border-radius:7px;overflow:hidden}
+.modes button{font:inherit;font-size:.8rem;padding:7px 4px;border:0;background:transparent;color:var(--ink);cursor:pointer;line-height:1.2}
+.modes button+button{border-left:1px solid var(--line)}
+.modes button[aria-pressed=true]{background:var(--ink);color:var(--panel)}
+svg text{font-family:var(--f-mono);font-size:12px;fill:var(--muted)}
+svg .axis{stroke:var(--ink);stroke-width:1}
+svg .gridl{stroke:var(--grid);stroke-width:1}
+svg .lbl2{fill:var(--ink);font-size:13px}
+svg .big{fill:var(--ink);font-size:22px;font-weight:500}
+.chk{display:flex;gap:6px;align-items:center;font-size:.85rem;cursor:pointer}
+.chk input{accent-color:var(--mark)}
+.mystq{display:grid;grid-template-columns:auto 1fr auto;gap:8px 10px;align-items:center;max-width:560px}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;vertical-align:-2px;margin-right:4px;border:1px solid var(--line)}
+.katex{font-size:1.02em}
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <div class="eyebrow">BTS Électrotechnique · Physique industrielle · Lumière et photométrie</div>
+      <h1>Banc d'étude de la lumière</h1>
+    </div>
+    <div class="hint">Choisissez un module sur le pupitre. Survolez l'affichage pour lire une valeur au curseur. Chaque partie des questions charge sa situation.</div>
+  </header>
+  <div class="card" style="padding:12px 16px;background:#FFF2CC;border-color:#FFD966;color:#16202e">
+    <b style="color:#C55A11">COMMENT TRAVAILLER</b> — À faire <b>après le cours</b>, en autonomie (en classe ou à la maison) : <b>≈ 45 min sans les questions ★, 1 h au maximum</b>.
+    Recopie tes réponses sur la fiche animation : c'est ta trace écrite, <b>tu n'as rien à envoyer</b>. Les questions ★ et l'onglet « Mission éclairage ★ » sont facultatifs.
+  </div>
+
+  <section class="bench">
+    <div class="card scope">
+      <div class="scope-top">
+        <div class="readout" id="readout">Curseur : survolez l'affichage</div>
+        <div class="row"><button class="btn ghost" id="clearPins" type="button">Effacer les relevés</button></div>
+      </div>
+      <svg id="plot" viewBox="0 0 820 480" role="img" aria-label="Affichage du banc" tabindex="0"></svg>
+      <div class="pins" id="pins"></div>
+    </div>
+
+    <aside class="card panel" id="panel">
+      <div class="group">
+        <span class="lbl">Module</span>
+        <div class="modes" role="group" aria-label="Module du banc">
+          <button type="button" data-mode="o">Ondes</button>
+          <button type="button" data-mode="s">Sources</button>
+          <button type="button" data-mode="l">Luxmètre</button>
+          <button type="button" data-mode="h">Local</button>
+        </div>
+        <p class="small" id="modeTxt" style="margin:0"></p>
+      </div>
+      <div class="group" id="ctrl"></div>
+      <div class="stats" id="stats"></div>
+    </aside>
+  </section>
+
+  <section class="card notebook">
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" id="tab-q" aria-selected="true" aria-controls="pane-q">Questions guidées</button>
+      <button class="tab" role="tab" id="tab-m" aria-selected="false" aria-controls="pane-m">Mission éclairage ★</button>
+    </div>
+
+    <div class="tabpanel" id="pane-q" role="tabpanel">
+      <div class="parts">
+        <div class="chips" id="partChips"></div>
+        
+      </div>
+      <div class="situ"><p id="partIntro"></p><div class="row"><span class="small" id="loaded" hidden>Situation chargée sur le banc</span><button class="btn" id="loadPart" type="button">Recharger la situation</button></div></div>
+      <ol class="qs" id="qs"></ol>
+    </div>
+
+    <div class="tabpanel" id="pane-m" role="tabpanel" hidden>
+      <div class="grid2">
+        <div>
+          <p style="margin-top:0">Vous préparez l'éclairage d'un poste de travail puis d'un local de la centrale. Pour chaque mission tirée au hasard, calculez les grandeurs demandées, puis vérifiez. Le module « Luxmètre » et le module « Local » du banc permettent de contrôler vos résultats.</p>
+          <div class="row"><button class="btn" id="newMyst" type="button">Nouvelle mission</button><button class="btn ghost" id="solMyst" type="button">Afficher la solution</button></div>
+          <div id="mystInfo" style="margin-top:12px"></div>
+        </div>
+        <form class="mystq" id="mystForm" autocomplete="off">
+          <label for="mH">Distance luminaire – plan de travail h</label><input type="text" id="mH" inputmode="decimal"><span class="unit">m</span>
+          <label for="mF">Hauteur de fixation par rapport au sol</label><input type="text" id="mF" inputmode="decimal"><span class="unit">m</span>
+          <label for="mN">Nombre minimal de luminaires du local</label><input type="text" id="mN" inputmode="decimal"><span class="unit">—</span>
+          <label for="mP">Puissance électrique totale du local</label><input type="text" id="mP" inputmode="decimal"><span class="unit">W</span>
+          <span></span><button class="btn" type="submit">Vérifier</button><span></span>
+        </form>
+      </div>
+      <div id="mystFb" style="margin-top:12px"></div>
+      
+    </div>
+  </section>
+</div>
+
+<script>
+(() => {
+'use strict';
+const $ = (s) => document.querySelector(s);
+const fmt = (v, d = 2) => {
+  if (!isFinite(v)) return '—';
+  const r = Math.round(v * 10 ** d) / 10 ** d;
+  return r.toLocaleString('fr-FR', { maximumFractionDigits: d });
+};
+const sci = (v, n = 3) => {
+  if (!isFinite(v) || v === 0) return fmt(v, 0);
+  const e = Math.floor(Math.log10(Math.abs(v))), m = v / 10 ** e;
+  if (e >= -2 && e <= 4) return fmt(v, Math.max(0, n - 1 - e));
+  return `${m.toLocaleString('fr-FR', { maximumFractionDigits: n - 1, minimumFractionDigits: n - 1 })} × 10${String(e).replace('-', '⁻').replace(/\d/g, (c) => '⁰¹²³⁴⁵⁶⁷⁸⁹'[c])}`;
+};
+const parseNum = (s) => { const v = parseFloat(String(s).replace(/\s/g, '').replace(',', '.').replace(/[×x]10\^?/i, 'e')); return isFinite(v) ? v : NaN; };
+const css = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const H = 6.63e-34, C = 3.00e8, EV = 1.60e-19, WIEN = 2.898e-3;
+const store = { get(k, d) { try { const v = localStorage.getItem('lp-' + k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem('lp-' + k, JSON.stringify(v)); } catch (e) {} } };
+const tex = (el) => { if (window.renderMathInElement) { try { renderMathInElement(el, { delimiters: [{ left: '$', right: '$', display: false }], throwOnError: false }); } catch (e) {} } };
+
+/* ---------- physique ---------- */
+const CIE = [[380, 0.000039], [390, 0.00012], [400, 0.000396], [410, 0.00121], [420, 0.004], [430, 0.0116], [440, 0.023], [450, 0.038], [460, 0.06], [470, 0.09098], [480, 0.13902], [490, 0.208], [500, 0.323], [510, 0.503], [520, 0.71], [530, 0.862], [540, 0.954], [550, 0.99495], [555, 1], [560, 0.995], [570, 0.952], [580, 0.87], [590, 0.757], [600, 0.631], [610, 0.503], [620, 0.381], [630, 0.265], [640, 0.175], [650, 0.107], [660, 0.061], [670, 0.032], [680, 0.017], [690, 0.00821], [700, 0.0041], [710, 0.00209], [720, 0.00105], [730, 0.00052], [740, 0.00025], [750, 0.00012], [760, 0.00006], [780, 0.000015]];
+const Vl = (l) => { if (l <= 380 || l >= 780) return 0; for (let i = 1; i < CIE.length; i++) if (l <= CIE[i][0]) { const [a, va] = CIE[i - 1], [b, vb] = CIE[i]; return va + (vb - va) * (l - a) / (b - a); } return 0; };
+const planck = (l, T) => { const x = l * 1e-9; return 1 / (x ** 5 * (Math.exp(1.4388e-2 / (x * T)) - 1)); };
+const g = (l, c, w, a = 1) => a * Math.exp(-0.5 * ((l - c) / w) ** 2);
+const wlrgb = (w) => {
+  let r = 0, gg = 0, b = 0;
+  if (w >= 380 && w < 440) { r = -(w - 440) / 60; b = 1; } else if (w < 490) { gg = (w - 440) / 50; b = 1; } else if (w < 510) { gg = 1; b = -(w - 510) / 20; }
+  else if (w < 580) { r = (w - 510) / 70; gg = 1; } else if (w < 645) { r = 1; gg = -(w - 645) / 65; } else if (w <= 780) { r = 1; }
+  const f = w < 420 ? 0.3 + 0.7 * (w - 380) / 40 : w > 700 ? 0.3 + 0.7 * (780 - w) / 80 : 1;
+  return `rgb(${Math.round(255 * r * f)},${Math.round(255 * gg * f)},${Math.round(255 * b * f)})`;
+};
+const SRC = {
+  hal: { n: 'Lampe halogène', type: 'continu', irc: 100, eff: '12 à 25 lm/W', f: (l, o) => planck(l, o.T) },
+  shp: { n: 'Sodium haute pression', type: 'raies', irc: 25, tc: 2000, eff: '80 à 130 lm/W', f: (l) => Math.max(0, g(l, 589, 18) - g(l, 589, 3, 0.55) + g(l, 568, 5, 0.25) + g(l, 615, 6, 0.22) + g(l, 498, 3, 0.12) + g(l, 819, 4, 0.35) + 0.03 * g(l, 600, 120)) },
+  iod: { n: 'Iodures métalliques', type: 'raies', irc: 65, tc: 4200, eff: '70 à 100 lm/W', f: (l) => [[405, .35], [436, .7], [451, .35], [474, .25], [498, .3], [519, .3], [535, .9], [546, 1], [568, .45], [578, .6], [589, .75], [610, .35], [624, .3], [658, .25], [671, .4], [703, .15], [820, .3]].reduce((s, [c, a]) => s + g(l, c, 2.2, a), 0.08 * g(l, 560, 110)) },
+  flu: { n: 'Tube fluorescent', type: 'raies', irc: 85, tc: 4000, eff: '60 à 100 lm/W', f: (l) => g(l, 450, 12, .18) + g(l, 490, 4, .12) + g(l, 545, 3.5, 1) + g(l, 611, 3, .85) + g(l, 587, 6, .2) + g(l, 625, 4, .2) + g(l, 436, 2, .45) + g(l, 405, 2, .2) + g(l, 708, 3, .08) },
+  led: { n: 'DEL blanche', type: 'continu', eff: '100 à 200 lm/W', f: (l, o) => o.tc <= 3000 ? g(l, 450, 10, .45) + g(l, 600, 62) : o.tc <= 4500 ? g(l, 450, 10, .75) + g(l, 575, 60, .95) : g(l, 450, 10) + g(l, 555, 55, .62) },
+  las: { n: 'Laser d\'alignement (635 nm)', type: 'raie unique', irc: 0, eff: '—', f: (l) => g(l, 635, 1) },
+};
+const LAMPS = { led: { n: 'DEL 8,5 W (806 lm)', I: 61, P: 8.3 }, hal: { n: 'Halogène 42 W (630 lm)', I: 49, P: 41.6 }, cfl: { n: 'Fluocompacte 12 W (650 lm)', I: 49.5, P: 11.8 }, lum: { n: 'Luminaire d\'établi (900 cd)', I: 900, P: 32 } };
+const KT = [2000, 2500, 3000, 3500, 4000, 5000, 6000, 7000], KLO = [10, 30, 70, 120, 180, 300, 450, 600], KHI = [50, 150, 500, 1500, 4000, 15000, 40000, 80000];
+const kInterp = (T, arr) => { for (let i = 1; i < KT.length; i++) if (T <= KT[i]) { const t = (T - KT[i - 1]) / (KT[i] - KT[i - 1]); return Math.exp(Math.log(arr[i - 1]) + t * (Math.log(arr[i]) - Math.log(arr[i - 1]))); } return arr[arr.length - 1]; };
+const kZone = (T, E) => E < kInterp(T, KLO) ? 'froide' : E > kInterp(T, KHI) ? 'chaude' : 'confort';
+const noise = (x) => { const s = Math.sin(x * 12.9898 + 78.233) * 43758.5453; return (s - Math.floor(s)) - 0.5; };
+
+const MODES = {
+  o: 'Une onde électromagnétique est caractérisée par sa longueur d\'onde λ et sa fréquence f = c/λ. Chaque photon transporte l\'énergie E = h·f = h·c/λ. Survolez l\'échelle pour lire λ, cliquez pour la régler.',
+  s: 'Spectre d\'émission de la source choisie (intensité relative). La bande colorée est le domaine visible. Pour la lampe halogène, la température du filament est réglable (loi de Wien fournie : λmax × T = 2,898 × 10⁻³ m·K).',
+  l: 'Banc photométrique : une lampe et la cellule d\'un luxmètre. Réglez la distance d et l\'inclinaison de la cellule, puis notez les relevés : ils s\'affichent sur le graphique.',
+  h: 'Éclairement moyen d\'un local par la méthode des flux : E = n·Φ·U·M / S. Le diagramme de Kruithof indique si l\'ambiance est confortable.',
+};
+const DEF = {
+  o: { lg: Math.log10(589e-9) },
+  s: { src: 'hal', T: 3000, tc: 4000, v: false },
+  l: { lamp: 'led', d: 0.5, a: 0, amb: false },
+  h: { L: 100, W: 40, n: 80, F: 21000, U: 0.65, M: 0.8, Tc: 4000, P: 150 },
+};
+const st = { mode: 'o', o: { ...DEF.o }, s: { ...DEF.s }, l: { ...DEF.l }, h: { ...DEF.h }, pins: [], lplot: 'd' };
+
+/* ---------- pupitre ---------- */
+const slider = (k, lab, unit, min, max, step, val, show) => `
+  <div class="slider"><label for="s-${k}">${lab}</label><output id="o-${k}">${show ?? fmt(val, 3) + ' ' + unit}</output>
+  <input type="range" id="s-${k}" data-k="${k}" min="${min}" max="${max}" step="${step}" value="${val}"></div>`;
+const sel = (k, lab, opts, val) => `<label class="small" for="s-${k}" style="margin:0">${lab}</label><select id="s-${k}" data-k="${k}">${Object.entries(opts).map(([v, n]) => `<option value="${v}" ${String(v) === String(val) ? 'selected' : ''}>${n}</option>`).join('')}</select>`;
+function buildCtrl() {
+  const m = st.mode, o = st[m]; let h = '';
+  if (m === 'o') {
+    h = slider('lg', 'Longueur d\'onde λ (échelle logarithmique)', '', -12, 3, 0.005, o.lg, sci(10 ** o.lg) + ' m')
+      + `<div class="row"><label class="small" for="s-nm" style="margin:0">ou saisir λ en nm</label><input type="text" id="s-nm" style="width:8em" inputmode="decimal" value="${fmt(10 ** o.lg * 1e9, 1)}"></div>`
+      + `<div class="row"><label class="small" for="s-hz" style="margin:0">ou saisir f en Hz</label><input type="text" id="s-hz" style="width:10em" inputmode="decimal" placeholder="ex : 446e6"></div>`;
+  } else if (m === 's') {
+    h = sel('src', 'Source', Object.fromEntries(Object.entries(SRC).map(([k, v]) => [k, v.n])), o.src);
+    if (o.src === 'hal') h += slider('T', 'Température du filament T', 'K', 1500, 3600, 10, o.T);
+    if (o.src === 'led') h += sel('tc', 'Température de couleur', { 2700: '2 700 K (chaude)', 4000: '4 000 K (neutre)', 5000: '5 000 K (froide)' }, o.tc);
+    h += `<label class="chk"><input type="checkbox" id="s-v" ${o.v ? 'checked' : ''}> Superposer la sensibilité de l'œil V(λ)</label>`;
+  } else if (m === 'l') {
+    h = sel('lamp', 'Lampe', Object.fromEntries(Object.entries(LAMPS).map(([k, v]) => [k, v.n])), o.lamp)
+      + slider('d', 'Distance lampe – cellule d', 'm', 0.2, 2, 0.01, o.d)
+      + slider('a', 'Inclinaison de la cellule', '°', 0, 90, 5, o.a)
+      + `<label class="chk"><input type="checkbox" id="s-amb" ${o.amb ? 'checked' : ''}> Éclairage de la salle allumé</label>`
+      + `<div class="row"><button class="btn" id="note" type="button">Noter le relevé</button><button class="btn ghost" id="swapPlot" type="button">${st.lplot === 'd' ? 'Tracer E = f(1/d²)' : 'Tracer E = f(d)'}</button></div>`;
+  } else {
+    h = slider('L', 'Longueur du local', 'm', 5, 120, 1, o.L) + slider('W', 'Largeur du local', 'm', 4, 60, 1, o.W)
+      + slider('n', 'Nombre de luminaires n', '', 1, 150, 1, o.n) + slider('F', 'Flux d\'un luminaire Φ', 'lm', 1000, 40000, 500, o.F)
+      + slider('P', 'Puissance d\'un luminaire', 'W', 10, 450, 5, o.P)
+      + slider('U', 'Facteur d\'utilisation U', '', 0.3, 0.8, 0.01, o.U) + slider('M', 'Facteur de maintenance M', '', 0.6, 1, 0.05, o.M)
+      + slider('Tc', 'Température de couleur Tc', 'K', 2000, 7000, 100, o.Tc);
+  }
+  $('#ctrl').innerHTML = h;
+  $('#ctrl').querySelectorAll('input[type=range]').forEach((r) => r.addEventListener('input', () => { st[m][r.dataset.k] = +r.value; draw(); }));
+  $('#ctrl').querySelectorAll('select').forEach((s) => s.addEventListener('change', () => { const v = s.value; st[m][s.dataset.k] = isNaN(+v) ? v : +v; buildCtrl(); draw(); }));
+  const nm = $('#s-nm'); if (nm) nm.addEventListener('change', () => { const v = parseNum(nm.value); if (v > 0) { st.o.lg = Math.min(3, Math.max(-12, Math.log10(v * 1e-9))); buildCtrl(); draw(); } });
+  const hz = $('#s-hz'); if (hz) hz.addEventListener('change', () => { const v = parseNum(hz.value); if (v > 0) { st.o.lg = Math.min(3, Math.max(-12, Math.log10(C / v))); buildCtrl(); $('#s-hz').value = hz.value; draw(); } });
+  const cv = $('#s-v'); if (cv) cv.addEventListener('change', () => { st.s.v = cv.checked; draw(); });
+  const ca = $('#s-amb'); if (ca) ca.addEventListener('change', () => { st.l.amb = ca.checked; draw(); });
+  const nb = $('#note'); if (nb) nb.addEventListener('click', () => { st.pins.push({ d: st.l.d, E: luxE(), lamp: st.l.lamp, a: st.l.a }); draw(); });
+  const sw = $('#swapPlot'); if (sw) sw.addEventListener('click', () => { st.lplot = st.lplot === 'd' ? 'i' : 'd'; buildCtrl(); draw(); });
+}
+function setMode(m) {
+  st.mode = m;
+  document.querySelectorAll('.modes button').forEach((b) => b.setAttribute('aria-pressed', b.dataset.mode === m));
+  $('#modeTxt').textContent = MODES[m]; $('#clearPins').hidden = m !== 'l'; $('#readout').textContent = 'Curseur : survolez l\'affichage';
+  buildCtrl(); draw();
+}
+document.querySelectorAll('.modes button').forEach((b) => b.addEventListener('click', () => setMode(b.dataset.mode)));
+$('#clearPins').addEventListener('click', () => { st.pins = []; draw(); });
+
+/* ---------- dessin ---------- */
+const svg = $('#plot'), Wv = 820, Hv = 480;
+let geo = null;
+const el = (t, a, txt) => `<${t} ${Object.entries(a).map(([k, v]) => `${k}="${v}"`).join(' ')}>${txt ?? ''}</${t}>`;
+const stat = (k, v) => `<div class="stat"><div class="k">${k}</div><div class="v">${v}</div></div>`;
+function niceTicks(lo, hi, n = 6) {
+  const span = hi - lo, step0 = span / n, p = 10 ** Math.floor(Math.log10(step0)), m = step0 / p;
+  const step = (m < 1.5 ? 1 : m < 3 ? 2 : m < 7 ? 5 : 10) * p, out = [];
+  for (let v = Math.ceil(lo / step) * step; v <= hi + 1e-9; v += step) out.push(+v.toFixed(10));
+  return out;
+}
+function frame(x0, x1, y0, y1, box, xl, yl, logy) {
+  const [L, T, R, B] = box; let s = '';
+  const X = (x) => L + (x - x0) / (x1 - x0) * (R - L);
+  const Y = logy ? (y) => B - (Math.log10(y) - Math.log10(y0)) / (Math.log10(y1) - Math.log10(y0)) * (B - T) : (y) => B - (y - y0) / (y1 - y0) * (B - T);
+  niceTicks(x0, x1, 8).forEach((t) => { s += el('line', { x1: X(t), x2: X(t), y1: T, y2: B, class: 'gridl' }) + el('text', { x: X(t), y: B + 16, 'text-anchor': 'middle' }, fmt(t, 3)); });
+  const yt = logy ? [10, 100, 1000, 1e4, 1e5].filter((v) => v >= y0 && v <= y1) : niceTicks(y0, y1, 6);
+  yt.forEach((t) => { s += el('line', { x1: L, x2: R, y1: Y(t), y2: Y(t), class: 'gridl' }) + el('text', { x: L - 6, y: Y(t) + 4, 'text-anchor': 'end' }, logy ? fmt(t, 0) : fmt(t, 3)); });
+  s += el('line', { x1: L, x2: R, y1: B, y2: B, class: 'axis' }) + el('line', { x1: L, x2: L, y1: T, y2: B, class: 'axis' });
+  s += el('text', { x: R, y: B + 32, 'text-anchor': 'end', class: 'lbl2' }, xl) + el('text', { x: L, y: T - 8, class: 'lbl2' }, yl);
+  return { s, X, Y, L, T, R, B, x0, x1, y0, y1, logy };
+}
+const luxE = () => { const o = st.l, I = LAMPS[o.lamp].I; return Math.max(0, I * Math.cos(o.a * Math.PI / 180) / o.d ** 2 * (1 + 0.012 * noise(o.d * 7 + o.a))) + (o.amb ? 350 : 3); };
+const DOMS = [[-13, -11, 'γ', '#7f7f7f'], [-11, -8, 'X', '#a6a6a6'], [-8, Math.log10(4e-7), 'UV', '#8e6bd1'], [Math.log10(8e-7), -3, 'infrarouge', '#d9534f'], [-3, Math.log10(0.3), 'micro-ondes', '#e3a33b'], [Math.log10(0.3), 3, 'ondes radio', '#5c8fd6']];
+const domName = (l) => l < 1e-11 ? 'rayons γ' : l < 1e-8 ? 'rayons X' : l < 4e-7 ? 'ultraviolet (UV)' : l <= 8e-7 ? 'visible' : l < 1e-3 ? 'infrarouge (IR)' : l < 0.3 ? 'micro-ondes' : 'ondes radio';
+
+function draw() {
+  const m = st.mode; let s = ''; geo = null;
+  if (m === 'o') {
+    const L = 40, R = 790, X = (lg) => L + (lg + 12) / 15 * (R - L), y0 = 150, y1 = 230, lam = 10 ** st.o.lg;
+    DOMS.forEach(([a, b, t, c]) => { const xa = X(Math.max(a, -12)), xb = X(b); s += el('rect', { x: xa, y: y0, width: xb - xa, height: y1 - y0, fill: c }) + el('text', { x: (xa + xb) / 2, y: (y0 + y1) / 2 + 5, 'text-anchor': 'middle', style: 'fill:#fff;font-weight:600' }, t); });
+    for (let w = 400; w < 800; w += 4) { const xa = X(Math.log10(w * 1e-9)), xb = X(Math.log10((w + 4) * 1e-9)); s += el('rect', { x: xa, y: y0, width: xb - xa + 0.5, height: y1 - y0, fill: wlrgb(w) }); }
+    for (let k = -12; k <= 3; k++) s += el('line', { x1: X(k), x2: X(k), y1: y1, y2: y1 + 6, class: 'axis' }) + el('text', { x: X(k), y: y1 + 20, 'text-anchor': 'middle' }, '10' + String(k).replace('-', '⁻').replace(/\d/g, (c) => '⁰¹²³⁴⁵⁶⁷⁸⁹'[c]));
+    s += el('text', { x: (L + R) / 2, y: y1 + 44, 'text-anchor': 'middle', class: 'lbl2' }, 'longueur d\'onde λ (m) — la fréquence et l\'énergie des photons augmentent vers la gauche');
+    const xm = X(st.o.lg);
+    s += el('line', { x1: xm, x2: xm, y1: y0 - 40, y2: y1 + 4, stroke: css('--ink'), 'stroke-width': 2 }) + el('polygon', { points: `${xm - 7},${y0 - 44} ${xm + 7},${y0 - 44} ${xm},${y0 - 32}`, fill: css('--ink') });
+    s += el('text', { x: Math.min(Math.max(xm, 120), 700), y: y0 - 54, 'text-anchor': 'middle', class: 'lbl2' }, `λ = ${sci(lam)} m · ${domName(lam)}`);
+    // onde dessinée
+    const vis = lam >= 3.8e-7 && lam <= 7.8e-7, col = vis ? wlrgb(lam * 1e9) : css('--trace'), per = 30 + (st.o.lg + 12) / 15 * 160; let d = '';
+    for (let x = 40; x <= 790; x += 2) d += `${x === 40 ? 'M' : 'L'}${x},${360 + 45 * Math.sin((x - 40) / per * 2 * Math.PI)}`;
+    s += el('path', { d, fill: 'none', stroke: col, 'stroke-width': 2.5 }) + el('text', { x: 40, y: 300 }, 'représentation de l\'onde (λ non à l\'échelle)');
+    const E = H * C / lam;
+    $('#stats').innerHTML = stat('Longueur d\'onde λ', sci(lam) + ' m') + stat('Fréquence f', sci(C / lam) + ' Hz') + stat('Domaine', domName(lam))
+      + stat('Énergie d\'un photon', sci(E) + ' J') + stat('… en électronvolts', sci(E / EV) + ' eV') + stat('Couleur', vis ? `<span class="swatch" style="background:${wlrgb(lam * 1e9)}"></span>${fmt(lam * 1e9, 0)} nm` : '— (invisible)');
+    geo = { kind: 'o', X0: L, X1: R, y0, y1 };
+  } else if (m === 's') {
+    const f = frame(300, 1000, 0, 1.1, [60, 30, 800, 420], 'λ (nm)', 'intensité relative');
+    let bg = ''; for (let w = 380; w < 780; w += 4) bg += el('rect', { x: f.X(w), y: f.T, width: f.X(w + 4) - f.X(w) + 0.5, height: f.B - f.T, fill: wlrgb(w), opacity: 0.22 });
+    s += bg + f.s;
+    const src = SRC[st.s.src], o = st.s, pts = []; let mx = 0;
+    for (let l = 300; l <= 1000; l += 1) { const v = src.f(l, o); pts.push([l, v]); if (l >= 380 && v > mx) mx = v; }
+    if (st.s.src === 'hal') { mx = Math.max(...pts.map((p) => p[1])); }
+    const path = pts.map(([l, v], i) => `${i ? 'L' : 'M'}${f.X(l)},${f.Y(Math.min(1.1, v / mx))}`).join('');
+    s += el('path', { d: path + `L${f.X(1000)},${f.Y(0)}L${f.X(300)},${f.Y(0)}Z`, fill: css('--trace'), opacity: 0.12 }) + el('path', { d: path, fill: 'none', stroke: css('--trace'), 'stroke-width': 2 });
+    if (o.v) { let d = ''; for (let l = 380; l <= 780; l += 2) d += `${l === 380 ? 'M' : 'L'}${f.X(l)},${f.Y(Vl(l))}`; s += el('path', { d, fill: 'none', stroke: css('--input'), 'stroke-width': 2, 'stroke-dasharray': '6 4' }) + el('text', { x: f.X(560), y: f.Y(1.03), fill: css('--input'), style: `fill:${css('--input')}` }, 'œil V(λ)'); }
+    let lmax = null;
+    if (st.s.src === 'hal') { lmax = WIEN / o.T * 1e9; if (lmax <= 1000) s += el('line', { x1: f.X(lmax), x2: f.X(lmax), y1: f.T, y2: f.B, stroke: css('--ink'), 'stroke-dasharray': '4 4' }) + el('text', { x: f.X(lmax) - 6, y: f.T + 14, 'text-anchor': 'end', class: 'lbl2' }, `λmax = ${fmt(lmax, 0)} nm`); }
+    s += el('text', { x: f.X(590), y: f.B - 8, 'text-anchor': 'middle' }, 'visible');
+    const tc = st.s.src === 'hal' ? o.T : st.s.src === 'led' ? o.tc : src.tc;
+    $('#stats').innerHTML = stat('Spectre', src.type) + stat('Température de couleur', tc ? fmt(tc, 0) + ' K' : '—') + stat('IRC', st.s.src === 'led' ? (o.tc <= 3000 ? '90' : o.tc <= 4500 ? '80' : '90') : fmt(src.irc, 0))
+      + stat('Efficacité typique', src.eff) + stat('λmax (Wien)', lmax ? fmt(lmax, 0) + ' nm' : '—') + stat('Domaine de λmax', lmax ? domName(lmax * 1e-9) : '—');
+    geo = { kind: 's', f, src, o };
+  } else if (m === 'l') {
+    const o = st.l, lamp = LAMPS[o.lamp], E = luxE();
+    // banc
+    const bx = (d) => 80 + d / 2 * 560;
+    s += el('rect', { x: 60, y: 120, width: 600, height: 10, fill: css('--line') });
+    for (let k = 0; k <= 20; k++) s += el('line', { x1: bx(k / 10), x2: bx(k / 10), y1: 130, y2: k % 5 ? 136 : 140, class: 'axis' }) + (k % 5 ? '' : el('text', { x: bx(k / 10), y: 154, 'text-anchor': 'middle' }, fmt(k / 10, 1) + ' m'));
+    s += el('circle', { cx: bx(0), cy: 70, r: 18, fill: '#ffd966', stroke: css('--accent'), 'stroke-width': 2 }) + el('rect', { x: bx(0) - 3, y: 88, width: 6, height: 32, fill: css('--muted') });
+    s += el('polygon', { points: `${bx(0) + 18},62 ${bx(o.d)},${40} ${bx(o.d)},${100} ${bx(0) + 18},78`, fill: '#ffd966', opacity: 0.25 });
+    const xc = bx(o.d), ang = o.a * Math.PI / 180;
+    s += el('line', { x1: xc - 22 * Math.sin(ang), y1: 70 - 22 * Math.cos(ang), x2: xc + 22 * Math.sin(ang), y2: 70 + 22 * Math.cos(ang), stroke: css('--ink'), 'stroke-width': 7 }) + el('rect', { x: xc - 3, y: 92, width: 6, height: 28, fill: css('--muted') });
+    s += el('text', { x: bx(0), y: 36, 'text-anchor': 'middle', class: 'lbl2' }, 'lampe') + el('text', { x: xc, y: 30, 'text-anchor': 'middle', class: 'lbl2' }, 'cellule');
+    s += el('rect', { x: 690, y: 40, width: 112, height: 70, rx: 8, fill: css('--chip'), stroke: css('--line') }) + el('text', { x: 746, y: 82, 'text-anchor': 'middle', class: 'big' }, fmt(E, E < 100 ? 1 : 0)) + el('text', { x: 746, y: 102, 'text-anchor': 'middle' }, 'lx') + el('text', { x: 746, y: 34, 'text-anchor': 'middle' }, 'luxmètre');
+    // graphique des relevés
+    const pins = st.pins, inv = st.lplot === 'i';
+    const xmax = inv ? Math.max(12, ...pins.map((p) => 1 / p.d ** 2)) * 1.05 : 2.1, ymax = Math.max(100, ...pins.map((p) => p.E)) * 1.1;
+    const f = frame(0, inv ? Math.ceil(xmax) : 2.1, 0, ymax, [70, 205, 800, 440], inv ? '1/d² (m⁻²)' : 'd (m)', 'E (lx)');
+    s += f.s;
+    pins.forEach((p) => { const x = inv ? 1 / p.d ** 2 : p.d; if (x <= f.x1) s += el('circle', { cx: f.X(x), cy: f.Y(p.E), r: 5, fill: css('--trace') }); });
+    $('#pins').innerHTML = pins.map((p, i) => `<span class="pin">${i + 1} · d = ${fmt(p.d, 2)} m · E = ${fmt(p.E, 0)} lx<button type="button" data-i="${i}" aria-label="Supprimer">×</button></span>`).join('');
+    $('#pins').querySelectorAll('button').forEach((b) => b.addEventListener('click', () => { st.pins.splice(+b.dataset.i, 1); draw(); }));
+    $('#stats').innerHTML = stat('Distance d', fmt(o.d, 2) + ' m') + stat('1/d²', fmt(1 / o.d ** 2, 2) + ' m⁻²') + stat('Éclairement lu', fmt(E, 0) + ' lx')
+      + stat('Lumière ambiante', o.amb ? 'salle allumée' : 'pièce occultée') + stat('Inclinaison', fmt(o.a, 0) + '°') + stat('E × d²', fmt(E * o.d ** 2, 1));
+    geo = { kind: 'l', f, inv };
+  } else {
+    const o = st.h, S = o.L * o.W, E = o.n * o.F * o.U * o.M / S;
+    const f = frame(2000, 7000, 10, 1e5, [70, 30, 800, 420], 'température de couleur Tc (K)', 'éclairement E (lx) — échelle log', true);
+    let up = '', lo = '';
+    for (let T = 2000; T <= 7000; T += 50) { up += `${T === 2000 ? 'M' : 'L'}${f.X(T)},${f.Y(kInterp(T, KHI))}`; lo = `L${f.X(T)},${f.Y(kInterp(T, KLO))}` + lo; }
+    s += el('path', { d: up + lo.replace(/^L/, 'L') + 'Z', fill: css('--ok'), opacity: 0.18 }) + f.s;
+    s += el('text', { x: f.X(4300), y: f.Y(900), 'text-anchor': 'middle', style: `fill:${css('--ok')};font-weight:600` }, 'confort') + el('text', { x: f.X(5800), y: f.Y(30), 'text-anchor': 'middle' }, 'ambiance froide') + el('text', { x: f.X(2700), y: f.Y(9000), 'text-anchor': 'middle' }, 'trop chaude');
+    const Ep = Math.min(9e4, Math.max(11, E));
+    s += el('circle', { cx: f.X(o.Tc), cy: f.Y(Ep), r: 7, fill: css('--trace') }) + el('text', { x: f.X(o.Tc) + 10, y: f.Y(Ep) - 10, class: 'lbl2' }, `${fmt(E, 0)} lx`);
+    const z = kZone(o.Tc, E);
+    $('#stats').innerHTML = stat('Surface S', fmt(S, 0) + ' m²') + stat('Éclairement moyen', fmt(E, 1) + ' lx') + stat('Ambiance (Kruithof)', z)
+      + stat('Puissance totale', fmt(o.n * o.P / 1000, 2) + ' kW') + stat('Efficacité', fmt(o.F / o.P, 1) + ' lm/W') + stat('Énergie sur 8 760 h', fmt(o.n * o.P * 8760 / 1000, 0) + ' kWh');
+    geo = { kind: 'h', f };
+    $('#pins').innerHTML = '';
+  }
+  if (m !== 'l') $('#pins').innerHTML = '';
+  svg.innerHTML = s;
+}
+function svgXY(e) { const r = svg.getBoundingClientRect(); return [(e.clientX - r.left) / r.width * Wv, (e.clientY - r.top) / r.height * Hv]; }
+svg.addEventListener('pointermove', (e) => {
+  if (!geo) return; const [x, y] = svgXY(e);
+  if (geo.kind === 'o') { const lg = -12 + (x - geo.X0) / (geo.X1 - geo.X0) * 15; if (lg < -12 || lg > 3) return; const l = 10 ** lg; $('#readout').innerHTML = `λ = <b>${sci(l)} m</b> · f = <b>${sci(C / l)} Hz</b> · ${domName(l)}`; return; }
+  const f = geo.f; if (x < f.L || x > f.R || y < f.T || y > f.B) return;
+  const vx = f.x0 + (x - f.L) / (f.R - f.L) * (f.x1 - f.x0);
+  const vy = f.logy ? 10 ** (Math.log10(f.y0) + (f.B - y) / (f.B - f.T) * (Math.log10(f.y1) - Math.log10(f.y0))) : f.y0 + (f.B - y) / (f.B - f.T) * (f.y1 - f.y0);
+  if (geo.kind === 's') $('#readout').innerHTML = `Curseur : λ = <b>${fmt(vx, 0)} nm</b> · ${domName(vx * 1e-9)}${vx >= 380 && vx <= 780 ? ` · V(λ) = <b>${fmt(Vl(vx), 3)}</b>` : ''}`;
+  else if (geo.kind === 'l') $('#readout').innerHTML = `Curseur : ${geo.inv ? '1/d²' : 'd'} = <b>${fmt(vx, 2)} ${geo.inv ? 'm⁻²' : 'm'}</b> · E = <b>${fmt(vy, 0)} lx</b>`;
+  else $('#readout').innerHTML = `Curseur : Tc = <b>${fmt(Math.round(vx / 50) * 50, 0)} K</b> · E = <b>${fmt(vy, 0)} lx</b> · ${kZone(vx, vy)}`;
+});
+svg.addEventListener('click', (e) => {
+  if (!geo || geo.kind !== 'o') return; const [x] = svgXY(e); const lg = -12 + (x - geo.X0) / (geo.X1 - geo.X0) * 15;
+  if (lg >= -12 && lg <= 3) { st.o.lg = lg; buildCtrl(); draw(); }
+});
+
+/* ---------- questions guidées ---------- */
+const PARTS = [
+  { title: 'A · Ondes et photons', mode: 'o', set: { ...DEF.o },
+    intro: 'Module « Ondes ». Les rondiers de la centrale utilisent des radios à 446 MHz ; les soudures sont contrôlées par ressuage sous lampe UV et par gammagraphie. Données : c = 3,00 × 10⁸ m/s ; h = 6,63 × 10⁻³⁴ J·s ; 1 eV = 1,60 × 10⁻¹⁹ J.',
+    qs: [
+      { q: 'Saisir f = 446e6 Hz sur le pupitre. Calculer la longueur d\'onde de la radio des rondiers.', u: 'm', a: 0.673, tol: 0.006, hint: '$\\lambda = c / f$', ex: 'λ = 3,00 × 10⁸ / 446 × 10⁶ ≈ 0,673 m : ondes radio.' },
+      { q: 'La lampe de ressuage émet à λ = 365 nm. Dans quel domaine se trouve ce rayonnement ?', set: { lg: Math.log10(365e-9) }, opts: ['Infrarouge', 'Visible', 'Ultraviolet', 'Micro-ondes'], a: 2, ex: '365 nm < 400 nm : ultraviolet (UV-A). Il fait briller le produit fluorescent dans les fissures.' },
+      { q: 'Calculer l\'énergie, en eV, d\'un photon de longueur d\'onde 589 nm (raie du sodium).', u: 'eV', a: 2.11, tol: 0.03, hint: '$E = \\dfrac{h\\,c}{\\lambda}$ en J, puis diviser par 1,60 × 10⁻¹⁹', ex: 'E = 6,63 × 10⁻³⁴ × 3,00 × 10⁸ / 589 × 10⁻⁹ = 3,38 × 10⁻¹⁹ J = 2,11 eV.' },
+      { star: true, q: 'Un photon UV du mercure transporte 4,89 eV. Calculer sa longueur d\'onde.', u: 'nm', a: 254, tol: 3, hint: '$\\lambda = \\dfrac{h\\,c}{E}$ avec E en joules', ex: 'E = 4,89 × 1,60 × 10⁻¹⁹ = 7,82 × 10⁻¹⁹ J ; λ = 1,99 × 10⁻²⁵ / 7,82 × 10⁻¹⁹ ≈ 2,54 × 10⁻⁷ m = 254 nm.' },
+      { q: 'Déplacer le curseur des ondes radio vers les rayons γ. Comment évolue l\'énergie d\'un photon ?', opts: ['Elle diminue quand λ diminue.', 'Elle augmente quand λ diminue : les photons UV, X et γ sont les plus énergétiques.', 'Elle ne dépend pas de λ.'], a: 1, ex: 'E = h·c/λ : l\'énergie est inversement proportionnelle à λ. Les photons X et γ, très énergétiques, sont ionisants.' },
+    ] },
+  { title: 'B · Sources et spectres', mode: 's', set: { ...DEF.s },
+    intro: 'Module « Sources ». On compare les spectres des lampes utilisées sur le site. Loi de Wien (fournie) : λmax × T = 2,898 × 10⁻³ m·K.',
+    qs: [
+      { q: 'Lampe halogène, filament à 3 000 K : relever (ou calculer) la longueur d\'onde du maximum d\'émission λmax.', u: 'nm', a: 966, tol: 8, ex: 'λmax = 2,898 × 10⁻³ / 3 000 = 9,66 × 10⁻⁷ m = 966 nm : dans l\'infrarouge.' },
+      { star: true, q: 'Augmenter la température du filament. Comment se déplace λmax ?', opts: ['Vers les grandes longueurs d\'onde (vers le rouge et l\'IR).', 'Vers les courtes longueurs d\'onde (vers le bleu) : la lumière devient plus blanche.', 'λmax ne bouge pas.'], a: 1, ex: 'λmax = 2,898 × 10⁻³ / T diminue quand T augmente : le maximum se rapproche du visible, la lumière est plus blanche et l\'efficacité meilleure.' },
+      { q: 'Quelle source présente un spectre de raies dont la raie principale est à 589 nm ?', opts: ['Lampe halogène', 'Sodium haute pression', 'DEL blanche', 'Laser d\'alignement'], a: 1, ex: 'La lampe au sodium haute pression : raie élargie autour de 589 nm (jaune-orangé), caractéristique du sodium.' },
+      { q: 'DEL blanche 4 000 K : relever au curseur la longueur d\'onde du pic étroit.', set: { src: 'led', tc: 4000 }, u: 'nm', a: 450, tol: 6, ex: 'Pic à 450 nm : c\'est la lumière bleue de la puce. La large bande vient du luminophore jaune.' },
+      { star: true, q: 'Cocher « Superposer V(λ) » sur la lampe halogène. Pourquoi cette lampe a-t-elle une faible efficacité lumineuse ?', set: { src: 'hal', T: 3000, v: true }, opts: ['Parce que son spectre est un spectre de raies.', 'Parce que l\'essentiel de son rayonnement est dans l\'infrarouge, où l\'œil n\'est pas sensible.', 'Parce que son IRC est faible.'], a: 1, ex: 'La courbe V(λ) est nulle au-delà de 780 nm : toute l\'énergie rayonnée en IR ne donne aucun lumen.' },
+      { q: 'Pour l\'atelier, il faut un IRC ≥ 80 et la meilleure efficacité. Quelle source choisir ?', opts: ['Sodium haute pression', 'Lampe halogène', 'Iodures métalliques', 'DEL blanche 4 000 K'], a: 3, ex: 'La DEL 4 000 K a un IRC de 80 et une efficacité de 100 à 200 lm/W. Le sodium a un IRC trop faible, l\'halogène une efficacité trop faible, les iodures un IRC de 65.' },
+    ] },
+  { title: 'C · Luxmètre', mode: 'l', set: { ...DEF.l },
+    intro: 'Module « Luxmètre ». Lampe DEL 8,5 W sur le banc, pièce occultée (lumière ambiante : 3 lx, à retrancher).',
+    qs: [
+      { q: 'Cellule face à la lampe à d = 0,50 m : relever l\'éclairement, puis retrancher l\'éclairement ambiant (3 lx).', u: 'lx', a: 244, tol: 6, ex: 'Le luxmètre affiche ≈ 247 lx, soit E ≈ 244 lx dû à la lampe.' },
+      { q: 'Régler d = 1,00 m. Relever E (corrigé). Par combien l\'éclairement a-t-il été divisé quand la distance a doublé ?', set: { d: 1.0 }, u: '', a: 4, tol: 0.2, ex: 'E ≈ 61 lx : 244 / 61 = 4. L\'éclairement est inversement proportionnel au carré de la distance.' },
+      { q: 'Noter au moins 5 relevés entre 0,3 m et 1,5 m, puis tracer E = f(1/d²). Calculer l\'intensité lumineuse I = E × d² de la lampe.', u: 'cd', a: 61, tol: 2.5, hint: 'Les points sont alignés : I est le coefficient directeur de la droite E = I / d².', ex: 'E × d² ≈ 61 dans tous les cas : I ≈ 61 cd.' },
+      { star: true, q: 'En supposant la lampe isotrope, calculer son flux lumineux Φ = 4π × I.', u: 'lm', a: 767, tol: 15, ex: 'Φ = 4π × 61 ≈ 767 lm, à comparer aux 806 lm annoncés (écart ≈ 5 % : la lampe n\'est pas parfaitement isotrope).' },
+      { star: true, q: 'À d = 0,50 m, incliner la cellule de 60°. Relever l\'éclairement corrigé.', set: { d: 0.5, a: 60 }, u: 'lx', a: 122, tol: 6, ex: 'E ≈ 122 lx : environ la moitié (cos 60° = 0,5). Pour un contrôle de poste, la cellule doit être posée à plat sur le plan de travail.' },
+      { q: 'Cocher « Éclairage de la salle allumé ». Que faut-il faire pour étudier la lampe seule ?', opts: ['Rien, la salle n\'influence pas la mesure.', 'Mesurer la lumière ambiante seule (lampe éteinte) et la retrancher, ou occulter la salle.', 'Rapprocher la cellule à 0,1 m.'], a: 1, ex: 'Le luxmètre mesure toute la lumière reçue. On occulte la salle ou on retranche l\'éclairement ambiant mesuré lampe éteinte.' },
+    ] },
+  { title: 'D · Éclairage d\'un local', mode: 'h', set: { ...DEF.h },
+    intro: 'Module « Local ». Salle des machines : plancher 100 m × 40 m, 80 projecteurs à DEL de 150 W et 21 000 lm, U = 0,65, M = 0,8. Exigence : 200 lx.',
+    qs: [
+      { q: 'Calculer l\'éclairement moyen sur le plancher.', u: 'lx', a: 218.4, tol: 2, hint: '$E = \\dfrac{n\\,\\Phi\\,U\\,M}{S}$', ex: 'E = 80 × 21 000 × 0,65 × 0,8 / 4 000 ≈ 218 lx ≥ 200 lx.' },
+      { star: true, q: 'Calculer le nombre minimal de projecteurs qui permettrait d\'atteindre 200 lx.', u: '', a: 74, tol: 0.4, ex: 'n = 200 × 4 000 / (21 000 × 0,65 × 0,8) = 73,3 → il faut au moins 74 projecteurs (on arrondit à l\'entier supérieur).' },
+      { q: 'Calculer l\'efficacité lumineuse d\'un projecteur.', u: 'lm/W', a: 140, tol: 1, ex: 'η = 21 000 / 150 = 140 lm/W.' },
+      { star: true, q: 'Régler Tc = 6 500 K. Quelle ambiance prévoit le diagramme de Kruithof pour ≈ 218 lx ?', set: { Tc: 6500 }, opts: ['Confortable', 'Froide, blafarde', 'Trop chaude, artificielle'], a: 1, ex: 'Le point (6 500 K ; 218 lx) est sous la zone de confort : lumière trop froide pour un éclairement aussi faible. 4 000 K convient mieux.' },
+      { star: true, q: 'Calculer l\'énergie consommée en un an (8 760 h) par les 80 projecteurs.', u: 'kWh', a: 105120, tol: 600, hint: 'W = n × P × t, avec P en kW et t en h', ex: 'W = 80 × 0,150 × 8 760 = 105 120 kWh.' },
+    ] },
+];
+let part = 0; const answers = store.get('ans', {});
+function loadPart() {
+  const P = PARTS[part]; st[P.mode] = { ...P.set }; if (P.mode === 'l') st.pins = [];
+  setMode(P.mode); $('#loaded').hidden = false;
+}
+function renderPart() {
+  $('#partChips').innerHTML = PARTS.map((p, i) => `<button class="chip" type="button" aria-pressed="${i === part}" data-i="${i}">${p.title}</button>`).join('');
+  $('#partChips').querySelectorAll('.chip').forEach((b) => b.addEventListener('click', () => { part = +b.dataset.i; renderPart(); loadPart(); }));
+  const P = PARTS[part]; $('#partIntro').textContent = P.intro + ' Les questions ★ sont facultatives.';
+  $('#qs').innerHTML = P.qs.map((q, i) => {
+    const id = `${part}-${i}`, a = answers[id] || {};
+    const inp = q.opts ? `<div class="opts">${q.opts.map((o, k) => `<label><input type="radio" name="r${id}" value="${k}" ${a.v == k ? 'checked' : ''}> ${o}</label>`).join('')}</div>`
+      : `<input type="text" inputmode="decimal" id="i${id}" value="${a.v ?? ''}" aria-label="Réponse"> <span class="unit">${q.u}</span>`;
+    return `<li class="q ${a.ok ? 'done' : ''}" data-id="${id}"><div class="qt"><span class="n">${'ABCD'[part]}${i + 1}${q.star ? ' ★' : ''}</span><div>${q.q}${q.set ? ' <button class="linkbtn" type="button" data-set="1">régler le banc</button>' : ''}</div></div>
+      <div class="ans">${inp}<button class="btn ghost" type="button" data-chk="1">Vérifier</button>${q.hint ? `<button class="linkbtn" type="button" data-hint="1">Coup de pouce</button>` : ''}</div>
+      <div class="fb-slot">${a.fb || ''}</div></li>`;
+  }).join('');
+  $('#qs').querySelectorAll('.q').forEach((li) => {
+    const [pi, qi] = li.dataset.id.split('-').map(Number), q = PARTS[pi].qs[qi];
+    li.querySelector('[data-chk]').addEventListener('click', () => check(li, q));
+    const h = li.querySelector('[data-hint]'); if (h) h.addEventListener('click', () => { const s = li.querySelector('.fb-slot'); s.innerHTML = `<div class="fb">${q.hint}</div>`; tex(s); });
+    const s = li.querySelector('[data-set]'); if (s) s.addEventListener('click', () => { Object.assign(st[PARTS[pi].mode], q.set); setMode(PARTS[pi].mode); });
+    const t = li.querySelector('input[type=text]'); if (t) t.addEventListener('keydown', (e) => { if (e.key === 'Enter') check(li, q); });
+  });
+  tex($('#qs')); score();
+}
+function check(li, q) {
+  const id = li.dataset.id; let v, ok;
+  if (q.opts) { const r = li.querySelector('input[type=radio]:checked'); if (!r) return; v = +r.value; ok = v === q.a; }
+  else { v = li.querySelector('input[type=text]').value; const n = parseNum(v); if (isNaN(n)) { li.querySelector('.fb-slot').innerHTML = '<div class="fb bad">Entrez une valeur numérique (virgule acceptée).</div>'; return; } ok = Math.abs(n - q.a) <= q.tol; }
+  const prev = answers[id] || {}, tries = (prev.tries || 0) + 1;
+  const fb = ok ? `<div class="fb ok"><b>Correct.</b> ${q.ex}</div>` : `<div class="fb bad"><b>À revoir.</b> ${tries >= 2 ? q.ex : (q.hint ? 'Utilisez le coup de pouce, vérifiez les unités puis réessayez.' : 'Relisez la situation et réessayez.')}</div>`;
+  answers[id] = { v, ok: ok || prev.ok, tries, fb, first: prev.first ?? ok }; store.set('ans', answers);
+  const slot = li.querySelector('.fb-slot'); slot.innerHTML = fb; tex(slot); li.classList.toggle('done', !!answers[id].ok); score();
+}
+function score() { /* pas de score */ }
+$('#loadPart').addEventListener('click', loadPart);
+
+/* ---------- mission éclairage ---------- */
+const mystStats = store.get('myst', { n: 0, ok: 0 });
+const POSTES = [['établi de câblage de l\'atelier électrique', 500], ['poste de contrôle des relais de protection', 750], ['bureau de la salle de commande', 500], ['magasin de pièces détachées', 300]];
+const LOCAUX = [['local des pompes d\'alimentation de secours', 200], ['atelier de maintenance mécanique', 500], ['salle des onduleurs', 200], ['couloir technique du bâtiment électrique', 100]];
+let myst = null;
+function newMyst() {
+  const r = (a, b) => a + Math.random() * (b - a), pick = (t) => t[Math.floor(Math.random() * t.length)];
+  const [pn, Ep] = pick(POSTES), I = Math.round(r(Ep * 1.6, Ep * 4.5) / 50) * 50, plan = 0.85;
+  const [ln, El] = pick(LOCAUX), L = Math.round(r(8, 30)), W = Math.round(r(5, 15)), F = Math.round(r(3, 9)) * 1000, P = Math.round(F / r(115, 150)), U = Math.round(r(0.45, 0.7) * 100) / 100, M = 0.8;
+  const h = Math.sqrt(I / Ep), n = Math.ceil(El * L * W / (F * U * M - 1e-9));
+  myst = { pn, Ep, I, plan, h, fix: h + plan, ln, El, L, W, F, P, U, M, n, Ptot: n * P };
+  $('#mystInfo').innerHTML = `<p style="margin:0 0 8px"><b>1. Poste de travail</b> — ${pn} : éclairement exigé <b>${Ep} lx</b>. Luminaire d'intensité <b>I = ${I} cd</b> vers le bas. Plan de travail à ${fmt(plan, 2)} m du sol.</p>
+    <p style="margin:0"><b>2. Local</b> — ${ln} : ${L} m × ${W} m, éclairement moyen exigé <b>${El} lx</b>. Luminaires de <b>${fmt(F, 0)} lm</b> et <b>${P} W</b>, facteur d'utilisation U = ${fmt(U, 2)}, facteur de maintenance M = 0,8.</p>`;
+  $('#mystFb').innerHTML = ''; ['#mH', '#mF', '#mN', '#mP'].forEach((s) => { $(s).value = ''; });
+}
+$('#newMyst').addEventListener('click', newMyst);
+$('#solMyst').addEventListener('click', () => { if (!myst) return; const m = myst;
+  $('#mystFb').innerHTML = `<div class="fb ok" style="margin:0">h = √(I / E) = √(${m.I} / ${m.Ep}) = ${fmt(m.h, 2)} m ; fixation à ${fmt(m.plan, 2)} + ${fmt(m.h, 2)} = ${fmt(m.fix, 2)} m du sol.<br>n = E·S / (Φ·U·M) = ${m.El} × ${m.L * m.W} / (${m.F} × ${fmt(m.U, 2)} × 0,8) = ${fmt(m.El * m.L * m.W / (m.F * m.U * m.M), 2)} → ${m.n} luminaires ; puissance totale ${m.n} × ${m.P} = ${fmt(m.Ptot, 0)} W.</div>`; });
+$('#mystForm').addEventListener('submit', (e) => {
+  e.preventDefault(); if (!myst) { newMyst(); return; } const m = myst, rows = [];
+  const line = (lbl, ok) => { rows.push(`<div class="fb ${ok ? 'ok' : 'bad'}" style="margin:0 0 6px">${lbl} : ${ok ? 'correct' : 'à revoir'}</div>`); return ok; };
+  const near = (s, v, t) => { const x = parseNum($(s).value); return !isNaN(x) && Math.abs(x - v) <= t; };
+  let all = line('Distance h', near('#mH', m.h, Math.max(0.02, 0.02 * m.h)));
+  all = line('Hauteur de fixation', near('#mF', m.fix, Math.max(0.02, 0.02 * m.fix))) && all;
+  all = line('Nombre de luminaires (entier supérieur)', near('#mN', m.n, 0.01)) && all;
+  all = line('Puissance totale', near('#mP', m.Ptot, 0.01 * m.Ptot + 0.5)) && all;
+  mystStats.n++; if (all) mystStats.ok++; store.set('myst', mystStats);
+  $('#mystFb').innerHTML = rows.join('');
+});
+
+/* ---------- onglets ---------- */
+document.querySelectorAll('.tab').forEach((t) => t.addEventListener('click', () => {
+  document.querySelectorAll('.tab').forEach((x) => x.setAttribute('aria-selected', x === t));
+  $('#pane-q').hidden = t.id !== 'tab-q'; $('#pane-m').hidden = t.id !== 'tab-m';
+  if (t.id === 'tab-m' && !myst) newMyst();
+}));
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', () => draw());
+window.addEventListener('load', () => tex(document.body));
+
+renderPart(); loadPart();
+})();
+</script>
+
+</body>
+</html>

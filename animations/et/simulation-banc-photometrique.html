@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Simulation banc photométrique</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout : un « banc de mesure » — enregistreur à gauche, pupitre de réglage à droite, cahier de questions dessous. */
+:root{
+  --bg:#f3f5f8; --panel:#ffffff; --ink:#16202e; --muted:#5b6778; --line:#d5dce6; --grid:#e7ecf2;
+  --trace:#d4561c; --input:#2f6fd6; --mark:#2f6fd6; --band:rgba(47,111,214,.10); --ok:#1f8a4c; --okbg:#e6f5ec; --bad:#b4372b; --badbg:#fbeceb;
+  --chip:#eef2f7; --accent:#d4561c;
+  --f-display:"IBM Plex Sans Condensed","Arial Narrow",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f141b; --panel:#171e28; --ink:#e6ebf2; --muted:#9aa6b6; --line:#2a3442; --grid:#202a36;
+  --trace:#ff8a4c; --input:#6ea2ff; --mark:#6ea2ff; --band:rgba(110,162,255,.13); --ok:#5fd08f; --okbg:#15301f; --bad:#ff8173; --badbg:#3a1b18;
+  --chip:#202a36; --accent:#ff8a4c; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#0f141b; --panel:#171e28; --ink:#e6ebf2; --muted:#9aa6b6; --line:#2a3442; --grid:#202a36;
+  --trace:#ff8a4c; --input:#6ea2ff; --mark:#6ea2ff; --band:rgba(110,162,255,.13); --ok:#5fd08f; --okbg:#15301f; --bad:#ff8173; --badbg:#3a1b18;
+  --chip:#202a36; --accent:#ff8a4c; color-scheme:dark }
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5}
+.wrap{max-width:1240px;margin:0 auto;padding-inline:16px;padding-block:18px 40px;display:flex;flex-direction:column;gap:16px}
+header{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 20px}
+h1{font-family:var(--f-display);font-weight:700;font-size:clamp(1.5rem,3vw,2rem);margin:0;letter-spacing:.01em;text-wrap:balance}
+.eyebrow{font-family:var(--f-mono);font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.bench{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:16px;align-items:start}
+@media (max-width:900px){.bench{grid-template-columns:minmax(0,1fr)}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px}
+.scope{padding:12px 12px 8px;min-width:0;display:flex;flex-direction:column;gap:8px}
+.scope-top{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}
+.readout{font-family:var(--f-mono);font-size:.85rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.readout b{color:var(--ink);font-weight:500}
+svg#plot{width:100%;height:auto;display:block;touch-action:none;cursor:crosshair;border-radius:6px}
+svg#plot:focus-visible{outline:2px solid var(--mark);outline-offset:2px}
+.pins{display:flex;flex-wrap:wrap;gap:6px}
+.pin{font-family:var(--f-mono);font-size:.78rem;background:var(--chip);border-radius:999px;padding:3px 6px 3px 10px;display:inline-flex;gap:6px;align-items:center;font-variant-numeric:tabular-nums}
+.pin button{border:0;background:none;color:var(--muted);cursor:pointer;font-size:.9rem;padding:0 4px;line-height:1}
+.hint{font-size:.82rem;color:var(--muted)}
+.panel{padding:14px;display:flex;flex-direction:column;gap:14px;position:relative}
+.panel h2,.notebook h2{font-family:var(--f-display);font-size:1.05rem;margin:0;font-weight:600;letter-spacing:.02em}
+.group{display:flex;flex-direction:column;gap:8px}
+.lbl{font-size:.72rem;font-family:var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+select,input[type=text]{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:6px 8px;width:100%}
+input[type=text]{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line);border-radius:7px;overflow:hidden}
+.seg button{font:inherit;font-size:.82rem;padding:6px 4px;border:0;background:transparent;color:var(--ink);cursor:pointer;line-height:1.2}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed=true]{background:var(--ink);color:var(--panel)}
+.slider{display:grid;grid-template-columns:1fr auto;gap:2px 8px;align-items:center}
+.slider label{font-size:.88rem}
+.slider output{font-family:var(--f-mono);font-size:.85rem;font-variant-numeric:tabular-nums}
+.slider input{grid-column:1/-1;width:100%;accent-color:var(--accent)}
+.checks{display:grid;grid-template-columns:1fr 1fr;gap:4px 10px}
+.checks label{font-size:.85rem;display:flex;gap:6px;align-items:flex-start;cursor:pointer}
+.checks input{accent-color:var(--mark);margin-top:3px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.stat{background:var(--chip);border-radius:6px;padding:6px 8px}
+.stat .k{font-size:.7rem;color:var(--muted);font-family:var(--f-mono)}
+.stat .v{font-family:var(--f-mono);font-size:.9rem;font-variant-numeric:tabular-nums}
+.btn{font:inherit;font-size:.88rem;font-weight:500;border:1px solid var(--ink);background:var(--ink);color:var(--panel);border-radius:7px;padding:7px 12px;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+.btn:focus-visible,.seg button:focus-visible,.tab:focus-visible{outline:2px solid var(--mark);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.locked{position:absolute;inset:0;background:var(--panel);border-radius:10px;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;font-size:.95rem}
+.notebook{padding:0;overflow:hidden}
+.tabs{display:flex;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+.tab{font:inherit;font-family:var(--f-display);font-weight:600;font-size:.98rem;padding:12px 16px;border:0;background:none;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-1px}
+.tab[aria-selected=true]{color:var(--ink);border-bottom-color:var(--accent)}
+.tabpanel{padding:16px}
+.parts{display:flex;flex-wrap:wrap;gap:6px;align-items:center;justify-content:space-between}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:.85rem;padding:5px 12px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer}
+.chip[aria-pressed=true]{background:var(--ink);color:var(--panel);border-color:var(--ink)}
+.score{font-family:var(--f-mono);font-size:.85rem}
+.situ{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;background:var(--chip);border-radius:8px;padding:10px 12px;margin-block:12px}
+.situ p{margin:0;max-width:75ch}
+ol.qs{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.q{border:1px solid var(--line);border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:8px}
+.q .qt{display:flex;gap:10px}
+.q .n{font-family:var(--f-mono);font-size:.8rem;color:var(--muted);min-width:2.2em;padding-top:2px}
+.q .ans{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding-left:calc(2.2em + 10px)}
+.q .ans input[type=text]{width:9em}
+.q .unit{font-family:var(--f-mono);font-size:.85rem;color:var(--muted)}
+.opts{display:flex;flex-direction:column;gap:4px;width:100%}
+.opts label{display:flex;gap:8px;align-items:flex-start;font-size:.92rem;cursor:pointer}
+.fb{margin-left:calc(2.2em + 10px);border-radius:6px;padding:8px 10px;font-size:.9rem}
+.fb.ok{background:var(--okbg);color:var(--ink);border-left:3px solid var(--ok)}
+.fb.bad{background:var(--badbg);color:var(--ink);border-left:3px solid var(--bad)}
+.q.done{border-color:color-mix(in srgb,var(--ok) 45%,var(--line))}
+.linkbtn{font:inherit;font-size:.82rem;border:0;background:none;color:var(--mark);cursor:pointer;padding:0;text-decoration:underline}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+@media (max-width:760px){.grid2{grid-template-columns:minmax(0,1fr)}}
+table.pts{border-collapse:collapse;font-family:var(--f-mono);font-size:.85rem;font-variant-numeric:tabular-nums;width:100%}
+table.pts th,table.pts td{border-bottom:1px solid var(--line);padding:4px 8px;text-align:right}
+table.pts th{color:var(--muted);font-weight:500}
+.tablewrap{overflow-x:auto}
+.recap{margin-top:20px;border-top:1px solid var(--line);padding-top:16px;display:flex;flex-direction:column;gap:10px}
+#recap{margin:0;background:var(--chip);border-radius:8px;padding:12px 14px;font-family:var(--f-mono);font-size:.85rem;white-space:pre-wrap;overflow-x:auto;font-variant-numeric:tabular-nums}
+.form{display:grid;grid-template-columns:auto 1fr auto;gap:8px 10px;align-items:center;max-width:460px}
+.form label{font-size:.9rem}
+.small{font-size:.82rem;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body style="margin:0">
+<style>
+.modes{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line);border-radius:7px;overflow:hidden}
+.modes button{font:inherit;font-size:.8rem;padding:7px 4px;border:0;background:transparent;color:var(--ink);cursor:pointer;line-height:1.2}
+.modes button+button{border-left:1px solid var(--line)}
+.modes button[aria-pressed=true]{background:var(--ink);color:var(--panel)}
+svg text{font-family:var(--f-mono);font-size:12px;fill:var(--muted)}
+svg .axis{stroke:var(--ink);stroke-width:1}
+svg .lbl2{fill:var(--ink);font-size:13px}
+svg .big{fill:var(--ink);font-size:26px;font-weight:500}
+svg .pt{cursor:pointer}
+.chk{display:flex;gap:6px;align-items:center;font-size:.88rem;cursor:pointer}
+.chk input{accent-color:var(--mark)}
+.fine{display:flex;gap:6px;align-items:center}
+.fine button{font:inherit;font-family:var(--f-mono);font-size:.8rem;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:6px;padding:3px 8px;cursor:pointer}
+table.pts td:first-child,table.pts th:first-child{text-align:left}
+.consigne{background:var(--chip);border-radius:8px;padding:10px 12px;margin:0}
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <div class="eyebrow">BTS Électrotechnique · Physique industrielle · Lumière et photométrie · Activité 3</div>
+      <h1>Banc photométrique</h1>
+    </div>
+    <div class="hint">Choisissez le poste indiqué par l'activité. Réglez le pupitre, attendez que l'affichage du luxmètre se stabilise, puis notez vos relevés sur votre feuille. Le bouton « Noter » garde une trace des valeurs à l'écran.</div>
+  </header>
+
+  <section class="bench">
+    <div class="card scope">
+      <div class="scope-top">
+        <div class="readout" id="readout"></div>
+        <div class="row"><button class="btn ghost" id="clear" type="button">Effacer les relevés</button></div>
+      </div>
+      <svg id="view" viewBox="0 0 820 480" role="img" aria-label="Banc de mesure" tabindex="0"></svg>
+      <div class="pins" id="pins"></div>
+    </div>
+
+    <aside class="card panel">
+      <div class="group">
+        <span class="lbl">Poste</span>
+        <div class="modes" role="group" aria-label="Poste">
+          <button type="button" data-p="1">1 · Distance</button>
+          <button type="button" data-p="2">2 · Lampes</button>
+          <button type="button" data-p="3">3 · Établi</button>
+        </div>
+        <p class="consigne small" id="consigne"></p>
+      </div>
+      <div class="group" id="ctrl"></div>
+      <div class="stats" id="stats"></div>
+    </aside>
+  </section>
+
+  <section class="card notebook">
+    <div class="tabpanel">
+      <h2 style="margin-top:0">Relevés notés</h2>
+      <div class="tablewrap"><table class="pts" id="tab"></table></div>
+      <p class="small">Ces relevés restent sur cette page (ils ne sont pas transmis). Recopiez-les dans le tableau de l'activité : c'est votre feuille qui fait foi.</p>
+    </div>
+  </section>
+</div>
+
+<script>
+(() => {
+'use strict';
+const $ = (s) => document.querySelector(s);
+const fmt = (v, d = 2) => { if (!isFinite(v)) return '—'; const r = Math.round(v * 10 ** d) / 10 ** d; return r.toLocaleString('fr-FR', { maximumFractionDigits: d, minimumFractionDigits: 0 }); };
+const css = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const store = { get(k, d) { try { const v = localStorage.getItem('bp-' + k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem('bp-' + k, JSON.stringify(v)); } catch (e) {} } };
+
+/* ---------------- modèle physique ---------------- */
+const LAMPS = {
+  hal: { n: 'Halogène 42 W – 630 lm (fabricant)', I: 49.0, P: 41.6, warm: 0 },
+  cfl: { n: 'Fluocompacte 12 W – 650 lm (fabricant)', I: 49.5, P: 11.8, warm: 12 },
+  led: { n: 'DEL 8,5 W – 806 lm (fabricant)', I: 61.0, P: 8.3, warm: 0 },
+};
+const AMB_OFF = 3, AMB_ON = 350, GEN = 150, I_LUM = 900;
+const st = { p: 1,
+  p1: { d: 0.5, a: 0, lamp: true, salle: false, ombre: false },
+  p2: { lamp: 'led', d: 0.5, on: true, t0: 0 },
+  p3: { h: 1.0, gen: true, pt: 4, ombre: false },
+  notes: store.get('notes', []) };
+let jitter = 0, tick = 0;
+
+function warmFactor() { const L = LAMPS[st.p2.lamp]; if (!L.warm || !st.p2.on) return 1; const t = (performance.now() - st.p2.t0) / 1000; return 1 - 0.45 * Math.exp(-t / L.warm); }
+function E1() { const o = st.p1; let e = o.lamp ? 61 * Math.cos(o.a * Math.PI / 180) / o.d ** 2 : 0; if (o.ombre) e *= 0.4; return e + (o.salle ? AMB_ON : AMB_OFF); }
+function E2() { const o = st.p2, L = LAMPS[o.lamp]; return (o.on ? L.I * warmFactor() / o.d ** 2 : 0) + AMB_OFF; }
+function P2() { const o = st.p2, L = LAMPS[o.lamp]; return o.on ? L.P * (L.warm ? 0.95 + 0.05 * warmFactor() : 1) : 0; }
+const GRID = []; [-0.3, 0, 0.3].forEach((y) => [-0.6, 0, 0.6].forEach((x) => GRID.push([x, y])));
+function E3(i) { const o = st.p3, [x, y] = GRID[i], r2 = o.h ** 2 + x * x + y * y; let e = I_LUM * o.h ** 2 / r2 ** 2; if (o.ombre) e *= 0.35; return e + (o.gen ? GEN : AMB_OFF); }
+const display = (E) => { const v = E * (1 + 0.006 * jitter) + 0.6 * jitter; return Math.max(0, Math.round(v)); };
+
+/* ---------------- pupitre ---------------- */
+const CONS = {
+  1: 'Lampe DEL sur le banc gradué, cellule du luxmètre face à la lampe. Réglez la distance d (du centre de l\'ampoule à la cellule) et l\'inclinaison de la cellule.',
+  2: 'Choisissez une lampe : le wattmètre indique la puissance absorbée P, le luxmètre l\'éclairement à la distance d. Après un changement de lampe, attendez la stabilisation.',
+  3: 'Établi de 1,60 m × 0,80 m vu de dessus. Le luminaire (I = 900 cd vers le bas) est au-dessus du centre, à la hauteur h du plan de travail. Cliquez sur un point du maillage pour y poser la cellule.',
+};
+const slider = (k, lab, unit, min, max, step, val, dec = 2) => `
+  <div class="slider"><label for="s-${k}">${lab}</label><output id="o-${k}">${fmt(val, dec)} ${unit}</output>
+  <input type="range" id="s-${k}" data-k="${k}" data-u="${unit}" data-dec="${dec}" min="${min}" max="${max}" step="${step}" value="${val}"></div>
+  <div class="fine"><button type="button" data-k="${k}" data-d="-${step}">− ${fmt(step, 3)}</button><button type="button" data-k="${k}" data-d="${step}">+ ${fmt(step, 3)}</button></div>`;
+const chk = (k, lab, v) => `<label class="chk"><input type="checkbox" data-c="${k}" ${v ? 'checked' : ''}> ${lab}</label>`;
+function build() {
+  const p = st.p, o = st['p' + p]; let h = '';
+  if (p === 1) h = slider('d', 'Distance lampe – cellule d', 'm', 0.2, 1.5, 0.01, o.d) + slider('a', 'Inclinaison de la cellule', '°', 0, 90, 15, o.a, 0)
+    + chk('lamp', 'Lampe allumée', o.lamp) + chk('salle', 'Éclairage de la salle allumé (stores levés)', o.salle) + chk('ombre', 'L\'opérateur se penche au-dessus de la cellule', o.ombre);
+  else if (p === 2) h = `<label class="small" for="s-lamp" style="margin:0">Lampe montée sur le support</label><select id="s-lamp">${Object.entries(LAMPS).map(([k, L]) => `<option value="${k}" ${k === o.lamp ? 'selected' : ''}>${L.n}</option>`).join('')}</select>`
+    + slider('d', 'Distance lampe – cellule d', 'm', 0.2, 1.5, 0.01, o.d) + chk('on', 'Lampe sous tension', o.on);
+  else h = slider('h', 'Hauteur h du luminaire au-dessus du plan de travail', 'm', 0.8, 2.5, 0.01, o.h)
+    + `<label class="small" for="s-pt" style="margin:0">Position de la cellule</label><select id="s-pt">${GRID.map((_, i) => `<option value="${i}" ${i === o.pt ? 'selected' : ''}>point ${i + 1}${i === 4 ? ' (centre, sous le luminaire)' : ''}</option>`).join('')}</select>`
+    + chk('gen', 'Éclairage général de l\'atelier allumé', o.gen) + chk('ombre', 'L\'opérateur se penche au-dessus de la cellule', o.ombre);
+  h += `<div class="row"><button class="btn" id="note" type="button">Noter le relevé</button></div>`;
+  $('#ctrl').innerHTML = h;
+  $('#ctrl').querySelectorAll('input[type=range]').forEach((r) => r.addEventListener('input', () => { o[r.dataset.k] = +r.value; $('#o-' + r.dataset.k).textContent = fmt(+r.value, +r.dataset.dec) + ' ' + r.dataset.u; draw(); }));
+  $('#ctrl').querySelectorAll('.fine button').forEach((b) => b.addEventListener('click', () => { const r = $('#s-' + b.dataset.k); const v = Math.min(+r.max, Math.max(+r.min, Math.round((+r.value + +b.dataset.d) * 1000) / 1000)); r.value = v; r.dispatchEvent(new Event('input')); }));
+  $('#ctrl').querySelectorAll('input[type=checkbox]').forEach((c) => c.addEventListener('change', () => { o[c.dataset.c] = c.checked; if (p === 2 && c.dataset.c === 'on' && c.checked) o.t0 = performance.now(); draw(); }));
+  const sl = $('#s-lamp'); if (sl) sl.addEventListener('change', () => { o.lamp = sl.value; o.on = true; o.t0 = performance.now(); build(); draw(); });
+  const sp = $('#s-pt'); if (sp) sp.addEventListener('change', () => { o.pt = +sp.value; draw(); });
+  $('#note').addEventListener('click', note);
+}
+function setPoste(p) {
+  st.p = p; document.querySelectorAll('.modes button').forEach((b) => b.setAttribute('aria-pressed', +b.dataset.p === p));
+  $('#consigne').textContent = CONS[p]; if (p === 2) st.p2.t0 = performance.now(); build(); draw(); renderNotes();
+}
+document.querySelectorAll('.modes button').forEach((b) => b.addEventListener('click', () => setPoste(+b.dataset.p)));
+
+/* ---------------- relevés ---------------- */
+function current() {
+  if (st.p === 1) { const o = st.p1; return { poste: 1, txt: `d = ${fmt(o.d, 2)} m · inclinaison ${o.a}°${o.lamp ? '' : ' · lampe éteinte'}${o.salle ? ' · salle allumée' : ''}${o.ombre ? ' · ombre' : ''}`, E: display(E1()) }; }
+  if (st.p === 2) { const o = st.p2; return { poste: 2, txt: `${LAMPS[o.lamp].n.split(' – ')[0]} · d = ${fmt(o.d, 2)} m · P = ${fmt(P2(), 1)} W`, E: display(E2()) }; }
+  const o = st.p3; return { poste: 3, txt: `h = ${fmt(o.h, 2)} m · point ${o.pt + 1}${o.gen ? ' · éclairage général' : ''}${o.ombre ? ' · ombre' : ''}`, E: display(E3(o.pt)) };
+}
+function note() { st.notes.push(current()); store.set('notes', st.notes); renderNotes(); }
+function renderNotes() {
+  const n = st.notes.filter((x) => x.poste === st.p);
+  $('#tab').innerHTML = `<tr><th>n°</th><th>Conditions (poste ${st.p})</th><th>E lu (lx)</th><th></th></tr>` + n.map((x, i) => `<tr><td>${i + 1}</td><td style="text-align:left">${x.txt}</td><td>${x.E}</td><td><button class="linkbtn" type="button" data-i="${st.notes.indexOf(x)}">supprimer</button></td></tr>`).join('');
+  $('#tab').querySelectorAll('button').forEach((b) => b.addEventListener('click', () => { st.notes.splice(+b.dataset.i, 1); store.set('notes', st.notes); renderNotes(); }));
+  $('#pins').innerHTML = n.length ? `<span class="pin">${n.length} relevé(s) noté(s) pour ce poste</span>` : '';
+}
+$('#clear').addEventListener('click', () => { st.notes = st.notes.filter((x) => x.poste !== st.p); store.set('notes', st.notes); renderNotes(); });
+
+/* ---------------- dessin ---------------- */
+const el = (t, a, txt) => `<${t} ${Object.entries(a).map(([k, v]) => `${k}="${v}"`).join(' ')}>${txt ?? ''}</${t}>`;
+const stat = (k, v) => `<div class="stat"><div class="k">${k}</div><div class="v">${v}</div></div>`;
+function luxmetre(x, y, E, sub) {
+  return el('rect', { x, y, width: 150, height: 92, rx: 10, fill: css('--chip'), stroke: css('--line') })
+    + el('text', { x: x + 75, y: y - 8, 'text-anchor': 'middle' }, 'luxmètre')
+    + el('rect', { x: x + 12, y: y + 12, width: 126, height: 50, rx: 4, fill: css('--panel'), stroke: css('--line') })
+    + el('text', { x: x + 128, y: y + 48, 'text-anchor': 'end', class: 'big' }, String(E))
+    + el('text', { x: x + 75, y: y + 80, 'text-anchor': 'middle' }, sub || 'lx · gamme auto');
+}
+function bench(d, a, on, shadow, salle, lampColor) {
+  let s = ''; const bx = (v) => 70 + v / 1.6 * 560;
+  s += el('rect', { x: 50, y: 300, width: 610, height: 14, fill: css('--line'), rx: 3 });
+  for (let k = 0; k <= 16; k++) s += el('line', { x1: bx(k / 10), x2: bx(k / 10), y1: 314, y2: k % 5 ? 320 : 326, class: 'axis' }) + (k % 5 ? '' : el('text', { x: bx(k / 10), y: 342, 'text-anchor': 'middle' }, fmt(k / 10, 1) + ' m'));
+  if (on) s += el('polygon', { points: `${bx(0) + 26},${208} ${bx(d)},${150} ${bx(d)},${290} ${bx(0) + 26},${232}`, fill: '#ffd966', opacity: 0.28 });
+  s += el('circle', { cx: bx(0), cy: 220, r: 26, fill: on ? (lampColor || '#ffd966') : css('--chip'), stroke: on ? css('--accent') : css('--line'), 'stroke-width': 2 }) + el('rect', { x: bx(0) - 4, y: 246, width: 8, height: 54, fill: css('--muted') });
+  const xc = bx(d), ang = a * Math.PI / 180;
+  s += el('line', { x1: xc - 26 * Math.sin(ang), y1: 220 - 26 * Math.cos(ang), x2: xc + 26 * Math.sin(ang), y2: 220 + 26 * Math.cos(ang), stroke: css('--ink'), 'stroke-width': 8 }) + el('rect', { x: xc - 4, y: 246, width: 8, height: 54, fill: css('--muted') });
+  if (shadow) s += el('ellipse', { cx: xc - 40, cy: 160, rx: 34, ry: 60, fill: css('--muted'), opacity: 0.45 }) + el('text', { x: xc - 40, y: 92, 'text-anchor': 'middle' }, 'opérateur penché');
+  s += el('text', { x: bx(0), y: 180, 'text-anchor': 'middle', class: 'lbl2' }, 'lampe') + el('text', { x: xc, y: 180, 'text-anchor': 'middle', class: 'lbl2' }, 'cellule');
+  s += el('line', { x1: bx(0), x2: xc, y1: 380, y2: 380, stroke: css('--ink'), 'marker-end': '' }) + el('text', { x: (bx(0) + xc) / 2, y: 372, 'text-anchor': 'middle', class: 'lbl2' }, `d = ${fmt(d, 2)} m`);
+  if (salle) s += el('text', { x: 50, y: 40, class: 'lbl2' }, '☀ salle éclairée, stores levés');
+  return s;
+}
+function draw() {
+  let s = '';
+  if (st.p === 1) {
+    const o = st.p1, E = display(E1());
+    s = bench(o.d, o.a, o.lamp, o.ombre, o.salle) + luxmetre(650, 60, E);
+    $('#stats').innerHTML = stat('Distance d', fmt(o.d, 2) + ' m') + stat('Inclinaison', o.a + '°') + stat('Lampe', o.lamp ? 'DEL 8,5 W' : 'éteinte');
+    $('#readout').textContent = 'Poste 1 · éclairement et distance';
+  } else if (st.p === 2) {
+    const o = st.p2, E = display(E2()), P = P2(), L = LAMPS[o.lamp];
+    s = bench(o.d, 0, o.on, false, false, o.lamp === 'hal' ? '#ffcf7a' : o.lamp === 'cfl' ? '#fff3c4' : '#f4f8ff') + luxmetre(650, 60, E);
+    s += el('rect', { x: 650, y: 200, width: 150, height: 92, rx: 10, fill: css('--chip'), stroke: css('--line') }) + el('text', { x: 725, y: 192, 'text-anchor': 'middle' }, 'wattmètre')
+      + el('rect', { x: 662, y: 212, width: 126, height: 50, rx: 4, fill: css('--panel'), stroke: css('--line') })
+      + el('text', { x: 778, y: 248, 'text-anchor': 'end', class: 'big' }, o.on ? fmt(P * (1 + 0.003 * jitter), 1) : '0,0') + el('text', { x: 725, y: 280, 'text-anchor': 'middle' }, 'W · puissance active');
+    const w = warmFactor();
+    $('#stats').innerHTML = stat('Lampe', L.n.split(' – ')[0]) + stat('Distance d', fmt(o.d, 2) + ' m') + stat('État', !o.on ? 'hors tension' : w < 0.985 ? 'en chauffe…' : 'stabilisée');
+    $('#readout').textContent = 'Poste 2 · comparaison des lampes';
+  } else {
+    const o = st.p3, E = display(E3(o.pt));
+    const X = (x) => 300 + x / 0.8 * 230, Y = (y) => 240 + y / 0.4 * 115;
+    s += el('rect', { x: X(-0.8), y: Y(-0.4), width: X(0.8) - X(-0.8), height: Y(0.4) - Y(-0.4), fill: '#c9a26b', opacity: 0.55, stroke: css('--ink') });
+    s += el('text', { x: X(-0.8), y: Y(-0.4) - 10, class: 'lbl2' }, 'établi vu de dessus (1,60 m × 0,80 m)');
+    // tache de lumière
+    const rad = 80 + o.h * 70;
+    s += `<defs><radialGradient id="spot"><stop offset="0" stop-color="#ffd966" stop-opacity=".75"/><stop offset="1" stop-color="#ffd966" stop-opacity="0"/></radialGradient></defs>`;
+    s += el('ellipse', { cx: X(0), cy: Y(0), rx: rad * 1.4, ry: rad, fill: 'url(#spot)' });
+    s += el('rect', { x: X(0) - 40, y: Y(0) - 8, width: 80, height: 16, fill: css('--ink'), opacity: 0.25, rx: 4 }) + el('text', { x: X(0), y: Y(0) - 14, 'text-anchor': 'middle' }, 'luminaire (au-dessus)');
+    GRID.forEach(([x, y], i) => {
+      const sel = i === o.pt;
+      s += `<g class="pt" data-i="${i}">` + el('circle', { cx: X(x), cy: Y(y), r: sel ? 13 : 9, fill: sel ? css('--ink') : css('--panel'), stroke: css('--ink'), 'stroke-width': 1.5 })
+        + el('text', { x: X(x), y: Y(y) + 4, 'text-anchor': 'middle', style: `fill:${sel ? css('--panel') : css('--ink')};font-size:11px` }, String(i + 1)) + '</g>';
+    });
+    s += el('text', { x: X(0.6), y: Y(0.4) + 26, 'text-anchor': 'middle' }, 'pas du maillage : 0,60 m × 0,30 m');
+    if (o.ombre) s += el('ellipse', { cx: X(GRID[o.pt][0]) - 30, cy: Y(GRID[o.pt][1]) - 20, rx: 40, ry: 26, fill: css('--muted'), opacity: 0.45 });
+    s += luxmetre(650, 60, E, `lx · point ${o.pt + 1}`);
+    s += el('text', { x: 650, y: 230, class: 'lbl2' }, `h = ${fmt(o.h, 2)} m`) + el('text', { x: 650, y: 252 }, o.gen ? 'éclairage général : oui' : 'éclairage général : non');
+    $('#stats').innerHTML = stat('Hauteur h', fmt(o.h, 2) + ' m') + stat('Cellule', 'point ' + (o.pt + 1)) + stat('Éclairage général', o.gen ? 'allumé' : 'éteint');
+    $('#readout').textContent = 'Poste 3 · réception de l\'éclairage de l\'établi';
+  }
+  $('#view').innerHTML = s;
+  $('#view').querySelectorAll('.pt').forEach((g) => g.addEventListener('click', () => { st.p3.pt = +g.dataset.i; build(); draw(); }));
+}
+// fluctuation de l'affichage (≈ 2 mesures par seconde)
+setInterval(() => { tick++; jitter = (Math.random() - 0.5) * 2; draw(); }, 500);
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', () => draw());
+setPoste(1);
+})();
+</script>
+</body>
+</html>

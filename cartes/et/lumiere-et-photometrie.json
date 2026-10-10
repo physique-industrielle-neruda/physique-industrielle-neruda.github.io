@@ -1,0 +1,66 @@
+{
+ "classe": "BTS Électrotechnique",
+ "titre": "Lumière et photométrie",
+ "cartes": [
+  {
+   "type": "Définition",
+   "recto": "Qu'est-ce qu'un photon ?",
+   "verso": "Un « grain » de lumière qui transporte une <b>énergie</b>.",
+   "origine": "Cours partie 1 – Deux modèles"
+  },
+  {
+   "type": "Définition",
+   "recto": "Que mesure l'IRC d'une source ?",
+   "verso": "Sa capacité à <b>restituer fidèlement les couleurs</b>.",
+   "origine": "Cours partie 2 – Rendu des couleurs"
+  },
+  {
+   "type": "Définition",
+   "recto": "Qu'est-ce que la température de couleur ?",
+   "verso": "La température du corps chaud qui donnerait la <b>même teinte</b>.",
+   "origine": "Cours partie 1 – Température de couleur"
+  },
+  {
+   "type": "Formule",
+   "recto": "Compléter : $\\lambda = \\dfrac{\\dots}{f}$",
+   "verso": "$\\lambda = \\dfrac{c}{f}$",
+   "origine": "Cours partie 1 – Longueur d'onde"
+  },
+  {
+   "type": "Formule",
+   "recto": "Compléter : $E = \\dfrac{\\Phi}{\\dots}$",
+   "verso": "$E = \\dfrac{\\Phi}{S}$ (surface éclairée)",
+   "origine": "Cours partie 2 – Éclairement"
+  },
+  {
+   "type": "Unité",
+   "recto": "Unité de l'éclairement ?",
+   "verso": "Le <b>lux</b> (lx).",
+   "origine": "Cours partie 2 – Éclairement"
+  },
+  {
+   "type": "Ordre de grandeur",
+   "recto": "Limites du domaine visible ?",
+   "verso": "De <b>400 nm</b> à <b>800 nm</b>.",
+   "origine": "Cours partie 1 – Domaines"
+  },
+  {
+   "type": "Sens physique",
+   "recto": "On double la distance à la source : l'éclairement… ?",
+   "verso": "Est <b>divisé par 4</b>.",
+   "origine": "Activité 3 – Partie A"
+  },
+  {
+   "type": "Sens physique",
+   "recto": "Photon UV ou photon rouge : lequel transporte le plus d'énergie ?",
+   "verso": "Le photon <b>UV</b> (longueur d'onde plus courte).",
+   "origine": "Cours partie 1 – Énergie d'un photon"
+  },
+  {
+   "type": "Calcul mental",
+   "recto": "Lampe de 10 W qui émet 1 000 lm : efficacité lumineuse ?",
+   "verso": "<b>100 lm/W</b>",
+   "origine": "Cours partie 2 – Efficacité lumineuse"
+  }
+ ]
+}
