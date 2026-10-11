@@ -246,8 +246,10 @@ function paneCorriges(c){
     });
   };
   render({});
-  unsub = onSnapshot(query(collection(db, "deblocages"), where("classe", "==", c.id)), snap => {
-    const counts = {}; snap.forEach(x => { const v = x.data(); counts[v.doc] = (counts[v.doc] || 0) + 1; }); render(counts);
+  // Un élève inscrit dans deux classes (cours dans l'une, TP dans l'autre) : son déblocage compte dans les deux listes
+  const mesUid = new Set((c.eleves || []).filter(e => e.uid).map(e => e.uid));
+  unsub = onSnapshot(collection(db, "deblocages"), snap => {
+    const counts = {}; snap.forEach(x => { const v = x.data(); if (mesUid.has(v.uid)) counts[v.doc] = (counts[v.doc] || 0) + 1; }); render(counts);
   }, e => toast("Lecture impossible : " + e.code));
 }
 
@@ -290,8 +292,9 @@ function docEleves(cid, d){
   $("#all").onclick = () => bulk(true);
   $("#none").onclick = () => { if (confirm("Verrouiller ce corrigé pour toute la classe ?")) bulk(false); };
   paint();
-  unsub = onSnapshot(query(collection(db, "deblocages"), where("doc", "==", d.corrige.id), where("classe", "==", cid)), snap => {
-    on = new Set(); snap.forEach(x => on.add(x.data().uid)); paint();
+  const mesUid = new Set(el.map(e => e.uid));
+  unsub = onSnapshot(query(collection(db, "deblocages"), where("doc", "==", d.corrige.id)), snap => {
+    on = new Set(); snap.forEach(x => { const u = x.data().uid; if (mesUid.has(u)) on.add(u); }); paint();
   }, e => toast("Lecture impossible : " + e.code));
 }
 
