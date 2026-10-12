@@ -393,72 +393,72 @@
       {
        "titre": "Prérequis",
        "type": "Fiche",
-       "fichier": "adeb8c776e4e4c14d3e19e63.bin",
-       "taille": 121263,
+       "fichier": "902b03beb79360cf199a8103.bin",
+       "taille": 122445,
        "pages": 3,
        "rubrique": "Pour commencer"
       },
       {
        "titre": "l'essentiel du chapitre",
        "type": "Cours",
-       "fichier": "6e577eafee4fe972207ce03a.bin",
-       "taille": 850136,
+       "fichier": "96f098e4ff02bbca0448cac2.bin",
+       "taille": 850172,
        "pages": 10,
        "rubrique": "Cours"
       },
       {
        "titre": "activité 1. spectres et sources lumineuses du hall turbine",
        "type": "Activité",
-       "fichier": "ddd139f98ccdeaed92f0f912.bin",
-       "taille": 342953,
+       "fichier": "04a979bdb4a6cbe82cd2a31a.bin",
+       "taille": 343686,
        "pages": 5,
        "rubrique": "Activités"
       },
       {
        "titre": "activité 1. spectres et sources lumineuses du hall turbine - coups de pouce",
        "type": "Activité",
-       "fichier": "f3da31e2e77f90fb596ad66c.bin",
-       "taille": 75690,
+       "fichier": "ffdaceed9866cef5dfdf558f.bin",
+       "taille": 76103,
        "pages": 1,
        "rubrique": "Activités"
       },
       {
        "titre": "activité 2. relamping de la salle des machines",
        "type": "Activité",
-       "fichier": "9e1890089ca3117db517d2ae.bin",
-       "taille": 336242,
+       "fichier": "1e32551a9cfec3da31b141cb.bin",
+       "taille": 336975,
        "pages": 5,
        "rubrique": "Activités"
       },
       {
        "titre": "activité 2. relamping de la salle des machines - coups de pouce",
        "type": "Activité",
-       "fichier": "5781eb22dfab06958955a21e.bin",
-       "taille": 78696,
+       "fichier": "4aaa7571e467046ab927ea1e.bin",
+       "taille": 79513,
        "pages": 1,
        "rubrique": "Activités"
       },
       {
        "titre": "activité 3. contrôle de l'éclairement au luxmètre",
        "type": "Activité",
-       "fichier": "8cebdc7f73c66a7267ce7bbe.bin",
-       "taille": 222316,
-       "pages": 4,
+       "fichier": "dc615ee3b1accc402eabf9ff.bin",
+       "taille": 226435,
+       "pages": 5,
        "rubrique": "Activités"
       },
       {
        "titre": "activité 3. contrôle de l'éclairement au luxmètre - coups de pouce",
        "type": "Activité",
-       "fichier": "96df9e064d661fb4f5190ada.bin",
-       "taille": 72911,
+       "fichier": "a5671711a578381c79cc2b3f.bin",
+       "taille": 76581,
        "pages": 1,
        "rubrique": "Activités"
       },
       {
        "titre": "fiche animation à compléter",
        "type": "Fiche",
-       "fichier": "e9b8c4ec3ea04c08bbf59443.bin",
-       "taille": 165546,
+       "fichier": "6ace609e5500d03ba2ba3434.bin",
+       "taille": 162144,
        "pages": 3,
        "rubrique": "Animation"
       },
@@ -477,8 +477,8 @@
       {
        "titre": "Exercice 1",
        "type": "Exercices",
-       "fichier": "0e5fa7f4e43cbdc5bd8541c3.bin",
-       "taille": 144511,
+       "fichier": "11203125a8bfd251bc0cf0ff.bin",
+       "taille": 139308,
        "pages": 2,
        "rubrique": "Exercices"
       },
@@ -541,8 +541,8 @@
       {
        "titre": "bilan",
        "type": "Fiche",
-       "fichier": "528408a31113b7081841fec5.bin",
-       "taille": 111651,
+       "fichier": "d7457d05183c2cf0a2e4875f.bin",
+       "taille": 107919,
        "pages": 2,
        "rubrique": "Réviser"
       },

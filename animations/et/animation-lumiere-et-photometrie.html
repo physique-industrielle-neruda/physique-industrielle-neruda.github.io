@@ -518,7 +518,7 @@ $('#loadPart').addEventListener('click', loadPart);
 /* ---------- mission éclairage (guidée, sans le banc) ---------- */
 const POSTES = [['établi de câblage de l\'atelier électrique', 500], ['poste de contrôle des relais de protection', 750], ['bureau de la salle de commande', 500], ['magasin de pièces détachées', 300]];
 const LOCAUX = [['local des pompes d\'alimentation de secours', 200], ['atelier de maintenance mécanique', 500], ['salle des onduleurs', 200], ['couloir technique du bâtiment électrique', 100]];
-const FIXE = { pn: 'établi de câblage de l\'atelier électrique', Ep: 500, I: 1500, ln: 'salle des onduleurs', El: 200, L: 12, W: 8, F: 6000, P: 45, U: 0.6 };
+const FIXE = { pn: 'comptoir du magasin de pièces détachées', Ep: 300, I: 1200, ln: 'salle des onduleurs', El: 200, L: 12, W: 8, F: 6000, P: 45, U: 0.6 };
 let myst = null, mystFixe = true;
 function build(d) {
   const plan = 0.85, M = 0.8, h2 = d.I / d.Ep, h = Math.sqrt(h2), S = d.L * d.W, Fu = d.F * d.U * M, Fn = d.El * S, nd = Fn / Fu, n = Math.ceil(nd - 1e-9);
