@@ -72,9 +72,16 @@
       {
        "titre": "TP2 hacheur 4 quadrants",
        "type": "TP",
-       "fichier": "7e53367719dff4ca5883e714.bin",
-       "taille": 1421895,
-       "pages": 20
+       "fichier": "012c36714b8ebdf530e79fc0.bin",
+       "taille": 846206,
+       "pages": 10
+      },
+      {
+       "titre": "TP2 hacheur 4 quadrants - coups de pouce",
+       "type": "TP",
+       "fichier": "c42c2b9648da96a1112fbd50.bin",
+       "taille": 88750,
+       "pages": 2
       }
      ]
     },

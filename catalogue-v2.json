@@ -72,9 +72,38 @@
       {
        "titre": "TP2 hacheur 4 quadrants",
        "type": "TP",
-       "fichier": "7e53367719dff4ca5883e714.bin",
-       "taille": 1421895,
-       "pages": 20
+       "fichier": "012c36714b8ebdf530e79fc0.bin",
+       "taille": 846206,
+       "pages": 10
+      },
+      {
+       "titre": "TP2 hacheur 4 quadrants - coups de pouce",
+       "type": "TP",
+       "fichier": "c42c2b9648da96a1112fbd50.bin",
+       "taille": 88750,
+       "pages": 2
+      },
+      {
+       "titre": "Corrigé élève TP2 hacheur 4 quadrants - préparation",
+       "type": "Corrigé",
+       "fichier": "fac24ecda0ae2e4fbca8cf40.bin",
+       "taille": 102309,
+       "pages": 2,
+       "corrige": {
+        "id": "et-le-hacheur-corrige-eleve-tp2-hacheur-4-quadrants-preparation",
+        "wk": "ypLkFOPRKi05YgjYJn90dUUKJyKXLMtJrPlCE2GmrT/K4njfNbJZHbAbASE8FgQ0dR8gGOyoQ4wmk2uu"
+       }
+      },
+      {
+       "titre": "Corrigé élève TP2 hacheur 4 quadrants - simulation et compte rendu",
+       "type": "Corrigé",
+       "fichier": "0a014afe8972ba4c1e7fbbf6.bin",
+       "taille": 717890,
+       "pages": 4,
+       "corrige": {
+        "id": "et-le-hacheur-corrige-eleve-tp2-hacheur-4-quadrants-simulation-e",
+        "wk": "NaTL8WV5CYOv/EC7/tDlnKrplTCcxhh+iA+3sMEYHzHFrLRBFVQtoW51BX+SZSKatV6H8MXeA10ULVUt"
+       }
       }
      ]
     },
