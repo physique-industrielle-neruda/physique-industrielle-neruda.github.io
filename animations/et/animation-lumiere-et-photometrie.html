@@ -111,6 +111,13 @@ table.pts th{color:var(--muted);font-weight:500}
 .form{display:grid;grid-template-columns:auto 1fr auto;gap:8px 10px;align-items:center;max-width:460px}
 .form label{font-size:.9rem}
 .small{font-size:.82rem;color:var(--muted)}
+.nobanc{background:#FBE5D6;border:2px solid #C55A11;color:#16202e;border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:.95rem}
+.nobanc b:first-child{color:#C55A11}
+.mdata{border-collapse:collapse;font-size:.9rem;margin:6px 0 10px}
+.mdata td{border:1px solid var(--line);padding:4px 10px}
+.mdata td:first-child{color:var(--muted)}
+.mtitle{font-family:var(--f-display);font-weight:600;font-size:1.02rem;margin:16px 0 4px;color:var(--ink)}
+.mrule{font-size:.88rem;background:var(--chip);border-radius:6px;padding:6px 10px;margin:4px 0 10px;display:inline-block}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head>
@@ -143,7 +150,7 @@ svg .big{fill:var(--ink);font-size:22px;font-weight:500}
   </header>
   <div class="card" style="padding:12px 16px;background:#FFF2CC;border-color:#FFD966;color:#16202e">
     <b style="color:#C55A11">COMMENT TRAVAILLER</b> — À faire <b>après le cours</b>, en autonomie (en classe ou à la maison) : <b>≈ 45 min sans les questions ★, 1 h au maximum</b>.
-    Recopie tes réponses sur la fiche animation : c'est ta trace écrite, <b>tu n'as rien à envoyer</b>. Les questions ★ et l'onglet « Mission éclairage ★ » sont facultatifs.
+    Recopie tes réponses sur la fiche animation : c'est ta trace écrite, <b>tu n'as rien à envoyer</b>. Les questions ★ et l'onglet « Mission éclairage ★ » sont facultatifs. <b>La Mission éclairage se fait sans le banc</b>, avec la calculatrice.
   </div>
 
   <section class="bench">
@@ -188,20 +195,12 @@ svg .big{fill:var(--ink);font-size:22px;font-weight:500}
     </div>
 
     <div class="tabpanel" id="pane-m" role="tabpanel" hidden>
-      <div class="grid2">
-        <div>
-          <p style="margin-top:0">Vous préparez l'éclairage d'un poste de travail puis d'un local de la centrale. Pour chaque mission tirée au hasard, calculez les grandeurs demandées, puis vérifiez. Le module « Luxmètre » et le module « Local » du banc permettent de contrôler vos résultats.</p>
-          <div class="row"><button class="btn" id="newMyst" type="button">Nouvelle mission</button><button class="btn ghost" id="solMyst" type="button">Afficher la solution</button></div>
-          <div id="mystInfo" style="margin-top:12px"></div>
-        </div>
-        <form class="mystq" id="mystForm" autocomplete="off">
-          <label for="mH">Distance luminaire – plan de travail h</label><input type="text" id="mH" inputmode="decimal"><span class="unit">m</span>
-          <label for="mF">Hauteur de fixation par rapport au sol</label><input type="text" id="mF" inputmode="decimal"><span class="unit">m</span>
-          <label for="mN">Nombre minimal de luminaires du local</label><input type="text" id="mN" inputmode="decimal"><span class="unit">—</span>
-          <label for="mP">Puissance électrique totale du local</label><input type="text" id="mP" inputmode="decimal"><span class="unit">W</span>
-          <span></span><button class="btn" type="submit">Vérifier</button><span></span>
-        </form>
-      </div>
+      <div class="nobanc"><b>⚠ CETTE PARTIE SE FAIT SANS L'ANIMATION</b><br>Le banc (en haut de la page) ne sert à rien ici : la mission se fait <b>avec ta calculatrice</b> et les formules du cours. Suis les étapes dans l'ordre, vérifie chaque résultat, puis recopie-le sur ta fiche animation (tableau « Mission éclairage ★ »).</div>
+      <div class="situ" style="display:block"><p style="margin:0 0 6px"><b>La mission.</b> Tu prépares l'éclairage de deux endroits de la centrale. Ce sont <b>deux problèmes indépendants</b> :</p>
+        <p style="margin:0">• <b>Problème 1 – Un poste de travail</b> : à quelle hauteur fixer le luminaire au-dessus de l'établi ?<br>• <b>Problème 2 – Un local</b> : combien de luminaires faut-il, et quelle puissance consomment-ils ?</p></div>
+      <div class="row" style="margin-bottom:10px"><span class="small" id="mystLbl"></span><button class="btn ghost" id="newMyst" type="button">Autre mission (entraînement)</button><button class="btn ghost" id="fixMyst" type="button" hidden>Revenir à la mission de la fiche</button></div>
+      <div id="mystBody"></div>
+      <div class="row" style="margin-top:12px"><button class="btn ghost" id="solMyst" type="button">Afficher la solution complète</button></div>
       <div id="mystFb" style="margin-top:12px"></div>
       
     </div>
@@ -516,41 +515,73 @@ function check(li, q) {
 function score() { /* pas de score */ }
 $('#loadPart').addEventListener('click', loadPart);
 
-/* ---------- mission éclairage ---------- */
-const mystStats = store.get('myst', { n: 0, ok: 0 });
+/* ---------- mission éclairage (guidée, sans le banc) ---------- */
 const POSTES = [['établi de câblage de l\'atelier électrique', 500], ['poste de contrôle des relais de protection', 750], ['bureau de la salle de commande', 500], ['magasin de pièces détachées', 300]];
 const LOCAUX = [['local des pompes d\'alimentation de secours', 200], ['atelier de maintenance mécanique', 500], ['salle des onduleurs', 200], ['couloir technique du bâtiment électrique', 100]];
-let myst = null;
-function newMyst() {
-  const r = (a, b) => a + Math.random() * (b - a), pick = (t) => t[Math.floor(Math.random() * t.length)];
-  const [pn, Ep] = pick(POSTES), I = Math.round(r(Ep * 1.6, Ep * 4.5) / 50) * 50, plan = 0.85;
-  const [ln, El] = pick(LOCAUX), L = Math.round(r(8, 30)), W = Math.round(r(5, 15)), F = Math.round(r(3, 9)) * 1000, P = Math.round(F / r(115, 150)), U = Math.round(r(0.45, 0.7) * 100) / 100, M = 0.8;
-  const h = Math.sqrt(I / Ep), n = Math.ceil(El * L * W / (F * U * M - 1e-9));
-  myst = { pn, Ep, I, plan, h, fix: h + plan, ln, El, L, W, F, P, U, M, n, Ptot: n * P };
-  $('#mystInfo').innerHTML = `<p style="margin:0 0 8px"><b>1. Poste de travail</b> — ${pn} : éclairement exigé <b>${Ep} lx</b>. Luminaire d'intensité <b>I = ${I} cd</b> vers le bas. Plan de travail à ${fmt(plan, 2)} m du sol.</p>
-    <p style="margin:0"><b>2. Local</b> — ${ln} : ${L} m × ${W} m, éclairement moyen exigé <b>${El} lx</b>. Luminaires de <b>${fmt(F, 0)} lm</b> et <b>${P} W</b>, facteur d'utilisation U = ${fmt(U, 2)}, facteur de maintenance M = 0,8.</p>`;
-  $('#mystFb').innerHTML = ''; ['#mH', '#mF', '#mN', '#mP'].forEach((s) => { $(s).value = ''; });
+const FIXE = { pn: 'établi de câblage de l\'atelier électrique', Ep: 500, I: 1500, ln: 'salle des onduleurs', El: 200, L: 12, W: 8, F: 6000, P: 45, U: 0.6 };
+let myst = null, mystFixe = true;
+function build(d) {
+  const plan = 0.85, M = 0.8, h2 = d.I / d.Ep, h = Math.sqrt(h2), S = d.L * d.W, Fu = d.F * d.U * M, Fn = d.El * S, nd = Fn / Fu, n = Math.ceil(nd - 1e-9);
+  return { ...d, plan, M, h2, h, fix: h + plan, S, Fu, Fn, nd, n, Ptot: n * d.P };
 }
+function randMyst() {
+  const r = (a, b) => a + Math.random() * (b - a), pick = (t) => t[Math.floor(Math.random() * t.length)];
+  const [pn, Ep] = pick(POSTES), [ln, El] = pick(LOCAUX), F = Math.round(r(3, 9)) * 1000;
+  return { pn, Ep, I: Math.round(r(Ep * 1.6, Ep * 4.5) / 50) * 50, ln, El, L: Math.round(r(8, 30)), W: Math.round(r(5, 15)), F, P: Math.round(F / r(115, 150)), U: Math.round(r(0.45, 0.7) * 100) / 100 };
+}
+function steps(m) {
+  return [
+    { t: 1, id: 'M1', q: 'Calcule <b>h²</b>, le carré de la distance entre le luminaire et le plan de travail.', rule: 'E = I / h²  donc  h² = I ÷ E', u: 'm²', a: m.h2, hint: `Divise l'intensité par l'éclairement : h² = ${m.I} ÷ ${m.Ep}.`, ex: `h² = ${m.I} ÷ ${m.Ep} = ${fmt(m.h2, 2)} m².` },
+    { t: 1, id: 'M2', q: 'Calcule la distance <b>h</b> entre le luminaire et le plan de travail.', rule: 'h = √(h²)', u: 'm', a: m.h, hint: `Prends la racine carrée du résultat précédent : √${fmt(m.h2, 2)}.`, ex: `h = √${fmt(m.h2, 2)} = ${fmt(m.h, 2)} m.` },
+    { t: 1, id: 'M3', q: 'Calcule la <b>hauteur de fixation</b> du luminaire, mesurée depuis le sol.', rule: 'hauteur de fixation = h + hauteur du plan de travail (0,85 m)', u: 'm', a: m.fix, hint: `Le plan de travail est à 0,85 m du sol : ajoute 0,85 m à h.`, ex: `${fmt(m.h, 2)} + 0,85 = ${fmt(m.fix, 2)} m du sol.` },
+    { t: 2, id: 'M4', q: 'Calcule la <b>surface S</b> du local.', rule: 'S = longueur × largeur', u: 'm²', a: m.S, hint: `S = ${m.L} × ${m.W}.`, ex: `S = ${m.L} × ${m.W} = ${m.S} m².` },
+    { t: 2, id: 'M5', q: 'Calcule le <b>flux lumineux nécessaire</b> sur le sol du local.', rule: 'flux nécessaire = E × S', u: 'lm', a: m.Fn, hint: `Multiplie l'éclairement exigé par la surface : ${m.El} × ${m.S}.`, ex: `${m.El} × ${m.S} = ${fmt(m.Fn, 0)} lm.` },
+    { t: 2, id: 'M6', q: 'Calcule le <b>flux utile</b> d\'un luminaire (ce qui arrive vraiment sur le sol).', rule: 'flux utile = Φ × U × M', u: 'lm', a: m.Fu, hint: `Multiplie le flux du luminaire par U et par M : ${fmt(m.F, 0)} × ${fmt(m.U, 2)} × 0,8.`, ex: `${fmt(m.F, 0)} × ${fmt(m.U, 2)} × 0,8 = ${fmt(m.Fu, 0)} lm.` },
+    { t: 2, id: 'M7', q: 'Calcule le <b>nombre de luminaires</b> (résultat avec virgule).', rule: 'n = flux nécessaire ÷ flux utile', u: '—', a: m.nd, hint: `Divise le résultat M5 par le résultat M6 : ${fmt(m.Fn, 0)} ÷ ${fmt(m.Fu, 0)}.`, ex: `n = ${fmt(m.Fn, 0)} ÷ ${fmt(m.Fu, 0)} = ${fmt(m.nd, 2)}.` },
+    { t: 2, id: 'M8', q: 'Combien de luminaires faut-il <b>installer</b> ?', rule: 'on arrondit toujours à l\'entier SUPÉRIEUR', u: '—', a: m.n, exact: true, hint: `On ne peut pas poser ${fmt(m.nd, 2)} luminaires. Avec moins, l'éclairement serait trop faible : arrondis au-dessus.`, ex: `${fmt(m.nd, 2)} → ${m.n} luminaires (arrondi à l'entier supérieur).` },
+    { t: 2, id: 'M9', q: 'Calcule la <b>puissance électrique totale</b> de l\'éclairage du local.', rule: 'P totale = nombre de luminaires × P d\'un luminaire', u: 'W', a: m.Ptot, exact: true, hint: `${m.n} luminaires de ${m.P} W chacun.`, ex: `${m.n} × ${m.P} = ${fmt(m.Ptot, 0)} W.` },
+  ];
+}
+function renderMyst() {
+  const m = myst, st = steps(m);
+  const li = (s) => `<li class="q" data-id="${s.id}"><div class="qt"><span class="n">${s.id}</span><div>${s.q}<br><span class="mrule">Formule : ${s.rule}</span></div></div>
+      <div class="ans"><input type="text" inputmode="decimal" aria-label="${s.id}"><span class="unit">${s.u}</span><button class="btn ghost" type="button" data-chk="1">Vérifier</button><button class="linkbtn" type="button" data-hint="1">Coup de pouce</button></div><div class="fb-slot"></div></li>`;
+  $('#mystLbl').textContent = mystFixe ? 'Mission de la fiche animation (à recopier)' : 'Mission d\'entraînement tirée au hasard (pas à recopier)';
+  $('#fixMyst').hidden = mystFixe;
+  $('#mystBody').innerHTML = `<div class="mtitle">Problème 1 – Le poste de travail</div>
+    <table class="mdata"><tr><td>Poste</td><td>${m.pn}</td></tr><tr><td>Éclairement exigé sur le plan de travail</td><td><b>E = ${m.Ep} lx</b></td></tr><tr><td>Intensité du luminaire vers le bas</td><td><b>I = ${fmt(m.I, 0)} cd</b></td></tr><tr><td>Hauteur du plan de travail</td><td>0,85 m au-dessus du sol</td></tr></table>
+    <ol class="qs">${st.filter((s) => s.t === 1).map(li).join('')}</ol>
+    <div class="mtitle">Problème 2 – Le local</div>
+    <table class="mdata"><tr><td>Local</td><td>${m.ln}</td></tr><tr><td>Dimensions</td><td><b>${m.L} m × ${m.W} m</b></td></tr><tr><td>Éclairement moyen exigé</td><td><b>E = ${m.El} lx</b></td></tr><tr><td>Un luminaire</td><td>flux <b>Φ = ${fmt(m.F, 0)} lm</b>, puissance <b>P = ${m.P} W</b></td></tr><tr><td>Facteur d'utilisation</td><td><b>U = ${fmt(m.U, 2)}</b> (part du flux qui arrive sur le sol)</td></tr><tr><td>Facteur de maintenance</td><td><b>M = 0,8</b> (lampes qui vieillissent, poussière)</td></tr></table>
+    <ol class="qs">${st.filter((s) => s.t === 2).map(li).join('')}</ol>`;
+  $('#mystFb').innerHTML = '';
+  document.querySelectorAll('#mystBody li.q').forEach((el) => {
+    const s = st.find((x) => x.id === el.dataset.id), slot = el.querySelector('.fb-slot'); let tries = 0;
+    const go = () => {
+      const x = parseNum(el.querySelector('input').value);
+      if (isNaN(x)) { slot.innerHTML = '<div class="fb bad">Entre une valeur numérique (virgule acceptée).</div>'; return; }
+      const ok = s.exact ? Math.abs(x - s.a) < 0.01 : Math.abs(x - s.a) <= Math.max(0.02, 0.02 * Math.abs(s.a));
+      tries++;
+      slot.innerHTML = ok ? `<div class="fb ok"><b>Correct.</b> ${s.ex}</div>` : `<div class="fb bad"><b>À revoir.</b> ${tries >= 2 ? s.ex : 'Utilise le coup de pouce, vérifie ton calcul puis réessaie.'}</div>`;
+      el.classList.toggle('done', ok);
+    };
+    el.querySelector('[data-chk]').addEventListener('click', go);
+    el.querySelector('input').addEventListener('keydown', (e) => { if (e.key === 'Enter') go(); });
+    el.querySelector('[data-hint]').addEventListener('click', () => { slot.innerHTML = `<div class="fb">${s.hint}</div>`; });
+  });
+}
+function newMyst() { myst = build(randMyst()); mystFixe = false; renderMyst(); }
+function fixMyst() { myst = build(FIXE); mystFixe = true; renderMyst(); }
 $('#newMyst').addEventListener('click', newMyst);
-$('#solMyst').addEventListener('click', () => { if (!myst) return; const m = myst;
-  $('#mystFb').innerHTML = `<div class="fb ok" style="margin:0">h = √(I / E) = √(${m.I} / ${m.Ep}) = ${fmt(m.h, 2)} m ; fixation à ${fmt(m.plan, 2)} + ${fmt(m.h, 2)} = ${fmt(m.fix, 2)} m du sol.<br>n = E·S / (Φ·U·M) = ${m.El} × ${m.L * m.W} / (${m.F} × ${fmt(m.U, 2)} × 0,8) = ${fmt(m.El * m.L * m.W / (m.F * m.U * m.M), 2)} → ${m.n} luminaires ; puissance totale ${m.n} × ${m.P} = ${fmt(m.Ptot, 0)} W.</div>`; });
-$('#mystForm').addEventListener('submit', (e) => {
-  e.preventDefault(); if (!myst) { newMyst(); return; } const m = myst, rows = [];
-  const line = (lbl, ok) => { rows.push(`<div class="fb ${ok ? 'ok' : 'bad'}" style="margin:0 0 6px">${lbl} : ${ok ? 'correct' : 'à revoir'}</div>`); return ok; };
-  const near = (s, v, t) => { const x = parseNum($(s).value); return !isNaN(x) && Math.abs(x - v) <= t; };
-  let all = line('Distance h', near('#mH', m.h, Math.max(0.02, 0.02 * m.h)));
-  all = line('Hauteur de fixation', near('#mF', m.fix, Math.max(0.02, 0.02 * m.fix))) && all;
-  all = line('Nombre de luminaires (entier supérieur)', near('#mN', m.n, 0.01)) && all;
-  all = line('Puissance totale', near('#mP', m.Ptot, 0.01 * m.Ptot + 0.5)) && all;
-  mystStats.n++; if (all) mystStats.ok++; store.set('myst', mystStats);
-  $('#mystFb').innerHTML = rows.join('');
-});
+$('#fixMyst').addEventListener('click', fixMyst);
+$('#solMyst').addEventListener('click', () => { if (!myst) return;
+  $('#mystFb').innerHTML = `<div class="fb ok" style="margin:0"><b>Solution</b><br>${steps(myst).map((s) => `${s.id} : ${s.ex}`).join('<br>')}</div>`; });
 
 /* ---------- onglets ---------- */
 document.querySelectorAll('.tab').forEach((t) => t.addEventListener('click', () => {
   document.querySelectorAll('.tab').forEach((x) => x.setAttribute('aria-selected', x === t));
   $('#pane-q').hidden = t.id !== 'tab-q'; $('#pane-m').hidden = t.id !== 'tab-m';
-  if (t.id === 'tab-m' && !myst) newMyst();
+  if (t.id === 'tab-m' && !myst) fixMyst();
 }));
 window.matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', () => draw());
 window.addEventListener('load', () => tex(document.body));
