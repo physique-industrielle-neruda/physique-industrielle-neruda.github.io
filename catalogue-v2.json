@@ -1145,6 +1145,19 @@
      "lien": "outils/wattmetre-numerique-fiwatt/simulation-wattmetre.html"
     }
    ]
+  },
+  {
+   "groupe": "Logiciels",
+   "titre": "Tableur Excel",
+   "docs": [
+    {
+     "titre": "Fiche méthode Excel - courbes et équations de droites",
+     "type": "Fiche",
+     "lien": "outils/tableur-excel/fiche-methode-excel-courbes-et-equations-de-droites-8ef3eb36.pdf",
+     "taille": 359708,
+     "pages": 3
+    }
+   ]
   }
  ],
  "version": 2,
