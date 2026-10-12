@@ -84,6 +84,17 @@
        "pages": 2
       },
       {
+       "titre": "Corrigé élève TP1 hacheur série",
+       "type": "Corrigé",
+       "fichier": "66c400b2ba2dffa91eeb91a9.bin",
+       "taille": 472014,
+       "pages": 6,
+       "corrige": {
+        "id": "et-le-hacheur-corrige-eleve-tp1-hacheur-serie",
+        "wk": "2RByc10AXUZu2ma4fUzP6ZLbFpZsFotKKesK+3WXVTBEWautxbIJ144HQTYl4pMAWPoVp/w8rVKQVpfq"
+       }
+      },
+      {
        "titre": "Corrigé élève TP2 hacheur 4 quadrants - préparation",
        "type": "Corrigé",
        "fichier": "fac24ecda0ae2e4fbca8cf40.bin",
