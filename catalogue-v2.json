@@ -445,14 +445,32 @@
       {
        "titre": "activité 3. thermographie infrarouge d'un TGBT",
        "type": "Activité",
-       "fichier": "6c2d1fa006b4fc1191102fcb.bin",
-       "taille": 215556,
+       "fichier": "4f8b4ed84d41f0d1142e88cd.bin",
+       "taille": 277005,
        "pages": 5
+      },
+      {
+       "titre": "activité 3. thermographie infrarouge d'un TGBT - coups de pouce",
+       "type": "Activité",
+       "fichier": "f58dc4b8cdfe0fa6fd601f00.bin",
+       "taille": 85314,
+       "pages": 2
       },
       {
        "titre": "animation transferts thermiques",
        "type": "Animation",
        "lien": "animations/et/animation-transferts-thermiques.html"
+      },
+      {
+       "titre": "Corrigé élève activité 3",
+       "type": "Corrigé",
+       "fichier": "3508475b913c257d65355474.bin",
+       "taille": 196342,
+       "pages": 3,
+       "corrige": {
+        "id": "et-les-transferts-thermiques-corrige-eleve-activite-3",
+        "wk": "9Ch3oyDs9UAj6Kic9SQOaCcgj5PdfjmEem2XrcB1ot7EZ6y7+e7VrR4hN1GGPmLjQ6EWx3gF2uWZFQg2"
+       }
       }
      ]
     },
