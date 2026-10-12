@@ -281,7 +281,7 @@ function renderWho(){
   if (!S.user) { w.hidden = true; return; }
   w.hidden = false;
   const grp = (CAT.groupes || []).find(g => g.id === S.groupe);
-  w.innerHTML = `<span>Connecté : <strong>${esc(S.prof ? "Professeur" : S.nom)}</strong>${grp && !S.prof ? " · " + esc(grp.nom) : ""}</span><button class="linkbtn" type="button">Se déconnecter</button>`;
+  w.innerHTML = `<span>Connecté : <strong>${esc(S.prof ? "Professeur" : S.nom)}</strong>${grp && !S.prof && !S.premium ? " · " + esc(grp.nom) : ""}</span><button class="linkbtn" type="button">Se déconnecter</button>`;
   w.querySelector("button").onclick = async () => { await signOut(auth); location.hash = ""; };
 }
 
