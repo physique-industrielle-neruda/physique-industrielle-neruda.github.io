@@ -91,6 +91,23 @@ nav.classes button[aria-pressed="true"] .n,nav.classes button[aria-pressed="true
 .chap .chev{flex:none;width:12px;height:12px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(-45deg);transition:transform .15s;margin-right:6px}
 .chap[open] .chev{transform:rotate(45deg)}
 .chap[open]>summary{border-bottom:1px solid var(--grid);border-radius:10px 10px 0 0}
+.annee{margin:18px 0 0}
+.annee>summary{list-style:none;cursor:pointer;display:flex;gap:12px;align-items:center;padding:12px 16px;border-radius:10px;
+  background:#1F3864;color:#fff}
+.annee>summary::-webkit-details-marker{display:none}
+.annee>summary:hover{filter:brightness(1.12)}
+.annee>summary .folder{flex:none;width:30px;height:25px;color:#fff}
+.annee>summary h3,.annee>summary h3 span{color:#fff}
+.annee>summary h3{flex:1;min-width:0;margin:0;display:flex;flex-direction:column;gap:2px;font-size:1.5rem;font-weight:700}
+.annee>summary .count{font-family:"Atkinson Hyperlegible",system-ui,sans-serif;font-size:.85rem;font-weight:400;opacity:.85}
+.annee>summary .moi{font-family:"Atkinson Hyperlegible",system-ui,sans-serif;font-size:.78rem;font-weight:700;
+  background:var(--accent);color:#fff;border-radius:20px;padding:2px 10px;white-space:nowrap}
+.annee>summary .chev{flex:none;width:12px;height:12px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;
+  transform:rotate(-45deg);transition:transform .15s;margin-right:6px}
+.annee[open]>summary .chev{transform:rotate(45deg)}
+.annee>.inner{padding:0 0 0 14px;border-left:3px solid #1F3864;margin-left:14px}
+@media (max-width:560px){.annee>.inner{padding-left:8px;margin-left:6px}}
+@media (prefers-reduced-motion: reduce){.annee>summary .chev{transition:none}}
 .chap ul.docs{padding:0 16px 4px}
 .chap ul.docs li:last-child{border-bottom:0}
 @media (prefers-reduced-motion: reduce){.chap .chev{transition:none}}
@@ -198,6 +215,7 @@ let CAT = null, current = null, booted = false;
 let S = { user:null, prof:false, premium:false, tous:false, nom:"", site:null, groupe:null, keys:{}, maitre:null, corr:{} };
 let unsubCorr = null, fresh = new Set();
 const opened = new Set();
+const fermes = new Set(); // dossiers d'année refermés par l'élève (sinon le sien s'ouvre tout seul)
 
 function toast(msg){ const t = $("#toast"); t.textContent = msg; t.style.display = "block"; clearTimeout(toast.t); toast.t = setTimeout(() => t.style.display = "none", 4500); }
 
@@ -365,6 +383,24 @@ function render(){
     head.innerHTML = `<h2>${esc(c.nom)}</h2><span class="status is-open">Documents ouverts</span>`;
     view.appendChild(head);
     if (!c.chapitres.length) { const p = document.createElement("p"); p.className = "empty"; p.textContent = "Aucun document pour l'instant."; view.appendChild(p); }
+    if (chaps.some(x => x.ch.annee)) {
+      // Dossiers « 1re année » / « 2e année » : celui de la classe de l'élève s'ouvre automatiquement
+      const grp = (CAT.groupes || []).find(g => g.id === S.groupe);
+      const mon = !S.prof && !S.tous && grp ? grp.annee : null;
+      const ans = [...new Set(chaps.map(x => x.ch.annee || 0))].sort();
+      ans.forEach(a => {
+        const xs = chaps.filter(x => (x.ch.annee || 0) === a);
+        const k = c.id + "/annee/" + a;
+        const box = document.createElement("details"); box.className = "annee";
+        if (q || opened.has(k) || (!fermes.has(k) && a === mon)) box.open = true;
+        const nom = a === 1 ? "1re année" : a ? a + "e année" : "Autres chapitres";
+        box.innerHTML = `<summary>${FOLDER}<h3><span>${esc(nom)}</span><span class="count">${xs.length} chapitre${xs.length > 1 ? "s" : ""}</span></h3>${a && a === mon ? '<span class="moi">Ma classe</span>' : ""}<span class="chev" aria-hidden="true"></span></summary>`;
+        box.addEventListener("toggle", () => { if (box.open) { opened.add(k); fermes.delete(k); } else { opened.delete(k); fermes.add(k); } });
+        const inner = document.createElement("div"); inner.className = "inner";
+        xs.forEach(x => { found += x.docs.length; inner.appendChild(chapBlock(c, x.ch, x.docs, !!q)); });
+        box.appendChild(inner); view.appendChild(box);
+      });
+    } else
     chaps.forEach(x => { found += x.docs.length; view.appendChild(chapBlock(c, x.ch, x.docs, !!q)); });
   }
   if (q && !found) { const p = document.createElement("p"); p.className = "empty"; p.textContent = "Aucun document ne correspond à « " + $("#q").value.trim() + " »."; view.appendChild(p); }
