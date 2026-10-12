@@ -337,72 +337,72 @@
       {
        "titre": "Prérequis",
        "type": "Fiche",
-       "fichier": "aad68368f752794f0516121d.bin",
-       "taille": 144295,
+       "fichier": "5f32bbe694f660b8ada23de5.bin",
+       "taille": 156722,
        "pages": 4,
        "rubrique": "Pour commencer"
       },
       {
        "titre": "Essentiel du chapitre",
        "type": "Cours",
-       "fichier": "cc0dc3f386bc8381970a0402.bin",
-       "taille": 713943,
+       "fichier": "6916fe481ef09a40a092642d.bin",
+       "taille": 716085,
        "pages": 8,
        "rubrique": "Cours"
       },
       {
-       "titre": "Activité 1 – Boucle 4-20 mA du pressuriseur",
+       "titre": "Activité 1 – Boucle 4-20 mA du pressuriseur du réacteur nucléaire",
        "type": "Activité",
-       "fichier": "1221c9c054cc1d1386424d61.bin",
-       "taille": 351190,
+       "fichier": "72b9d4b82fe2f0c16f3f587e.bin",
+       "taille": 349368,
        "pages": 5,
        "rubrique": "Activités"
       },
       {
-       "titre": "Activité 1 – Boucle 4-20 mA du pressuriseur - coups de pouce",
+       "titre": "Activité 1 – Boucle 4-20 mA du pressuriseur du réacteur nucléaire - coups de pouce",
        "type": "Activité",
-       "fichier": "485843a8827ff4266e0f80f0.bin",
-       "taille": 87494,
+       "fichier": "9ff9990feb01c64cb744884f.bin",
+       "taille": 90783,
        "pages": 2,
        "rubrique": "Activités"
       },
       {
        "titre": "Activité 2 – Numérisation d'une mesure de température",
        "type": "Activité",
-       "fichier": "eeddbc14e992013aca0f5db4.bin",
-       "taille": 309711,
+       "fichier": "59b3c46762a50aa5f1e9fb34.bin",
+       "taille": 314770,
        "pages": 5,
        "rubrique": "Activités"
       },
       {
        "titre": "Activité 2 – Numérisation d'une mesure de température - coups de pouce",
        "type": "Activité",
-       "fichier": "ee791c57b85d37762fadc8c8.bin",
-       "taille": 85535,
+       "fichier": "b171f2ff21fd2853c32078db.bin",
+       "taille": 89815,
        "pages": 2,
        "rubrique": "Activités"
       },
       {
        "titre": "Activité 3 – Temps de réponse et précision d'une sonde Pt100",
        "type": "Activité",
-       "fichier": "5b9f1412ab611df557d04627.bin",
-       "taille": 204123,
+       "fichier": "57bc67c9223e73462d85751e.bin",
+       "taille": 205456,
        "pages": 4,
        "rubrique": "Activités"
       },
       {
        "titre": "Activité 3 – Temps de réponse et précision d'une sonde Pt100 - coups de pouce",
        "type": "Activité",
-       "fichier": "fb15eceb5a059e0dcf377306.bin",
-       "taille": 79281,
-       "pages": 1,
+       "fichier": "c25638fce99f187bf1af948d.bin",
+       "taille": 83047,
+       "pages": 2,
        "rubrique": "Activités"
       },
       {
        "titre": "Fiche animation",
        "type": "Fiche",
-       "fichier": "7edc303056c1615f11fbc769.bin",
-       "taille": 143218,
+       "fichier": "d7bbd17729c713c26229de93.bin",
+       "taille": 150705,
        "pages": 2,
        "rubrique": "Animation"
       },
@@ -421,72 +421,72 @@
       {
        "titre": "Exercice 1",
        "type": "Exercices",
-       "fichier": "0ad533dccc56eabe2c9ba98c.bin",
-       "taille": 120142,
+       "fichier": "5745a5b6847b48fd344ac520.bin",
+       "taille": 121048,
        "pages": 1,
        "rubrique": "Exercices"
       },
       {
        "titre": "Exercice 1 - coups de pouce",
        "type": "Exercices",
-       "fichier": "8375920e1af5f40b38073f54.bin",
-       "taille": 73572,
+       "fichier": "96df7a2d026b3152e040c6b7.bin",
+       "taille": 74302,
        "pages": 1,
        "rubrique": "Exercices"
       },
       {
        "titre": "Exercice 2",
        "type": "Exercices",
-       "fichier": "8fc79f362c9badfb3b3485b6.bin",
-       "taille": 105488,
+       "fichier": "3865161c2d5810d508cc78c1.bin",
+       "taille": 105487,
        "pages": 1,
        "rubrique": "Exercices"
       },
       {
        "titre": "Exercice 2 - coups de pouce",
        "type": "Exercices",
-       "fichier": "10c8663fb7facbfbf2550087.bin",
-       "taille": 70536,
+       "fichier": "a9bc890de2af77a3f9a18c36.bin",
+       "taille": 71054,
        "pages": 1,
        "rubrique": "Exercices"
       },
       {
        "titre": "Exercice 3",
        "type": "Exercices",
-       "fichier": "17bfd84b40c9fbb2049ff778.bin",
-       "taille": 139218,
+       "fichier": "08975100511575faf1863e8f.bin",
+       "taille": 139425,
        "pages": 1,
        "rubrique": "Exercices"
       },
       {
        "titre": "Exercice 3 - coups de pouce",
        "type": "Exercices",
-       "fichier": "8a5c3a0ec4c9cd78185a58a2.bin",
-       "taille": 71614,
+       "fichier": "8578f5c72bd4ca8f093f9595.bin",
+       "taille": 71618,
        "pages": 1,
        "rubrique": "Exercices"
       },
       {
        "titre": "Exercice 4",
        "type": "Exercices",
-       "fichier": "aaa9e732cfc351a693be5165.bin",
-       "taille": 152744,
+       "fichier": "1f724d75caef7c7a13062d93.bin",
+       "taille": 153278,
        "pages": 1,
        "rubrique": "Exercices"
       },
       {
        "titre": "Exercice 4 - coups de pouce",
        "type": "Exercices",
-       "fichier": "2355f72722a66144c3c7a15c.bin",
-       "taille": 70235,
+       "fichier": "6684a375b4b62ce11aadfc86.bin",
+       "taille": 70921,
        "pages": 1,
        "rubrique": "Exercices"
       },
       {
        "titre": "Bilan",
        "type": "Fiche",
-       "fichier": "8662a0ed13b4b7e74b8803c6.bin",
-       "taille": 117248,
+       "fichier": "35675400c24e0a6ac25f84e0.bin",
+       "taille": 119061,
        "pages": 2,
        "rubrique": "Réviser"
       },
