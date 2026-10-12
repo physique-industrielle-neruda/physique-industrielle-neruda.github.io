@@ -565,8 +565,8 @@
       {
        "titre": "activité 2. relamping de la salle des machines",
        "type": "Activité",
-       "fichier": "1e32551a9cfec3da31b141cb.bin",
-       "taille": 336975,
+       "fichier": "94aeb8916512b7f87d5bb252.bin",
+       "taille": 337024,
        "pages": 5,
        "rubrique": "Activités"
       },
@@ -581,12 +581,12 @@
       {
        "titre": "Corrigé élève activité 2",
        "type": "Corrigé",
-       "fichier": "fbc15736b0ffc8af8c1146c6.bin",
-       "taille": 100545,
+       "fichier": "67800132697ebb12bbbe2819.bin",
+       "taille": 100586,
        "pages": 2,
        "corrige": {
         "id": "et-lumiere-et-photometrie-corrige-eleve-activite-2",
-        "wk": "eqtT+hDzut8LhSwl3702Q8zCs+MMiryU/v6sCNE01SEYM6hR9W3HIYRBj7wWK59BPWKjHbHjSVY3FTDs"
+        "wk": "yBy1KtL8gaTDAPqHcDiy8SAImcPXvNQ60/qwb3jhChS81JD3zt8BwvnmnGS//63QN3/kG5qlIJWEM3fP"
        },
        "rubrique": "Activités"
       },
