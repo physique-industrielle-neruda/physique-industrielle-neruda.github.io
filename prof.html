@@ -60,6 +60,12 @@ button.row:active{background:var(--bg)}
 .chev{flex:none;width:9px;height:9px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(-45deg)}
 .count{flex:none;font-variant-numeric:tabular-nums;font-weight:700;font-size:.95rem;color:var(--ink);background:var(--bg);border:1px solid var(--grid);border-radius:20px;padding:2px 10px}
 .count.full{color:var(--ok);border-color:currentColor;background:var(--ok-soft)}
+details.annee{margin:14px 0}
+details.annee>summary{cursor:pointer;list-style:none;font-weight:700;font-size:1.05rem;padding:12px 16px;background:var(--surface);border:1px solid var(--grid);border-radius:12px;display:flex;align-items:center;gap:8px}
+details.annee>summary::-webkit-details-marker{display:none}
+details.annee>summary::before{content:"▸";color:var(--muted);transition:transform .15s}
+details.annee[open]>summary::before{transform:rotate(90deg)}
+details.annee[open]>summary{margin-bottom:4px}
 .sec{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:22px 4px 0}
 .tabs{display:flex;gap:6px;margin:14px 0 4px;background:var(--surface);border:1px solid var(--grid);border-radius:10px;padding:4px}
 .tabs button{flex:1;border:0;background:none;padding:9px;border-radius:7px;font-weight:700;color:var(--muted);cursor:pointer}
@@ -234,12 +240,28 @@ function classe(id, tab){
 
 function paneCorriges(c){
   const groups = corriges(c.site), total = (c.eleves || []).filter(e => e.uid).length;
+  const ma = /(\d)\s*(?:re|ère|e|ème)\s+ann[ée]e/i.exec(c.nom || ""), monAn = ma ? +ma[1] : null, ouverts = new Set();
   if (!groups.length) { $("#pane").innerHTML = `<p class="empty">Aucun corrigé élève pour ce BTS pour l'instant.</p>`; return; }
   const render = (counts) => {
-    $("#pane").innerHTML = groups.map(g => `<p class="sec">${esc(g.ch.titre)}</p><div class="card">` + g.docs.map(d => {
+    const bloc = g => `<p class="sec">${esc(g.ch.titre)}</p><div class="card">` + g.docs.map(d => {
       const n = counts[d.corrige.id] || 0;
       return `<button class="row" data-doc="${esc(d.corrige.id)}"><span class="main"><span class="t">${esc(d.titre)}</span><span class="m">${n === total && total ? "Débloqué pour toute la classe" : n ? n + " élève" + (n>1?"s":"") + " débloqué" + (n>1?"s":"") : "Personne pour l'instant"}</span></span><span class="count${n===total&&total?" full":""}">${n}/${total}</span><span class="chev"></span></button>`;
-    }).join("") + `</div>`).join("") + (total ? "" : `<p class="note">Aucun compte élève n'est encore créé : onglet « Élèves et comptes ».</p>`);
+    }).join("") + `</div>`;
+    // Chapitres rangés par année (comme sur le site) : l'année de la classe ouverte en premier, l'autre repliée
+    const annees = [...new Set(groups.map(g => g.ch.annee).filter(Boolean))].sort();
+    let html;
+    if (!annees.length) html = groups.map(bloc).join("");
+    else {
+      const ordre = monAn ? [monAn, ...annees.filter(a => a !== monAn)] : annees;
+      const nomAn = a => a === 1 ? "1re année" : a + "e année";
+      html = ordre.map(a => {
+        const gs = groups.filter(g => g.ch.annee === a); if (!gs.length) return "";
+        const ouvert = a === monAn || ouverts.has(a);
+        return `<details class="annee" data-a="${a}"${ouvert ? " open" : ""}><summary>${nomAn(a)}${a === monAn ? ` <span class="pill ok">Ma classe</span>` : ""}</summary>${gs.map(bloc).join("")}</details>`;
+      }).join("") + groups.filter(g => !g.ch.annee).map(bloc).join("");
+    }
+    $("#pane").innerHTML = html + (total ? "" : `<p class="note">Aucun compte élève n'est encore créé : onglet « Élèves et comptes ».</p>`);
+    $("#pane").querySelectorAll("details.annee").forEach(dt => dt.ontoggle = () => { const a = +dt.dataset.a; if (a !== monAn) dt.open ? ouverts.add(a) : ouverts.delete(a); });
     $("#pane").querySelectorAll(".row").forEach(b => b.onclick = () => {
       const d = groups.flatMap(g => g.docs).find(x => x.corrige.id === b.dataset.doc);
       go(docEleves, c.id, d);
