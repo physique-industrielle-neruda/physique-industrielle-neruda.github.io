@@ -16,9 +16,9 @@
       {
        "titre": "l'essentiel du chapitre",
        "type": "Cours",
-       "fichier": "900eb893ce46c7d5a374991a.bin",
-       "taille": 1919265,
-       "pages": 15
+       "fichier": "8c5f4d67c0e56d95240f79ac.bin",
+       "taille": 1941810,
+       "pages": 16
       },
       {
        "titre": "bilan",
@@ -79,6 +79,20 @@
        "titre": "animation transferts thermiques",
        "type": "Animation",
        "lien": "animations/et/animation-transferts-thermiques.html"
+      },
+      {
+       "titre": "Exercice 3 - coups de pouce",
+       "type": "Exercices",
+       "fichier": "5f46d26c956915390015ec9b.bin",
+       "taille": 105973,
+       "pages": 2
+      },
+      {
+       "titre": "Exercice 4 - coups de pouce",
+       "type": "Exercices",
+       "fichier": "5d3745622ef00a3e58c686b2.bin",
+       "taille": 83376,
+       "pages": 1
       }
      ],
      "annee": 1
@@ -353,9 +367,9 @@
       {
        "titre": "Activité 1 – Boucle 4-20 mA du pressuriseur du réacteur nucléaire",
        "type": "Activité",
-       "fichier": "6379a57122004db4eaac84b8.bin",
-       "taille": 349394,
-       "pages": 5,
+       "fichier": "73bc4059ff7121b46fb2cc05.bin",
+       "taille": 351862,
+       "pages": 6,
        "rubrique": "Activités"
       },
       {
@@ -369,8 +383,8 @@
       {
        "titre": "Activité 2 – Numérisation d'une mesure de température",
        "type": "Activité",
-       "fichier": "59b3c46762a50aa5f1e9fb34.bin",
-       "taille": 314770,
+       "fichier": "324683483cf6d49905f36072.bin",
+       "taille": 316708,
        "pages": 5,
        "rubrique": "Activités"
       },
@@ -385,8 +399,8 @@
       {
        "titre": "Activité 3 – Temps de réponse et précision d'une sonde Pt100",
        "type": "Activité",
-       "fichier": "57bc67c9223e73462d85751e.bin",
-       "taille": 205456,
+       "fichier": "de99d8e70de908f73cb810b8.bin",
+       "taille": 207367,
        "pages": 4,
        "rubrique": "Activités"
       },
@@ -421,8 +435,8 @@
       {
        "titre": "Exercice 1",
        "type": "Exercices",
-       "fichier": "5745a5b6847b48fd344ac520.bin",
-       "taille": 121048,
+       "fichier": "853e7372f81377d3e8538810.bin",
+       "taille": 121851,
        "pages": 1,
        "rubrique": "Exercices"
       },
@@ -469,8 +483,8 @@
       {
        "titre": "Exercice 4",
        "type": "Exercices",
-       "fichier": "1f724d75caef7c7a13062d93.bin",
-       "taille": 153278,
+       "fichier": "4dc38021682970cdcb2a7565.bin",
+       "taille": 154080,
        "pages": 1,
        "rubrique": "Exercices"
       },
