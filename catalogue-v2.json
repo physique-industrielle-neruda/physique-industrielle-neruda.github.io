@@ -804,6 +804,72 @@
        "titre": "animation régimes transitoires",
        "type": "Animation",
        "lien": "animations/et/animation-regimes-transitoires.html"
+      },
+      {
+       "titre": "Corrigé élève activité 1. Surveillance thermique moteur industriel",
+       "type": "Corrigé",
+       "fichier": "026e0441302b669b75440a5e.bin",
+       "taille": 166385,
+       "pages": 3,
+       "corrige": {
+        "id": "et-les-regimes-transitoires-corrige-eleve-activite-1-surveillance-thermique-mo",
+        "wk": "wpVviBzeA88bd3zBowPYbCGq5LaP3i8uA/bl4EXlo5fNTIpE24pNnBN/clca/ygaCPDl/7Q0qyrUxjdi"
+       }
+      },
+      {
+       "titre": "Corrigé élève activité 2. mise en vitesse convoyeur automatisé",
+       "type": "Corrigé",
+       "fichier": "9ae888af5487fa10ac5e7856.bin",
+       "taille": 176322,
+       "pages": 3,
+       "corrige": {
+        "id": "et-les-regimes-transitoires-corrige-eleve-activite-2-mise-en-vitesse-convoyeur",
+        "wk": "/qJ7lDsiRHQScllrFQqTNfVo8fFQ3hbQkeLjKPM+UygUjpMzffw5jSB28lFCc0LgmpSdhRwE+FM7KPY2"
+       }
+      },
+      {
+       "titre": "Corrigé élève Exercice 1",
+       "type": "Corrigé",
+       "fichier": "a154914ef1b653f5fbcda75f.bin",
+       "taille": 153267,
+       "pages": 2,
+       "corrige": {
+        "id": "et-les-regimes-transitoires-corrige-eleve-exercice-1",
+        "wk": "LDNsBBBH00jMOt/s0wnJkgkBagDR7H3BZTMfE4Jzl+QxaBzJMQMxsbr7Z/qVZdls88rnYBmjcf8XHgv6"
+       }
+      },
+      {
+       "titre": "Corrigé élève Exercice 2",
+       "type": "Corrigé",
+       "fichier": "621d0c8f6812b78e9c5753f8.bin",
+       "taille": 101096,
+       "pages": 2,
+       "corrige": {
+        "id": "et-les-regimes-transitoires-corrige-eleve-exercice-2",
+        "wk": "cHxlydeOcFV1H+cnLr1s44tIoTHfEfJj+efUVkfHbV9kD54YoZlKhv7iyBdO8o3aFBLkD6ISO05gqeeI"
+       }
+      },
+      {
+       "titre": "Corrigé élève Exercice 3",
+       "type": "Corrigé",
+       "fichier": "093e8fbdeecfb848971fce43.bin",
+       "taille": 169197,
+       "pages": 2,
+       "corrige": {
+        "id": "et-les-regimes-transitoires-corrige-eleve-exercice-3",
+        "wk": "tPNy/L712Ske7vf12MFbjEgqAXqNUKglsJJz/C1Toe5pL0/BDL0nbEdJRLtrCQ+W9cfKlbbTIImEpmBq"
+       }
+      },
+      {
+       "titre": "Corrigé élève Exercice 4",
+       "type": "Corrigé",
+       "fichier": "85d4d16fe5cfc7becff5eb71.bin",
+       "taille": 84099,
+       "pages": 2,
+       "corrige": {
+        "id": "et-les-regimes-transitoires-corrige-eleve-exercice-4",
+        "wk": "bba64lps0++vaQBBhDvWvsDCcvIwoA+LWEmTdSPpVB4FmVECjBOEL7KF3HmiWJQeBnIaVYJsM4IEfb4G"
+       }
       }
      ],
      "annee": 2
@@ -1153,7 +1219,7 @@
   },
   {
    "groupe": "Appareils",
-   "titre": "Oscilloscope RIGOL DS1104Z Plus – bâtiment B (4 voies)",
+   "titre": "Oscilloscope RIGOL DS1104Z Plus",
    "docs": [
     {
      "titre": "Fiche méthode oscilloscope DS1104Z Plus",
@@ -1166,19 +1232,6 @@
      "titre": "Simulation oscilloscope",
      "type": "Simulation",
      "lien": "outils/oscilloscope-rigol-ds1104z-plus/simulation-oscilloscope.html"
-    }
-   ]
-  },
-  {
-   "groupe": "Appareils",
-   "titre": "Oscilloscope RIGOL DS1102CD – bâtiment D (2 voies)",
-   "docs": [
-    {
-     "titre": "Fiche outil oscilloscope DS1102CD",
-     "type": "Fiche",
-     "lien": "outils/oscilloscope-rigol-ds1102cd/fiche-outil-oscilloscope-ds1102cd-cb7e8128.pdf",
-     "taille": 327491,
-     "pages": 3
     }
    ]
   },
@@ -1201,19 +1254,6 @@
    ]
   },
   {
-   "groupe": "Appareils",
-   "titre": "GBF METRIX MTX 3240",
-   "docs": [
-    {
-     "titre": "Fiche outil GBF MTX 3240",
-     "type": "Fiche",
-     "lien": "outils/gbf-metrix-mtx-3240/fiche-outil-gbf-mtx-3240-a1d90ff3.pdf",
-     "taille": 429854,
-     "pages": 2
-    }
-   ]
-  },
-  {
    "groupe": "Logiciels",
    "titre": "Tableur Excel",
    "docs": [
@@ -1228,5 +1268,41 @@
   }
  ],
  "version": 2,
- "groupes": []
+ "groupes": [
+  {
+   "id": "et1a",
+   "nom": "BTS ET – 1re année alternants",
+   "site": "et",
+   "annee": 1
+  },
+  {
+   "id": "et2",
+   "nom": "BTS ET – 2e année",
+   "site": "et",
+   "annee": 2
+  },
+  {
+   "id": "et2a",
+   "nom": "BTS ET – 2e année alternants",
+   "site": "et",
+   "annee": 2
+  },
+  {
+   "id": "cira1",
+   "nom": "BTS CIRA – 1re année",
+   "site": "cira",
+   "annee": 1
+  },
+  {
+   "id": "cim2",
+   "nom": "BTS CIM – 2e année",
+   "site": "cim",
+   "annee": 2
+  },
+  {
+   "id": "invites",
+   "nom": "Invités (collègues)",
+   "site": "tous"
+  }
+ ]
 }

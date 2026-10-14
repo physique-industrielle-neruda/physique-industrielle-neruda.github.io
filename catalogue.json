@@ -825,7 +825,7 @@
   },
   {
    "groupe": "Appareils",
-   "titre": "Oscilloscope RIGOL DS1104Z Plus – bâtiment B (4 voies)",
+   "titre": "Oscilloscope RIGOL DS1104Z Plus",
    "docs": [
     {
      "titre": "Fiche méthode oscilloscope DS1104Z Plus",
@@ -838,19 +838,6 @@
      "titre": "Simulation oscilloscope",
      "type": "Simulation",
      "lien": "outils/oscilloscope-rigol-ds1104z-plus/simulation-oscilloscope.html"
-    }
-   ]
-  },
-  {
-   "groupe": "Appareils",
-   "titre": "Oscilloscope RIGOL DS1102CD – bâtiment D (2 voies)",
-   "docs": [
-    {
-     "titre": "Fiche outil oscilloscope DS1102CD",
-     "type": "Fiche",
-     "lien": "outils/oscilloscope-rigol-ds1102cd/fiche-outil-oscilloscope-ds1102cd-cb7e8128.pdf",
-     "taille": 327491,
-     "pages": 3
     }
    ]
   },
@@ -869,19 +856,6 @@
      "titre": "Simulation wattmètre",
      "type": "Simulation",
      "lien": "outils/wattmetre-numerique-fiwatt/simulation-wattmetre.html"
-    }
-   ]
-  },
-  {
-   "groupe": "Appareils",
-   "titre": "GBF METRIX MTX 3240",
-   "docs": [
-    {
-     "titre": "Fiche outil GBF MTX 3240",
-     "type": "Fiche",
-     "lien": "outils/gbf-metrix-mtx-3240/fiche-outil-gbf-mtx-3240-a1d90ff3.pdf",
-     "taille": 429854,
-     "pages": 2
     }
    ]
   },
