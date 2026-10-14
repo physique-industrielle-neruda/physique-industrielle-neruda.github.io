@@ -196,7 +196,7 @@ li.fresh{animation:fresh 2.4s ease-out}
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut, setPersistence, browserLocalPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, doc, getDoc, collection, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, doc, getDoc, getDocs, collection, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const FB = {"apiKey":"AIzaSyDH32Ma0shVbsIHR0xNJbahb5MO0RKHRS0","authDomain":"physique-neruda.firebaseapp.com","projectId":"physique-neruda","storageBucket":"physique-neruda.firebasestorage.app","messagingSenderId":"62730174289","appId":"1:62730174289:web:588c846aadd4eec2109d70"};
 const DOMAINE = "@physique-neruda.firebaseapp.com";
@@ -211,6 +211,7 @@ const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":
 const size = n => n > 1e6 ? (n/1e6).toFixed(1).replace(".", ",") + " Mo" : Math.max(1, Math.round(n/1e3)) + " ko";
 
 let CAT = null, current = null, booted = false;
+let EVAL = { evaluations: [] }, NOMS = {};
 /* Session : rôle, classe, clés */
 let S = { user:null, prof:false, premium:false, tous:false, nom:"", site:null, groupe:null, keys:{}, maitre:null, corr:{} };
 let unsubCorr = null, fresh = new Set();
@@ -272,6 +273,90 @@ async function openDoc(cls, d, download){
   }
 }
 
+/* == Évaluations == */
+const fmtDate = d => d ? d.split("-").reverse().join("/") : "";
+async function evalKey(item){
+  const id = item.corrige.id;
+  if (S.corr[id]) return importKey(b64(S.corr[id]));
+  if (S.prof && S.maitre) {
+    const w = b64(item.corrige.wk);
+    return importKey(await crypto.subtle.decrypt({name:"AES-GCM", iv:w.slice(0,12), additionalData:enc.encode(id)}, S.maitre, w.slice(12)));
+  }
+  return null;
+}
+async function openEval(item, titre, download){
+  let w = null;
+  if (!download) { w = window.open("", "_blank"); if (w) { try { w.document.title = titre; w.document.body.innerHTML = "<p style='font:16px sans-serif;padding:20px'>Ouverture…</p>"; } catch(e){} } }
+  try {
+    const key = await evalKey(item); if (!key) throw new Error("verrou");
+    const url = URL.createObjectURL(await decryptBlob(BASE + "docs/evaluations/" + item.fichier, key));
+    if (w && !download) w.location.href = url;
+    else { const a = document.createElement("a"); a.href = url; a.download = titre + ".pdf"; document.body.appendChild(a); a.click(); a.remove(); }
+    setTimeout(() => URL.revokeObjectURL(url), 120000);
+  } catch(e) { if (w) w.close(); toast(e.message === "verrou" ? "Cette copie n'est pas encore disponible." : "Impossible d'ouvrir ce document. Rechargez la page et réessayez."); }
+}
+function evalRow(label, titre, meta, item){
+  const li = document.createElement("li");
+  if (fresh.has(item.corrige.id)) li.className = "fresh";
+  li.innerHTML = `<span class="type corr">${esc(label)}</span><span class="title">${esc(titre)}<span class="meta">${esc(meta)}</span></span>
+    <span class="actions"><button class="open" type="button">Ouvrir</button><button class="open dl" type="button" aria-label="Télécharger ${esc(titre)}">Télécharger</button></span>`;
+  const [o, dl] = li.querySelectorAll("button");
+  o.onclick = () => openEval(item, titre, false); dl.onclick = () => openEval(item, titre, true);
+  return li;
+}
+const pdfMeta = it => `PDF, ${it.pages ? it.pages + " p., " : ""}${size(it.taille)}`;
+function folderBox(cls, key, titre, count, forceOpen){
+  const s = document.createElement("details"); s.className = cls;
+  if (forceOpen || opened.has(key)) s.open = true;
+  s.innerHTML = `<summary>${FOLDER}<h3><span>${esc(titre)}</span><span class="count">${esc(count)}</span></h3><span class="chev" aria-hidden="true"></span></summary>`;
+  s.addEventListener("toggle", () => { if (s.open) opened.add(key); else opened.delete(key); });
+  return s;
+}
+/* Élève : dossier « Mes évaluations » (seulement ses propres copies, une fois publiées par le professeur) */
+function mesEvals(c){
+  const evs = (EVAL.evaluations || []).filter(e => e.site === c.id)
+    .map(e => ({ e, cp: (e.copies || []).find(x => S.corr[x.corrige.id]) })).filter(x => x.cp)
+    .sort((a, b) => (b.e.date || "").localeCompare(a.e.date || ""));
+  const n = evs.length;
+  const s = folderBox("chap evals", c.id + "/mes-evaluations", "Mes évaluations", n ? n + " copie" + (n > 1 ? "s" : "") + " corrigée" + (n > 1 ? "s" : "") : "Aucune copie corrigée pour l'instant", evs.some(x => fresh.has(x.cp.corrige.id)));
+  const ul = document.createElement("ul"); ul.className = "docs";
+  if (!n) { const li = document.createElement("li"); li.innerHTML = `<span class="title"><span class="meta">Tes copies corrigées apparaîtront ici après chaque évaluation.</span></span>`; ul.appendChild(li); }
+  evs.forEach(x => ul.appendChild(evalRow("Ma copie", x.e.titre, (x.e.date ? fmtDate(x.e.date) + " · " : "") + pdfMeta(x.cp), x.cp)));
+  s.appendChild(ul); return s;
+}
+/* Professeur : dossier « Évaluations » → classe → évaluation (copies) + « Bilans de correction » */
+function renderEvaluationsProf(view){
+  const head = document.createElement("div"); head.className = "classhead";
+  head.innerHTML = `<h2>Évaluations</h2><span class="status is-open">Visible par vous seul</span>`;
+  view.appendChild(head);
+  const evs = EVAL.evaluations || [];
+  if (!evs.length) { const p = document.createElement("p"); p.className = "empty"; p.textContent = "Aucune évaluation corrigée pour l'instant."; view.appendChild(p); return; }
+  const ids = [...new Set(evs.map(e => e.classe))];
+  ids.forEach(cid => {
+    const info = NOMS[cid] || { nom: cid, eleves: {} };
+    const mine = evs.filter(e => e.classe === cid).sort((a, b) => (b.date || "").localeCompare(a.date || ""));
+    const k = "evals/" + cid;
+    const box = document.createElement("details"); box.className = "annee";
+    if (opened.has(k) || ids.length === 1) box.open = true;
+    box.innerHTML = `<summary>${FOLDER}<h3><span>${esc(info.nom)}</span><span class="count">${mine.length} évaluation${mine.length > 1 ? "s" : ""}</span></h3><span class="chev" aria-hidden="true"></span></summary>`;
+    box.addEventListener("toggle", () => { if (box.open) opened.add(k); else opened.delete(k); });
+    const inner = document.createElement("div"); inner.className = "inner";
+    mine.forEach(e => {
+      const cps = (e.copies || []).map(cp => ({ cp, nom: info.eleves[cp.login] || cp.login })).sort((a, b) => a.nom.localeCompare(b.nom, "fr"));
+      const s = folderBox("chap", k + "/" + e.id, (e.date ? fmtDate(e.date) + " – " : "") + e.titre, cps.length + " copie" + (cps.length > 1 ? "s" : ""));
+      const ul = document.createElement("ul"); ul.className = "docs";
+      cps.forEach(x => ul.appendChild(evalRow("Copie", x.nom, pdfMeta(x.cp), x.cp)));
+      s.appendChild(ul); inner.appendChild(s);
+    });
+    const bil = mine.filter(e => e.bilan);
+    const sb = folderBox("chap", k + "/bilans", "Bilans de correction", bil.length + " bilan" + (bil.length > 1 ? "s" : ""));
+    const ub = document.createElement("ul"); ub.className = "docs";
+    bil.forEach(e => ub.appendChild(evalRow("Bilan", (e.date ? fmtDate(e.date) + " – " : "") + e.titre, pdfMeta(e.bilan), e.bilan)));
+    sb.appendChild(ub); inner.appendChild(sb);
+    box.appendChild(inner); view.appendChild(box);
+  });
+}
+
 const LOCK = '<svg class="lockico" viewBox="0 0 12 13" aria-hidden="true"><rect x="1" y="5.5" width="10" height="7" rx="1.5" fill="currentColor"/><path d="M3.5 5.5V4a2.5 2.5 0 0 1 5 0v1.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>';
 
 function visibleClasses(){
@@ -283,6 +368,7 @@ function visibleClasses(){
 function renderNav(){
   const nav = $("#classes"); nav.innerHTML = "";
   const items = visibleClasses().map(c => ({id:c.id, n:c.court, mini:c.mini||c.court, s:c.sous}));
+  if (S.prof) items.push({id:"evaluations", n:"Évaluations", mini:"Évals", s:"Copies corrigées et bilans"});
   if (!S.user) items.push({id:"connexion", n:"Connexion", mini:"Connexion", s:"Accès aux cours de votre BTS"});
   if ((CAT.outils || []).length) items.push({id:"outils", n:"Outils", mini:"Outils", s:"Fiches méthodes et simulations"});
   for (const it of items) {
@@ -371,6 +457,7 @@ function render(){
   $("#searchBox").hidden = !S.user && current !== "outils";
   const view = $("#view"); view.innerHTML = "";
   if (current === "connexion") { view.appendChild(loginBox()); return; }
+  if (current === "evaluations" && S.prof) { renderEvaluationsProf(view); return; }
   const q = $("#q").value.trim().toLowerCase();
   let found = 0;
   if (q || current === "outils") found += renderOutils(view, q);
@@ -382,6 +469,7 @@ function render(){
     const head = document.createElement("div"); head.className = "classhead";
     head.innerHTML = `<h2>${esc(c.nom)}</h2><span class="status is-open">Documents ouverts</span>`;
     view.appendChild(head);
+    if (!q && !S.prof && !S.tous) view.appendChild(mesEvals(c));
     if (!c.chapitres.length) { const p = document.createElement("p"); p.className = "empty"; p.textContent = "Aucun document pour l'instant."; view.appendChild(p); }
     if (chaps.some(x => x.ch.annee)) {
       // Dossiers « 1re année » / « 2e année » : celui de la classe de l'élève s'ouvre automatiquement
@@ -452,7 +540,7 @@ function route(){
   const h = location.hash.slice(1);
   const ids = visibleClasses().map(c => c.id);
   if (!S.user) current = (h === "outils" && (CAT.outils || []).length) ? "outils" : "connexion";
-  else current = ids.includes(h) || (h === "outils" && (CAT.outils || []).length) ? h : (S.site || ids[0]);
+  else current = (h === "evaluations" && S.prof) ? h : ids.includes(h) || (h === "outils" && (CAT.outils || []).length) ? h : (S.site || ids[0]);
   render();
 }
 
@@ -470,6 +558,7 @@ async function startSession(user){
         if (k.corriges) S.maitre = await crypto.subtle.importKey("raw", b64(k.corriges), "AES-GCM", false, ["decrypt"]);
       }
       Object.assign(S, { user, prof:true, nom:"Professeur" });
+      try { const cs = await getDocs(collection(db, "classes")); cs.forEach(x => { const v = x.data(); NOMS[x.id] = { nom: v.nom || x.id, eleves: Object.fromEntries((v.eleves || []).map(e => [e.login, e.nom])) }; }); } catch(_){}
       return;
     }
     const e = await getDoc(doc(db, "eleves", user.uid));
@@ -499,7 +588,7 @@ async function startSession(user){
     unsubCorr = onSnapshot(query(collection(db, "deblocages"), where("uid", "==", user.uid)), snap => {
       const before = new Set(Object.keys(S.corr)); const now = {};
       snap.forEach(x => { const v = x.data(); if (v.doc && v.cle) now[v.doc] = v.cle; });
-      if (!first) for (const id in now) if (!before.has(id)) { fresh.add(id); toast("Un corrigé vient d'être débloqué !"); }
+      if (!first) for (const id in now) if (!before.has(id)) { fresh.add(id); toast(id.startsWith("eval-") ? "Ta copie corrigée est disponible dans « Mes évaluations »." : "Un corrigé vient d'être débloqué !"); }
       first = false; S.corr = now; render();
     }, () => {});
   } catch(x) {
@@ -510,6 +599,7 @@ async function startSession(user){
 (async function init(){
   try {
     CAT = await fetch(BASE + "catalogue-v2.json", {cache:"no-cache"}).then(r => r.json());
+    EVAL = await fetch(BASE + "evaluations.json", {cache:"no-cache"}).then(r => r.ok ? r.json() : { evaluations: [] }).catch(() => ({ evaluations: [] }));
     $("#who").textContent = CAT.auteur || "";
     if (CAT.titre) document.querySelector("h1").textContent = CAT.titre;
     $("#q").addEventListener("input", render);

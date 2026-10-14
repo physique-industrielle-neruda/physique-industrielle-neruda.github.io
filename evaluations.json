@@ -1,0 +1,193 @@
+{
+ "version": 1,
+ "evaluations": [
+  {
+   "id": "et1a/2026-10-13 QCM Les transferts thermiques",
+   "classe": "et1a",
+   "site": "et",
+   "titre": "QCM Les transferts thermiques",
+   "date": "2026-10-13",
+   "copies": [
+    {
+     "login": "romain.a",
+     "fichier": "96351a41be9f81cc11c22359.bin",
+     "taille": 611044,
+     "pages": 2,
+     "corrige": {
+      "id": "eval-0a3f9ffa329abafb6f82",
+      "wk": "8bdrF+Z9k8sYNG9yrqtxM1dI49HI0E6glkns7YV2Cpx0HmnABmzP3fkLkrKGWoTS8Tobq7bxU4iimieh"
+     }
+    },
+    {
+     "login": "amaury.b",
+     "fichier": "6ed713a482f67d3ba3aa9ac6.bin",
+     "taille": 639507,
+     "pages": 4,
+     "corrige": {
+      "id": "eval-22ef11099d781a6f7e4f",
+      "wk": "Ck6pd9n4RAy5lkZ2OU8dAPtD/iNOsuX3bee8iOQB9fh5YAjSioigVnfB1WEUO7naK5ySaF9FvKRh8RkY"
+     }
+    },
+    {
+     "login": "eliot.c",
+     "fichier": "5dab077efd34cd0dbabcd07d.bin",
+     "taille": 616419,
+     "pages": 3,
+     "corrige": {
+      "id": "eval-449f63e0718a16b7d81f",
+      "wk": "nO4ed0dR6GQN/ZD2ZcgcGJQZIlSKEcFIvGDj926pDsJBJmdV2fOp+kNoxlA9yJCDqB+QXuBvXjnVxN1M"
+     }
+    },
+    {
+     "login": "edouard.d",
+     "fichier": "89e68ba44636ff7bcd4e1c4c.bin",
+     "taille": 664821,
+     "pages": 4,
+     "corrige": {
+      "id": "eval-570d70a29a2700361af6",
+      "wk": "2l1vFW2bW+S75inAjKulLo4zH1frNoLa5hLnenEVsmcfSyjPBujEv8Zp1lqNODBcsWihrhJO72iC+GSu"
+     }
+    },
+    {
+     "login": "sasha.d",
+     "fichier": "fc6d87c74220d0dcd562ce64.bin",
+     "taille": 644271,
+     "pages": 4,
+     "corrige": {
+      "id": "eval-c503336aae403146a74e",
+      "wk": "I6oeHKP72Xvy2dpyW90gjO2IpUgv3qQk26Ix0t/Ub904HFHEN1DlZMx58N1ibwcLwizaB2MSKBq3kR+P"
+     }
+    },
+    {
+     "login": "raphael.f",
+     "fichier": "834706b1dc9976465bde8d89.bin",
+     "taille": 662465,
+     "pages": 3,
+     "corrige": {
+      "id": "eval-dc701735ce866e940a2d",
+      "wk": "rHb0DVljDC13zfkKMohcQX1TF+KGZRI8sJ5zgZVA3ML9nQVKmCu1bNiws4puZSglmVIGU4oPhTZ3+jFv"
+     }
+    },
+    {
+     "login": "paul.g",
+     "fichier": "1f5ad0f377db9767f2e6fe6c.bin",
+     "taille": 651326,
+     "pages": 4,
+     "corrige": {
+      "id": "eval-59c8f08e7e384f319a1f",
+      "wk": "1xrxSwSU1Rm1EUqX3Pif+eSVvWoJyVTK7zeYcVdteFqjMwjkz8JYf9qiicgvqi0WptFItKdMpi7MOZte"
+     }
+    },
+    {
+     "login": "ufuk.g",
+     "fichier": "f3c13646e2865052e07e124f.bin",
+     "taille": 606596,
+     "pages": 2,
+     "corrige": {
+      "id": "eval-c61790237f1411e1e7f9",
+      "wk": "58xOaNNmJB8ilhJLZ8M/dWRJp3WUkHImfRh/yKEGZlkIsDif4xTAcoGKGpm469j+f3664duo3a5dxUXE"
+     }
+    },
+    {
+     "login": "nolan.h",
+     "fichier": "c3e7f6fcf26749e2fbfa8887.bin",
+     "taille": 642768,
+     "pages": 4,
+     "corrige": {
+      "id": "eval-3082966dce0c7a832bf0",
+      "wk": "9ly75qpp25Chf9SI423ypeJwobHUKO8v8zZau8N15oQvISse+Q46VBLYAuvFADcPvqHzbe2KmHQ+tEbV"
+     }
+    },
+    {
+     "login": "louis.j",
+     "fichier": "55259790b575b98d42deb56f.bin",
+     "taille": 647828,
+     "pages": 4,
+     "corrige": {
+      "id": "eval-33a14609274ff3992b3e",
+      "wk": "Z29kFXBwREv3vJpfmUuCb0jje8b4JBSZyEjyxkWppqiwFV/PuNQWxw1r+YbLnRMNhiuBdYhhMk0JNMUP"
+     }
+    },
+    {
+     "login": "florian.l",
+     "fichier": "692d86bca20c022268495499.bin",
+     "taille": 606840,
+     "pages": 2,
+     "corrige": {
+      "id": "eval-e854c05ac57f7d3ef411",
+      "wk": "lc3hIgctxCom7L5kfYAqZ3nQeIpdzjCJ1nUVQFLZTFJ4XE8KUN/zZEeeRW13dA9W/FHhs94dkXHmstL9"
+     }
+    },
+    {
+     "login": "florian.le",
+     "fichier": "c72b9ae5d68af13960e1ca93.bin",
+     "taille": 652283,
+     "pages": 5,
+     "corrige": {
+      "id": "eval-6341340ca4914b2df102",
+      "wk": "06bfGgPUXrSq4GeSnPPkvZn2ABKfA982e/Bo7dygtatwgZAaMrf5krAig+VX4ZQaqRJ2PF9l+Dn7/BpO"
+     }
+    },
+    {
+     "login": "enzo.p",
+     "fichier": "01e7383be14dbbaa5cbc26d0.bin",
+     "taille": 645563,
+     "pages": 4,
+     "corrige": {
+      "id": "eval-3ed7206680623dbb2090",
+      "wk": "sS/T2HlOa3I1hAnEBMKQeVs//G/xVt5g+5DGEgI2wGobjuneg1AnjLSwmP0RpKwIME8FUUZmbwj+hhSz"
+     }
+    },
+    {
+     "login": "alban.r",
+     "fichier": "9405d1bae14924c54f6980f9.bin",
+     "taille": 650993,
+     "pages": 4,
+     "corrige": {
+      "id": "eval-72ae54aee795c7cfa4eb",
+      "wk": "e80J0MoPWlu7KehJzlYu8zhXlsubHWJZi0GvN6OItrNsVb+woA20lHISMgze3L0zNdNRxsEMR1D3AVRW"
+     }
+    },
+    {
+     "login": "quentin.s",
+     "fichier": "fdd9ad809ed7340e311dc8eb.bin",
+     "taille": 644214,
+     "pages": 4,
+     "corrige": {
+      "id": "eval-1564e6e08501693a026a",
+      "wk": "AQU8oXqNKYV7WmVxYymXQG0Gk1PgTGHesHEKRoS891W/wiPtIFPKQ7yEm9QmrIltjPQectWBC00mIC9F"
+     }
+    },
+    {
+     "login": "hugo.s",
+     "fichier": "2da87418eb8c361a08ee52ba.bin",
+     "taille": 619059,
+     "pages": 3,
+     "corrige": {
+      "id": "eval-deb5571b66df0603419c",
+      "wk": "spQx5U0AFr5tSZrZ4lRk4rzRSaV9XocetCk41FA1xsLRYhiGhUAQjO9sGGxzdBM2czY4i2mDjmSTbWMy"
+     }
+    },
+    {
+     "login": "eren.o",
+     "fichier": "db940c057ffdaaf3480ea189.bin",
+     "taille": 645043,
+     "pages": 4,
+     "corrige": {
+      "id": "eval-6ddfdde33049423cc6c0",
+      "wk": "6A+TPWe9mSksWHorttIusg4gvSAfuOnXkxL2/oQ6RU4igWIiPGH7bNFFVI/DUU89NTE5C+iaDg+MKRlb"
+     }
+    }
+   ],
+   "bilan": {
+    "fichier": "3fe80eb22be654d10805fad8.bin",
+    "taille": 40125,
+    "pages": 1,
+    "corrige": {
+     "id": "eval-fd9682d844000d2bae73",
+     "wk": "qhfn27YWOfzbCoJwLOk+9NjXIrg4DfGdMT5hiqynHk/e060vXSAR6TCst/OqeRJYTmk03gKcxoUEGcrg"
+    }
+   }
+  }
+ ]
+}

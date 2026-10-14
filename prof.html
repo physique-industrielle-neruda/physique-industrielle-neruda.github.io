@@ -141,7 +141,7 @@ const tob64 = buf => btoa(String.fromCharCode(...new Uint8Array(buf)));
 const enc = new TextEncoder();
 function toast(m){ const t = $("#toast"); t.textContent = m; t.style.display = "block"; clearTimeout(toast.t); toast.t = setTimeout(() => t.style.display = "none", 3500); }
 
-let CAT = null, CLASSES = [], MAITRE = null, unsub = null;
+let CAT = null, CLASSES = [], MAITRE = null, unsub = null, EVAL = { evaluations: [] };
 let stack = [];   // pile d'écrans pour le bouton retour
 
 function setBar(title, sub, canBack){
@@ -195,6 +195,7 @@ function loginScreen(){
 /* ---------- Données ---------- */
 async function loadAll(){
   CAT = await fetch(BASE + "catalogue-v2.json", {cache:"no-cache"}).then(r => r.json());
+  EVAL = await fetch(BASE + "evaluations.json", {cache:"no-cache"}).then(r => r.ok ? r.json() : { evaluations: [] }).catch(() => ({ evaluations: [] }));
   const snap = await getDocs(collection(db, "classes"));
   CLASSES = []; snap.forEach(d => CLASSES.push({ id:d.id, ...d.data() }));
   CLASSES.sort((a, b) => (a.ordre ?? 99) - (b.ordre ?? 99));
@@ -231,11 +232,11 @@ function home(){
 /* ---------- Une classe ---------- */
 function classe(id, tab){
   const c = CLASSES.find(x => x.id === id); if (!c) return home();
-  setBar(c.nom, tab === "corriges" ? "Corrigés à débloquer" : "Élèves et comptes", true);
-  const tabs = `<div class="tabs" role="tablist"><button role="tab" aria-selected="${tab==="corriges"}" data-t="corriges">Corrigés</button><button role="tab" aria-selected="${tab==="eleves"}" data-t="eleves">Élèves et comptes</button></div>`;
+  setBar(c.nom, tab === "corriges" ? "Corrigés à débloquer" : tab === "evaluations" ? "Évaluations corrigées" : "Élèves et comptes", true);
+  const tabs = `<div class="tabs" role="tablist"><button role="tab" aria-selected="${tab==="corriges"}" data-t="corriges">Corrigés</button><button role="tab" aria-selected="${tab==="evaluations"}" data-t="evaluations">Évaluations</button><button role="tab" aria-selected="${tab==="eleves"}" data-t="eleves">Élèves et comptes</button></div>`;
   $("#app").innerHTML = tabs + `<div id="pane"></div>`;
   $("#app").querySelectorAll(".tabs button").forEach(b => b.onclick = () => { stack[stack.length-1] = [classe, [id, b.dataset.t]]; stopLive(); classe(id, b.dataset.t); });
-  if (tab === "corriges") paneCorriges(c); else paneEleves(c);
+  if (tab === "corriges") paneCorriges(c); else if (tab === "evaluations") paneEvals(c); else paneEleves(c);
 }
 
 function paneCorriges(c){
@@ -317,6 +318,83 @@ function docEleves(cid, d){
   const mesUid = new Set(el.map(e => e.uid));
   unsub = onSnapshot(query(collection(db, "deblocages"), where("doc", "==", d.corrige.id)), snap => {
     on = new Set(); snap.forEach(x => { const u = x.data().uid; if (mesUid.has(u)) on.add(u); }); paint();
+  }, e => toast("Lecture impossible : " + e.code));
+}
+
+/* == Évaluations == */
+const fmtDate = d => d ? d.split("-").reverse().join("/") : "";
+function evalsDe(cid){ return (EVAL.evaluations || []).filter(e => e.classe === cid).sort((a, b) => (b.date || "").localeCompare(a.date || "")); }
+async function voirPdf(item, titre){
+  const w = window.open("", "_blank");
+  try {
+    if (!MAITRE) throw new Error("cles");
+    const k = await crypto.subtle.importKey("raw", b64(await unwrap(item)), "AES-GCM", false, ["decrypt"]);
+    const r = await fetch(BASE + "docs/evaluations/" + item.fichier, {cache:"no-cache"}); if (!r.ok) throw new Error("x");
+    const buf = new Uint8Array(await r.arrayBuffer());
+    const url = URL.createObjectURL(new Blob([await crypto.subtle.decrypt({name:"AES-GCM", iv:buf.slice(0,12)}, k, buf.slice(12))], {type:"application/pdf"}));
+    if (w) w.location.href = url; else location.href = url;
+  } catch(e){ if (w) w.close(); toast(e.message === "cles" ? "Clés absentes : importez le fichier dans Réglages." : "Ouverture impossible."); }
+}
+function paneEvals(c){
+  const evs = evalsDe(c.id), el = (c.eleves || []).filter(e => e.uid);
+  if (!evs.length) { $("#pane").innerHTML = `<p class="empty">Aucune évaluation corrigée pour cette classe.</p>`; return; }
+  const ids = new Set(evs.flatMap(e => e.copies.map(x => x.corrige.id))), mesUid = new Set(el.map(e => e.uid));
+  const render = counts => {
+    $("#pane").innerHTML = `<div class="card">` + evs.map((e, i) => {
+      const n = e.copies.reduce((a, x) => a + (counts[x.corrige.id] || 0), 0), t = e.copies.length;
+      return `<button class="row" data-i="${i}"><span class="main"><span class="t">${esc((e.date ? fmtDate(e.date) + " – " : "") + e.titre)}</span><span class="m">${n === t ? "Publiée pour toute la classe" : n ? n + " copie" + (n>1?"s":"") + " publiée" + (n>1?"s":"") : "Pas encore publiée"}</span></span><span class="count${n===t?" full":""}">${n}/${t}</span><span class="chev"></span></button>`;
+    }).join("") + `</div><p class="note">Chaque élève ne voit que sa propre copie, dans « Mes évaluations », une fois publiée.</p>`;
+    $("#pane").querySelectorAll(".row").forEach(b => b.onclick = () => go(evalEleves, c.id, evs[+b.dataset.i]));
+  };
+  render({});
+  unsub = onSnapshot(collection(db, "deblocages"), snap => {
+    const counts = {}; snap.forEach(x => { const v = x.data(); if (ids.has(v.doc) && mesUid.has(v.uid)) counts[v.doc] = (counts[v.doc] || 0) + 1; }); render(counts);
+  }, e => toast("Lecture impossible : " + e.code));
+}
+function evalEleves(cid, ev){
+  const c = CLASSES.find(x => x.id === cid);
+  setBar((ev.date ? fmtDate(ev.date) + " – " : "") + ev.titre, c.nom, true);
+  const el = (c.eleves || []).filter(e => e.uid).slice().sort((a, b) => a.nom.localeCompare(b.nom, "fr"));
+  const cp = Object.fromEntries(ev.copies.map(x => [x.login, x]));
+  const avec = el.filter(e => cp[e.login]);
+  let on = new Set();
+  $("#app").innerHTML = `<div class="progress" aria-hidden="true"><i id="pb"></i></div><p class="note" id="pn"></p>
+    <div class="btns"><button class="btn ok" id="all">Publier pour toute la classe</button><button class="btn ghost" id="none">Tout retirer</button>${ev.bilan ? `<button class="btn ghost" id="bil">Voir le bilan de correction</button>` : ""}</div>
+    <div class="card" id="list">${el.map(e => cp[e.login]
+      ? `<div class="row" style="cursor:default"><span class="main"><span class="t">${esc(e.nom)}</span><span class="m" data-m="${esc(e.uid)}">Non publiée</span></span>
+         <button class="btn ghost" style="width:auto;margin:0 8px;padding:6px 10px" data-voir="${esc(e.login)}">Voir</button>
+         <label class="sw"><input type="checkbox" data-uid="${esc(e.uid)}" data-login="${esc(e.login)}" aria-label="Publier pour ${esc(e.nom)}"><span></span></label></div>`
+      : `<div class="row" style="cursor:default"><span class="main"><span class="t">${esc(e.nom)}</span><span class="m">Pas de copie</span></span></div>`).join("")}</div>`;
+  const boxes = [...$("#list").querySelectorAll("input")];
+  const paint = () => {
+    boxes.forEach(b => { b.checked = on.has(b.dataset.uid); $(`[data-m="${b.dataset.uid}"]`).textContent = b.checked ? "Publiée : l'élève voit sa copie" : "Non publiée"; });
+    $("#pb").style.width = (100 * on.size / Math.max(1, avec.length)) + "%";
+    $("#pn").textContent = `${on.size} / ${avec.length} copies publiées.`;
+  };
+  const ref = (uid, login) => doc(db, "deblocages", cp[login].corrige.id + "_" + uid);
+  const data = async (uid, login) => ({ uid, doc: cp[login].corrige.id, classe: cid, cle: await unwrap(cp[login]), at: serverTimestamp() });
+  boxes.forEach(b => b.onchange = async () => {
+    const uid = b.dataset.uid, login = b.dataset.login, val = b.checked; b.disabled = true;
+    try { if (!MAITRE) throw new Error("cles"); if (val) { await setDoc(ref(uid, login), await data(uid, login)); on.add(uid); } else { await deleteDoc(ref(uid, login)); on.delete(uid); } }
+    catch(e){ b.checked = !val; toast(e.message === "cles" ? "Clés absentes : importez le fichier dans Réglages." : "Échec, vérifiez la connexion."); }
+    b.disabled = false; paint();
+  });
+  $("#list").querySelectorAll("[data-voir]").forEach(b => b.onclick = () => voirPdf(cp[b.dataset.voir], b.dataset.voir));
+  if (ev.bilan) $("#bil").onclick = () => voirPdf(ev.bilan, "bilan");
+  const bulk = async val => {
+    try {
+      if (!MAITRE) throw new Error("cles");
+      const batch = writeBatch(db);
+      for (const e of avec) { if (val) batch.set(ref(e.uid, e.login), await data(e.uid, e.login)); else batch.delete(ref(e.uid, e.login)); }
+      await batch.commit(); toast(val ? "Copies publiées : chaque élève voit la sienne." : "Copies retirées.");
+    } catch(e){ toast(e.message === "cles" ? "Clés absentes : importez le fichier dans Réglages." : "Échec, vérifiez la connexion."); }
+  };
+  $("#all").onclick = () => bulk(true);
+  $("#none").onclick = () => { if (confirm("Retirer cette évaluation pour toute la classe ?")) bulk(false); };
+  paint();
+  const ids = new Set(ev.copies.map(x => x.corrige.id)), mesUid = new Set(avec.map(e => e.uid));
+  unsub = onSnapshot(collection(db, "deblocages"), snap => {
+    on = new Set(); snap.forEach(x => { const v = x.data(); if (ids.has(v.doc) && mesUid.has(v.uid)) on.add(v.uid); }); paint();
   }, e => toast("Lecture impossible : " + e.code));
 }
 
