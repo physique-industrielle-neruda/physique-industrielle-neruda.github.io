@@ -11,19 +11,19 @@
 <style>
 :root{
   --bg:#F4F6F9; --surface:#FFFFFF; --ink:#1F3864; --text:#18212F; --muted:#5A6577;
-  --grid:#D8E0EA; --accent:#C55A11; --accent-soft:#FBEDE3; --ok:#3F7A3A; --ok-soft:#E6F1E3;
+  --grid:#D8E0EA; --accent:#C55A11; --accent-soft:#FBEDE3; --ok:#3F7A3A; --ok-soft:#E6F1E3; --pouce:#7A4FB5; --pouce-soft:#EFE7FA; --pouce-row:#F8F4FD;
   --focus:#C55A11; --shadow:0 1px 0 rgba(31,56,100,.08);
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
     --bg:#101826; --surface:#172234; --ink:#AFC4EA; --text:#E4EAF3; --muted:#9AA7BC;
-    --grid:#2A3850; --accent:#F08A4B; --accent-soft:#3A2618; --ok:#8CC784; --ok-soft:#1F3320;
+    --grid:#2A3850; --accent:#F08A4B; --accent-soft:#3A2618; --ok:#8CC784; --ok-soft:#1F3320; --pouce:#C3A6F0; --pouce-soft:#2E2442; --pouce-row:#1D1A2C;
     --focus:#F08A4B; --shadow:none;
   }
 }
 :root[data-theme="dark"]{
   --bg:#101826; --surface:#172234; --ink:#AFC4EA; --text:#E4EAF3; --muted:#9AA7BC;
-  --grid:#2A3850; --accent:#F08A4B; --accent-soft:#3A2618; --ok:#8CC784; --ok-soft:#1F3320;
+  --grid:#2A3850; --accent:#F08A4B; --accent-soft:#3A2618; --ok:#8CC784; --ok-soft:#1F3320; --pouce:#C3A6F0; --pouce-soft:#2E2442; --pouce-row:#1D1A2C;
   --focus:#F08A4B; --shadow:none;
 }
 *{box-sizing:border-box}
@@ -116,6 +116,8 @@ ul.docs li{display:grid;grid-template-columns:7.2em 1fr auto;gap:12px;align-item
   padding:11px 0;border-bottom:1px solid var(--grid)}
 .type{font-size:.8rem;font-weight:700;color:var(--ink);background:var(--bg);border:1px solid var(--grid);
   border-radius:20px;padding:2px 10px;justify-self:start;white-space:nowrap}
+.type.pouce{color:var(--pouce);border-color:currentColor;background:var(--pouce-soft)}
+li.pouce{background:var(--pouce-row);box-shadow:inset 4px 0 0 var(--pouce)}
 .type.tp{color:var(--accent);border-color:currentColor;background:var(--accent-soft)}
 .title{min-width:0}
 .title .meta{display:block;font-size:.82rem;color:var(--muted)}
@@ -422,7 +424,9 @@ function docRow(c, d){
       <span class="title">${esc(d.titre)}<span class="meta">${meta}${S.prof || S.premium ? "" : " · débloqué"}</span></span>
       <span class="actions"><button class="open" type="button">Ouvrir</button><button class="open dl" type="button" aria-label="Télécharger ${esc(d.titre)}">Télécharger</button></span>`;
   } else {
-    li.innerHTML = `<span class="type${/^TP/i.test(d.type) ? " tp" : ""}">${esc(d.type)}</span>
+    const pouce = /coups?\s+de\s+pouce/i.test(d.titre);
+    if (pouce) li.className = "pouce";
+    li.innerHTML = `<span class="type${pouce ? " pouce" : /^TP/i.test(d.type) ? " tp" : ""}">${pouce ? "Coup de pouce" : esc(d.type)}</span>
       <span class="title">${esc(d.titre)}<span class="meta">${meta}</span></span>
       <span class="actions"><button class="open" type="button">Ouvrir</button><button class="open dl" type="button" aria-label="Télécharger ${esc(d.titre)}">Télécharger</button></span>`;
   }
