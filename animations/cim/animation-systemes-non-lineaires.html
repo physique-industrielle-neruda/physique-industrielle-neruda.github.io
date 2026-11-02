@@ -74,7 +74,7 @@ canvas{width:100%;height:auto;display:block;background:#fff;border:1px solid var
  <button data-t="t4">4. Cartes de révision</button>
 </nav>
 <main>
-<div class="box hint">Écris ta réponse dans la case (nombre seul, la virgule est acceptée), puis clique sur <b>Vérifier</b>. Au 1er essai faux, tu as une piste ; au 2e, la correction. Recopie tes réponses sur ta <b>fiche animation</b> (tu n'as rien à rendre). Les questions ★ sont facultatives. <span class="score" id="score"></span></div>
+<div class="box hint">Écris ta réponse dans la case (nombre seul, la virgule est acceptée), puis clique sur <b>Vérifier</b>. Au 1er essai faux, tu as une piste ; au 2e, la correction. Recopie tes réponses sur ta <b>fiche animation</b> (tu n'as rien à rendre). Les questions ★ sont facultatives.</div>
 
 <!-- ===================== ONGLET 1 -->
 <section id="t1" class="on">
@@ -170,7 +170,7 @@ const QS={
    ex:'$\\Delta V$ = 0,3 V (4,35 V et 4,65 V), soit une humidité tenue entre 43,5 % et 46,5 %.'}]
 };
 const answers={};
-function updScore(){const all=Object.values(QS).flat().filter(q=>!q.star).length,ok=Object.keys(answers).filter(k=>answers[k].best&&!answers[k].star).length;$('score').textContent=`Questions réussies : ${ok} / ${all}`;}
+function updScore(){}
 function fbHtml(q,a){
  if(a.ok)return `<div class="fb ok"><strong>Juste.</strong> ${q.ex}</div>`;
  if(a.tries>=2)return `<div class="fb bad"><strong>Ce n'est pas la bonne réponse. Correction :</strong> ${q.ex}</div>`;
