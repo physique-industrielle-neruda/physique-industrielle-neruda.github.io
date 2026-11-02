@@ -95,7 +95,7 @@
        "pages": 1
       },
       {
-       "titre": "Corrigé élève activité 3",
+       "titre": "Corrigé activité 3",
        "type": "Corrigé",
        "fichier": "3508475b913c257d65355474.bin",
        "taille": 196342,
@@ -106,7 +106,7 @@
        }
       },
       {
-       "titre": "Corrigé élève Exercice 3",
+       "titre": "Corrigé Exercice 3",
        "type": "Corrigé",
        "fichier": "1bda156c66d67e9fb6a1d00f.bin",
        "taille": 159016,
@@ -117,7 +117,7 @@
        }
       },
       {
-       "titre": "Corrigé élève Exercice 4",
+       "titre": "Corrigé Exercice 4",
        "type": "Corrigé",
        "fichier": "7dac812bd12efe6e80b76204.bin",
        "taille": 105548,
@@ -167,7 +167,7 @@
        "rubrique": "Activités"
       },
       {
-       "titre": "Corrigé élève activité 1",
+       "titre": "Corrigé activité 1",
        "type": "Corrigé",
        "fichier": "c7352208a55a222e242721fc.bin",
        "taille": 98962,
@@ -195,7 +195,7 @@
        "rubrique": "Activités"
       },
       {
-       "titre": "Corrigé élève activité 2",
+       "titre": "Corrigé activité 2",
        "type": "Corrigé",
        "fichier": "67800132697ebb12bbbe2819.bin",
        "taille": 100586,
@@ -223,7 +223,7 @@
        "rubrique": "Activités"
       },
       {
-       "titre": "Corrigé élève activité 3",
+       "titre": "Corrigé activité 3",
        "type": "Corrigé",
        "fichier": "fe87752a7e4c44e9b9aca852.bin",
        "taille": 128413,
@@ -271,7 +271,7 @@
        "rubrique": "Exercices"
       },
       {
-       "titre": "Corrigé élève exercice 1",
+       "titre": "Corrigé exercice 1",
        "type": "Corrigé",
        "fichier": "03c08343594b05e99c38bf3e.bin",
        "taille": 93221,
@@ -299,7 +299,7 @@
        "rubrique": "Exercices"
       },
       {
-       "titre": "Corrigé élève exercice 2",
+       "titre": "Corrigé exercice 2",
        "type": "Corrigé",
        "fichier": "66d709780681ad827697ff22.bin",
        "taille": 84559,
@@ -327,7 +327,7 @@
        "rubrique": "Exercices"
       },
       {
-       "titre": "Corrigé élève exercice 3",
+       "titre": "Corrigé exercice 3",
        "type": "Corrigé",
        "fichier": "d20d266983c7a9c691e75d53.bin",
        "taille": 85032,
@@ -355,7 +355,7 @@
        "rubrique": "Exercices"
       },
       {
-       "titre": "Corrigé élève exercice 4",
+       "titre": "Corrigé exercice 4",
        "type": "Corrigé",
        "fichier": "ef4576c10e7f2078351948db.bin",
        "taille": 95345,
@@ -459,7 +459,7 @@
        "pages": 2
       },
       {
-       "titre": "Corrigé élève TP1 hacheur série",
+       "titre": "Corrigé TP1 hacheur série",
        "type": "Corrigé",
        "fichier": "66c400b2ba2dffa91eeb91a9.bin",
        "taille": 472014,
@@ -470,7 +470,7 @@
        }
       },
       {
-       "titre": "Corrigé élève TP2 hacheur 4 quadrants - préparation",
+       "titre": "Corrigé TP2 hacheur 4 quadrants - préparation",
        "type": "Corrigé",
        "fichier": "fac24ecda0ae2e4fbca8cf40.bin",
        "taille": 102309,
@@ -481,7 +481,7 @@
        }
       },
       {
-       "titre": "Corrigé élève TP2 hacheur 4 quadrants - simulation et compte rendu",
+       "titre": "Corrigé TP2 hacheur 4 quadrants - simulation et compte rendu",
        "type": "Corrigé",
        "fichier": "0a014afe8972ba4c1e7fbbf6.bin",
        "taille": 717890,
@@ -531,7 +531,7 @@
        "rubrique": "Activités"
       },
       {
-       "titre": "Corrigé élève Activité 1 – Boucle 4-20 mA du pressuriseur du réacteur nucléaire",
+       "titre": "Corrigé Activité 1 – Boucle 4-20 mA du pressuriseur du réacteur nucléaire",
        "type": "Corrigé",
        "fichier": "c5aa7f88fb696f8d3c080897.bin",
        "taille": 194472,
@@ -559,7 +559,7 @@
        "rubrique": "Activités"
       },
       {
-       "titre": "Corrigé élève Activité 2 – Numérisation d'une mesure de température",
+       "titre": "Corrigé Activité 2 – Numérisation d'une mesure de température",
        "type": "Corrigé",
        "fichier": "ba0c2c41266d71ad74321188.bin",
        "taille": 131177,
@@ -587,7 +587,7 @@
        "rubrique": "Activités"
       },
       {
-       "titre": "Corrigé élève Activité 3 – Temps de réponse et précision d'une sonde Pt100",
+       "titre": "Corrigé Activité 3 – Temps de réponse et précision d'une sonde Pt100",
        "type": "Corrigé",
        "fichier": "ca673777595986336a2476b9.bin",
        "taille": 121225,
@@ -635,7 +635,7 @@
        "rubrique": "Exercices"
       },
       {
-       "titre": "Corrigé élève Exercice 1",
+       "titre": "Corrigé Exercice 1",
        "type": "Corrigé",
        "fichier": "581bf8309745688e24de7fac.bin",
        "taille": 102768,
@@ -663,7 +663,7 @@
        "rubrique": "Exercices"
       },
       {
-       "titre": "Corrigé élève Exercice 2",
+       "titre": "Corrigé Exercice 2",
        "type": "Corrigé",
        "fichier": "11ba59dc39d8bb783899db6c.bin",
        "taille": 91048,
@@ -691,7 +691,7 @@
        "rubrique": "Exercices"
       },
       {
-       "titre": "Corrigé élève Exercice 3",
+       "titre": "Corrigé Exercice 3",
        "type": "Corrigé",
        "fichier": "7dd3d6219e85ce437b3df674.bin",
        "taille": 90383,
@@ -719,7 +719,7 @@
        "rubrique": "Exercices"
       },
       {
-       "titre": "Corrigé élève Exercice 4",
+       "titre": "Corrigé Exercice 4",
        "type": "Corrigé",
        "fichier": "dd1006a279469c41d4222fcb.bin",
        "taille": 104499,
@@ -806,7 +806,7 @@
        "lien": "animations/et/animation-regimes-transitoires.html"
       },
       {
-       "titre": "Corrigé élève activité 1. Surveillance thermique moteur industriel",
+       "titre": "Corrigé activité 1. Surveillance thermique moteur industriel",
        "type": "Corrigé",
        "fichier": "026e0441302b669b75440a5e.bin",
        "taille": 166385,
@@ -817,7 +817,7 @@
        }
       },
       {
-       "titre": "Corrigé élève activité 2. mise en vitesse convoyeur automatisé",
+       "titre": "Corrigé activité 2. mise en vitesse convoyeur automatisé",
        "type": "Corrigé",
        "fichier": "9ae888af5487fa10ac5e7856.bin",
        "taille": 176322,
@@ -828,7 +828,7 @@
        }
       },
       {
-       "titre": "Corrigé élève Exercice 1",
+       "titre": "Corrigé Exercice 1",
        "type": "Corrigé",
        "fichier": "a154914ef1b653f5fbcda75f.bin",
        "taille": 153267,
@@ -839,7 +839,7 @@
        }
       },
       {
-       "titre": "Corrigé élève Exercice 2",
+       "titre": "Corrigé Exercice 2",
        "type": "Corrigé",
        "fichier": "621d0c8f6812b78e9c5753f8.bin",
        "taille": 101096,
@@ -850,7 +850,7 @@
        }
       },
       {
-       "titre": "Corrigé élève Exercice 3",
+       "titre": "Corrigé Exercice 3",
        "type": "Corrigé",
        "fichier": "093e8fbdeecfb848971fce43.bin",
        "taille": 169197,
@@ -861,7 +861,7 @@
        }
       },
       {
-       "titre": "Corrigé élève Exercice 4",
+       "titre": "Corrigé Exercice 4",
        "type": "Corrigé",
        "fichier": "85d4d16fe5cfc7becff5eb71.bin",
        "taille": 84099,
@@ -933,7 +933,7 @@
        "rubrique": "TP"
       },
       {
-       "titre": "Corrigé élève TP 1 – Analyse spectrale",
+       "titre": "Corrigé TP 1 – Analyse spectrale",
        "type": "Corrigé",
        "fichier": "52268657a4244a4491784329.bin",
        "taille": 173789,
@@ -961,7 +961,7 @@
        "rubrique": "TP"
       },
       {
-       "titre": "Corrigé élève TP 2 – Mesure du THD",
+       "titre": "Corrigé TP 2 – Mesure du THD",
        "type": "Corrigé",
        "fichier": "78ab5ebfc7d04eae1fca6150.bin",
        "taille": 132995,
@@ -989,7 +989,7 @@
        "rubrique": "Exercices"
       },
       {
-       "titre": "Corrigé élève Exercice 1",
+       "titre": "Corrigé Exercice 1",
        "type": "Corrigé",
        "fichier": "08e38b56d510d22dccdabc82.bin",
        "taille": 94607,
@@ -1017,7 +1017,7 @@
        "rubrique": "Exercices"
       },
       {
-       "titre": "Corrigé élève Exercice 2",
+       "titre": "Corrigé Exercice 2",
        "type": "Corrigé",
        "fichier": "70152bdeae88483dea4cf5df.bin",
        "taille": 114967,
@@ -1045,7 +1045,7 @@
        "rubrique": "Exercices"
       },
       {
-       "titre": "Corrigé élève Exercice 3",
+       "titre": "Corrigé Exercice 3",
        "type": "Corrigé",
        "fichier": "a77bf1af149b08579700d412.bin",
        "taille": 82386,
@@ -1073,7 +1073,7 @@
        "rubrique": "Exercices"
       },
       {
-       "titre": "Corrigé élève Exercice 4",
+       "titre": "Corrigé Exercice 4",
        "type": "Corrigé",
        "fichier": "f0290e9f869e0da039f6cd5e.bin",
        "taille": 102476,
@@ -1165,7 +1165,7 @@
        "pages": 5
       },
       {
-       "titre": "Corrigé élève Annale BTS 2025 - moteur à courant continu",
+       "titre": "Corrigé Annale BTS 2025 - moteur à courant continu",
        "type": "Corrigé",
        "fichier": "26c9efbe0b1f8e2977b4276d.bin",
        "taille": 144193,
@@ -1176,7 +1176,7 @@
        }
       },
       {
-       "titre": "Corrigé élève exercice 1",
+       "titre": "Corrigé exercice 1",
        "type": "Corrigé",
        "fichier": "0bb6493caeff92ce337df694.bin",
        "taille": 147925,
@@ -1187,7 +1187,7 @@
        }
       },
       {
-       "titre": "Corrigé élève exercice 2",
+       "titre": "Corrigé exercice 2",
        "type": "Corrigé",
        "fichier": "65331075c9cc34dc5cdf7c66.bin",
        "taille": 133455,
@@ -1198,7 +1198,7 @@
        }
       },
       {
-       "titre": "Corrigé élève TP1 Moteur à courant continu",
+       "titre": "Corrigé TP1 Moteur à courant continu",
        "type": "Corrigé",
        "fichier": "c463355ea977ea93ae6c8bc3.bin",
        "taille": 404748,
@@ -1209,7 +1209,7 @@
        }
       },
       {
-       "titre": "Corrigé élève TP2 Moteur asynchrone (simulation)",
+       "titre": "Corrigé TP2 Moteur asynchrone (simulation)",
        "type": "Corrigé",
        "fichier": "e7684cf7e042f36eaa103e05.bin",
        "taille": 362469,
