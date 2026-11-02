@@ -1165,6 +1165,39 @@
        "pages": 5
       },
       {
+       "titre": "Corrigé élève Annale BTS 2025 - moteur à courant continu",
+       "type": "Corrigé",
+       "fichier": "26c9efbe0b1f8e2977b4276d.bin",
+       "taille": 144193,
+       "pages": 4,
+       "corrige": {
+        "id": "cim-les-convertisseurs-electromecaniques-corrige-eleve-annale-bts-2025-moteur-a-courant-con",
+        "wk": "sVVr/zPTJ2VhbEpDspRy7gj6O+PejDn1L4yJub+h7pbY1dLRr0LnChyD0Txs/jhPGMURG7Mi7/Gpz5xh"
+       }
+      },
+      {
+       "titre": "Corrigé élève exercice 1",
+       "type": "Corrigé",
+       "fichier": "0bb6493caeff92ce337df694.bin",
+       "taille": 147925,
+       "pages": 3,
+       "corrige": {
+        "id": "cim-les-convertisseurs-electromecaniques-corrige-eleve-exercice-1",
+        "wk": "cl/F/s+QLjsE5j5MmopEa5AK6eNkQNVODhH38jMtuawvpvkTb5/AgX8wuHGneoGYfZsf1JdMyjyadsLT"
+       }
+      },
+      {
+       "titre": "Corrigé élève exercice 2",
+       "type": "Corrigé",
+       "fichier": "65331075c9cc34dc5cdf7c66.bin",
+       "taille": 133455,
+       "pages": 3,
+       "corrige": {
+        "id": "cim-les-convertisseurs-electromecaniques-corrige-eleve-exercice-2",
+        "wk": "o5BFQZSRk1x7UQcLijcSf7O3fQ7BjKB/BiCQCKm56MDdReceeJp+TB73P78RsjFtWDS9dNfwog2HWyRs"
+       }
+      },
+      {
        "titre": "Corrigé élève TP1 Moteur à courant continu",
        "type": "Corrigé",
        "fichier": "c463355ea977ea93ae6c8bc3.bin",
@@ -1219,19 +1252,14 @@
   },
   {
    "groupe": "Appareils",
-   "titre": "Oscilloscope RIGOL DS1104Z Plus – bâtiment B (4 voies)",
+   "titre": "GBF METRIX MTX 3240",
    "docs": [
     {
-     "titre": "Fiche méthode oscilloscope DS1104Z Plus",
+     "titre": "Fiche outil GBF MTX 3240",
      "type": "Fiche",
-     "lien": "outils/oscilloscope-rigol-ds1104z-plus/fiche-methode-oscilloscope-ds1104z-plus-7a1bf24a.pdf",
-     "taille": 323564,
-     "pages": 4
-    },
-    {
-     "titre": "Simulation oscilloscope",
-     "type": "Simulation",
-     "lien": "outils/oscilloscope-rigol-ds1104z-plus/simulation-oscilloscope.html"
+     "lien": "outils/gbf-metrix-mtx-3240/fiche-outil-gbf-mtx-3240-a1d90ff3.pdf",
+     "taille": 429854,
+     "pages": 2
     }
    ]
   },
@@ -1242,9 +1270,27 @@
     {
      "titre": "Fiche outil oscilloscope DS1102CD",
      "type": "Fiche",
-     "lien": "outils/oscilloscope-rigol-ds1102cd/fiche-outil-oscilloscope-ds1102cd-cb7e8128.pdf",
+     "lien": "outils/oscilloscope-rigol-ds1102cd-batiment-d-2-voies/fiche-outil-oscilloscope-ds1102cd-cb7e8128.pdf",
      "taille": 327491,
      "pages": 3
+    }
+   ]
+  },
+  {
+   "groupe": "Appareils",
+   "titre": "Oscilloscope RIGOL DS1104Z Plus – bâtiment B (4 voies)",
+   "docs": [
+    {
+     "titre": "Fiche méthode oscilloscope DS1104Z Plus",
+     "type": "Fiche",
+     "lien": "outils/oscilloscope-rigol-ds1104z-plus-batiment-b-4-voies/fiche-methode-oscilloscope-ds1104z-plus-7a1bf24a.pdf",
+     "taille": 323564,
+     "pages": 4
+    },
+    {
+     "titre": "Simulation oscilloscope",
+     "type": "Simulation",
+     "lien": "outils/oscilloscope-rigol-ds1104z-plus-batiment-b-4-voies/simulation-oscilloscope.html"
     }
    ]
   },
@@ -1263,19 +1309,6 @@
      "titre": "Simulation wattmètre",
      "type": "Simulation",
      "lien": "outils/wattmetre-numerique-fiwatt/simulation-wattmetre.html"
-    }
-   ]
-  },
-  {
-   "groupe": "Appareils",
-   "titre": "GBF METRIX MTX 3240",
-   "docs": [
-    {
-     "titre": "Fiche outil GBF MTX 3240",
-     "type": "Fiche",
-     "lien": "outils/gbf-metrix-mtx-3240/fiche-outil-gbf-mtx-3240-a1d90ff3.pdf",
-     "taille": 429854,
-     "pages": 2
     }
    ]
   },

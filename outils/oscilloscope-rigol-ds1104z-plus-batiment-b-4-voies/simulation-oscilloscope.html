@@ -1,0 +1,929 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Simulation oscilloscope</title>
+<style>
+:root{
+  --fond:#eef1f4; --carte:#ffffff; --texte:#1d2733; --doux:#5b6775; --bleu:#1f4e79; --bleu2:#dce9f5;
+  --ok:#1b7f3b; --okf:#e6f4ea; --ko:#b71c1c; --kof:#fdecea; --bord:#cfd8e1;
+  --boitier:#e7e9ea; --boitier2:#d5d9dc; --touche:#f7f7f5; --ecran:#0b0f14;
+  --c1:#f2d33c; --c2:#3ec7f0; --cm:#c77dff; --ct:#ff9f43;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Segoe UI",Calibri,system-ui,sans-serif;background:var(--fond);color:var(--texte)}
+header{background:var(--bleu);color:#fff;padding:12px 18px;display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 16px}
+header h1{font-size:1.25rem;margin:0}
+header span{opacity:.85;font-size:.9rem}
+.onglets{display:flex;gap:4px;padding:10px 16px 0;flex-wrap:wrap}
+.onglets button{border:1px solid var(--bord);border-bottom:none;background:#dfe5eb;padding:8px 14px;border-radius:8px 8px 0 0;font:inherit;cursor:pointer;color:var(--texte)}
+.onglets button.actif{background:var(--carte);font-weight:600;color:var(--bleu)}
+main{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:14px;padding:0 16px 20px;align-items:start}
+@media (max-width:1200px){main{grid-template-columns:1fr}}
+
+/* ---------- appareil ---------- */
+.scope{background:linear-gradient(#f1f2f2,var(--boitier));border:1px solid #bfc5c9;border-radius:0 14px 14px 14px;padding:14px;box-shadow:0 3px 10px rgba(0,0,0,.12);display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:14px}
+@media (max-width:900px){.scope{grid-template-columns:1fr}}
+.marque{font-size:.8rem;color:#56606a;margin:0 0 6px 4px;letter-spacing:.04em}
+.marque b{color:#333}
+.zone-ecran{display:grid;grid-template-columns:86px minmax(0,1fr) 108px;gap:6px;background:#cdd2d5;border-radius:10px;padding:8px}
+.menu-col{display:flex;flex-direction:column;gap:5px}
+.menu-col button{flex:1;min-height:40px;border:1px solid #6d8aa3;border-radius:6px;background:linear-gradient(#a8bfd2,#86a2b9);color:#0d2233;font:600 .72rem/1.1 inherit;cursor:pointer;padding:2px}
+.menu-col button:disabled{opacity:.35;cursor:default}
+.ecran{position:relative;background:var(--ecran);border-radius:4px;overflow:hidden}
+canvas#cv{display:block;width:100%;height:auto;touch-action:none}
+.softmenu{position:absolute;top:36px;right:0;width:0;display:none}
+.zone-ecran .ecran-menu{background:#11161c;border-radius:4px;display:flex;flex-direction:column;gap:3px;padding:4px}
+.ecran-menu .titre{color:#9fb6c9;font-size:.72rem;text-align:center;font-weight:700;padding:3px 0;border-bottom:1px solid #2b3540}
+.ecran-menu button{background:#1b2530;border:1px solid #2f3d4b;color:#e8eef3;border-radius:3px;padding:5px 4px;font:inherit;font-size:.72rem;cursor:pointer;text-align:center;min-height:42px}
+.ecran-menu button small{display:block;color:#ffd66b;font-weight:700;font-size:.78rem;margin-top:2px}
+.ecran-menu button:hover{background:#26384a}
+.ecran-menu .vide{flex:1}
+.gauche .mes{background:#1b2530;color:#e8eef3;border-color:#2f3d4b;font-weight:500}
+.gauche .mes.on{outline:2px solid var(--c1)}
+
+.panneau{display:flex;flex-direction:column;gap:10px}
+.rangee{display:flex;gap:6px;flex-wrap:wrap}
+.tch{border:1px solid #aab1b6;border-radius:6px;background:linear-gradient(#fff,var(--touche));padding:7px 9px;font:600 .74rem inherit;cursor:pointer;color:#333;box-shadow:0 2px 0 #b9bfc3;min-width:58px}
+.tch:active{transform:translateY(1px);box-shadow:0 1px 0 #b9bfc3}
+.tch.vert{background:linear-gradient(#8ddc6a,#56b33a);color:#0d3b05;border-color:#4b9a33}
+.tch.run{background:linear-gradient(#9fe39a,#69c463)}
+.tch.stop{background:linear-gradient(#ff9a9a,#e05555);color:#fff}
+.tch.ch1{border:2px solid var(--c1)} .tch.ch2{border:2px solid var(--c2)}
+.tch.sel{box-shadow:0 0 0 3px rgba(31,78,121,.35)}
+.tch.allume::after{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:#2ecc40;margin-left:5px;vertical-align:middle}
+.bloc{border:1px solid #b8c0c6;border-radius:9px;padding:8px;background:rgba(255,255,255,.35)}
+.bloc h4{margin:0 0 6px;font-size:.68rem;letter-spacing:.12em;color:#6b757d}
+.boutons{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.blocs2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.molette{display:flex;flex-direction:column;align-items:center;gap:2px}
+.molette label{font-size:.66rem;color:#555;font-weight:700;letter-spacing:.05em}
+.molette .ligne{display:flex;align-items:center;gap:4px}
+.molette .bt{width:26px;height:26px;border-radius:50%;border:1px solid #aab1b6;background:#fff;font-weight:700;cursor:pointer;color:#333;padding:0;line-height:1}
+.knob{width:46px;height:46px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,#d7dadb 70%,#b8bcbe);border:1px solid #9aa1a5;cursor:pointer;position:relative;box-shadow:0 2px 3px rgba(0,0,0,.25)}
+.knob.gros{width:56px;height:56px}
+.knob::after{content:"";position:absolute;left:50%;top:5px;width:3px;height:11px;margin-left:-1.5px;background:#777;border-radius:2px;transform-origin:50% 18px}
+.knob.gros::after{transform-origin:50% 23px}
+.molette small{font-size:.6rem;color:#777}
+.voyants{display:flex;gap:8px;font-size:.62rem;color:#555;justify-content:center}
+.voyants span::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:#bbb;margin-right:3px}
+.voyants span.on::before{background:#2ecc40}
+.entrees{display:flex;justify-content:space-around;margin-top:6px;font-size:.7rem;color:#555}
+.bnc{display:flex;flex-direction:column;align-items:center;gap:2px}
+.bnc i{width:30px;height:30px;border-radius:50%;background:radial-gradient(circle,#444 20%,#c9ced1 22%,#9aa1a5 60%,#d9dcde 64%);display:block}
+.avert{font-size:.62rem;color:#7a5b00;text-align:center}
+
+/* ---------- consignes ---------- */
+.cote{background:var(--carte);border:1px solid var(--bord);border-radius:12px;padding:14px;position:sticky;top:10px;max-height:calc(100vh - 20px);overflow:auto}
+@media (max-width:1200px){.cote{position:static;max-height:none}}
+.cote h2{font-size:1.05rem;margin:0 0 8px;color:var(--bleu)}
+.cote h3{font-size:.95rem;margin:12px 0 6px}
+.progress{height:8px;background:#e3e8ee;border-radius:5px;overflow:hidden;margin:6px 0 10px}
+.progress div{height:100%;background:var(--ok);width:0}
+.parties{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px}
+.parties button{border:1px solid var(--bord);background:#f4f6f8;border-radius:14px;padding:3px 9px;font:inherit;font-size:.78rem;cursor:pointer}
+.parties button.actif{background:var(--bleu);color:#fff;border-color:var(--bleu)}
+.parties button.fini{border-color:var(--ok);color:var(--ok)}
+.parties button.fini.actif{color:#fff}
+.contexte{background:var(--bleu2);border-left:4px solid var(--bleu);padding:8px 10px;border-radius:4px;font-size:.88rem;margin-bottom:10px}
+.question{border:1px solid var(--bord);border-radius:9px;padding:10px;margin-bottom:10px}
+.question .num{font-weight:700;color:var(--bleu)}
+.question p{margin:4px 0 8px;font-size:.9rem;line-height:1.4}
+.rep{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.rep input,.rep select{font:inherit;padding:5px 7px;border:1px solid var(--bord);border-radius:6px;width:110px}
+.btn{font:inherit;font-size:.85rem;border:1px solid var(--bleu);background:var(--bleu);color:#fff;border-radius:6px;padding:5px 11px;cursor:pointer}
+.btn.sec{background:#fff;color:var(--bleu)}
+.fb{margin-top:8px;padding:7px 9px;border-radius:6px;font-size:.86rem;display:none;line-height:1.4}
+.fb.ok{display:block;background:var(--okf);color:var(--ok)}
+.fb.ko{display:block;background:var(--kof);color:var(--ko)}
+.fb.ind{display:block;background:#fff8e1;color:#7a5b00}
+.question.reussie{border-color:var(--ok);background:#fbfefb}
+.nav{display:flex;justify-content:space-between;margin-top:6px}
+table.bilan{width:100%;border-collapse:collapse;font-size:.82rem}
+table.bilan td,table.bilan th{border:1px solid var(--bord);padding:4px 6px;text-align:left}
+table.bilan th{background:var(--bleu2)}
+.gen{display:grid;grid-template-columns:auto 1fr;gap:5px 8px;font-size:.85rem;align-items:center;margin-bottom:10px}
+.gen input,.gen select{font:inherit;padding:3px 5px;border:1px solid var(--bord);border-radius:5px;width:100%}
+.note{font-size:.8rem;color:var(--doux)}
+.ecran{min-width:0}
+@media (max-width:700px){.zone-ecran{grid-template-columns:1fr}.zone-ecran .ecran{order:-1}.menu-col{flex-direction:row;flex-wrap:wrap}.menu-col button{min-height:32px;flex:1 1 30%}.menu-col button:disabled{display:none}.ecran-menu{flex-direction:row;flex-wrap:wrap}.ecran-menu .titre{flex:1 1 100%}.ecran-menu button{flex:1 1 30%;min-height:38px}.ecran-menu .vide{display:none}main{padding:0 6px 16px}.scope{padding:8px}}
+.bulle{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:#1d2733;color:#fff;padding:9px 16px;border-radius:8px;font-size:.88rem;opacity:0;transition:opacity .25s;pointer-events:none;max-width:90vw;z-index:9}
+.bulle.vis{opacity:.95}
+</style>
+</head>
+<body>
+<header>
+  <h1>Simulation d'oscilloscope numérique</h1>
+  <span>Inspirée de l'oscilloscope 4 voies DS1104Z Plus du laboratoire · à faire avant le premier TP</span>
+</header>
+
+<div class="onglets" id="onglets">
+  <button data-o="guide" class="actif">Entraînement guidé</button>
+  <button data-o="mystere">Signal mystère</button>
+  <button data-o="libre">Mode libre</button>
+</div>
+
+<main>
+<section>
+  <div class="scope">
+    <div>
+      <p class="marque"><b>OSCILLOSCOPE NUMÉRIQUE</b> · 4 voies · 100 MHz · 1 GSa/s · <i>simulation : voies 1 et 2 actives</i></p>
+      <div class="zone-ecran">
+        <div class="menu-col gauche" id="menuGauche"></div>
+        <div class="ecran"><canvas id="cv" width="620" height="500"></canvas></div>
+        <div class="ecran-menu" id="menuDroit"></div>
+      </div>
+      <div class="entrees">
+        <div class="bnc"><i></i><b style="color:#b59a00">CH1</b></div>
+        <div class="bnc"><i></i><b style="color:#178fb3">CH2</b></div>
+        <div class="bnc" style="opacity:.4"><i></i>CH3</div>
+        <div class="bnc" style="opacity:.4"><i></i>CH4</div>
+      </div>
+      <p class="avert">⚠ Entrées 1 MΩ // 13 pF – 300 V eff. max – CAT I – masses communes reliées à la terre</p>
+    </div>
+
+    <div class="panneau">
+      <div class="rangee">
+        <button class="tch" id="bClear">CLEAR</button>
+        <button class="tch" id="bAuto">AUTO</button>
+        <button class="tch run" id="bRun">RUN/STOP</button>
+        <button class="tch" id="bSingle">SINGLE</button>
+      </div>
+      <div class="bloc">
+        <h4>MENU</h4>
+        <div style="display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:center">
+          <div class="molette" id="mMulti"></div>
+          <div class="boutons">
+            <button class="tch" data-m="measure">Measure</button>
+            <button class="tch" data-m="acquire">Acquire</button>
+            <button class="tch" data-m="storage">Storage</button>
+            <button class="tch" data-m="cursor">Cursor</button>
+            <button class="tch" data-m="display">Display</button>
+            <button class="tch" data-m="utility">Utility</button>
+          </div>
+        </div>
+        <div class="rangee" style="margin-top:6px;justify-content:flex-end">
+          <button class="tch vert" id="bHelp">Help</button>
+          <button class="tch vert" id="bPrint" title="Capture d'écran">🖨 Capture</button>
+        </div>
+      </div>
+      <div class="blocs2">
+        <div class="bloc">
+          <h4>VERTICAL</h4>
+          <div class="rangee" style="margin-bottom:6px">
+            <button class="tch ch1" id="bCH1">CH1</button>
+            <button class="tch ch2" id="bCH2">CH2</button>
+            <button class="tch" data-m="math">MATH</button>
+          </div>
+          <div class="molette" id="mVpos"></div>
+          <div class="molette" id="mVscale" style="margin-top:6px"></div>
+        </div>
+        <div class="bloc">
+          <h4>HORIZONTAL</h4>
+          <div class="molette" id="mHpos"></div>
+          <div class="rangee" style="justify-content:center;margin:6px 0"><button class="tch" data-m="horiz">MENU</button></div>
+          <div class="molette" id="mHscale"></div>
+        </div>
+      </div>
+      <div class="bloc">
+        <h4>TRIGGER</h4>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:center">
+          <div>
+            <div class="voyants" id="voyants"><span data-v="auto">Auto</span><span data-v="normal">Normal</span><span data-v="single">Single</span></div>
+            <div class="rangee" style="justify-content:center;margin-top:4px">
+              <button class="tch" id="bMode">MODE</button>
+              <button class="tch" data-m="trigger">MENU</button>
+              <button class="tch" id="bForce">FORCE</button>
+            </div>
+          </div>
+          <div class="molette" id="mLevel"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<aside class="cote" id="cote"></aside>
+</main>
+<div class="bulle" id="bulle"></div>
+
+<script>
+"use strict";
+// =====================================================================
+//  OUTILS
+// =====================================================================
+const $ = s => document.querySelector(s);
+const VSEQ = [0.005,0.01,0.02,0.05,0.1,0.2,0.5,1,2,5,10];
+const HSEQ = []; [1e-6,1e-5,1e-4,1e-3,1e-2].forEach(d => [1,2,5].forEach(k => HSEQ.push(k*d))); HSEQ.push(0.1);
+const gauss = (() => { let s = 1; return () => { let u = 0; for (let i = 0; i < 6; i++) u += Math.random(); return (u - 3) / 1.2; }; })();
+function arrondi(x, n = 3) { if (!isFinite(x)) return x; if (x === 0) return 0; const p = Math.pow(10, n - 1 - Math.floor(Math.log10(Math.abs(x)))); return Math.round(x * p) / p; }
+function fmt(x, u) {
+  if (x === null || !isFinite(x)) return '*****';
+  const a = Math.abs(x); let k = 1, p = '';
+  if (a >= 1e3 && u !== 'V') { k = 1e-3; p = 'k'; }
+  else if (a >= 1 || a === 0) { k = 1; p = ''; }
+  else if (a >= 1e-3) { k = 1e3; p = 'm'; }
+  else if (a >= 1e-6) { k = 1e6; p = 'µ'; }
+  else { k = 1e9; p = 'n'; }
+  let v = x * k; const d = Math.abs(v) >= 100 ? 1 : Math.abs(v) >= 10 ? 2 : 3;
+  return v.toFixed(d).replace('.', ',') + ' ' + p + u;
+}
+const fmtCal = (x, u) => fmt(x, u).replace(/,0+ /, ' ').replace(/(,\d*?)0+ /, '$1 ').replace(', ', ' ');
+function bulle(t) { const b = $('#bulle'); b.textContent = t; b.classList.add('vis'); clearTimeout(bulle.t); bulle.t = setTimeout(() => b.classList.remove('vis'), 2600); }
+function lireNombre(s) { s = String(s).trim().replace(',', '.').replace(/\s/g, ''); if (s === '') return NaN; return Number(s); }
+
+// =====================================================================
+//  SIGNAUX (ce qui est réellement sur le montage)
+// =====================================================================
+// type : sinus | carre | triangle | mli ; A : amplitude (crête) ou niveau haut (MLI) ; off : décalage ; ph : retard en degrés
+const SIG = {
+  1: { type: 'sinus', A: 3, f: 1000, off: 0, ph: 0, duty: 0.5, sonde: 1 },
+  2: { type: 'sinus', A: 1, f: 1000, off: 0, ph: 90, duty: 0.5, sonde: 1 },
+};
+function brut(s, t) {
+  let x = s.f * t - s.ph / 360; x -= Math.floor(x);
+  switch (s.type) {
+    case 'sinus': return s.off + s.A * Math.sin(2 * Math.PI * x);
+    case 'carre': return s.off + (x < 0.5 ? s.A : -s.A);
+    case 'triangle': return s.off + s.A * (x < 0.25 ? 4 * x : x < 0.75 ? 2 - 4 * x : 4 * x - 4);
+    case 'mli': return s.off + (x < s.duty ? s.A : 0);
+  }
+  return 0;
+}
+function moyenneBrut(s) { return s.type === 'mli' ? s.off + s.A * s.duty : s.off; }
+
+// =====================================================================
+//  ÉTAT DE L'OSCILLOSCOPE
+// =====================================================================
+let S;
+function etatDefaut() {
+  return {
+    ch: {
+      1: { on: true, iv: 7, pos: 0, coup: 'DC', sonde: 1 },
+      2: { on: false, iv: 7, pos: 0, coup: 'DC', sonde: 1 },
+    },
+    actif: 1, ih: 9, hpos: 0, xy: false,
+    trig: { src: 1, pente: 'montant', niv: 0, mode: 'auto' },
+    run: true, singleArme: false, capture: false,
+    mesures: [], mesSrc: 1,
+    cur: { mode: 'off', sel: 'A', src: 1, A: -2, B: 2 },
+    math: { op: 'off', src: 1, unite: 'dB', ifmax: 6 },
+    acq: 'normal',
+    menu: null, gauche: false,
+    figé: null, dernier: null, nivAff: 0,
+  };
+}
+const calV = n => VSEQ[S.ch[n].iv] * S.ch[n].sonde;   // V/div affiché
+const calH = () => HSEQ[S.ih];
+// tension affichée (après sonde réelle, menu sonde et couplage), sans bruit
+function vAff(n, t) {
+  const c = S.ch[n], s = SIG[n];
+  if (c.coup === 'GND') return 0;
+  let v = brut(s, t);
+  if (c.coup === 'AC') v -= moyenneBrut(s);
+  return v / s.sonde * c.sonde;
+}
+function moyAff(n) { const c = S.ch[n], s = SIG[n]; if (c.coup !== 'DC') return 0; return moyenneBrut(s) / s.sonde * c.sonde; }
+
+// --------- déclenchement : recherche d'un franchissement du niveau ---------
+function chercheDeclenchement() {
+  const n = S.trig.src, s = SIG[n], T = 1 / s.f, L = S.trig.niv, K = 1500;
+  if (S.ch[n].coup === 'GND') return null;
+  const d = 0.3137 * T / K;   // départ décalé : évite de rater un franchissement situé pile en t = 0
+  let prev = vAff(n, d);
+  for (let k = 1; k <= K + 1; k++) {
+    const t = d + k * T / K, v = vAff(n, t);
+    const ok = S.trig.pente === 'montant' ? (prev < L && v >= L) : (prev > L && v <= L);
+    if (ok) { const fr = (L - prev) / ((v - prev) || 1e-12); return d + (k - 1 + fr) * T / K; }
+    prev = v;
+  }
+  return null;
+}
+// renvoie l'instant correspondant au centre de l'écran (point de déclenchement)
+function instantTrame() {
+  if (S.figé) return { t: S.figé.t, etat: 'STOP', graine: S.figé.graine };
+  const td = chercheDeclenchement();
+  const mode = S.trig.mode;
+  if (S.forcer) { S.forcer = false; const t = Math.random() / SIG[S.trig.src].f; return fin(t, "T'D"); }
+  if (td !== null) {
+    return fin(td, "T'D");
+  }
+  if (mode === 'auto') { const r = { t: Math.random() / SIG[S.trig.src].f, etat: 'AUTO', graine: Math.random() }; S.dernier = r; return r; }
+  return S.dernier ? { t: S.dernier.t, etat: 'WAIT', graine: S.dernier.graine, vieux: true } : { t: null, etat: 'WAIT' };
+  function fin(t, etat) {
+    const r = { t, etat, graine: 12345 };
+    if (mode === 'single' || S.singleArme) { S.figé = r; S.run = false; S.singleArme = false; S.capture = true; majRun(); r.etat = 'STOP'; }
+    S.dernier = r; return r;
+  }
+}
+
+// =====================================================================
+//  MESURES
+// =====================================================================
+function fenetre(t0) { const H = calH(); return [t0 + S.hpos - 6 * H, t0 + S.hpos + 6 * H]; }
+function horsEcran(n, ta, tb) {
+  const c = S.ch[n], cal = calV(n); const K = 400;
+  for (let k = 0; k <= K; k++) { const y = vAff(n, ta + (tb - ta) * k / K) / cal + c.pos; if (y > 4.05 || y < -4.05) return true; }
+  return false;
+}
+function franchissements(n, ta, tb, L) {
+  const K = 3000, out = []; let prev = vAff(n, ta);
+  for (let k = 1; k <= K; k++) { const t = ta + (tb - ta) * k / K, v = vAff(n, t); if (prev < L && v >= L) out.push(t - (v - L) / ((v - prev) || 1e-12) * (tb - ta) / K); prev = v; }
+  return out;
+}
+function calculeMesure(type, n, t0) {
+  if (t0 === null) return null;
+  const c = S.ch[n], s = SIG[n];
+  if (!c.on && !(type.startsWith('Delay') || type.startsWith('Phase'))) return null;
+  const [ta, tb] = fenetre(t0), T = 1 / s.f, nb = Math.floor((tb - ta) / T + 1e-9);
+  const j = () => 1 + (trameCourante && trameCourante.etat === 'AUTO' ? 0.0015 : 0.0004) * gauss();
+  const vert = ['Vmax', 'Vmin', 'Vpp', 'Vavg', 'Vrms'].includes(type);
+  if (vert && horsEcran(n, ta, tb)) return null;
+  if (c.coup === 'GND') return vert ? 0.0004 * gauss() : null;
+  // échantillonnage sur un nombre entier de périodes si possible
+  const tA = ta, tB = nb >= 1 ? ta + nb * T : tb, K = 4000;
+  let mx = -1e9, mn = 1e9, sm = 0, sq = 0;
+  for (let k = 0; k < K; k++) { const v = vAff(n, tA + (tB - tA) * (k + 0.5) / K); mx = Math.max(mx, v); mn = Math.min(mn, v); sm += v; sq += v * v; }
+  const moy = sm / K, eff = Math.sqrt(sq / K);
+  switch (type) {
+    case 'Vmax': return mx * j();
+    case 'Vmin': return mn * j();
+    case 'Vpp': return (mx - mn) * j();
+    case 'Vavg': return Math.abs(moy) < 1e-9 * (mx - mn + 1) ? 0.002 * gauss() * calV(n) * 0.1 : moy * j();
+    case 'Vrms': return eff * j();
+    case 'Freq': return nb >= 1 ? s.f * j() : null;
+    case 'Period': return nb >= 1 ? T * j() : null;
+    case '+Duty': {
+      if (nb < 1) return null; let h = 0; const mid = (mx + mn) / 2;
+      for (let k = 0; k < K; k++) if (vAff(n, tA + (tB - tA) * (k + 0.5) / K) > mid) h++;
+      return h / K * 100 * j();
+    }
+    case 'Delay 1→2': case 'Phase 1→2': {
+      if (!S.ch[1].on || !S.ch[2].on || SIG[1].f !== SIG[2].f || nb < 1) return null;
+      const milieu = k => { let a = 1e9, b = -1e9; for (let i = 0; i < 1000; i++) { const v = vAff(k, ta + i * T / 1000); a = Math.min(a, v); b = Math.max(b, v); } return (a + b) / 2; };
+      const m1 = milieu(1), m2 = milieu(2);
+      const f1 = franchissements(1, ta, tb, m1), f2 = franchissements(2, ta, tb, m2);
+      if (!f1.length || !f2.length) return null;
+      let d = f2.find(t => t >= f1[0]); if (d === undefined) return null; d -= f1[0];
+      if (d > T / 2) d -= T;
+      return type[0] === 'D' ? d * j() : d / T * 360 * j();
+    }
+  }
+  return null;
+}
+const MES = [['Vpp', 'V'], ['Vmax', 'V'], ['Vmin', 'V'], ['Vavg', 'V'], ['Vrms', 'V'], ['Freq', 'Hz'], ['Period', 's'], ['+Duty', '%'], ['Delay 1→2', 's'], ['Phase 1→2', '°']];
+function uniteMes(t) { return MES.find(m => m[0] === t)[1]; }
+function texteMes(m, v) {
+  const u = uniteMes(m.type);
+  if (v === null) return '*****';
+  if (u === '%') return v.toFixed(1).replace('.', ',') + ' %';
+  if (u === '°') return v.toFixed(1).replace('.', ',') + ' °';
+  return fmt(v, u);
+}
+
+// =====================================================================
+//  FFT
+// =====================================================================
+const FMAX = [500, 1e3, 2e3, 5e3, 1e4, 2e4, 5e4, 1e5, 2e5, 5e5, 1e6];
+function fft(re, im) {
+  const n = re.length;
+  for (let i = 1, j = 0; i < n; i++) { let b = n >> 1; for (; j & b; b >>= 1) j ^= b; j ^= b; if (i < j) { [re[i], re[j]] = [re[j], re[i]]; [im[i], im[j]] = [im[j], im[i]]; } }
+  for (let len = 2; len <= n; len <<= 1) {
+    const a = -2 * Math.PI / len, wr = Math.cos(a), wi = Math.sin(a);
+    for (let i = 0; i < n; i += len) { let cr = 1, ci = 0; for (let k = 0; k < len / 2; k++) {
+      const ur = re[i + k], ui = im[i + k], vr = re[i + k + len / 2] * cr - im[i + k + len / 2] * ci, vi = re[i + k + len / 2] * ci + im[i + k + len / 2] * cr;
+      re[i + k] = ur + vr; im[i + k] = ui + vi; re[i + k + len / 2] = ur - vr; im[i + k + len / 2] = ui - vi;
+      const t = cr * wr - ci * wi; ci = cr * wi + ci * wr; cr = t; } }
+  }
+}
+function spectre(n, t0) {
+  const N = 4096, [ta, tb] = fenetre(t0), dt = (tb - ta) / N; const re = new Float64Array(N), im = new Float64Array(N); let sw = 0;
+  for (let k = 0; k < N; k++) { const w = 0.5 - 0.5 * Math.cos(2 * Math.PI * k / (N - 1)); sw += w; re[k] = (vAff(n, ta + k * dt) + 0.0004 * calV(n) * gauss()) * w; }
+  fft(re, im);
+  const out = []; for (let k = 0; k < N / 2; k++) { const vpk = 2 * Math.hypot(re[k], im[k]) / sw * (k === 0 ? 0.5 : 1); out.push({ f: k / (N * dt), vrms: k === 0 ? vpk : vpk / Math.SQRT2 }); }
+  return { raies: out, fs: 1 / dt };
+}
+const fmaxFFT = () => FMAX[S.math.ifmax];
+
+// =====================================================================
+//  AFFICHAGE
+// =====================================================================
+const cv = $('#cv'), g = cv.getContext('2d');
+const GX = 10, GY = 36, PX = 50;          // grille : 12 × 8 divisions de 50 px
+const COUL = { 1: '#f2d33c', 2: '#3ec7f0' };
+let nivAffJusque = 0, trameCourante = null;
+
+function dessine() {
+  const tr = S.run || S.figé ? instantTrame() : (S.dernier || { t: null, etat: 'STOP' });
+  if (!S.run && !S.figé) tr.etat = 'STOP';
+  trameCourante = tr; graineBruit = Math.floor((tr.graine || 0.5) * 2147483646) % 2147483646 + 1;
+  g.fillStyle = '#05080b'; g.fillRect(0, 0, cv.width, cv.height);
+  // ---- barre du haut
+  g.font = 'bold 15px Consolas, monospace'; g.textBaseline = 'middle';
+  const coulEtat = { "T'D": '#2ecc40', AUTO: '#2ecc40', WAIT: '#ff9f43', STOP: '#ff4d4d' }[tr.etat];
+  g.fillStyle = coulEtat; g.fillRect(8, 6, 62, 24); g.fillStyle = '#000'; g.textAlign = 'center'; g.fillText(tr.etat, 39, 18);
+  g.textAlign = 'left'; g.fillStyle = '#fff'; g.fillText('H  ' + fmtCal(calH(), 's'), 84, 18);
+  g.fillStyle = '#aaa'; g.fillText('D ' + fmt(S.hpos, 's'), 200, 18);
+  g.fillStyle = COUL[S.trig.src]; g.fillText('T ' + (S.trig.pente === 'montant' ? '↑' : '↓') + ' CH' + S.trig.src + ' ' + fmt(S.trig.niv, 'V'), 360, 18);
+  g.fillStyle = '#aaa'; g.fillText(S.acq === 'moyenne' ? 'Moy.' : S.trig.mode === 'auto' ? 'Auto' : S.trig.mode === 'normal' ? 'Normal' : 'Single', 552, 18);
+  // ---- grille
+  g.strokeStyle = '#2a3440'; g.lineWidth = 1;
+  for (let i = 0; i <= 12; i++) { g.beginPath(); g.moveTo(GX + i * PX + .5, GY); g.lineTo(GX + i * PX + .5, GY + 8 * PX); g.stroke(); }
+  for (let i = 0; i <= 8; i++) { g.beginPath(); g.moveTo(GX, GY + i * PX + .5); g.lineTo(GX + 12 * PX, GY + i * PX + .5); g.stroke(); }
+  g.strokeStyle = '#4a5866';
+  for (let i = 0; i <= 60; i++) { const x = GX + i * 10 + .5; g.beginPath(); g.moveTo(x, GY + 4 * PX - 3); g.lineTo(x, GY + 4 * PX + 3); g.stroke(); }
+  for (let i = 0; i <= 40; i++) { const y = GY + i * 10 + .5; g.beginPath(); g.moveTo(GX + 6 * PX - 3, y); g.lineTo(GX + 6 * PX + 3, y); g.stroke(); }
+  g.save(); g.beginPath(); g.rect(GX, GY, 12 * PX, 8 * PX); g.clip();
+  const fft = S.math.op === 'FFT';
+  if (tr.t !== null) {
+    if (S.xy) dessineXY(tr);
+    else {
+      for (const n of [1, 2]) if (S.ch[n].on) dessineVoie(n, tr, fft ? 0.35 : 1);
+      if (S.math.op === 'A+B' || S.math.op === 'A−B') dessineMath(tr);
+      if (fft) dessineFFT(tr);
+    }
+  }
+  g.restore();
+  // ---- repères de voies et de déclenchement
+  for (const n of [1, 2]) if (S.ch[n].on && !S.xy) {
+    const y = GY + (4 - S.ch[n].pos) * PX; if (y >= GY - 2 && y <= GY + 8 * PX + 2) {
+      g.fillStyle = COUL[n]; g.beginPath(); g.moveTo(GX - 9, y - 8); g.lineTo(GX + 4, y); g.lineTo(GX - 9, y + 8); g.fill();
+      g.fillStyle = '#000'; g.font = 'bold 11px Consolas, monospace'; g.fillText(String(n), GX - 9, y + 1);
+    }
+  }
+  if (!S.xy) {
+    const tx = GX + 6 * PX - S.hpos / calH() * PX;
+    if (tx >= GX && tx <= GX + 12 * PX) { g.fillStyle = '#ff9f43'; g.beginPath(); g.moveTo(tx - 7, GY - 2); g.lineTo(tx + 7, GY - 2); g.lineTo(tx, GY + 8); g.fill(); }
+    const n = S.trig.src, yl = GY + (4 - (S.trig.niv / calV(n) + S.ch[n].pos)) * PX;
+    const yc = Math.max(GY + 4, Math.min(GY + 8 * PX - 4, yl));
+    g.fillStyle = '#ff9f43'; g.beginPath(); g.moveTo(GX + 12 * PX + 9, yc - 7); g.lineTo(GX + 12 * PX - 3, yc); g.lineTo(GX + 12 * PX + 9, yc + 7); g.fill();
+    if (performance.now() < nivAffJusque) { g.strokeStyle = '#ff9f43'; g.setLineDash([5, 4]); g.beginPath(); g.moveTo(GX, yc + .5); g.lineTo(GX + 12 * PX, yc + .5); g.stroke(); g.setLineDash([]); }
+  }
+  dessineCurseurs(tr);
+  // ---- mesures
+  g.font = '13px Consolas, monospace'; g.textBaseline = 'middle';
+  let x = GX;
+  for (const m of S.mesures) {
+    const v = calculeMesure(m.type, m.src, tr.t), txt = m.type + (m.type.includes('→') ? '' : '(' + m.src + ')') + ' = ' + texteMes(m, v);
+    g.fillStyle = m.type.includes('→') ? '#ddd' : COUL[m.src]; g.fillText(txt, x, GY + 8 * PX + 16); x += g.measureText(txt).width + 18;
+  }
+  // ---- barre du bas : calibres
+  g.font = 'bold 14px Consolas, monospace';
+  for (const n of [1, 2]) {
+    const c = S.ch[n], x0 = 10 + (n - 1) * 150;
+    g.fillStyle = c.on ? COUL[n] : '#444'; g.fillRect(x0, 472, 140, 22);
+    g.fillStyle = '#000'; const cp = c.coup === 'DC' ? '⎓' : c.coup === 'AC' ? '∿' : '⏚';
+    g.fillText(n + ' ' + cp + ' ' + fmtCal(calV(n), 'V'), x0 + 6, 483);
+    g.font = 'bold 11px Consolas, monospace'; g.fillText('×' + c.sonde, x0 + 108, 483); g.font = 'bold 14px Consolas, monospace';
+  }
+  if (S.math.op !== 'off') {
+    g.fillStyle = '#c77dff'; g.fillRect(320, 472, 200, 22); g.fillStyle = '#000';
+    g.fillText(S.math.op === 'FFT' ? 'FFT CH' + S.math.src + ' ' + fmtCal(fmaxFFT() / 12, 'Hz') + '/div' : 'MATH ' + S.math.op, 326, 483);
+  }
+  if (S.xy) { g.fillStyle = '#ddd'; g.fillText('Mode XY', 540, 483); }
+}
+function yPix(n, v) { return GY + (4 - (v / calV(n) + S.ch[n].pos)) * PX; }
+let graineBruit = 1;
+function alea() { graineBruit = (graineBruit * 16807) % 2147483647; return graineBruit / 2147483647; }
+function gaussFixe() { let u = 0; for (let i = 0; i < 6; i++) u += alea(); return (u - 3) / 1.2; }
+function bruit(n) { return (S.acq === 'moyenne' ? 0.003 : 0.012) * calV(n) * gaussFixe(); }
+function dessineVoie(n, tr, alpha) {
+  const [ta, tb] = fenetre(tr.t), K = 1200;
+  g.globalAlpha = alpha * (tr.vieux ? 0.8 : 1); g.strokeStyle = COUL[n]; g.lineWidth = 1.6; g.beginPath();
+  for (let k = 0; k <= K; k++) { const t = ta + (tb - ta) * k / K, x = GX + 12 * PX * k / K, y = yPix(n, vAff(n, t) + bruit(n)); k ? g.lineTo(x, y) : g.moveTo(x, y); }
+  g.stroke(); g.globalAlpha = 1;
+}
+function dessineMath(tr) {
+  const [ta, tb] = fenetre(tr.t), K = 1200, sgn = S.math.op === 'A+B' ? 1 : -1;
+  g.strokeStyle = '#c77dff'; g.lineWidth = 1.6; g.beginPath();
+  for (let k = 0; k <= K; k++) { const t = ta + (tb - ta) * k / K, v = vAff(1, t) + sgn * vAff(2, t), x = GX + 12 * PX * k / K, y = GY + (4 - v / calV(1)) * PX; k ? g.lineTo(x, y) : g.moveTo(x, y); }
+  g.stroke();
+}
+function dessineFFT(tr) {
+  const sp = spectre(S.math.src, tr.t), fmx = Math.min(fmaxFFT(), sp.fs / 2);
+  g.strokeStyle = '#c77dff'; g.lineWidth = 1.5; g.beginPath(); let premier = true;
+  for (const r of sp.raies) {
+    if (r.f > fmx) break;
+    const x = GX + r.f / fmaxFFT() * 12 * PX;
+    const y = S.math.unite === 'dB' ? GY + (20 - 20 * Math.log10(Math.max(r.vrms, 1e-6))) / 10 * PX : GY + 8 * PX - r.vrms / calV(S.math.src) * PX;
+    premier ? g.moveTo(x, y) : g.lineTo(x, y); premier = false;
+  }
+  g.stroke();
+  g.fillStyle = '#c77dff'; g.font = '12px Consolas, monospace'; g.textBaseline = 'top';
+  g.fillText(S.math.unite === 'dB' ? 'FFT : 10 dB/div, haut = +20 dBV' : 'FFT : ' + fmtCal(calV(S.math.src), 'V') + '/div (Vrms)', GX + 6, GY + 6);
+  g.fillText('0 Hz', GX + 4, GY + 8 * PX - 18); const t2 = fmt(fmaxFFT(), 'Hz'); g.fillText(t2, GX + 12 * PX - g.measureText(t2).width - 4, GY + 8 * PX - 18);
+  g.textBaseline = 'middle';
+}
+function dessineXY(tr) {
+  const T = 1 / SIG[1].f, K = 1500; g.strokeStyle = '#7CFC9A'; g.lineWidth = 1.5; g.beginPath();
+  for (let k = 0; k <= K; k++) { const t = tr.t + 2 * T * k / K, x = GX + (6 + vAff(1, t) / calV(1) + S.ch[1].pos) * PX, y = GY + (4 - (vAff(2, t) / calV(2) + S.ch[2].pos)) * PX; k ? g.lineTo(x, y) : g.moveTo(x, y); }
+  g.stroke();
+}
+// ---------- curseurs ----------
+function valCurseur(k) {
+  const c = S.cur, p = c[k];
+  if (c.mode === 'X') return S.math.op === 'FFT' ? (p + 6) / 12 * fmaxFFT() : p * calH() + S.hpos;
+  if (S.math.op === 'FFT' && S.math.unite === 'dB') return 20 - (4 - p) * 10;
+  return (p - S.ch[c.src].pos) * calV(c.src);
+}
+function dessineCurseurs() {
+  const c = S.cur; if (c.mode === 'off') return;
+  g.setLineDash([6, 4]); g.lineWidth = 1.2;
+  for (const k of ['A', 'B']) {
+    g.strokeStyle = c.sel === k || c.sel === 'AB' ? '#ff6b6b' : '#a15959'; g.beginPath();
+    if (c.mode === 'X') { const x = GX + (6 + c[k]) * PX + .5; g.moveTo(x, GY); g.lineTo(x, GY + 8 * PX); }
+    else { const y = GY + (4 - c[k]) * PX + .5; g.moveTo(GX, y); g.lineTo(GX + 12 * PX, y); }
+    g.stroke();
+  }
+  g.setLineDash([]);
+  const fftX = S.math.op === 'FFT', u = c.mode === 'X' ? (fftX ? 'Hz' : 's') : (fftX && S.math.unite === 'dB' ? 'dB' : 'V');
+  const a = valCurseur('A'), b = valCurseur('B'), f = v => u === 'dB' ? v.toFixed(1).replace('.', ',') + ' dBV' : fmt(v, u);
+  const lignes = ['A' + c.mode + ' = ' + f(a), 'B' + c.mode + ' = ' + f(b), 'Δ' + c.mode + ' = ' + (u === 'dB' ? (b - a).toFixed(1).replace('.', ',') + ' dB' : fmt(b - a, u))];
+  if (c.mode === 'X' && !fftX) lignes.push('1/ΔX = ' + (Math.abs(b - a) > 1e-12 ? fmt(1 / Math.abs(b - a), 'Hz') : '*****'));
+  g.font = '13px Consolas, monospace'; const w = 185, h = lignes.length * 17 + 8, x0 = GX + 12 * PX - w - 6, y0 = GY + 6;
+  g.fillStyle = 'rgba(20,28,36,.9)'; g.fillRect(x0, y0, w, h); g.strokeStyle = '#ff6b6b'; g.strokeRect(x0 + .5, y0 + .5, w, h);
+  g.fillStyle = '#ffd0d0'; lignes.forEach((l, i) => g.fillText(l, x0 + 8, y0 + 13 + i * 17));
+}
+// glisser les curseurs à la souris
+let glisse = null;
+function posCanvas(e) { const r = cv.getBoundingClientRect(); return { x: (e.clientX - r.left) * cv.width / r.width, y: (e.clientY - r.top) * cv.height / r.height }; }
+cv.addEventListener('pointerdown', e => {
+  if (S.cur.mode === 'off') return; const p = posCanvas(e);
+  const v = S.cur.mode === 'X' ? (p.x - GX) / PX - 6 : 4 - (p.y - GY) / PX;
+  glisse = Math.abs(v - S.cur.A) <= Math.abs(v - S.cur.B) ? 'A' : 'B'; S.cur.sel = glisse; cv.setPointerCapture(e.pointerId); bouge(e);
+});
+cv.addEventListener('pointermove', bouge);
+cv.addEventListener('pointerup', () => glisse = null);
+function bouge(e) {
+  if (!glisse) return; const p = posCanvas(e);
+  let v = S.cur.mode === 'X' ? (p.x - GX) / PX - 6 : 4 - (p.y - GY) / PX;
+  v = Math.round(v * 50) / 50; S.cur[glisse] = Math.max(S.cur.mode === 'X' ? -6 : -4, Math.min(S.cur.mode === 'X' ? 6 : 4, v)); demande();
+}
+
+// =====================================================================
+//  MENUS À L'ÉCRAN
+// =====================================================================
+function item(titre, valeur, action) { return { titre, valeur, action }; }
+function cycle(liste, v) { return liste[(liste.indexOf(v) + 1) % liste.length]; }
+const MENUS = {
+  ch1: () => menuVoie(1), ch2: () => menuVoie(2),
+  trigger: () => ({ titre: 'Déclenchement', items: [
+    item('Type', 'Front', () => bulle('Seul le déclenchement sur front est simulé.')),
+    item('Source', 'CH' + S.trig.src, () => { S.trig.src = S.trig.src === 1 ? 2 : 1; }),
+    item('Pente', S.trig.pente === 'montant' ? '↑ montant' : '↓ descendant', () => { S.trig.pente = S.trig.pente === 'montant' ? 'descendant' : 'montant'; }),
+    item('Mode', { auto: 'Auto', normal: 'Normal', single: 'Single' }[S.trig.mode], () => changeMode()),
+    item('Couplage', 'DC', () => bulle('Couplage du déclenchement : DC.')),
+  ] }),
+  measure: () => ({ titre: 'Mesures', items: [
+    item('Source', 'CH' + S.mesSrc, () => { S.mesSrc = S.mesSrc === 1 ? 2 : 1; }),
+    item('Effacer', 'toutes', () => { S.mesures = []; }),
+    item('Liste', '← touches de gauche', () => bulle('Choisis la mesure avec les touches à gauche de l\'écran.')),
+  ] }),
+  cursor: () => ({ titre: 'Curseurs', items: [
+    item('Mode', { off: 'Désactivé', X: 'Manuel X', Y: 'Manuel Y' }[S.cur.mode], () => { S.cur.mode = cycle(['off', 'X', 'Y'], S.cur.mode); if (S.cur.mode !== 'off') { S.cur.A = S.cur.mode === 'X' ? -2 : 2; S.cur.B = S.cur.mode === 'X' ? 2 : -2; } }),
+    item('Sélection', S.cur.sel === 'AB' ? 'A et B' : 'Curseur ' + S.cur.sel, () => { S.cur.sel = cycle(['A', 'B', 'AB'], S.cur.sel); }),
+    item('Source (Y)', 'CH' + S.cur.src, () => { S.cur.src = S.cur.src === 1 ? 2 : 1; }),
+    item('Déplacer', 'bouton ↻ ou souris', () => bulle('Tourne le bouton multifonction, ou fais glisser le curseur sur l\'écran.')),
+  ] }),
+  math: () => ({ titre: 'Math', items: [
+    item('Opérateur', { off: 'Désactivé', 'A+B': 'A+B', 'A−B': 'A−B', FFT: 'FFT' }[S.math.op], () => { S.math.op = cycle(['off', 'A+B', 'A−B', 'FFT'], S.math.op); }),
+    item('Source FFT', 'CH' + S.math.src, () => { S.math.src = S.math.src === 1 ? 2 : 1; }),
+    item('Unité', S.math.unite === 'dB' ? 'dB' : 'Vrms', () => { S.math.unite = S.math.unite === 'dB' ? 'Vrms' : 'dB'; }),
+    item('Fenêtre', 'Hanning', () => bulle('Fenêtre de Hanning, adaptée à la plupart des signaux périodiques.')),
+    item('Fréq. max', fmt(fmaxFFT(), 'Hz'), () => { S.math.ifmax = (S.math.ifmax + 1) % FMAX.length; }),
+  ] }),
+  horiz: () => ({ titre: 'Horizontal', items: [
+    item('Base de temps', S.xy ? 'XY' : 'Y-T', () => { S.xy = !S.xy; }),
+  ] }),
+  acquire: () => ({ titre: 'Acquisition', items: [
+    item('Mode', S.acq === 'normal' ? 'Normal' : 'Moyenne', () => { S.acq = S.acq === 'normal' ? 'moyenne' : 'normal'; }),
+  ] }),
+  storage: () => ({ titre: 'Stockage', items: [
+    item('Capture', 'Image PNG', () => capture()),
+  ] }),
+  display: () => ({ titre: 'Affichage', items: [item('Grille', 'Complète', () => bulle('Réglage non simulé.'))] }),
+  utility: () => ({ titre: 'Utilitaire', items: [item('Langue', 'Français', () => bulle('Réglage non simulé.'))] }),
+};
+function menuVoie(n) {
+  const c = S.ch[n];
+  return { titre: 'CH' + n, items: [
+    item('Couplage', c.coup, () => { c.coup = cycle(['DC', 'AC', 'GND'], c.coup); }),
+    item('Voie', c.on ? 'Activée' : 'Désactivée', () => { c.on = !c.on; }),
+    item('Sonde', '×' + c.sonde, () => { c.sonde = c.sonde === 1 ? 10 : 1; bulle('Sonde ×' + c.sonde + ' : le calibre affiché devient ' + fmtCal(calV(n), 'V') + '/div.'); }),
+  ] };
+}
+function majMenus() {
+  const d = $('#menuDroit'); d.innerHTML = '';
+  const m = S.menu ? MENUS[S.menu]() : null;
+  if (m) {
+    const t = document.createElement('div'); t.className = 'titre'; t.textContent = m.titre; d.appendChild(t);
+    m.items.forEach(it => { const b = document.createElement('button'); b.innerHTML = it.titre + '<small>' + it.valeur + '</small>'; b.onclick = () => { it.action(); action(); }; d.appendChild(b); });
+  } else { const t = document.createElement('div'); t.className = 'titre'; t.textContent = '—'; d.appendChild(t); }
+  const v = document.createElement('div'); v.className = 'vide'; d.appendChild(v);
+  // touches de gauche
+  const gch = $('#menuGauche'); gch.innerHTML = '';
+  const bm = document.createElement('button'); bm.textContent = 'MENU'; bm.onclick = () => { S.menu = S.menu ? null : 'measure'; action(); }; gch.appendChild(bm);
+  if (S.menu === 'measure') {
+    MES.forEach(([t]) => {
+      const b = document.createElement('button'); b.className = 'mes' + (S.mesures.some(m => m.type === t && (t.includes('→') || m.src === S.mesSrc)) ? ' on' : ''); b.textContent = t;
+      b.onclick = () => ajouteMesure(t); gch.appendChild(b);
+    });
+  } else for (let i = 0; i < 6; i++) { const b = document.createElement('button'); b.disabled = true; gch.appendChild(b); }
+  // voyants et touches
+  document.querySelectorAll('#voyants span').forEach(s => s.classList.toggle('on', s.dataset.v === S.trig.mode));
+  $('#bCH1').classList.toggle('allume', S.ch[1].on); $('#bCH2').classList.toggle('allume', S.ch[2].on);
+  $('#bCH1').classList.toggle('sel', S.actif === 1); $('#bCH2').classList.toggle('sel', S.actif === 2);
+}
+function ajouteMesure(t) {
+  const src = t.includes('→') ? 1 : S.mesSrc;
+  const i = S.mesures.findIndex(m => m.type === t && m.src === src);
+  if (i >= 0) S.mesures.splice(i, 1);
+  else { S.mesures.push({ type: t, src }); if (S.mesures.length > 5) S.mesures.shift(); }
+  action();
+}
+function capture() {
+  const a = document.createElement('a'); a.download = 'capture-oscilloscope.png'; a.href = cv.toDataURL('image/png'); a.click(); bulle('Capture enregistrée (capture-oscilloscope.png).');
+}
+
+// =====================================================================
+//  MOLETTES ET TOUCHES
+// =====================================================================
+function molette(id, titre, pousser, moins, plus, gros) {
+  const el = $(id);
+  el.innerHTML = `<label>${titre}</label><div class="ligne"><button class="bt" aria-label="tourner à gauche">◀</button><div class="knob ${gros ? 'gros' : ''}" title="Cliquer = appuyer sur le bouton${pousser ? ' (' + pousser.nom + ')' : ''}"></div><button class="bt" aria-label="tourner à droite">▶</button></div>${pousser ? '<small>appui : ' + pousser.nom + '</small>' : '<small>&nbsp;</small>'}`;
+  const [bm, k, bp] = el.querySelectorAll('.bt, .knob'); let ang = 0;
+  const tourne = s => { ang += s * 20; k.style.transform = `rotate(${ang}deg)`; (s < 0 ? moins : plus)(); action(); };
+  bm.onclick = () => tourne(-1); bp.onclick = () => tourne(1);
+  k.onclick = () => { if (pousser) { pousser.f(); action(); } };
+  k.addEventListener('wheel', e => { e.preventDefault(); tourne(e.deltaY > 0 ? -1 : 1); }, { passive: false });
+}
+const borne = (v, a, b) => Math.max(a, Math.min(b, v));
+molette('#mVpos', 'POSITION', { nom: 'zéro', f: () => { S.ch[S.actif].pos = 0; } }, () => { S.ch[S.actif].pos = borne(S.ch[S.actif].pos - 0.2, -5, 5); }, () => { S.ch[S.actif].pos = borne(S.ch[S.actif].pos + 0.2, -5, 5); });
+molette('#mVscale', 'SCALE (V/div)', null, () => { S.ch[S.actif].iv = Math.min(VSEQ.length - 1, S.ch[S.actif].iv + 1); }, () => { S.ch[S.actif].iv = Math.max(0, S.ch[S.actif].iv - 1); }, true);
+molette('#mHpos', 'POSITION', { nom: 'zéro', f: () => { S.hpos = 0; } }, () => { S.hpos -= calH() / 5; }, () => { S.hpos += calH() / 5; });
+molette('#mHscale', 'SCALE (s/div)', null, () => { S.ih = Math.min(HSEQ.length - 1, S.ih + 1); }, () => { S.ih = Math.max(0, S.ih - 1); }, true);
+molette('#mLevel', 'LEVEL', { nom: 'zéro', f: () => { S.trig.niv = 0; nivAffJusque = performance.now() + 1500; } }, () => niveau(-1), () => niveau(1));
+molette('#mMulti', '↻ multifonction', { nom: 'valider', f: () => multi(0) }, () => multi(-1), () => multi(1));
+function niveau(s) { S.trig.niv = arrondi(S.trig.niv + s * calV(S.trig.src) / 5, 4); if (Math.abs(S.trig.niv) < 1e-9) S.trig.niv = 0; nivAffJusque = performance.now() + 1500; }
+function multi(s) {
+  if (S.menu === 'cursor' && S.cur.mode !== 'off') {
+    if (s === 0) { S.cur.sel = cycle(['A', 'B', 'AB'], S.cur.sel); return; }
+    const lim = S.cur.mode === 'X' ? 6 : 4;
+    for (const k of S.cur.sel === 'AB' ? ['A', 'B'] : [S.cur.sel]) S.cur[k] = borne(Math.round((S.cur[k] + s * 0.1) * 10) / 10, -lim, lim);
+  } else if (S.menu === 'math' && S.math.op === 'FFT') {
+    if (s) S.math.ifmax = borne(S.math.ifmax + s, 0, FMAX.length - 1);
+  } else if (S.menu === 'measure') {
+    if (s) bulle('Choisis la mesure avec les touches à gauche de l\'écran.');
+  } else if (s) bulle('Le bouton multifonction sert dans les menus Cursor (déplacer un curseur) et Math FFT.');
+}
+function changeMode() {
+  S.trig.mode = cycle(['auto', 'normal', 'single'], S.trig.mode);
+  if (S.trig.mode === 'single') { S.singleArme = true; S.figé = null; S.run = true; }
+  majRun();
+}
+function majRun() { const b = $('#bRun'); b.classList.toggle('run', S.run); b.classList.toggle('stop', !S.run); }
+
+$('#bCH1').onclick = () => toucheVoie(1); $('#bCH2').onclick = () => toucheVoie(2);
+function toucheVoie(n) {
+  const c = S.ch[n];
+  if (!c.on) { c.on = true; S.actif = n; S.menu = 'ch' + n; }
+  else if (S.menu === 'ch' + n) { c.on = false; S.menu = null; if (S.actif === n && S.ch[3 - n].on) S.actif = 3 - n; }
+  else { S.actif = n; S.menu = 'ch' + n; }
+  action();
+}
+document.querySelectorAll('[data-m]').forEach(b => b.onclick = () => { S.menu = S.menu === b.dataset.m ? null : b.dataset.m; action(); });
+$('#bRun').onclick = () => {
+  if (S.run) { S.run = false; S.figé = S.dernier || null; if (S.figé) S.figé = { ...S.figé }; }
+  else { S.run = true; S.figé = null; S.capture = false; if (S.trig.mode === 'single') S.singleArme = true; }
+  majRun(); action();
+};
+$('#bSingle').onclick = () => { S.trig.mode = 'single'; S.singleArme = true; S.figé = null; S.run = true; S.capture = false; S.dernier = null; majRun(); action(); };
+$('#bClear').onclick = () => { S.dernier = null; S.figé = null; if (!S.run) { S.dernier = null; } action(); };
+$('#bMode').onclick = () => { changeMode(); action(); };
+$('#bForce').onclick = () => { S.forcer = true; action(); };
+$('#bPrint').onclick = capture;
+$('#bHelp').onclick = () => bulle('Règle d\'or : sonde, puis calibre vertical, base de temps, et enfin niveau de déclenchement dans le signal.');
+$('#bAuto').onclick = () => { auto(); action(); bulle('AUTO : premier réglage. Affine ensuite à la main.'); };
+function auto() {
+  for (const n of [1, 2]) {
+    const s = SIG[n], c = S.ch[n]; c.coup = 'DC';
+    const vmax = Math.max(Math.abs(brut(s, 0)), ...Array.from({ length: 200 }, (_, k) => Math.abs(brut(s, k / 200 / s.f)))) / s.sonde;
+    const vpp = (() => { let a = 1e9, b = -1e9; for (let k = 0; k < 200; k++) { const v = brut(s, k / 200 / s.f) / s.sonde; a = Math.min(a, v); b = Math.max(b, v); } return b - a; })();
+    if (n === 2 && !c.on) continue;
+    let i = VSEQ.findIndex(v => vpp / v <= 3.5); c.iv = i < 0 ? VSEQ.length - 1 : i;
+    c.pos = n === 1 && S.ch[2].on ? 1 : n === 2 ? -2 : 0;
+    const moy = moyenneBrut(s) / s.sonde; c.pos = borne(Math.round((c.pos - moy / VSEQ[c.iv]) * 5) / 5, -4, 4);
+    void vmax;
+  }
+  const f = SIG[1].f; let i = HSEQ.findIndex(h => 12 * h * f >= 2.5); S.ih = i < 0 ? HSEQ.length - 1 : i;
+  S.hpos = 0; S.trig.src = 1; S.trig.pente = 'montant'; S.trig.mode = 'auto'; S.run = true; S.figé = null; S.singleArme = false;
+  S.trig.niv = arrondi(moyAff(1), 3); majRun();
+}
+
+// boucle d'affichage
+let besoin = true;
+function demande() { besoin = true; }
+function action() { majMenus(); demande(); if (window.apresAction) apresAction(); }
+let derniereTrame = 0;
+function boucle(t) {
+  if (t - derniereTrame > 70 || besoin) { if (S.run || besoin) dessine(); derniereTrame = t; besoin = false; }
+  requestAnimationFrame(boucle);
+}
+
+// =====================================================================
+//  ENTRAÎNEMENT GUIDÉ
+// =====================================================================
+const PARTIES = [
+  { nom: 'A. Prise en main', contexte: 'On observe sur CH1 la tension de sortie d\'un générateur basse fréquence. Sonde ×1, câble BNC simple.',
+    init() { SIG[1] = { type: 'sinus', A: 3.2, f: 1250, off: 0, ph: 0, duty: .5, sonde: 1 }; S = etatDefaut(); S.ch[1].iv = 9; S.ih = 11; },
+    q: [
+      { act: true, txt: 'Avec la molette <b>SCALE (V/div)</b>, règle le calibre vertical de CH1 pour que la sinusoïde occupe <b>au moins 6 divisions</b> en hauteur sans sortir de l\'écran.',
+        test: () => { const h = 6.4 / calV(1); return S.ch[1].on && h >= 6 && h <= 8 && Math.abs(S.ch[1].pos) <= 0.8; },
+        ind: 'Le signal fait environ 6,4 V crête à crête. Quel calibre de la suite 1 – 2 – 5 donne entre 6 et 8 divisions ? Pense à recentrer la trace (appui sur POSITION).' },
+      { act: true, txt: 'Avec la molette <b>SCALE (s/div)</b> de la zone HORIZONTAL, affiche <b>2 à 3 périodes</b> environ.',
+        test: () => { const p = 12 * calH() * 1250; return p >= 1.8 && p <= 3.6; }, ind: 'Un calibre trop grand tasse les périodes. Tourne vers la gauche (◀) pour étaler.' },
+      { txt: 'Lis l\'amplitude <b>U<sub>max</sub></b> (tension maximale) par comptage des divisions.', rep: 3.2, tol: 0.15, u: 'V', ind: 'Compte les divisions entre le bas et le haut de la courbe, multiplie par le calibre, puis divise par 2.' },
+      { txt: 'Lis la période <b>T</b>.', rep: 0.8, tol: 0.04, u: 'ms', ind: 'Mesure la durée de plusieurs périodes puis divise. T = nombre de divisions × calibre horizontal.' },
+      { txt: 'Calcule la fréquence <b>f</b>.', rep: 1250, tol: 40, u: 'Hz', ind: 'f = 1 / T, avec T en secondes.' },
+      { txt: 'Appuie sur <b>Measure</b>, puis choisis <b>Vrms</b> avec les touches de gauche. Quelle valeur efficace s\'affiche ?', rep: 2.26, tol: 0.08, u: 'V', ok: 'Pour une sinusoïde, on retrouve U<sub>eff</sub> = U<sub>max</sub> / √2 = 3,2 / 1,414 ≈ 2,26 V.', ind: 'Measure → touche de gauche « Vrms ». La valeur apparaît en bas de l\'écran.' },
+    ] },
+  { nom: 'B. Sonde ×10', contexte: 'On mesure la tension au secondaire d\'un transformateur 230 V / 12 V. Le collègue a utilisé une <b>sonde ×10</b> (commutateur de la sonde sur ×10), mais n\'a pas réglé le menu de la voie.',
+    init() { SIG[1] = { type: 'sinus', A: 12 * Math.SQRT2, f: 50, off: 0, ph: 0, duty: .5, sonde: 10 }; S = etatDefaut(); S.ch[1].iv = 6; S.ih = 11; S.mesures = [{ type: 'Vrms', src: 1 }]; },
+    q: [
+      { txt: 'Sans rien changer, quelle valeur efficace <b>Vrms</b> affiche l\'oscilloscope ?', rep: 1.2, tol: 0.06, u: 'V', ok: 'L\'appareil affiche 1,2 V au lieu de 12 V : la sonde divise par 10, mais le menu ne le sait pas.', ind: 'Lis la mesure Vrms(1) en bas de l\'écran.' },
+      { act: true, txt: 'Corrige le réglage : <b>CH1 → Sonde</b> doit correspondre à la sonde utilisée.', test: () => S.ch[1].sonde === 10, ind: 'Appuie sur CH1 puis sur l\'option « Sonde » du menu à droite de l\'écran.' },
+      { txt: 'Quelle est maintenant la valeur efficace réelle de la tension ?', rep: 12, tol: 0.4, u: 'V', ok: 'On retrouve bien les 12 V du secondaire. Remarque : la trace a gardé la même taille, seul le calibre affiché a été multiplié par 10.' },
+    ] },
+  { nom: 'C. Couplage DC / AC', contexte: 'Sur CH1, on observe un signal rectangulaire qui varie entre 0 V et 12 V (commande d\'un relais statique), de fréquence 500 Hz.',
+    init() { SIG[1] = { type: 'carre', A: 6, f: 500, off: 6, ph: 0, duty: .5, sonde: 1 }; S = etatDefaut(); S.ch[1].iv = 9; S.ch[1].pos = -1.4; S.ih = 10; S.trig.niv = 6; },
+    q: [
+      { txt: 'En couplage <b>DC</b>, ajoute la mesure <b>Vavg</b> (valeur moyenne). Quelle valeur lis-tu ?', rep: 6, tol: 0.3, u: 'V', ind: 'Measure → Vavg.' },
+      { act: true, txt: 'Passe CH1 en couplage <b>AC</b>.', test: () => S.ch[1].coup === 'AC', ind: 'CH1 → Couplage, jusqu\'à lire AC.' },
+      { txt: 'Que vaut maintenant Vavg ?', rep: 0, tol: 0.25, u: 'V', ok: 'En couplage AC, l\'oscilloscope supprime la composante continue : la valeur moyenne affichée est nulle. Pour mesurer une valeur moyenne, il faut toujours être en <b>DC</b>.', ind: 'Observe aussi comment la trace s\'est déplacée.' },
+    ] },
+  { nom: 'D. Déclenchement', contexte: 'Sur CH1, une sinusoïde de 1 kHz et de 2 V d\'amplitude. Le niveau de déclenchement a été mal réglé : l\'affichage défile.',
+    init() { SIG[1] = { type: 'sinus', A: 2, f: 1000, off: 0, ph: 0, duty: .5, sonde: 1 }; S = etatDefaut(); S.ch[1].iv = 7; S.ih = 9; S.trig.niv = 3.4; },
+    q: [
+      { act: true, txt: 'Observe l\'écran : le niveau de déclenchement (flèche orange à droite) est en dehors du signal. Avec la molette <b>LEVEL</b>, <b>stabilise l\'affichage</b> (« T\'D » en vert en haut à gauche).', test: () => S.run && chercheDeclenchement() !== null && S.trig.src === 1, ind: 'Le niveau doit être compris entre −2 V et +2 V. Un appui sur LEVEL le remet à 0 V.' },
+      { act: true, txt: 'Règle le niveau à environ 1 V puis appuie sur <b>SINGLE</b> : l\'oscilloscope capture une seule acquisition et s\'arrête (STOP).', test: () => S.capture && !S.run && Math.abs(S.trig.niv - 1) <= 0.25, ind: 'Si l\'appareil reste sur WAIT, le niveau n\'est pas franchi par le signal.' },
+      { qcm: ['Auto', 'Normal', 'Single'], rep: 'Single', txt: 'Pour observer le démarrage d\'un moteur (un phénomène qui ne se produit qu\'une fois), quel mode de déclenchement choisir ?', ok: 'Le mode Single attend l\'événement, l\'enregistre et fige l\'écran.' },
+    ] },
+  { nom: 'E. Déphasage', contexte: 'Dans un circuit RL alimenté en 50 Hz : CH1 = tension u(t) ; CH2 = tension aux bornes d\'une résistance de shunt, image du courant i(t). Les deux masses sont au même point.',
+    init() { SIG[1] = { type: 'sinus', A: 5, f: 50, off: 0, ph: 0, duty: .5, sonde: 1 }; SIG[2] = { type: 'sinus', A: 2, f: 50, off: 0, ph: 45, duty: .5, sonde: 1 }; S = etatDefaut(); S.ch[2].on = true; S.ch[1].iv = 8; S.ch[2].iv = 7; S.ih = 11; },
+    q: [
+      { txt: 'Avec les curseurs (<b>Cursor → Mode : Manuel X</b>), mesure le décalage <b>Δt</b> entre les passages par zéro (en montant) de u et de i.', rep: 2.5, tol: 0.15, u: 'ms', ind: 'Place le curseur A sur un passage par zéro montant de CH1 et B sur le suivant de CH2. Tu peux faire glisser les curseurs à la souris. Étale avec la base de temps pour plus de précision.' },
+      { txt: 'Calcule le déphasage <b>φ</b> du courant par rapport à la tension.', rep: 45, tol: 3, u: '°', ok: 'φ = 360° × Δt / T = 360 × 2,5 / 20 = 45°. Le courant est en retard sur la tension (circuit inductif). Tu peux vérifier avec la mesure automatique Phase 1→2.', ind: 'φ = 360° × Δt / T, avec T = 20 ms en 50 Hz.' },
+    ] },
+  { nom: 'F. Signal MLI', contexte: 'Sur CH1 : tension de commande MLI d\'un hacheur, entre 0 et 24 V, de fréquence 5 kHz.',
+    init() { SIG[1] = { type: 'mli', A: 24, f: 5000, off: 0, ph: 0, duty: .35, sonde: 1 }; S = etatDefaut(); S.ch[1].iv = 9; S.ch[1].pos = -2.4; S.ih = 5; S.trig.niv = 12; },
+    q: [
+      { txt: 'Détermine le rapport cyclique <b>α</b> (avec les curseurs ou la mesure +Duty).', rep: 35, tol: 2, u: '%', ind: 'α = durée à l\'état haut / période.' },
+      { txt: 'Calcule la valeur moyenne <b>U<sub>moy</sub></b> de cette tension.', rep: 8.4, tol: 0.4, u: 'V', ok: 'U<sub>moy</sub> = α × U = 0,35 × 24 = 8,4 V. Vérifie avec la mesure Vavg.' },
+    ] },
+  { nom: 'G. Spectre (FFT)', contexte: 'Sur CH1 : signal carré ±5 V de fréquence 1 kHz. On veut voir sa décomposition en harmoniques.',
+    init() { SIG[1] = { type: 'carre', A: 5, f: 1000, off: 0, ph: 0, duty: .5, sonde: 1 }; S = etatDefaut(); S.ch[1].iv = 8; S.ih = 9; },
+    q: [
+      { act: true, txt: 'Affiche la FFT de CH1 : <b>MATH → Opérateur : FFT</b>, source CH1. Règle la <b>base de temps</b> pour afficher une dizaine de périodes, et <b>Fréq. max</b> sur 10 kHz.', test: () => S.math.op === 'FFT' && S.math.src === 1 && 12 * calH() * 1000 >= 8 && fmaxFFT() === 1e4, ind: 'Avec 1 ms/div, on affiche 12 périodes. Fréq. max se règle dans le menu MATH ou avec le bouton multifonction.' },
+      { txt: 'À quelle fréquence se trouve la <b>deuxième raie</b> importante du spectre ?', rep: 3000, tol: 150, u: 'Hz', ok: 'Un signal carré ne contient que les harmoniques de rang impair : 1 kHz, 3 kHz, 5 kHz…', ind: 'Utilise les curseurs X : en mode FFT, ils indiquent une fréquence.' },
+      { txt: 'Avec les curseurs Y, mesure l\'écart (en dB) entre la raie à 1 kHz et la raie à 3 kHz.', rep: 9.5, tol: 1, u: 'dB', ok: 'L\'harmonique de rang 3 a une amplitude 3 fois plus petite : 20 log(3) ≈ 9,5 dB.', ind: 'Cursor → Mode : Manuel Y. Place A sur le sommet de la raie 1 kHz et B sur celui de la raie 3 kHz.' },
+    ] },
+];
+let partie = 0, reussi = PARTIES.map(p => p.q.map(() => false)), reponses = PARTIES.map(p => p.q.map(() => ''));
+const totalQ = PARTIES.reduce((a, p) => a + p.q.length, 0);
+function chargePartie(i) { partie = i; PARTIES[i].init(); majRun(); afficheGuide(); majMenus(); demande(); }
+function afficheGuide() {
+  const P = PARTIES[partie], c = $('#cote'); let num = PARTIES.slice(0, partie).reduce((a, p) => a + p.q.length, 0);
+  const nb = reussi.flat().filter(Boolean).length;
+  let h = `<h2>Entraînement guidé</h2><div class="note">${nb} / ${totalQ} questions réussies</div><div class="progress"><div style="width:${nb / totalQ * 100}%"></div></div><div class="parties">`;
+  PARTIES.forEach((p, i) => h += `<button data-p="${i}" class="${i === partie ? 'actif' : ''} ${reussi[i].every(Boolean) ? 'fini' : ''}">${p.nom.split('.')[0]}</button>`);
+  h += `<button data-p="bilan">Bilan</button></div><h3>${P.nom}</h3><div class="contexte">${P.contexte}</div>`;
+  P.q.forEach((q, j) => {
+    num++;
+    h += `<div class="question ${reussi[partie][j] ? 'reussie' : ''}" id="q${j}"><span class="num">Q${num}.</span> ${q.act ? '<i>(action)</i>' : ''}<p>${q.txt}</p><div class="rep">`;
+    if (q.act) h += `<button class="btn" data-v="${j}">Vérifier mon réglage</button>`;
+    else if (q.qcm) h += `<select id="in${j}"><option value="">— choisir —</option>${q.qcm.map(o => `<option ${reponses[partie][j] === o ? 'selected' : ''}>${o}</option>`).join('')}</select><button class="btn" data-v="${j}">Valider</button>`;
+    else h += `<input id="in${j}" inputmode="decimal" value="${reponses[partie][j]}" placeholder="valeur"> <span>${q.u}</span><button class="btn" data-v="${j}">Valider</button>`;
+    if (q.ind) h += `<button class="btn sec" data-i="${j}">Indice</button>`;
+    h += `</div><div class="fb ${reussi[partie][j] ? 'ok' : ''}" id="fb${j}">${reussi[partie][j] ? '✔ ' + (q.ok || 'Bravo !') : ''}</div></div>`;
+  });
+  h += `<div class="nav"><button class="btn sec" ${partie ? '' : 'disabled'} id="prec">◀ Partie précédente</button><button class="btn sec" id="suiv">${partie < PARTIES.length - 1 ? 'Partie suivante ▶' : 'Voir le bilan ▶'}</button></div>`;
+  h += `<p class="note">Changer de partie recharge le montage. Les molettes : clique sur ◀ ▶ ou utilise la molette de la souris ; clique sur le bouton lui-même pour « appuyer ».</p>`;
+  c.innerHTML = h;
+  c.querySelectorAll('[data-p]').forEach(b => b.onclick = () => b.dataset.p === 'bilan' ? afficheBilan() : chargePartie(+b.dataset.p));
+  c.querySelectorAll('[data-v]').forEach(b => b.onclick = () => valide(+b.dataset.v));
+  c.querySelectorAll('[data-i]').forEach(b => b.onclick = () => { const f = $('#fb' + b.dataset.i); f.className = 'fb ind'; f.innerHTML = '💡 ' + P.q[+b.dataset.i].ind; });
+  c.querySelectorAll('input[id^=in]').forEach(i => i.addEventListener('keydown', e => { if (e.key === 'Enter') valide(+i.id.slice(2)); }));
+  $('#prec').onclick = () => chargePartie(partie - 1);
+  $('#suiv').onclick = () => partie < PARTIES.length - 1 ? chargePartie(partie + 1) : afficheBilan();
+}
+function valide(j) {
+  const q = PARTIES[partie].q[j], f = $('#fb' + j); let bon;
+  if (q.act) bon = q.test();
+  else if (q.qcm) { const v = $('#in' + j).value; reponses[partie][j] = v; if (!v) { f.className = 'fb ko'; f.textContent = 'Choisis une réponse.'; return; } bon = v === q.rep; }
+  else {
+    const s = $('#in' + j).value; reponses[partie][j] = s; const v = lireNombre(s);
+    if (isNaN(v)) { f.className = 'fb ko'; f.textContent = 'Entre une valeur numérique (la virgule est acceptée).'; return; }
+    bon = Math.abs(v - q.rep) <= q.tol;
+    if (!bon && q.u === 'ms' && Math.abs(v * 1000 - q.rep) <= q.tol) { f.className = 'fb ko'; f.textContent = 'Attention à l\'unité : la réponse est attendue en ms.'; return; }
+    if (!bon && q.u === 'Hz' && Math.abs(v * 1000 - q.rep) <= q.tol) { f.className = 'fb ko'; f.textContent = 'Attention à l\'unité : la réponse est attendue en Hz (pas en kHz).'; return; }
+  }
+  if (bon) { reussi[partie][j] = true; f.className = 'fb ok'; f.innerHTML = '✔ ' + (q.ok || 'Bravo !'); $('#q' + j).classList.add('reussie'); majProgress(); }
+  else { f.className = 'fb ko'; f.innerHTML = q.act ? '✘ Pas encore. ' + (q.ind || '') : '✘ Ce n\'est pas la bonne valeur. Vérifie ta lecture ou demande un indice.'; }
+}
+function majProgress() { const nb = reussi.flat().filter(Boolean).length; const p = document.querySelector('.progress div'); if (p) p.style.width = nb / totalQ * 100 + '%'; const n = document.querySelector('.cote .note'); if (n) n.textContent = nb + ' / ' + totalQ + ' questions réussies'; }
+function afficheBilan() {
+  const c = $('#cote'); const nb = reussi.flat().filter(Boolean).length; let k = 0;
+  let h = `<h2>Bilan</h2><p><b>${nb} / ${totalQ}</b> questions réussies.</p><table class="bilan"><tr><th>Q</th><th>Partie</th><th>Ta réponse</th><th></th></tr>`;
+  PARTIES.forEach((p, i) => p.q.forEach((q, j) => { k++; h += `<tr><td>Q${k}</td><td>${p.nom.split('. ')[1]}</td><td>${q.act ? (reussi[i][j] ? 'réglage fait' : '—') : (reponses[i][j] || '—') + ' ' + (q.u && reponses[i][j] ? q.u : '')}</td><td>${reussi[i][j] ? '✔' : '✘'}</td></tr>`; }));
+  h += `</table><h3>Ce qu'il faut retenir</h3><ul style="font-size:.88rem;line-height:1.45;padding-left:18px">
+  <li>Ordre des réglages : <b>sonde</b> → <b>calibre vertical</b> → <b>base de temps</b> → <b>niveau de déclenchement dans le signal</b>.</li>
+  <li>Le menu Sonde doit être identique à la sonde utilisée, sinon toutes les tensions sont fausses d'un facteur 10.</li>
+  <li>En couplage AC, la composante continue disparaît : valeur moyenne toujours mesurée en <b>DC</b>.</li>
+  <li>Vrms donne la valeur efficace vraie ; U<sub>max</sub>/√2 n'est valable que pour une sinusoïde.</li>
+  <li>φ = 360° × Δt / T ; α = t<sub>H</sub> / T ; U<sub>moy</sub> = α U pour une MLI 0 / U.</li>
+  <li>FFT : afficher une dizaine de périodes ; le carré ne contient que des harmoniques impairs.</li></ul>
+  <div class="nav"><button class="btn sec" id="retour">◀ Revenir aux questions</button><button class="btn sec" id="raz">Tout recommencer</button></div>`;
+  c.innerHTML = h; $('#retour').onclick = () => chargePartie(partie);
+  $('#raz').onclick = () => { if (confirm('Effacer toutes les réponses ?')) { reussi = PARTIES.map(p => p.q.map(() => false)); reponses = PARTIES.map(p => p.q.map(() => '')); chargePartie(0); } };
+}
+
+// =====================================================================
+//  SIGNAL MYSTÈRE
+// =====================================================================
+let mystere = null;
+function nouveauMystere() {
+  const types = ['sinus', 'carre', 'triangle', 'mli'], type = types[Math.floor(Math.random() * 4)];
+  const fs = [50, 100, 200, 250, 400, 500, 800, 1000, 1500, 2000, 2500, 4000, 5000, 10000], f = fs[Math.floor(Math.random() * fs.length)];
+  const A = [0.5, 0.8, 1, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 10, 12][Math.floor(Math.random() * 13)];
+  const off = type === 'mli' ? 0 : [0, 0, 0, 1, 2, -1, 0.5, 3][Math.floor(Math.random() * 8)];
+  const duty = [0.2, 0.25, 0.3, 0.4, 0.6, 0.7, 0.75][Math.floor(Math.random() * 7)];
+  SIG[1] = { type, A, f, off, ph: 0, duty, sonde: 1 };
+  S = etatDefaut(); S.ch[1].iv = 3 + Math.floor(Math.random() * 7); S.ih = Math.floor(Math.random() * 14) + 1; S.trig.niv = arrondi((Math.random() - 0.3) * 6, 2);
+  const vpp = type === 'mli' ? A : 2 * A, moy = moyenneBrut(SIG[1]);
+  mystere = { type, vpp, f, moy };
+  majRun(); afficheMystere(); majMenus(); demande();
+}
+function afficheMystere(res) {
+  const c = $('#cote'); const nomT = { sinus: 'sinusoïdal', carre: 'carré', triangle: 'triangulaire', mli: 'rectangulaire (MLI)' };
+  let h = `<h2>Signal mystère</h2><div class="contexte">Un signal inconnu est branché sur CH1 (sonde ×1). L'oscilloscope est mal réglé : à toi de l'identifier, sans utiliser AUTO si possible !</div>
+  <div class="question"><div class="gen">
+    <label>Forme</label><select id="mT"><option value="">—</option>${Object.entries(nomT).map(([k, v]) => `<option value="${k}">${v}</option>`).join('')}</select>
+    <label>U crête à crête (V)</label><input id="mV" inputmode="decimal">
+    <label>Fréquence (Hz)</label><input id="mF" inputmode="decimal">
+    <label>Valeur moyenne (V)</label><input id="mM" inputmode="decimal">
+  </div><div class="rep"><button class="btn" id="mVal">Valider</button><button class="btn sec" id="mRev">Solution</button><button class="btn sec" id="mNew">Nouveau signal</button></div><div id="mFb"></div></div>
+  <p class="note">Tolérance : 5 % sur les valeurs (0,2 V sur la valeur moyenne).</p>`;
+  c.innerHTML = h;
+  $('#mNew').onclick = nouveauMystere;
+  $('#mRev').onclick = () => { $('#mFb').innerHTML = `<div class="fb ind">Forme : ${nomT[mystere.type]} · U<sub>pp</sub> = ${String(arrondi(mystere.vpp)).replace('.', ',')} V · f = ${mystere.f} Hz · U<sub>moy</sub> = ${String(arrondi(mystere.moy, 3)).replace('.', ',')} V</div>`; };
+  $('#mVal').onclick = () => {
+    const t = $('#mT').value, v = lireNombre($('#mV').value), f = lireNombre($('#mF').value), m = lireNombre($('#mM').value);
+    const ok = [t === mystere.type, Math.abs(v - mystere.vpp) <= 0.05 * mystere.vpp, Math.abs(f - mystere.f) <= 0.05 * mystere.f, Math.abs(m - mystere.moy) <= 0.2];
+    const noms = ['Forme', 'U crête à crête', 'Fréquence', 'Valeur moyenne'];
+    $('#mFb').innerHTML = `<div class="fb ${ok.every(Boolean) ? 'ok' : 'ko'}">${ok.map((b, i) => (b ? '✔ ' : '✘ ') + noms[i]).join('<br>')}${ok.every(Boolean) ? '<br><b>Signal identifié, bravo !</b>' : ''}</div>`;
+  };
+}
+
+// =====================================================================
+//  MODE LIBRE
+// =====================================================================
+function afficheLibre() {
+  const c = $('#cote'); const types = { sinus: 'Sinusoïdal', carre: 'Carré', triangle: 'Triangulaire', mli: 'MLI 0 / U' };
+  let h = `<h2>Mode libre</h2><p class="note">Règle ici les signaux branchés sur les voies, puis entraîne-toi à les observer.</p>`;
+  for (const n of [1, 2]) {
+    const s = SIG[n];
+    h += `<h3 style="color:${n === 1 ? '#a88d00' : '#178fb3'}">Signal sur CH${n}</h3><div class="gen" data-n="${n}">
+    <label>Forme</label><select data-k="type">${Object.entries(types).map(([k, v]) => `<option value="${k}" ${s.type === k ? 'selected' : ''}>${v}</option>`).join('')}</select>
+    <label>Amplitude (V)</label><input data-k="A" type="number" step="0.1" value="${arrondi(s.A)}">
+    <label>Fréquence (Hz)</label><input data-k="f" type="number" step="1" min="1" value="${s.f}">
+    <label>Décalage (V)</label><input data-k="off" type="number" step="0.1" value="${s.off}">
+    <label>Retard (°)</label><input data-k="ph" type="number" step="5" value="${s.ph}">
+    <label>Rapport cyclique</label><input data-k="duty" type="number" step="0.05" min="0.05" max="0.95" value="${s.duty}">
+    <label>Sonde réelle</label><select data-k="sonde"><option value="1" ${s.sonde === 1 ? 'selected' : ''}>×1</option><option value="10" ${s.sonde === 10 ? 'selected' : ''}>×10</option></select>
+    </div>`;
+  }
+  h += `<p class="note">Pour le déphasage, garde la même fréquence sur les deux voies. Amplitude d'une MLI = niveau haut.</p>`;
+  c.innerHTML = h;
+  c.querySelectorAll('.gen').forEach(gb => gb.querySelectorAll('[data-k]').forEach(el => el.onchange = () => {
+    const n = +gb.dataset.n, k = el.dataset.k; let v = el.value;
+    if (k !== 'type') { v = Number(v); if (!isFinite(v)) return; }
+    if (k === 'f') v = Math.max(1, Math.min(1e6, v)); if (k === 'duty') v = Math.max(0.05, Math.min(0.95, v));
+    SIG[n][k] = v; demande();
+  }));
+}
+
+// onglets
+let onglet = 'guide';
+document.querySelectorAll('#onglets button').forEach(b => b.onclick = () => {
+  document.querySelectorAll('#onglets button').forEach(x => x.classList.toggle('actif', x === b)); onglet = b.dataset.o;
+  if (onglet === 'guide') chargePartie(partie);
+  else if (onglet === 'mystere') nouveauMystere();
+  else { SIG[1] = { type: 'sinus', A: 3, f: 1000, off: 0, ph: 0, duty: .5, sonde: 1 }; SIG[2] = { type: 'sinus', A: 1.5, f: 1000, off: 0, ph: 60, duty: .5, sonde: 1 }; S = etatDefaut(); S.ch[2].on = true; S.ch[2].pos = -2; S.ch[1].pos = 1.5; majRun(); afficheLibre(); majMenus(); demande(); }
+});
+
+chargePartie(0);
+requestAnimationFrame(boucle);
+</script>
+</body>
+</html>
