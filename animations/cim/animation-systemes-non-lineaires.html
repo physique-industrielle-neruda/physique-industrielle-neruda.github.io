@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Systèmes non linéaires</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<style>
+:root{--navy:#1F3864;--orange:#C55A11;--green:#3F7A3A;--slate:#5A6577;--bg:#F4F6F9;--card:#fff;--ink:#1d2433;--line:#d5dce6;--red:#C00000}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;font-size:15px;color:var(--ink);background:var(--bg)}
+header{background:var(--navy);color:#fff;padding:14px 16px}
+header .k{color:#F4B183;font-size:12px;font-weight:bold;letter-spacing:.5px}
+header h1{margin:4px 0 0;font-size:21px}
+nav{display:flex;flex-wrap:wrap;gap:6px;padding:10px 16px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+nav button{border:1px solid var(--navy);background:#fff;color:var(--navy);padding:7px 11px;border-radius:6px;cursor:pointer;font-size:14px;font-family:inherit}
+nav button.on{background:var(--navy);color:#fff}
+main{max-width:1000px;margin:0 auto;padding:14px 16px 40px}
+section{display:none}section.on{display:block}
+.box{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin:12px 0}
+.sit{background:#F2F2F2;border-left:5px solid var(--navy)}
+.sit b.t,.q b.t{color:var(--navy)}
+.ctrl{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px 18px;align-items:center}
+.ctrl label{font-size:14px}
+input[type=range]{width:100%}
+.val{font-weight:bold;color:var(--orange)}
+canvas{width:100%;height:auto;display:block;background:#fff;border:1px solid var(--line);border-radius:6px;margin-top:8px}
+.grid2{display:grid;grid-template-columns:1.6fr 1fr;gap:10px}
+@media(max-width:720px){.grid2{grid-template-columns:1fr}}
+.badge{display:inline-block;padding:3px 9px;border-radius:12px;font-weight:bold;font-size:13px;margin:4px 6px 0 0}
+.b-ok{background:#E2EFDA;color:#2f5f2a}.b-ko{background:#FBE5D6;color:var(--red)}.b-info{background:#DEEAF6;color:var(--navy)}
+.q{border-left:4px solid var(--green);background:#fff}
+.q .n{font-weight:bold;color:var(--green)}
+.q.star .n{color:var(--orange)}
+.q button{margin-top:6px;font-size:13px;border:1px solid var(--slate);background:#fff;color:var(--slate);border-radius:5px;padding:4px 9px;cursor:pointer}
+.ans{display:none;margin-top:6px;padding:7px 9px;background:#E2EFDA;border-radius:5px}
+.hint{font-size:13px;color:var(--slate)}
+.led{display:inline-block;width:16px;height:16px;border-radius:50%;vertical-align:middle;margin-right:6px;border:1px solid #888}
+.cards{display:flex;flex-direction:column;align-items:center}
+.card{width:min(560px,100%);min-height:200px;border-radius:12px;background:#fff;border:2px solid var(--navy);display:flex;align-items:center;justify-content:center;
+ text-align:center;padding:22px;font-size:19px;cursor:pointer;user-select:none}
+.card.back{background:#E2EFDA;border-color:var(--green)}
+.cbar{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;justify-content:center}
+.cbar button{border:1px solid var(--navy);background:#fff;color:var(--navy);padding:7px 12px;border-radius:6px;cursor:pointer;font-family:inherit}
+.rad label{margin-right:12px}
+</style>
+</head>
+<body>
+<header><div class="k">BTS CIM · PHYSIQUE INDUSTRIELLE · ANIMATION (1 H MAXIMUM)</div>
+<h1>Systèmes non linéaires : amplifier, comparer</h1></header>
+<nav id="nav">
+ <button data-t="t1" class="on">1. Amplificateur</button>
+ <button data-t="t2">2. Comparateur à un seuil</button>
+ <button data-t="t3">3. Comparateur à hystérésis</button>
+ <button data-t="t4">4. Cartes de révision</button>
+</nav>
+<main>
+<div class="box hint">Réponds aux questions sur ta <b>fiche animation</b> (elle te sert de trace, tu n'as rien à rendre). Cherche d'abord, puis vérifie avec « Voir la réponse ». Les questions ★ sont facultatives.</div>
+
+<!-- ===================== ONGLET 1 -->
+<section id="t1" class="on">
+ <div class="box sit"><b class="t">Presse n° 3.</b> Le capteur de pression d'injection est suivi d'un amplificateur ($V_{sat}$ = 13,5 V). La carte d'acquisition accepte 0 à 10 V. Le nouveau capteur donne 200 mV à 2000 bar (l'ancien : 50 mV).</div>
+ <div class="box ctrl">
+  <label>Amplification $A$ : <span class="val" id="aV">100</span><input type="range" id="aR" min="10" max="150" step="1" value="100"></label>
+  <div class="rad">Capteur : <label><input type="radio" name="cap" value="0.05"> ancien (50 mV)</label><label><input type="radio" name="cap" value="0.2" checked> nouveau (200 mV)</label></div>
+  <div id="aInfo"></div>
+ </div>
+ <div class="grid2"><canvas id="c1" width="640" height="420"></canvas><canvas id="c1b" width="400" height="420"></canvas></div>
+ <div class="box q"><span class="n">Q1.</span> Règle $A$ = 100 et choisis le nouveau capteur. Quelle est la valeur maximale de $v_S$ ? Pourquoi ?<br><button>Voir la réponse</button><div class="ans">$v_S$ max = 13,5 V : l'amplificateur sature (il faudrait 20 V). Le signal est écrêté.</div></div>
+ <div class="box q"><span class="n">Q2.</span> Diminue $A$ jusqu'à ce que le signal ne soit plus écrêté. Note la plus grande valeur de $A$ qui convient.<br><button>Voir la réponse</button><div class="ans">$A$ ≈ 67, car $\frac{13{,}5}{0{,}200} = 67{,}5$.</div></div>
+ <div class="box q star"><span class="n">Q3 ★.</span> Règle $A$ = 50. Que vaut $v_S$ max ? La carte (0 à 10 V) peut-elle lire ce signal ?<br><button>Voir la réponse</button><div class="ans">$v_S$ max = 10 V : pas d'écrêtage, et 10 V est dans la plage de la carte.</div></div>
+</section>
+
+<!-- ===================== ONGLET 2 -->
+<section id="t2">
+ <div class="box sit"><b class="t">Presse n° 2 – trémie à granulés.</b> Le capteur donne $v_N$ (0 V vide, 10 V pleine) sur l'entrée − de l'ADI ; $V_{réf}$ est sur l'entrée +. Le voyant s'allume quand $v_S$ = +13,5 V. À $t$ = 35 min, l'opérateur remplit la trémie.</div>
+ <div class="box ctrl">
+  <label>$V_{réf}$ : <span class="val" id="rV">2,0 V</span><input type="range" id="rR" min="0.5" max="8" step="0.1" value="2"></label>
+  <label><input type="checkbox" id="vib"> Vibrations de la trémie (±0,1 V)</label>
+  <div id="rInfo"></div>
+ </div>
+ <canvas id="c2" width="900" height="460"></canvas>
+ <div class="box q"><span class="n">Q4.</span> Avec $V_{réf}$ = 2,0 V, pendant combien de minutes le voyant est-il allumé ?<br><button>Voir la réponse</button><div class="ans">5 min (de 30 à 35 min).</div></div>
+ <div class="box q"><span class="n">Q5.</span> Règle $V_{réf}$ = 3,0 V (alarme à 30 %). À quel instant le voyant s'allume-t-il ? Combien de temps reste-t-il allumé ?<br><button>Voir la réponse</button><div class="ans">Il s'allume à $t$ = 25 min et reste allumé 10 min (jusqu'au remplissage à 35 min).</div></div>
+ <div class="box q"><span class="n">Q6.</span> Remets $V_{réf}$ = 2,0 V et active les vibrations. Que voit-on sur $v_S$ près du seuil ?<br><button>Voir la réponse</button><div class="ans">La sortie bascule plusieurs fois de suite autour de $t$ = 30 min : le voyant clignote.</div></div>
+ <div class="box q star"><span class="n">Q7 ★.</span> Pourquoi ce clignotement est-il gênant pour l'opérateur et pour le matériel ?<br><button>Voir la réponse</button><div class="ans">L'alarme devient illisible ; un relais commandé par cette sortie s'userait très vite.</div></div>
+</section>
+
+<!-- ===================== ONGLET 3 -->
+<section id="t3">
+ <div class="box sit"><b class="t">Sécheur de granulés.</b> $v_\theta$ = 0,1 V par °C (8,0 V à 80 °C). Le chauffage marche quand $v_S$ = +13,5 V. On envoie au comparateur un enregistrement de 20 s, quand la température est proche de 80 °C.</div>
+ <div class="box ctrl">
+  <div class="rad">Mode : <label><input type="radio" name="mode" value="1"> un seuil</label><label><input type="radio" name="mode" value="2" checked> deux seuils</label></div>
+  <label id="lS">Seuil : <span class="val" id="sV">8,00 V</span><input type="range" id="sR" min="7" max="9" step="0.05" value="8"></label>
+  <label id="lB">$V_B$ : <span class="val" id="bV">7,80 V</span><input type="range" id="bR" min="7" max="9" step="0.05" value="7.8"></label>
+  <label id="lH">$V_H$ : <span class="val" id="hV">8,20 V</span><input type="range" id="hR" min="7" max="9" step="0.05" value="8.2"></label>
+  <div id="hInfo"></div>
+ </div>
+ <div class="grid2"><canvas id="c3" width="640" height="460"></canvas><canvas id="c3b" width="400" height="460"></canvas></div>
+ <div class="box q"><span class="n">Q8.</span> Choisis le mode « un seuil » (8,00 V). Combien de basculements le compteur affiche-t-il ?<br><button>Voir la réponse</button><div class="ans">10 basculements en 20 s.</div></div>
+ <div class="box q"><span class="n">Q9.</span> Mode « deux seuils », $V_B$ = 7,80 V et $V_H$ = 8,20 V. Combien de basculements ?<br><button>Voir la réponse</button><div class="ans">2 basculements.</div></div>
+ <div class="box q"><span class="n">Q10.</span> Règle $V_B$ = 7,90 V et $V_H$ = 8,10 V. Combien de basculements ? Explique.<br><button>Voir la réponse</button><div class="ans">4 basculements : l'écart (0,2 V) est plus petit que le bruit (environ 0,36 V crête à crête).</div></div>
+ <div class="box q star"><span class="n">Q11 ★.</span> Garde des seuils centrés sur 8,00 V. Cherche le plus petit écart $\Delta V$ qui ne donne que 2 basculements.<br><button>Voir la réponse</button><div class="ans">$\Delta V$ = 0,3 V (7,85 V et 8,15 V). Avec 0,2 V, il reste 4 basculements.</div></div>
+ <div class="box q star"><span class="n">Q12 ★.</span> Règle $V_B$ = 7,00 V et $V_H$ = 9,00 V. Que se passe-t-il ? Pourquoi est-ce une mauvaise idée pour le sécheur ?<br><button>Voir la réponse</button><div class="ans">Aucun basculement : le chauffage reste en marche et la température peut dépasser 82 °C. Seuils trop écartés : la température n'est plus tenue.</div></div>
+</section>
+
+<!-- ===================== ONGLET 4 -->
+<section id="t4">
+ <div class="box hint">Réponds de tête, en moins de 10 secondes, puis clique sur la carte pour la retourner.</div>
+ <div class="cards"><div class="card" id="card"></div>
+ <div class="cbar"><button id="prev">◀ Précédente</button><span id="cnt" style="align-self:center;font-weight:bold;color:var(--navy)"></span><button id="next">Suivante ▶</button><button id="shuf">Mélanger</button></div></div>
+</section>
+</main>
+
+<script>
+const $=id=>document.getElementById(id);
+const fr=(x,d)=>x.toFixed(d).replace('.',',');
+// ----- onglets
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
+ document.querySelectorAll('nav button').forEach(x=>x.classList.remove('on'));b.classList.add('on');
+ document.querySelectorAll('section').forEach(s=>s.classList.toggle('on',s.id===b.dataset.t));draw();});
+document.querySelectorAll('.q button').forEach(b=>b.onclick=()=>{const a=b.nextElementSibling;a.style.display=a.style.display==='block'?'none':'block';});
+
+// ----- outil de tracé
+function plot(cv,box,opt){ // box: [x0,y0,w,h] en px ; opt: xmin,xmax,ymin,ymax,xstep,ystep,xl,yl,title
+ const g=cv.getContext('2d');const [X,Y,W,H]=box;
+ const sx=x=>X+(x-opt.xmin)/(opt.xmax-opt.xmin)*W, sy=y=>Y+H-(y-opt.ymin)/(opt.ymax-opt.ymin)*H;
+ g.strokeStyle='#E3E8EF';g.lineWidth=1;g.font='12px Arial';g.fillStyle='#333';
+ for(let x=opt.xmin;x<=opt.xmax+1e-9;x+=opt.xstep){g.beginPath();g.moveTo(sx(x),Y);g.lineTo(sx(x),Y+H);g.stroke();g.textAlign='center';g.fillText(fr(x,opt.xd||0),sx(x),Y+H+14);}
+ for(let y=opt.ymin;y<=opt.ymax+1e-9;y+=opt.ystep){g.beginPath();g.moveTo(X,sy(y));g.lineTo(X+W,sy(y));g.stroke();g.textAlign='right';g.fillText(fr(y,opt.yd||0),X-4,sy(y)+4);}
+ g.strokeStyle='#555';g.strokeRect(X,Y,W,H);
+ if(opt.ymin<0&&opt.ymax>0){g.beginPath();g.moveTo(X,sy(0));g.lineTo(X+W,sy(0));g.stroke();}
+ g.fillStyle='#1F3864';g.font='bold 13px Arial';g.textAlign='left';g.fillText(opt.title||'',X,Y-6);
+ g.font='12px Arial';g.fillStyle='#333';g.textAlign='right';g.fillText(opt.xl||'',X+W,Y+H+28);
+ return {sx,sy,g};
+}
+function line(P,xs,ys,col,lw,dash){const g=P.g;g.strokeStyle=col;g.lineWidth=lw||2;g.setLineDash(dash||[]);g.beginPath();
+ xs.forEach((x,i)=>{const px=P.sx(x),py=P.sy(ys[i]);i?g.lineTo(px,py):g.moveTo(px,py)});g.stroke();g.setLineDash([]);}
+const lin=(a,b,n)=>Array.from({length:n},(_,i)=>a+(b-a)*i/(n-1));
+
+// ===================== Onglet 1
+function draw1(){
+ const A=+$('aR').value, vm=+document.querySelector('input[name=cap]:checked').value; $('aV').textContent=A;
+ const t=lin(0,10,1001), ve=t.map(x=>x<1?0:x<3?vm*(x-1)/2:x<6?vm:x<8?vm*(8-x)/2:0);
+ const vl=ve.map(v=>A*v), vs=vl.map(v=>Math.min(v,13.5));
+ const cv=$('c1'),g=cv.getContext('2d');g.clearRect(0,0,cv.width,cv.height);
+ const P1=plot(cv,[50,25,570,140],{xmin:0,xmax:10,ymin:0,ymax:250,xstep:1,ystep:50,title:'ve(t) en mV',xl:'t (s)'});
+ line(P1,t,ve.map(v=>v*1000),'#1F3864',2.2);
+ const ymax=Math.max(22,Math.ceil(Math.max(...vl)/5)*5);
+ const P2=plot(cv,[50,215,570,170],{xmin:0,xmax:10,ymin:0,ymax:ymax,xstep:1,ystep:ymax>30?10:5,title:'vS(t) en V',xl:'t (s)'});
+ line(P2,[0,10],[13.5,13.5],'#C55A11',1.2,[5,4]);P2.g.textAlign='left';P2.g.fillStyle='#C55A11';P2.g.fillText('Vsat = 13,5 V',P2.sx(0.3),P2.sy(13.5)-4);
+ line(P2,[0,10],[10,10],'#3F7A3A',1.2,[2,3]);P2.g.fillStyle='#3F7A3A';P2.g.fillText('limite de la carte 10 V',P2.sx(6.2),P2.sy(10)+14);
+ if(Math.max(...vl)>13.5) line(P2,t,vl,'#999',1.3,[5,4]);
+ line(P2,t,vs,'#C00000',2.6);
+ // caractéristique
+ const cb=$('c1b'),gb=cb.getContext('2d');gb.clearRect(0,0,cb.width,cb.height);
+ const P3=plot(cb,[45,25,330,355],{xmin:-0.3,xmax:0.3,ymin:-15,ymax:15,xstep:0.1,ystep:5,xd:1,title:'Caractéristique vS = f(ve)',xl:'ve (V)'});
+ const xv=lin(-0.3,0.3,301);line(P3,xv,xv.map(x=>Math.max(-13.5,Math.min(13.5,A*x))),'#1F3864',2.2);
+ line(P3,[0,vm],[0,Math.min(13.5,A*vm)],'#C00000',4);
+ const m=Math.max(...vs), ecr=A*vm>13.5;
+ $('aInfo').innerHTML=`<span class="badge b-info">v<sub>S</sub> max = ${fr(m,1)} V</span>`+(ecr?'<span class="badge b-ko">ÉCRÊTÉ (saturation)</span>':'<span class="badge b-ok">zone linéaire</span>')+(m>10?'<span class="badge b-ko">hors plage carte</span>':'');
+}
+// ===================== Onglet 2
+function draw2(){
+ const vr=+$('rR').value, vib=$('vib').checked; $('rV').textContent=fr(vr,1)+' V';
+ const t=lin(0,60,3001), vN=t.map(x=>(x<35?8-0.2*x:9-0.2*(x-35))+(vib?0.1*Math.sin(2*Math.PI*x/0.45):0));
+ const vs=vN.map(v=>v<vr?13.5:-13.5);
+ const cv=$('c2'),g=cv.getContext('2d');g.clearRect(0,0,cv.width,cv.height);
+ const P1=plot(cv,[50,25,820,190],{xmin:0,xmax:60,ymin:0,ymax:10,xstep:5,ystep:2,title:'vN(t) en V',xl:'t (min)'});
+ line(P1,t,vN,'#1F3864',2);line(P1,[0,60],[vr,vr],'#3F7A3A',1.4,[6,4]);P1.g.textAlign='left';P1.g.fillStyle='#3F7A3A';P1.g.fillText('Vréf',P1.sx(56),P1.sy(vr)-5);
+ const P2=plot(cv,[50,265,820,160],{xmin:0,xmax:60,ymin:-15,ymax:15,xstep:5,ystep:5,title:'vS(t) en V',xl:'t (min)'});
+ line(P2,t,vs,'#C00000',2.4);
+ let on=0,sw=0;for(let i=1;i<t.length;i++){if(vs[i]>0)on+=t[i]-t[i-1];if(vs[i]!==vs[i-1])sw++;}
+ $('rInfo').innerHTML=`<span class="led" style="background:${vs[vs.length-1]>0?'#f5c400':'#ddd'}"></span><span class="badge b-info">voyant allumé : ${fr(on,1)} min</span><span class="badge ${sw>2?'b-ko':'b-ok'}">basculements : ${sw}</span><span class="badge b-info">alarme à ${Math.round(vr*10)} %</span>`;
+}
+// ===================== Onglet 3
+const T3=lin(0,20,4001), VT=T3.map(t=>8-0.5*Math.cos(2*Math.PI*t/20)+0.12*Math.sin(2*Math.PI*1.3*t+0.4)+0.06*Math.sin(2*Math.PI*3.1*t+1.3));
+function draw3(){
+ const mode=document.querySelector('input[name=mode]:checked').value;
+ let s=+$('sR').value,b=+$('bR').value,h=+$('hR').value;
+ if(b>h){h=b;$('hR').value=h;}
+ $('sV').textContent=fr(s,2)+' V';$('bV').textContent=fr(b,2)+' V';$('hV').textContent=fr(h,2)+' V';
+ $('lS').style.display=mode==='1'?'':'none';$('lB').style.display=$('lH').style.display=mode==='2'?'':'none';
+ let out=[],st=13.5;
+ if(mode==='1') out=VT.map(v=>v<s?13.5:-13.5);
+ else VT.forEach(v=>{if(st>0&&v>h)st=-13.5;else if(st<0&&v<b)st=13.5;out.push(st);});
+ let sw=0;for(let i=1;i<out.length;i++)if(out[i]!==out[i-1])sw++;
+ const cv=$('c3'),g=cv.getContext('2d');g.clearRect(0,0,cv.width,cv.height);
+ const P1=plot(cv,[50,25,570,200],{xmin:0,xmax:20,ymin:7.2,ymax:8.8,xstep:2,ystep:0.2,yd:1,title:'vθ(t) en V',xl:'t (s)'});
+ line(P1,T3,VT,'#1F3864',1.5);
+ if(mode==='1')line(P1,[0,20],[s,s],'#C55A11',1.6,[6,4]);else{line(P1,[0,20],[h,h],'#3F7A3A',1.6,[6,4]);line(P1,[0,20],[b,b],'#3F7A3A',1.6,[6,4]);}
+ const P2=plot(cv,[50,280,570,150],{xmin:0,xmax:20,ymin:-15,ymax:15,xstep:2,ystep:5,title:'vS(t) en V (chauffage en marche si +13,5 V)',xl:'t (s)'});
+ line(P2,T3,out,'#C00000',2.3);
+ const cb=$('c3b'),gb=cb.getContext('2d');gb.clearRect(0,0,cb.width,cb.height);
+ const P3=plot(cb,[45,25,330,390],{xmin:7,xmax:9,ymin:-15,ymax:15,xstep:0.5,ystep:5,xd:1,title:'Caractéristique vS = f(vθ)',xl:'vθ (V)'});
+ if(mode==='1')line(P3,[7,s,s,9],[13.5,13.5,-13.5,-13.5],'#1F3864',2.4);
+ else{line(P3,[7,h,h],[13.5,13.5,-13.5],'#1F3864',2.4);line(P3,[9,b,b],[-13.5,-13.5,13.5],'#1F3864',2.4);}
+ $('hInfo').innerHTML=`<span class="badge ${sw>2?'b-ko':'b-ok'}">basculements en 20 s : ${sw}</span>`+(mode==='2'?`<span class="badge b-info">ΔV = ${fr(h-b,2)} V</span><span class="badge b-info">${fr(b*10,1)} °C → ${fr(h*10,1)} °C</span>`:'');
+}
+// ===================== Cartes
+const CARDS=[
+ ['Comment s\'appelle la courbe $v_S = f(v_e)$ ?','La caractéristique de transfert'],
+ ['ADI idéal : que valent les courants $i^+$ et $i^-$ ?','Ils sont nuls : $i^+ = i^- = 0$'],
+ ['Compléter : $\\varepsilon = \\dots$','$\\varepsilon = V^+ - V^-$'],
+ ['La sortie de l\'ADI est reliée à l\'entrée −. Quel régime ?','Régime linéaire : $\\varepsilon = 0$'],
+ ['Aucune liaison entre la sortie et l\'entrée −. Quel régime ?','Régime saturé (comparateur)'],
+ ['Régime saturé et $\\varepsilon > 0$ : que vaut $v_S$ ?','$v_S = +V_{sat}$'],
+ ['Non inverseur : $v_S = \\left(1 + \\dots\\right) v_e$','$\\dfrac{R_2}{R_1}$'],
+ ['Comparateur à un seuil : pour quelle valeur de $v_e$ la sortie bascule-t-elle ?','$v_e = V_{réf}$ (la tension de seuil)'],
+ ['Pourquoi utiliser deux seuils plutôt qu\'un ?','Pour que la sortie ne bascule pas à cause du bruit'],
+ ['Zone linéaire, $A = 10$ et $v_e = 0{,}5$ V : $v_S$ ?','$v_S = 5$ V']];
+let order=CARDS.map((_,i)=>i),ci=0,back=false;
+function showCard(){const c=CARDS[order[ci]];$('card').innerHTML=back?c[1]:c[0];$('card').classList.toggle('back',back);$('cnt').textContent=`Carte ${ci+1} / ${CARDS.length}`;render($('card'));}
+$('card').onclick=()=>{back=!back;showCard();};
+$('next').onclick=()=>{ci=(ci+1)%CARDS.length;back=false;showCard();};
+$('prev').onclick=()=>{ci=(ci+CARDS.length-1)%CARDS.length;back=false;showCard();};
+$('shuf').onclick=()=>{for(let i=order.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[order[i],order[j]]=[order[j],order[i]];}ci=0;back=false;showCard();};
+
+function render(el){try{renderMathInElement(el,{delimiters:[{left:'$',right:'$',display:false}],throwOnError:false});}catch(e){}}
+function draw(){draw1();draw2();draw3();}
+['aR','rR','sR','bR','hR','vib'].forEach(id=>$(id).oninput=draw);
+document.querySelectorAll('input[type=radio]').forEach(r=>r.onchange=draw);
+window.addEventListener('load',()=>{render(document.body);draw();showCard();});
+</script>
+</body>
+</html>

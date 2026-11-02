@@ -1,0 +1,66 @@
+{
+ "classe": "BTS CIM",
+ "titre": "Systèmes non linéaires",
+ "cartes": [
+  {
+   "type": "Définition",
+   "recto": "Comment s'appelle la courbe $v_S = f(v_e)$ ?",
+   "verso": "La <b>caractéristique de transfert</b>.",
+   "origine": "Cours §1 — La fonction amplification"
+  },
+  {
+   "type": "Définition",
+   "recto": "ADI idéal : que valent les courants $i^+$ et $i^-$ ?",
+   "verso": "Ils sont <b>nuls</b> : $i^+ = i^- = 0$.",
+   "origine": "Cours §2 — L'ADI en régime linéaire"
+  },
+  {
+   "type": "Formule",
+   "recto": "Compléter : $\\varepsilon = \\dots$",
+   "verso": "$\\varepsilon = V^+ - V^-$",
+   "origine": "Cours §2 — L'ADI en régime linéaire"
+  },
+  {
+   "type": "Sens physique",
+   "recto": "La sortie de l'ADI est reliée à l'entrée −. Quel régime ?",
+   "verso": "Régime <b>linéaire</b> : $\\varepsilon = 0$.",
+   "origine": "Cours §2 — L'ADI en régime linéaire"
+  },
+  {
+   "type": "Définition",
+   "recto": "Aucune liaison entre la sortie et l'entrée −. Quel régime ?",
+   "verso": "Régime <b>saturé</b> (comparateur).",
+   "origine": "Cours §3 — Le comparateur à un seuil"
+  },
+  {
+   "type": "Sens physique",
+   "recto": "Régime saturé et $\\varepsilon > 0$ : que vaut $v_S$ ?",
+   "verso": "$v_S = +V_{sat}$",
+   "origine": "Cours §3 — Le comparateur à un seuil"
+  },
+  {
+   "type": "Formule",
+   "recto": "Non inverseur : $v_S = \\left(1 + \\dots\\right) v_e$",
+   "verso": "$\\dfrac{R_2}{R_1}$",
+   "origine": "Cours §2 — L'ADI en régime linéaire"
+  },
+  {
+   "type": "Définition",
+   "recto": "Comparateur à un seuil : pour quelle valeur de $v_e$ la sortie bascule-t-elle ?",
+   "verso": "$v_e = V_{réf}$ : la <b>tension de seuil</b>.",
+   "origine": "Cours §3 — Le comparateur à un seuil"
+  },
+  {
+   "type": "Sens physique",
+   "recto": "Pourquoi utiliser deux seuils plutôt qu'un ?",
+   "verso": "Pour que la sortie ne bascule pas à cause du <b>bruit</b>.",
+   "origine": "Cours §4 — Le comparateur à hystérésis"
+  },
+  {
+   "type": "Calcul",
+   "recto": "Zone linéaire, $A = 10$ et $v_e = 0{,}5$ V : $v_S$ ?",
+   "verso": "$v_S = 5$ V",
+   "origine": "Cours §1 — La fonction amplification"
+  }
+ ]
+}
