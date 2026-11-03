@@ -138,8 +138,11 @@ footer{margin:28px 0 0;padding-top:14px;border-top:1px solid var(--grid);color:v
   }
   if(!cls || !ch){ erreur("L'adresse ne précise pas la classe et le chapitre."); return; }
 
-  fetch("cartes/" + cls + "/" + ch + ".json", {cache:"no-cache"})
-    .then(function(r){ if(!r.ok) throw 0; return r.json(); })
+  // Chapitre verrouillé : les cartes ont été déchiffrées par la page d'accueil et confiées au stockage local
+  var local = null;
+  if(par.get("v") === "1"){ try{ local = JSON.parse(localStorage.getItem("cartes-verrou." + cls + "." + ch) || "null"); }catch(e){} }
+  (local ? Promise.resolve(local) : fetch("cartes/" + cls + "/" + ch + ".json", {cache:"no-cache"})
+    .then(function(r){ if(!r.ok) throw 0; return r.json(); }))
     .then(demarrer)
     .catch(function(){ erreur("Ce chapitre n'a pas encore de cartes."); });
 

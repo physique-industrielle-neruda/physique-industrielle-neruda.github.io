@@ -207,7 +207,8 @@ async function loadAll(){
 }
 function corriges(site){
   const c = CAT.classes.find(x => x.id === site); if (!c) return [];
-  return c.chapitres.map(ch => ({ ch, docs: ch.docs.filter(d => d.corrige) })).filter(x => x.docs.length);
+  // Un chapitre verrouillé apparaît en tête de sa liste, comme un corrigé : « Ouvrir le chapitre » = transmettre sa clé
+  return c.chapitres.map(ch => ({ ch, docs: (ch.verrou ? [{ titre: "🔒 Accès au chapitre (dossier verrouillé)", chapitre: true, corrige: ch.verrou }] : []).concat(ch.docs.filter(d => d.corrige)) })).filter(x => x.docs.length);
 }
 async function unwrap(d){
   const w = b64(d.corrige.wk);
@@ -225,7 +226,7 @@ function home(){
     $("#imp").onclick = () => go(settings); return;
   }
   const html = CLASSES.map(c => {
-    const n = (c.eleves || []).length, nc = corriges(c.site).reduce((a, x) => a + x.docs.length, 0);
+    const n = (c.eleves || []).length, nc = corriges(c.site).reduce((a, x) => a + x.docs.filter(d => !d.chapitre).length, 0);
     return `<button class="row" data-id="${esc(c.id)}"><span class="main"><span class="t">${esc(c.nom)}</span><span class="m">${n} élève${n>1?"s":""} · ${nc} corrigé${nc>1?"s":""}</span></span><span class="chev"></span></button>`;
   }).join("");
   $("#app").innerHTML = `<div class="card">${html}</div>`;
@@ -251,7 +252,8 @@ function paneCorriges(c){
     last = counts;
     const bloc = g => `<p class="sec">${esc(g.ch.titre)}</p><div class="card">` + g.docs.map(d => {
       const n = counts[d.corrige.id] || 0;
-      return `<button class="row" data-doc="${esc(d.corrige.id)}"><span class="main"><span class="t">${esc(d.titre)}</span><span class="m">${n === total && total ? "Débloqué pour toute la classe" : n ? n + " élève" + (n>1?"s":"") + " débloqué" + (n>1?"s":"") : "Personne pour l'instant"}</span></span><span class="count${n===total&&total?" full":""}">${n}/${total}</span><span class="chev"></span></button>`;
+      const lib = d.chapitre ? (n === total && total ? "Chapitre ouvert à toute la classe" : n ? "Ouvert pour " + n + " élève" + (n>1?"s":"") : "Chapitre fermé aux élèves") : (n === total && total ? "Débloqué pour toute la classe" : n ? n + " élève" + (n>1?"s":"") + " débloqué" + (n>1?"s":"") : "Personne pour l'instant");
+      return `<button class="row" data-doc="${esc(d.corrige.id)}"><span class="main"><span class="t">${esc(d.titre)}</span><span class="m">${lib}</span></span><span class="count${n===total&&total?" full":""}">${n}/${total}</span><span class="chev"></span></button>`;
     }).join("") + `</div>`;
     // Chapitres rangés par niveau, choisis avec un menu déroulant (l'année de la classe ouverte par défaut)
     const annees = [...new Set(groups.map(g => g.ch.annee).filter(Boolean))].sort();
@@ -295,9 +297,9 @@ function docEleves(cid, d){
     <div class="btns"><button class="btn ok" id="all">Tout débloquer</button><button class="btn ghost" id="none">Tout verrouiller</button></div>`;
   const boxes = [...$("#list").querySelectorAll("input")];
   const paint = () => {
-    boxes.forEach(b => { b.checked = on.has(b.dataset.uid); $(`[data-m="${b.dataset.uid}"]`).textContent = b.checked ? "Corrigé débloqué" : "Verrouillé"; });
+    boxes.forEach(b => { b.checked = on.has(b.dataset.uid); $(`[data-m="${b.dataset.uid}"]`).textContent = b.checked ? (d.chapitre ? "Chapitre ouvert" : "Corrigé débloqué") : "Verrouillé"; });
     $("#pb").style.width = (100 * on.size / el.length) + "%";
-    $("#pn").textContent = `${on.size} / ${el.length} élèves ont accès au corrigé.`;
+    $("#pn").textContent = `${on.size} / ${el.length} élèves ont accès ${d.chapitre ? "au chapitre" : "au corrigé"}.`;
   };
   const key = async () => { if (!K) { if (!MAITRE) throw new Error("cles"); K = await unwrap(d); } return K; };
   const ref = uid => doc(db, "deblocages", d.corrige.id + "_" + uid);
@@ -315,11 +317,12 @@ function docEleves(cid, d){
     try {
       const k = val ? await key() : null, batch = writeBatch(db);
       el.forEach(e => { if (val) batch.set(ref(e.uid), { uid:e.uid, doc:d.corrige.id, classe:cid, cle:k, at:serverTimestamp() }); else batch.delete(ref(e.uid)); });
-      await batch.commit(); toast(val ? "Corrigé débloqué pour toute la classe." : "Corrigé verrouillé pour toute la classe.");
+      await batch.commit(); toast(d.chapitre ? (val ? "Chapitre ouvert à toute la classe." : "Chapitre refermé pour toute la classe.") : val ? "Corrigé débloqué pour toute la classe." : "Corrigé verrouillé pour toute la classe.");
     } catch(e){ toast(e.message === "cles" ? "Clés absentes : importez le fichier dans Réglages." : "Échec, vérifiez la connexion."); }
   };
   $("#all").onclick = () => bulk(true);
-  $("#none").onclick = () => { if (confirm("Verrouiller ce corrigé pour toute la classe ?")) bulk(false); };
+  if (d.chapitre) { $("#all").textContent = "Ouvrir le chapitre à toute la classe"; $("#none").textContent = "Refermer le chapitre"; }
+  $("#none").onclick = () => { if (confirm(d.chapitre ? "Refermer ce chapitre pour toute la classe ?" : "Verrouiller ce corrigé pour toute la classe ?")) bulk(false); };
   paint();
   const mesUid = new Set(el.map(e => e.uid));
   unsub = onSnapshot(query(collection(db, "deblocages"), where("doc", "==", d.corrige.id)), snap => {

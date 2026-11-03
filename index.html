@@ -90,6 +90,12 @@ nav.classes button[aria-pressed="true"] .n,nav.classes button[aria-pressed="true
 .chap h3 .count{font-family:"Atkinson Hyperlegible",system-ui,sans-serif;font-size:.85rem;font-weight:400;color:var(--muted)}
 .chap .chev{flex:none;width:12px;height:12px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(-45deg);transition:transform .15s;margin-right:6px}
 .chap[open] .chev{transform:rotate(45deg)}
+.chap.ferme>summary{cursor:default}
+.chap.ferme>summary:hover{background:transparent}
+.chap.ferme .folder{color:var(--muted)}
+.chap.ferme h3 .count{display:flex;align-items:center;gap:6px}
+.chap .lockico{width:12px;height:13px;flex:none}
+.badge-verrou{display:inline-flex;align-items:center;gap:5px;font-family:"Atkinson Hyperlegible",system-ui,sans-serif;font-size:.78rem;font-weight:600;color:#9a3412;background:#fff1e6;border:1px solid #fed7aa;border-radius:999px;padding:2px 9px;white-space:nowrap}
 .chap[open]>summary{border-bottom:1px solid var(--grid);border-radius:10px 10px 0 0}
 .annee{margin:18px 0 0}
 .annee>summary{list-style:none;cursor:pointer;display:flex;gap:12px;align-items:center;padding:12px 16px;border-radius:10px;
@@ -238,12 +244,12 @@ function toast(msg){ const t = $("#toast"); t.textContent = msg; t.style.display
 
 const importKey = raw => crypto.subtle.importKey("raw", raw, "AES-GCM", false, ["decrypt"]);
 
-async function decryptBlob(url, key){
+async function decryptBlob(url, key, type){
   const r = await fetch(url, {cache:"no-cache"});
   if (!r.ok) throw new Error("introuvable");
   const buf = new Uint8Array(await r.arrayBuffer());
   const plain = await crypto.subtle.decrypt({name:"AES-GCM", iv:buf.slice(0,12)}, key, buf.slice(12));
-  return new Blob([plain], {type:"application/pdf"});
+  return new Blob([plain], {type: type || "application/pdf"});
 }
 
 /* Clé d'un corrigé : transmise par le professeur (élève) ou extraite de l'enveloppe (professeur) */
@@ -258,20 +264,40 @@ async function corrKey(d){
   return null;
 }
 
+/* Chapitre verrouillé : clé transmise par le professeur (élève) ou extraite de l'enveloppe (professeur, invité premium) */
+function chapInfo(id){ for (const c of CAT.classes) for (const ch of c.chapitres) if (ch.verrou && ch.verrou.id === id) return ch.verrou; return null; }
+const chapOK = ch => !ch.verrou || S.prof || S.premium || !!S.corr[ch.verrou.id];
+async function chapKey(id){
+  if (S.corr[id]) return importKey(b64(S.corr[id]));
+  const v = chapInfo(id);
+  if (v && (S.prof || S.premium) && S.maitre) {
+    const w = b64(v.wk);
+    return importKey(await crypto.subtle.decrypt({name:"AES-GCM", iv:w.slice(0,12), additionalData:enc.encode(id)}, S.maitre, w.slice(12)));
+  }
+  return null;
+}
+
 async function openDoc(cls, d, download){
   let w = null;
   if (!download) { w = window.open("", "_blank"); if (w) { try { w.document.title = d.titre; w.document.body.innerHTML = "<p style='font:16px sans-serif;padding:20px'>Ouverture de « " + esc(d.titre) + " »…</p>"; } catch(e){} } }
   try {
-    const key = d.corrige ? await corrKey(d) : S.keys[cls];
-    if (!key) throw new Error("verrou");
-    const blob = await decryptBlob(BASE + "docs/" + cls + "/" + d.fichier, key);
+    const key = d.corrige ? await corrKey(d) : d.cv ? await chapKey(d.cv) : S.keys[cls];
+    if (!key) throw new Error(d.cv && !d.corrige ? "chapitre" : "verrou");
+    const blob = await decryptBlob(BASE + "docs/" + cls + "/" + d.fichier, key, d.format === "html" ? "text/html;charset=utf-8" : d.format === "cartes" ? "application/json" : null);
+    if (d.format === "cartes") {
+      // Cartes d'un chapitre verrouillé : déchiffrées ici, puis confiées à cartes.html (même site, stockage local)
+      try { localStorage.setItem("cartes-verrou." + cls + "." + d.ch, await blob.text()); } catch(_){}
+      const href = BASE + "cartes.html?c=" + encodeURIComponent(cls) + "&ch=" + encodeURIComponent(d.ch) + "&v=1";
+      if (w) w.location.href = href; else location.href = href;
+      return;
+    }
     const url = URL.createObjectURL(blob);
     if (w && !download) { w.location.href = url; }
     else { const a = document.createElement("a"); a.href = url; a.download = d.titre + ".pdf"; document.body.appendChild(a); a.click(); a.remove(); }
     setTimeout(() => URL.revokeObjectURL(url), 120000);
   } catch(e) {
     if (w) w.close();
-    toast(e.message === "verrou" ? "Ce corrigé n'est pas encore débloqué." : "Impossible d'ouvrir ce document. Rechargez la page et réessayez.");
+    toast(e.message === "verrou" ? "Ce corrigé n'est pas encore débloqué." : e.message === "chapitre" ? "Ce chapitre n'est pas encore ouvert." : "Impossible d'ouvrir ce document. Rechargez la page et réessayez.");
   }
 }
 
@@ -410,7 +436,13 @@ function docRow(c, d){
       <span class="actions"><a class="open" href="${esc(href)}" target="_blank" rel="noopener">Ouvrir</a>${d.taille ? `<a class="open dl" href="${esc(href)}" download="${esc(d.titre)}.pdf">Télécharger</a>` : ""}</span>`;
     return li;
   }
-  const meta = `PDF, ${d.pages ? d.pages + " p., " : ""}${size(d.taille)}`;
+  const meta = d.format === "html" ? "Animation interactive" : d.format === "cartes" ? (d.nombre ? d.nombre + " cartes" : "Cartes de révision") : `PDF, ${d.pages ? d.pages + " p., " : ""}${size(d.taille)}`;
+  if (d.format) {
+    li.innerHTML = `<span class="type">${esc(d.type)}</span><span class="title">${esc(d.titre)}<span class="meta">${meta}</span></span>
+      <span class="actions"><button class="open" type="button">Ouvrir</button></span>`;
+    li.querySelector("button").onclick = () => openDoc(c.id, d, false);
+    return li;
+  }
   if (d.corrige) {
     const ok = S.prof || S.premium || !!S.corr[d.corrige.id];
     if (fresh.has(d.corrige.id)) li.className = "fresh";
@@ -439,10 +471,16 @@ function docRow(c, d){
 const FOLDER = '<svg class="folder" viewBox="0 0 34 28" aria-hidden="true"><path d="M2 5a3 3 0 0 1 3-3h8l3 4h13a3 3 0 0 1 3 3v14a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3z" fill="currentColor" fill-opacity=".15" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>';
 function chapBlock(c, ch, docs, forceOpen, outil){
   const key = c.id + "/" + ch.titre;
+  if (!outil && ch.verrou && !chapOK(ch)) {
+    const f = document.createElement("div"); f.className = "chap ferme";
+    f.innerHTML = `<summary>${FOLDER}<h3><span>${esc(ch.titre)}</span><span class="count">${LOCK}Chapitre verrouillé : le professeur l'ouvrira bientôt</span></h3></summary>`;
+    return f;
+  }
   const s = document.createElement("details"); s.className = "chap";
   if (forceOpen || opened.has(key)) s.open = true;
   const n = docs.length;
-  s.innerHTML = `<summary>${outil ? FOLDER.replace('class="folder"', 'class="folder outil"') : FOLDER}<h3><span>${esc(ch.titre)}</span><span class="count">${n} document${n > 1 ? "s" : ""}</span></h3><span class="chev" aria-hidden="true"></span></summary>`;
+  const badge = !outil && ch.verrou && (S.prof || S.premium) ? `<span class="badge-verrou">${LOCK}Chapitre sous cadenas</span>` : "";
+  s.innerHTML = `<summary>${outil ? FOLDER.replace('class="folder"', 'class="folder outil"') : FOLDER}<h3><span>${esc(ch.titre)}</span><span class="count">${n} document${n > 1 ? "s" : ""}</span></h3>${badge}<span class="chev" aria-hidden="true"></span></summary>`;
   s.addEventListener("toggle", () => { if (s.open) opened.add(key); else opened.delete(key); });
   if (outil || !docs.some(d => d.rubrique)) {
     const ul = document.createElement("ul"); ul.className = "docs";
@@ -477,7 +515,7 @@ function render(){
   if (q || current === "outils") found += renderOutils(view, q);
   const classes = q ? visibleClasses() : visibleClasses().filter(c => c.id === current);
   for (const c of classes) {
-    const chaps = c.chapitres.map(ch => ({ch, docs: ch.docs.filter(d => !q || (d.titre + " " + d.type + " " + ch.titre).toLowerCase().includes(q))}))
+    const chaps = c.chapitres.map(ch => ({ch, docs: ch.docs.filter(d => !q || (chapOK(ch) && (d.titre + " " + d.type + " " + ch.titre).toLowerCase().includes(q)))}))
       .filter(x => x.docs.length);
     if (q && !chaps.length) continue;
     const head = document.createElement("div"); head.className = "classhead";
@@ -604,7 +642,7 @@ async function startSession(user){
     unsubCorr = onSnapshot(query(collection(db, "deblocages"), where("uid", "==", user.uid)), snap => {
       const before = new Set(Object.keys(S.corr)); const now = {};
       snap.forEach(x => { const v = x.data(); if (v.doc && v.cle) now[v.doc] = v.cle; });
-      if (!first) for (const id in now) if (!before.has(id)) { fresh.add(id); toast(id.startsWith("eval-") ? "Ta copie corrigée est disponible dans « Mes évaluations »." : "Un corrigé vient d'être débloqué !"); }
+      if (!first) for (const id in now) if (!before.has(id)) { fresh.add(id); toast(id.startsWith("eval-") ? "Ta copie corrigée est disponible dans « Mes évaluations »." : chapInfo(id) ? "Un nouveau chapitre vient d'être ouvert !" : "Un corrigé vient d'être débloqué !"); }
       first = false; S.corr = now; render();
     }, () => {});
   } catch(x) {
