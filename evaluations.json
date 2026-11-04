@@ -1,7 +1,85 @@
 {
  "version": 1,
- "noms": "KKUINNOuJ2lk8TGpC5T7C2zTLxWzfBUjAxcE8NJCaJ1EUgOXmBjVYtNXQZtM4O5QEy6WjakMPNANgCV6W8sfGxXoro2J+ceMJTyopTNRhB8MbC89at1COmsiqRkTtex6IeATTn8ngpR59qqJ31AXmzKFuyRHBZbH1V1X3C7KaIflne9eJu0FLaN+RO0Sf8SpTfWYbQFJeGSTQYIlpCYLXAsVmDE+EJ4ozA8GhuoiB6l0rgFA1LinCtEuKOWuWuXuBnuyy5YpnrYG5SKkNFM2M80A7WoHdPI6pG6vJdCUeEPm8efU0fAbmW9scjryrsHrCNWIwdweEd6h9W0yZpwGO6EbxIPDVzVPxdmsiRTG9al7LdD/qbqbc/uiD+DUdxANxw5sCxF8cQXpFQTPE4lydKK5wbl2rTFMfDA+DuNxH4zJBiNVVKO+7YU9IfnT7rFQkYIi5esUZOjUFZldMGtUyCLeENFPfihyYMtA/Z669GdNfk93GRE2cUBQ/fMIFZyHhj8bgMSSqxxDUKPRFgR/EfUI7Tpx/mjO80tEJqPDIYOerTboJTvgkPKE4BQNf+0ATPNErentdFVFA5yrBEvjhn80Kbc+Gw3aNvEbVAtMwoVa1aZedH2yVzwOqgnKyo449C86VMWSaTD7tuIqiPM04cBESwyU/Bcq0g5zS6Dw4gxsXfEJc2rx8RuQeyA=",
+ "noms": "ZaxlQv+Y1wKGZZ9zW2IghUjxuHecbbjRKEeU4Bk2xel7sTyKVfWAaIJAzetHnQDMFhXGDksZxcgV6fsYoAjb6zerizp1UwkPe1a1r5ZCXYaKXiLPclzA1y8qjpqooGL7URm6352QRT1pTJ8bqweTzR3gmTXc3FjdEBP2M1DXoqtBTPWVo7lXd9pnZ7Srcc6FaDjJi0E7pv1j99Os3TNvMyIsXzeLorZj4mbjy6mcKHiAgwWWzFdMqqIFErhsOmZ0rcTB0OE6jQfRlVg4PH0sARSxIGSwWOlZhqMz3mUFidnHgrT2wAaeDhxImmpcFlI9RZ+ePKP4rGm6bKXkskpiQn77/FXMyVIsp+aMrmn1uet5CsBmFYUkxHiDlBC62mXl+bjFLvMrnsG9smjsQLgDZEJXI7IgMcsViB83+1I/4KTO5wtJZR6tgHZ514SBDHojZyzJBcN90hc4i2RIP9X+ZTD7CwzyrSdmM/YU1gtCPA9sdWPiKdmpJTq7UqrkPjY1LHRXeNk16HXynZSZj9fPms7Mjccap+eWdFxjGsU8UpK53Iluo6eTO8iyB3ulFsjroNDQCw2NqHeJxmk50EGna7yIJTxUe1IiLffONUloVP3E1Yri5drusrU/V5Nr5M2Wo06QUmDSXowx49Qfv+klJ8g7YSgfD7+G6rbl6ekC6w9kluSjPIqJdqcMHqX/PCW1HvrVeaGNEXqPKW/XYlRGFyqtSAraxHImPITnPvFEOqqnU3zTQ0R06se/hBwmGm0Ak91OfKGlqwJHYdxjTyPcl8STJkqolImeWcJalhxEwsVJhqPPj+Z+ntEqT0xsKo2An3UIgOn6YbWxq5zn8vSn+WsgGxXDNA3vM6iHmBwGVPIbPSqzo/Szs8RUw97IObkQgwHR3cv56hbV4rlhCdDFgCJL/aCSaZ8lujQ99/2uSuk+D7GGZvCkZw4SmaJ/HV0nTfWhJA==",
  "evaluations": [
+  {
+   "id": "cira1/2026-11-03 Évaluation chapitre 3 - Régime sinusoïdal",
+   "classe": "cira1",
+   "site": "cira",
+   "titre": "Évaluation chapitre 3 - Régime sinusoïdal",
+   "date": "2026-11-03",
+   "copies": [
+    {
+     "login": "andy.c",
+     "fichier": "9864f0a138e57579cdcfb283.bin",
+     "taille": 1502268,
+     "pages": 8,
+     "corrige": {
+      "id": "eval-deece0d728414075786d",
+      "wk": "oCaX48z8TSjxjLKCG2wyLJgt8un2gQXe+qYQaJx3Vkim4fPzRCKTKiu8Pr9hGM9aUPcC+wEE3CvIsAhC"
+     }
+    },
+    {
+     "login": "ludivine.f",
+     "fichier": "01657b2bf20f535f546a8c61.bin",
+     "taille": 1381993,
+     "pages": 8,
+     "corrige": {
+      "id": "eval-9b0e4df98c16c101b7e6",
+      "wk": "TV+59ac+DV5fmwFnWoAmfaVcQDXlA4owJajVQIaN16FbI9g06/VfgsODAW1Nvc3F8LCb5MURDykFky5u"
+     }
+    },
+    {
+     "login": "noa.g",
+     "fichier": "e22efe1df587157346554670.bin",
+     "taille": 1332974,
+     "pages": 8,
+     "corrige": {
+      "id": "eval-d9d3f404434242ecc95b",
+      "wk": "O2R2p+RcHF7LIWLYlaVLTmb7Co34kYOcTCHa3OMTXHpAIPm7Mos4QFJjXTllbauMX/kEgKbUQmSFBeg3"
+     }
+    },
+    {
+     "login": "kenzo.g",
+     "fichier": "016b0a45494617e70c720c4e.bin",
+     "taille": 1355372,
+     "pages": 8,
+     "corrige": {
+      "id": "eval-48e5483ee4bfa5c8feb3",
+      "wk": "NOIm+h6XYRR4XLMUe8QRikRXQdKmD/ULMGFoptkVcmdA83B5tPPq2Xbhf/0MpbgD6NOpCeLZzD5z9KDt"
+     }
+    },
+    {
+     "login": "robin.l",
+     "fichier": "c8eabcaa3ab6369d9dee5322.bin",
+     "taille": 1445433,
+     "pages": 8,
+     "corrige": {
+      "id": "eval-5fe99babde6f1eae2052",
+      "wk": "6tHe2BPnPZrVzfdMclk02zfp8ek1ex5XHOINvHiXDIYdp6WEdRwRFKaKjELZLeuFrXEdTpMfNI2QIDFi"
+     }
+    },
+    {
+     "login": "clement.l",
+     "fichier": "84b8174d3a00dd3f7ef1d1c2.bin",
+     "taille": 1389938,
+     "pages": 8,
+     "corrige": {
+      "id": "eval-2a4b5f33e8555e5042cb",
+      "wk": "hXWyDqec2kw8YCnJUK8PrPP/aYhdtGMlm3tjKhH5eX8tJV/EKMUmVzMHnawnXNCxXQ0RQn0VOD2mF7de"
+     }
+    }
+   ],
+   "bilan": {
+    "fichier": "75a0e457e4bf43f13464b127.bin",
+    "taille": 33683,
+    "pages": 1,
+    "corrige": {
+     "id": "eval-e97e5ab757c1b2e530ca",
+     "wk": "ZJLrG0RtkrlGu76/dZzfJBQ9uZza3tqzp7TY/ocqA68eRKh88xsUge4U7r/LOiBFyuhcGmPlXPzUpk+g"
+    }
+   }
+  },
   {
    "id": "et1a/2026-10-13 QCM Les transferts thermiques",
    "classe": "et1a",
