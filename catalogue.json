@@ -583,6 +583,20 @@
    "sous": "Contrôle industriel et régulation automatique",
    "chapitres": [
     {
+     "num": "2",
+     "titre": "Dipôles actifs et passifs",
+     "docs": [
+      {
+       "titre": "Correction de l'évaluation des chapitres 1 et 2",
+       "type": "Document",
+       "fichier": "291bee988131a3debf216b47.bin",
+       "taille": 270908,
+       "pages": 6,
+       "rubrique": "Autres documents"
+      }
+     ]
+    },
+    {
      "num": "4",
      "titre": "Nature des signaux, Fourier et THD",
      "docs": [

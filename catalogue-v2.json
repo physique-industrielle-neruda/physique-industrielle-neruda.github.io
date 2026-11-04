@@ -883,6 +883,20 @@
    "sous": "Contrôle industriel et régulation automatique",
    "chapitres": [
     {
+     "num": "2",
+     "titre": "Dipôles actifs et passifs",
+     "docs": [
+      {
+       "titre": "Correction de l'évaluation des chapitres 1 et 2",
+       "type": "Document",
+       "fichier": "291bee988131a3debf216b47.bin",
+       "taille": 270908,
+       "pages": 6,
+       "rubrique": "Autres documents"
+      }
+     ]
+    },
+    {
      "num": "4",
      "titre": "Nature des signaux, Fourier et THD",
      "docs": [
@@ -1390,8 +1404,8 @@
       {
        "titre": "TP 1 – Barrière optique (ADI ou porte logique)",
        "type": "TP",
-       "fichier": "372afc088a5b94a1e31818e1.bin",
-       "taille": 311153,
+       "fichier": "fc19fe727d462d366480ef9f.bin",
+       "taille": 311145,
        "pages": 6,
        "cv": "cim-chap-systemes-non-lineaires",
        "rubrique": "TP"
@@ -1408,12 +1422,12 @@
       {
        "titre": "Corrigé TP 1 – Barrière optique (ADI ou porte logique)",
        "type": "Corrigé",
-       "fichier": "f917fe890d0188604f0b5881.bin",
+       "fichier": "18c5ba7624929905a1307975.bin",
        "taille": 332310,
        "pages": 4,
        "corrige": {
         "id": "cim-systemes-non-lineaires-corrige-tp-1-barriere-optique-adi-ou-porte-logique",
-        "wk": "MEcs+p+lJNh9iDvPYb/ICLUPt/uljH8kfHqZOv4bJlgFOxn3qorvb8mKIYLQ2OEN+0I0Gn14E0eYZW7O"
+        "wk": "eStSteDy0MK00iscY7GCEm3jfSsBuWtUe+M1bb7YdKUMq8pSZbuWk0nIECaftR54rr71jkVhh7t7SIRw"
        },
        "rubrique": "TP"
       },
