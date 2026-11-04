@@ -1494,8 +1494,8 @@
       {
        "titre": "Exercice 3 – La cuve de liquide de coupe",
        "type": "Exercices",
-       "fichier": "91b490cc1c60e3a2dbfcabc6.bin",
-       "taille": 185245,
+       "fichier": "e72cc4807a3d9b591e5a07f4.bin",
+       "taille": 187718,
        "pages": 2,
        "cv": "cim-chap-systemes-non-lineaires",
        "rubrique": "Exercices"
@@ -1512,12 +1512,12 @@
       {
        "titre": "Corrigé Exercice 3",
        "type": "Corrigé",
-       "fichier": "548c60fb8cc441f02643aff0.bin",
-       "taille": 162002,
-       "pages": 1,
+       "fichier": "bcbea6130049844b8ac3f39e.bin",
+       "taille": 164709,
+       "pages": 2,
        "corrige": {
         "id": "cim-systemes-non-lineaires-corrige-exercice-3",
-        "wk": "dEtFfNc0Q1kW/AeNTRvHq2bHgSHg4CfK9OlwLAp0kAaTLffDi+aKF7Dc+jBedcoJdaW4tF3whEGYCPQB"
+        "wk": "7JVyF1YW626VCnid8oM7cy0YQ6jZDRxS5MShWI7M3XfSbw4RTScYq7I5Pa5rWjKqebnoIg8s2gWMJla9"
        },
        "rubrique": "Exercices"
       },
