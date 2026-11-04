@@ -1434,8 +1434,8 @@
       {
        "titre": "Exercice 1 – L'ensacheuse de farine",
        "type": "Exercices",
-       "fichier": "53c8d539bb262ff7799ce959.bin",
-       "taille": 106732,
+       "fichier": "ac1af3ccb9999e5fa470a716.bin",
+       "taille": 110425,
        "pages": 1,
        "cv": "cim-chap-systemes-non-lineaires",
        "rubrique": "Exercices"
@@ -1443,8 +1443,8 @@
       {
        "titre": "Exercice 1 - coups de pouce",
        "type": "Exercices",
-       "fichier": "b75fd3ad263ed8c80e4fed9d.bin",
-       "taille": 70245,
+       "fichier": "f8e0f53baa39d691b0a2b47b.bin",
+       "taille": 77034,
        "pages": 1,
        "cv": "cim-chap-systemes-non-lineaires",
        "rubrique": "Exercices"
@@ -1452,20 +1452,20 @@
       {
        "titre": "Corrigé Exercice 1",
        "type": "Corrigé",
-       "fichier": "00e13df4ae35c5a56f0088b7.bin",
-       "taille": 67803,
+       "fichier": "0457698c46d4e7e7581e2c16.bin",
+       "taille": 74675,
        "pages": 1,
        "corrige": {
         "id": "cim-systemes-non-lineaires-corrige-exercice-1",
-        "wk": "7+naC/5CrNNlSNO1VHBNa2jvzA+YCORBJ46bFLVHsOH8n1Cyo7aStInvw1Gj+be6o2374d8by6zwpFKf"
+        "wk": "2nCFjWw5qcMQP5Zptdbh+6KNMsUpNKGGgb/5yu7f6ZhNMMsBxZrvNFaIsK2Gtz01URKehDzyah+PVW1z"
        },
        "rubrique": "Exercices"
       },
       {
        "titre": "Exercice 2 – L'éclairage d'une serre horticole",
        "type": "Exercices",
-       "fichier": "2a115c128aa27920974fecdb.bin",
-       "taille": 197997,
+       "fichier": "6bf8855d9b0a58d3fc8979c4.bin",
+       "taille": 197365,
        "pages": 2,
        "cv": "cim-chap-systemes-non-lineaires",
        "rubrique": "Exercices"
@@ -1473,8 +1473,8 @@
       {
        "titre": "Exercice 2 - coups de pouce",
        "type": "Exercices",
-       "fichier": "afa713f2c8061e8c87d87da5.bin",
-       "taille": 69858,
+       "fichier": "6c40296e0c09e3b186461bae.bin",
+       "taille": 70323,
        "pages": 1,
        "cv": "cim-chap-systemes-non-lineaires",
        "rubrique": "Exercices"
@@ -1482,12 +1482,12 @@
       {
        "titre": "Corrigé Exercice 2",
        "type": "Corrigé",
-       "fichier": "c921f77c548c65b8c709161e.bin",
-       "taille": 169921,
-       "pages": 2,
+       "fichier": "f15af750d9f3c516e7a55722.bin",
+       "taille": 169105,
+       "pages": 1,
        "corrige": {
         "id": "cim-systemes-non-lineaires-corrige-exercice-2",
-        "wk": "gHtHJ2mG0tcSle9Iy8nEr17QpwtB9enJD+lDbk94lBhVe7qTj/M+0laDiKznG3QlT55ZOTNg7j1v6gVw"
+        "wk": "jjSq3+p2sazsX/9AoYLo8TysmZrw/5ChA5A875aGexmA2TIzwVfBNJtOXS81IroxsXoW0WoEt8v/tLkL"
        },
        "rubrique": "Exercices"
       },
@@ -1524,8 +1524,8 @@
       {
        "titre": "Exercice 4 – Le tachymètre d'une broche d'usinage",
        "type": "Exercices",
-       "fichier": "e17f5618e9137aca478ca9ac.bin",
-       "taille": 296762,
+       "fichier": "031d23a77f0cc2206d73dca1.bin",
+       "taille": 298621,
        "pages": 3,
        "cv": "cim-chap-systemes-non-lineaires",
        "rubrique": "Exercices"
@@ -1533,8 +1533,8 @@
       {
        "titre": "Exercice 4 - coups de pouce",
        "type": "Exercices",
-       "fichier": "9786824092d33e6b79891a56.bin",
-       "taille": 76129,
+       "fichier": "669665877c2dea2a9baa0697.bin",
+       "taille": 79204,
        "pages": 1,
        "cv": "cim-chap-systemes-non-lineaires",
        "rubrique": "Exercices"
@@ -1542,12 +1542,12 @@
       {
        "titre": "Corrigé Exercice 4",
        "type": "Corrigé",
-       "fichier": "fdd4314e7e5fa6f57984ecd1.bin",
-       "taille": 212792,
+       "fichier": "49bce2a85d3d3ae49f18dc88.bin",
+       "taille": 216034,
        "pages": 2,
        "corrige": {
         "id": "cim-systemes-non-lineaires-corrige-exercice-4",
-        "wk": "bCl7nGeCdk4vbVbTiwzdsiGsHEaqXrmJJl8tv4mhbCgjh6lcRDoFM7L19baeavZdxT0SOMNYhURJVFHJ"
+        "wk": "53MCMj6PvtemglGaLavdeu/Ht3LgPxkVr8M0VoTE5HzkDtSWk0mkPlX5Uep8ybjqAYHWIE452fcyPSdE"
        },
        "rubrique": "Exercices"
       },
