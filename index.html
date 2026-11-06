@@ -266,6 +266,12 @@ async function corrKey(d){
 
 /* Chapitre verrouillé : clé transmise par le professeur (élève) ou extraite de l'enveloppe (professeur, invité premium) */
 function chapInfo(id){ for (const c of CAT.classes) for (const ch of c.chapitres) if (ch.verrou && ch.verrou.id === id) return ch.verrou; return null; }
+/* Élève d'une classe de 1re année : pas d'accès aux chapitres de 2e année */
+function anneeOK(ch){
+  if (S.prof || S.tous || !ch.annee) return true;
+  const g = (CAT.groupes || []).find(x => x.id === S.groupe);
+  return !(g && g.annee === 1 && ch.annee > 1);
+}
 const chapOK = ch => !ch.verrou || S.prof || S.premium || !!S.corr[ch.verrou.id];
 async function chapKey(id){
   if (S.corr[id]) return importKey(b64(S.corr[id]));
@@ -515,7 +521,7 @@ function render(){
   if (q || current === "outils") found += renderOutils(view, q);
   const classes = q ? visibleClasses() : visibleClasses().filter(c => c.id === current);
   for (const c of classes) {
-    const chaps = c.chapitres.map(ch => ({ch, docs: ch.docs.filter(d => !q || (chapOK(ch) && (d.titre + " " + d.type + " " + ch.titre).toLowerCase().includes(q)))}))
+    const chaps = c.chapitres.filter(anneeOK).map(ch => ({ch, docs: ch.docs.filter(d => !q || (chapOK(ch) && (d.titre + " " + d.type + " " + ch.titre).toLowerCase().includes(q)))}))
       .filter(x => x.docs.length);
     if (q && !chaps.length) continue;
     const head = document.createElement("div"); head.className = "classhead";
