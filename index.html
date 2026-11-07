@@ -196,7 +196,7 @@ li.fresh{animation:fresh 2.4s ease-out}
     <p>Connectez-vous avec l'identifiant et le mot de passe personnels donnés par votre professeur. Les documents sont déchiffrés directement sur votre appareil.</p>
     <p>Les corrigés s'ouvrent quand le professeur a vérifié votre travail.</p>
     <p>Sur un ordinateur du lycée, ne cochez pas « Rester connecté sur cet appareil ».</p>
-    <p>La rubrique Outils (fiches méthodes et simulations des appareils de TP) est en accès libre.</p>
+    <p>La rubrique Outils (fiches méthodes et simulations des appareils de TP) est accessible une fois connecté.</p>
   </footer>
 </main>
 <div class="toast" id="toast" role="status"></div>
@@ -264,6 +264,17 @@ async function corrKey(d){
   return null;
 }
 
+/* Rubrique Outils (comptes connectés) : clé « outils » enveloppée par la clé de chaque classe */
+let KO = null;
+async function outilsKey(){
+  if (KO) return KO;
+  for (const id in S.keys) {
+    const wk = CAT.outilsWk && CAT.outilsWk[id]; if (!wk) continue;
+    try { const w = b64(wk); KO = await importKey(await crypto.subtle.decrypt({name:"AES-GCM", iv:w.slice(0,12), additionalData:enc.encode("outils")}, S.keys[id], w.slice(12))); return KO; } catch(_){}
+  }
+  return null;
+}
+
 /* Chapitre verrouillé : clé transmise par le professeur (élève) ou extraite de l'enveloppe (professeur, invité premium) */
 function chapInfo(id){ for (const c of CAT.classes) for (const ch of c.chapitres) if (ch.verrou && ch.verrou.id === id) return ch.verrou; return null; }
 /* Élève d'une classe de 1re année : pas d'accès aux chapitres de 2e année */
@@ -287,7 +298,7 @@ async function openDoc(cls, d, download){
   let w = null;
   if (!download) { w = window.open("", "_blank"); if (w) { try { w.document.title = d.titre; w.document.body.innerHTML = "<p style='font:16px sans-serif;padding:20px'>Ouverture de « " + esc(d.titre) + " »…</p>"; } catch(e){} } }
   try {
-    const key = d.corrige ? await corrKey(d) : d.cv ? await chapKey(d.cv) : S.keys[cls];
+    const key = cls === "outils" ? await outilsKey() : d.corrige ? await corrKey(d) : d.cv ? await chapKey(d.cv) : S.keys[cls];
     if (!key) throw new Error(d.cv && !d.corrige ? "chapitre" : "verrou");
     const blob = await decryptBlob(BASE + "docs/" + cls + "/" + d.fichier, key, d.format === "html" ? "text/html;charset=utf-8" : d.format === "cartes" ? "application/json" : null);
     if (d.format === "cartes") {
@@ -414,7 +425,7 @@ function renderNav(){
   const items = visibleClasses().map(c => ({id:c.id, n:c.court, mini:c.mini||c.court, s:c.sous}));
   if (S.evals) items.push({id:"evaluations", n:"Évaluations", mini:"Évals", s:"Copies corrigées et bilans"});
   if (!S.user) items.push({id:"connexion", n:"Connexion", mini:"Connexion", s:"Accès aux cours de votre BTS"});
-  if ((CAT.outils || []).length) items.push({id:"outils", n:"Outils", mini:"Outils", s:"Fiches méthodes et simulations"});
+  if (S.user && (CAT.outils || []).length) items.push({id:"outils", n:"Outils", mini:"Outils", s:"Fiches méthodes et simulations"});
   for (const it of items) {
     const b = document.createElement("button");
     b.type = "button"; b.setAttribute("aria-pressed", String(it.id === current));
@@ -442,7 +453,7 @@ function docRow(c, d){
       <span class="actions"><a class="open" href="${esc(href)}" target="_blank" rel="noopener">Ouvrir</a>${d.taille ? `<a class="open dl" href="${esc(href)}" download="${esc(d.titre)}.pdf">Télécharger</a>` : ""}</span>`;
     return li;
   }
-  const meta = d.format === "html" ? "Animation interactive" : d.format === "cartes" ? (d.nombre ? d.nombre + " cartes" : "Cartes de révision") : `PDF, ${d.pages ? d.pages + " p., " : ""}${size(d.taille)}`;
+  const meta = d.format === "html" ? (d.type === "Simulation" ? "Simulation interactive" : "Animation interactive") : d.format === "cartes" ? (d.nombre ? d.nombre + " cartes" : "Cartes de révision") : `PDF, ${d.pages ? d.pages + " p., " : ""}${size(d.taille)}`;
   if (d.format) {
     li.innerHTML = `<span class="type">${esc(d.type)}</span><span class="title">${esc(d.titre)}<span class="meta">${meta}</span></span>
       <span class="actions"><button class="open" type="button">Ouvrir</button></span>`;
@@ -512,13 +523,13 @@ function chapBlock(c, ch, docs, forceOpen, outil){
 
 function render(){
   renderNav(); renderWho();
-  $("#searchBox").hidden = !S.user && current !== "outils";
+  $("#searchBox").hidden = !S.user;
   const view = $("#view"); view.innerHTML = "";
   if (current === "connexion") { view.appendChild(loginBox()); return; }
   if (current === "evaluations" && S.evals) { renderEvaluationsProf(view); return; }
   const q = $("#q").value.trim().toLowerCase();
   let found = 0;
-  if (q || current === "outils") found += renderOutils(view, q);
+  if (S.user && (q || current === "outils")) found += renderOutils(view, q);
   const classes = q ? visibleClasses() : visibleClasses().filter(c => c.id === current);
   for (const c of classes) {
     const chaps = c.chapitres.filter(anneeOK).map(ch => ({ch, docs: ch.docs.filter(d => !q || (chapOK(ch) && (d.titre + " " + d.type + " " + ch.titre).toLowerCase().includes(q)))}))
@@ -558,7 +569,7 @@ function renderOutils(view, q){
     .filter(x => x.docs.length);
   if (q && !outils.length) return 0;
   const head = document.createElement("div"); head.className = "classhead";
-  head.innerHTML = `<h2>Outils</h2><span class="status libre">Accès libre, sans connexion</span>`;
+  head.innerHTML = `<h2>Outils</h2><span class="status is-open">Documents ouverts</span>`;
   view.appendChild(head);
   if (!q) { const p = document.createElement("p"); p.className = "intro-outils"; p.textContent = "Fiches méthodes des appareils et logiciels utilisés en TP, avec une simulation pour s'entraîner avant la séance."; view.appendChild(p); }
   let grp = null, n = 0;
@@ -597,7 +608,7 @@ function loginBox(){
 function route(){
   const h = location.hash.slice(1);
   const ids = visibleClasses().map(c => c.id);
-  if (!S.user) current = (h === "outils" && (CAT.outils || []).length) ? "outils" : "connexion";
+  if (!S.user) current = "connexion";
   else current = (h === "evaluations" && S.evals) ? h : ids.includes(h) || (h === "outils" && (CAT.outils || []).length) ? h : (S.site || ids[0]);
   render();
 }
@@ -605,6 +616,7 @@ function route(){
 async function startSession(user){
   if (unsubCorr) { unsubCorr(); unsubCorr = null; }
   S = { user:null, prof:false, evals:false, premium:false, tous:false, nom:"", site:null, groupe:null, keys:{}, maitre:null, corr:{} };
+  KO = null;
   if (!user) return;
   try {
     if (user.email === PROF) {

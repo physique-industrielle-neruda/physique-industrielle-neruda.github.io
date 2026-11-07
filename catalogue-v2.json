@@ -1114,6 +1114,340 @@
        "rubrique": "Réviser"
       }
      ]
+    },
+    {
+     "num": "5",
+     "titre": "Chaîne d'acquisition",
+     "docs": [
+      {
+       "titre": "Prérequis",
+       "type": "Fiche",
+       "fichier": "a5e41702a1f646487be03e31.bin",
+       "taille": 89749,
+       "pages": 2,
+       "cv": "cira-chap-chaine-d-acquisition",
+       "rubrique": "Pour commencer"
+      },
+      {
+       "titre": "Essentiel du chapitre",
+       "type": "Cours",
+       "fichier": "5181c0755b171ab43795c127.bin",
+       "taille": 514051,
+       "pages": 7,
+       "cv": "cira-chap-chaine-d-acquisition",
+       "rubrique": "Cours"
+      },
+      {
+       "titre": "Activité 1 – Conditionnement d'un signal",
+       "type": "Activité",
+       "fichier": "92361cbb23cec51007f5719f.bin",
+       "taille": 243795,
+       "pages": 5,
+       "cv": "cira-chap-chaine-d-acquisition",
+       "rubrique": "Activités"
+      },
+      {
+       "titre": "Activité 1 – Conditionnement d'un signal - coups de pouce",
+       "type": "Activité",
+       "fichier": "804eac7bf568b4ad3e548798.bin",
+       "taille": 77351,
+       "pages": 1,
+       "cv": "cira-chap-chaine-d-acquisition",
+       "rubrique": "Activités"
+      },
+      {
+       "titre": "Corrigé Activité 1 – Conditionnement d'un signal",
+       "type": "Corrigé",
+       "fichier": "39695fad5d9bf7c3729963ae.bin",
+       "taille": 127574,
+       "pages": 2,
+       "corrige": {
+        "id": "cira-chaine-d-acquisition-corrige-activite-1-conditionnement-d-un-signal",
+        "wk": "gc+kVk//cIZft17myjRKDk/rkwFNSxUqnke4beHsXl9JWBvdEQmh713SJDlTm5o4SAzeYdu8TJT2JWgI"
+       },
+       "rubrique": "Activités"
+      },
+      {
+       "titre": "Activité 2 – Échantillonnage et repliement",
+       "type": "Activité",
+       "fichier": "a86b79148d2a77bee306be53.bin",
+       "taille": 424167,
+       "pages": 5,
+       "cv": "cira-chap-chaine-d-acquisition",
+       "rubrique": "Activités"
+      },
+      {
+       "titre": "Activité 2 – Échantillonnage et repliement - coups de pouce",
+       "type": "Activité",
+       "fichier": "daa831565d448e4d4549ee8b.bin",
+       "taille": 76881,
+       "pages": 2,
+       "cv": "cira-chap-chaine-d-acquisition",
+       "rubrique": "Activités"
+      },
+      {
+       "titre": "Corrigé Activité 2 – Échantillonnage et repliement",
+       "type": "Corrigé",
+       "fichier": "698e8cd2864f09a69764fef8.bin",
+       "taille": 107392,
+       "pages": 3,
+       "corrige": {
+        "id": "cira-chaine-d-acquisition-corrige-activite-2-echantillonnage-et-repliement",
+        "wk": "C7iZ0W0diAU9hTc0BWBxs18ASzSlY0J2yr3F95CbQyFxZ1p/bejNh8pzpb+TCk9XkvM+6KObPKZWk3dx"
+       },
+       "rubrique": "Activités"
+      },
+      {
+       "titre": "Activité 3 – Le convertisseur analogique-numérique",
+       "type": "Activité",
+       "fichier": "caf1b41ba53c4b831dde458f.bin",
+       "taille": 260879,
+       "pages": 5,
+       "cv": "cira-chap-chaine-d-acquisition",
+       "rubrique": "Activités"
+      },
+      {
+       "titre": "Activité 3 – Le convertisseur analogique-numérique - coups de pouce",
+       "type": "Activité",
+       "fichier": "c9d38404ea4690ebe5b8851c.bin",
+       "taille": 75619,
+       "pages": 1,
+       "cv": "cira-chap-chaine-d-acquisition",
+       "rubrique": "Activités"
+      },
+      {
+       "titre": "Corrigé Activité 3 – Le convertisseur analogique-numérique",
+       "type": "Corrigé",
+       "fichier": "fe19844644b0f6bd451c6111.bin",
+       "taille": 207040,
+       "pages": 3,
+       "corrige": {
+        "id": "cira-chaine-d-acquisition-corrige-activite-3-le-convertisseur-analogique-num",
+        "wk": "Kos5uwjFo5Y7/Hz/sQ8ygf1JebAgtpPHR4Fc9/arY+nKx/DU+z0pJOC+xytdOIUWymSk/a0j8AkzGZUp"
+       },
+       "rubrique": "Activités"
+      },
+      {
+       "titre": "Fiche animation",
+       "type": "Fiche",
+       "fichier": "a5a8c89950a709de3aa32569.bin",
+       "taille": 130887,
+       "pages": 2,
+       "cv": "cira-chap-chaine-d-acquisition",
+       "rubrique": "Animation"
+      },
+      {
+       "titre": "Animation – Chaîne d'acquisition",
+       "type": "Animation",
+       "fichier": "5f2c70e9c0d590e2da76fe7b.bin",
+       "format": "html",
+       "cv": "cira-chap-chaine-d-acquisition",
+       "rubrique": "Animation"
+      },
+      {
+       "titre": "TP 1 – Bode d'un filtre - coups de pouce",
+       "type": "TP",
+       "fichier": "a813d0b0634c5a1d453106ee.bin",
+       "taille": 83499,
+       "pages": 2,
+       "cv": "cira-chap-chaine-d-acquisition",
+       "rubrique": "TP"
+      },
+      {
+       "titre": "TP 1 – Diagramme de Bode d'un filtre",
+       "type": "TP",
+       "fichier": "e9fa1dfc46d4129b53c03b8b.bin",
+       "taille": 459547,
+       "pages": 8,
+       "cv": "cira-chap-chaine-d-acquisition",
+       "rubrique": "TP"
+      },
+      {
+       "titre": "Corrigé TP 1 – Diagramme de Bode d'un filtre",
+       "type": "Corrigé",
+       "fichier": "7e75ff73b6f4a7bd55cc1201.bin",
+       "taille": 335058,
+       "pages": 5,
+       "corrige": {
+        "id": "cira-chaine-d-acquisition-corrige-tp-1-diagramme-de-bode-d-un-filtre",
+        "wk": "Ce78FvE5JXNTd9jSc7wEWW37gNTW+2+a8aHBdWJexkFZAPAeZFTHQGXRbB+0SVbkLsBG4AFMpKxHEo7q"
+       },
+       "rubrique": "TP"
+      },
+      {
+       "titre": "TP 2 – Chaîne de mesure de température",
+       "type": "TP",
+       "fichier": "708421cb1e09890e32a27068.bin",
+       "taille": 737529,
+       "pages": 10,
+       "cv": "cira-chap-chaine-d-acquisition",
+       "rubrique": "TP"
+      },
+      {
+       "titre": "TP 2 – Chaîne de mesure de température - coups de pouce",
+       "type": "TP",
+       "fichier": "cbc3a086a0c95e62878d9f97.bin",
+       "taille": 92361,
+       "pages": 2,
+       "cv": "cira-chap-chaine-d-acquisition",
+       "rubrique": "TP"
+      },
+      {
+       "titre": "Corrigé TP 2 – Chaîne de mesure de température",
+       "type": "Corrigé",
+       "fichier": "92b2d60a1f01a8a38588f411.bin",
+       "taille": 211800,
+       "pages": 5,
+       "corrige": {
+        "id": "cira-chaine-d-acquisition-corrige-tp-2-chaine-de-mesure-de-temperature",
+        "wk": "89OJv3PaEjzxRc6/elHJ1VRsnpquZt6G6kO6PEqFz6VSyKN5tGHRMgbIUHSPmCPy6MORVlqhKbZ6yB1a"
+       },
+       "rubrique": "TP"
+      },
+      {
+       "titre": "Exercice 1 – Le débit d'eau d'appoint",
+       "type": "Exercices",
+       "fichier": "e73a86390a03f9f1b1740507.bin",
+       "taille": 117679,
+       "pages": 2,
+       "cv": "cira-chap-chaine-d-acquisition",
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 1 - coups de pouce",
+       "type": "Exercices",
+       "fichier": "919e3131e3984db9fdd616e2.bin",
+       "taille": 70887,
+       "pages": 1,
+       "cv": "cira-chap-chaine-d-acquisition",
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Corrigé Exercice 1",
+       "type": "Corrigé",
+       "fichier": "aee2bdfdb4eefb8de3da6f38.bin",
+       "taille": 84508,
+       "pages": 2,
+       "corrige": {
+        "id": "cira-chaine-d-acquisition-corrige-exercice-1",
+        "wk": "8I/hODdHIYhHw3ndA0tZFVzgjxFYA51Y536fla7n314jK3flRr9fr+09qMZ5ObJvnesof8kB9eV+On2c"
+       },
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 2 – Le filtre d'une balance industrielle",
+       "type": "Exercices",
+       "fichier": "9dac3bdc87ed86b4d7632a2a.bin",
+       "taille": 197995,
+       "pages": 1,
+       "cv": "cira-chap-chaine-d-acquisition",
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 2 - coups de pouce",
+       "type": "Exercices",
+       "fichier": "768b801332ac95cad1840876.bin",
+       "taille": 62774,
+       "pages": 1,
+       "cv": "cira-chap-chaine-d-acquisition",
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Corrigé Exercice 2",
+       "type": "Corrigé",
+       "fichier": "103bc695888bb00b10df096e.bin",
+       "taille": 272455,
+       "pages": 2,
+       "corrige": {
+        "id": "cira-chaine-d-acquisition-corrige-exercice-2",
+        "wk": "WyI9ktbyrjyqwzn2hY0ZnAN2VtYrLfhTAnViHEDzQdw9so/05DjXm718lA4zX0YyqFpS4ndY+ymdPsXX"
+       },
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 3 – Les vibrations du groupe turbo-alternateur",
+       "type": "Exercices",
+       "fichier": "45ae7ec063c5c40a89df4e77.bin",
+       "taille": 103271,
+       "pages": 1,
+       "cv": "cira-chap-chaine-d-acquisition",
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 3 - coups de pouce",
+       "type": "Exercices",
+       "fichier": "8d74827c62e25fdec059ba63.bin",
+       "taille": 68562,
+       "pages": 1,
+       "cv": "cira-chap-chaine-d-acquisition",
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Corrigé Exercice 3",
+       "type": "Corrigé",
+       "fichier": "0aba08c8c184df3e6b98d8fc.bin",
+       "taille": 74082,
+       "pages": 2,
+       "corrige": {
+        "id": "cira-chaine-d-acquisition-corrige-exercice-3",
+        "wk": "R48lt+1PP1rLtlwchGeRaFPHfMMldJkskwRDP5cyqqlY4Kfey5+Mw2LpbdZtIJD0tODTHz2XyTUvPfr6"
+       },
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 4 – Le niveau d'un silo de farine",
+       "type": "Exercices",
+       "fichier": "7166802e189d297c478f60ff.bin",
+       "taille": 111943,
+       "pages": 1,
+       "cv": "cira-chap-chaine-d-acquisition",
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 4 - coups de pouce",
+       "type": "Exercices",
+       "fichier": "d315e63ff42c830df37cc19f.bin",
+       "taille": 68224,
+       "pages": 1,
+       "cv": "cira-chap-chaine-d-acquisition",
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Corrigé Exercice 4",
+       "type": "Corrigé",
+       "fichier": "0a62c97017c10988beed12bd.bin",
+       "taille": 88791,
+       "pages": 1,
+       "corrige": {
+        "id": "cira-chaine-d-acquisition-corrige-exercice-4",
+        "wk": "VkH9q+7zr1Fd1Bcy/KAjRL4SvN9tJYJ5MRQNgQYDKSJmIxAm5femxoKZH21lFW8eXW3WuId9NI6lb4sw"
+       },
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Bilan",
+       "type": "Fiche",
+       "fichier": "e3b56b0d4a9e4ab5ce6ac4ac.bin",
+       "taille": 130774,
+       "pages": 1,
+       "cv": "cira-chap-chaine-d-acquisition",
+       "rubrique": "Réviser"
+      },
+      {
+       "titre": "cartes de révision",
+       "type": "Cartes",
+       "nombre": 10,
+       "fichier": "915094612f1f25c4b3b20f5e.bin",
+       "format": "cartes",
+       "ch": "chaine-d-acquisition",
+       "cv": "cira-chap-chaine-d-acquisition",
+       "rubrique": "Réviser"
+      }
+     ],
+     "verrou": {
+      "id": "cira-chap-chaine-d-acquisition",
+      "wk": "nweLNHyjxQpDZX5PTheQv47YSDCcVxCTxikap3VW0Ik5K1t5PbFxY3c3fUeFh3M2V80+I+RdvMRn/cZb"
+     }
     }
    ]
   },
@@ -1579,6 +1913,11 @@
    ]
   }
  ],
+ "outilsWk": {
+  "et": "D1rJRpEfZefGbedncmhXKucONK+LR19oRd8S3R8cG6TLRQG24GN0gBliyiPob1tCVWaeQxOiPgcwDf/N",
+  "cira": "/cuQFutg3vUOFIOdfxjzpGI+vqps7Ipj0eZNzVat5Pm5gA2TIFEMvR9Wv/1EAZ5VrZTpNWqrsFEtx7wL",
+  "cim": "Jlw1RAvk+UubNnvAMGQEv4/CUSPpsqbUgAb6CWF+w7qcEcfFToB6FT8FRulGji5h5XBjExdRQz/ObbgK"
+ },
  "outils": [
   {
    "groupe": "Appareils",
@@ -1587,14 +1926,15 @@
     {
      "titre": "Fiche méthode analyseur de réseau C.A 8331",
      "type": "Fiche",
-     "lien": "outils/analyseur-de-reseau-c-a-8331/fiche-methode-analyseur-de-reseau-c-a-8331-2ed44997.pdf",
+     "fichier": "853e73008372fb18860c99c4.bin",
      "taille": 392619,
      "pages": 4
     },
     {
      "titre": "Simulation analyseur de réseau",
      "type": "Simulation",
-     "lien": "outils/analyseur-de-reseau-c-a-8331/simulation-analyseur-de-reseau.html"
+     "format": "html",
+     "fichier": "39ba6d2e301b779ee870381d.bin"
     }
    ]
   },
@@ -1605,7 +1945,7 @@
     {
      "titre": "Fiche outil GBF MTX 3240",
      "type": "Fiche",
-     "lien": "outils/gbf-metrix-mtx-3240/fiche-outil-gbf-mtx-3240-a1d90ff3.pdf",
+     "fichier": "85447e0d3e868d089576c6a6.bin",
      "taille": 429854,
      "pages": 2
     }
@@ -1618,7 +1958,7 @@
     {
      "titre": "Fiche outil oscilloscope DS1102CD",
      "type": "Fiche",
-     "lien": "outils/oscilloscope-rigol-ds1102cd-batiment-d-2-voies/fiche-outil-oscilloscope-ds1102cd-cb7e8128.pdf",
+     "fichier": "4d1639b1507944c585a97ab3.bin",
      "taille": 327491,
      "pages": 3
     }
@@ -1631,14 +1971,15 @@
     {
      "titre": "Fiche méthode oscilloscope DS1104Z Plus",
      "type": "Fiche",
-     "lien": "outils/oscilloscope-rigol-ds1104z-plus-batiment-b-4-voies/fiche-methode-oscilloscope-ds1104z-plus-7a1bf24a.pdf",
+     "fichier": "9b1084d173b74aade466a48d.bin",
      "taille": 323564,
      "pages": 4
     },
     {
      "titre": "Simulation oscilloscope",
      "type": "Simulation",
-     "lien": "outils/oscilloscope-rigol-ds1104z-plus-batiment-b-4-voies/simulation-oscilloscope.html"
+     "format": "html",
+     "fichier": "a6b149cc869dd2945d066bbf.bin"
     }
    ]
   },
@@ -1649,14 +1990,15 @@
     {
      "titre": "Fiche méthode wattmètre FIWATT",
      "type": "Fiche",
-     "lien": "outils/wattmetre-numerique-fiwatt/fiche-methode-wattmetre-fiwatt-fcc4da01.pdf",
+     "fichier": "ff4b274913afbd8eaa01be45.bin",
      "taille": 346922,
      "pages": 3
     },
     {
      "titre": "Simulation wattmètre",
      "type": "Simulation",
-     "lien": "outils/wattmetre-numerique-fiwatt/simulation-wattmetre.html"
+     "format": "html",
+     "fichier": "6d7bea3c1e7d053a0f332090.bin"
     }
    ]
   },
@@ -1667,7 +2009,7 @@
     {
      "titre": "Fiche méthode Excel - courbes et équations de droites",
      "type": "Fiche",
-     "lien": "outils/tableur-excel/fiche-methode-excel-courbes-et-equations-de-droites-8ef3eb36.pdf",
+     "fichier": "11ad7f1d8e0ebed45c8f50e1.bin",
      "taille": 359708,
      "pages": 3
     }
