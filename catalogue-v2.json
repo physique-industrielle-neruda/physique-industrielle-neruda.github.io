@@ -609,26 +609,44 @@
        "rubrique": "TP"
       },
       {
+       "titre": "TP 3 – Bilan des puissances du moteur asynchrone",
+       "type": "TP",
+       "fichier": "ea357abb99634f1992c38abb.bin",
+       "taille": 948897,
+       "pages": 18,
+       "cv": "et-chap-le-moteur-asynchrone",
+       "rubrique": "TP"
+      },
+      {
+       "titre": "TP 3 – Bilan des puissances du moteur asynchrone - coups de pouce",
+       "type": "TP",
+       "fichier": "990fb8f9cae5aebdc9021f71.bin",
+       "taille": 183919,
+       "pages": 4,
+       "cv": "et-chap-le-moteur-asynchrone",
+       "rubrique": "TP"
+      },
+      {
        "titre": "Corrigé TP 3 – compte rendu",
        "type": "Corrigé",
-       "fichier": "55fbedd8d3b680b36283d5c6.bin",
-       "taille": 567350,
+       "fichier": "798ce73b1c298cb53f08e0c1.bin",
+       "taille": 593841,
        "pages": 8,
        "corrige": {
         "id": "et-le-moteur-asynchrone-corrige-eleve-tp-3-compte-rendu",
-        "wk": "TLRb1zHS7YaPK023Mi4+Xy1+GQKCync1rWS1k5wVAsn4Z66T3TUfdDAruoadUShj4m2i8JVQV5ieYqYt"
+        "wk": "in+qrD+tStYT4dl0nnq79nhXGmGBr6dOl3dI6NQ/Z7e1iHgu3MAZ9B4G9BBjvLKAEV3J6yLzGSvdNklW"
        },
        "rubrique": "TP"
       },
       {
        "titre": "Corrigé TP 3 – préparation",
        "type": "Corrigé",
-       "fichier": "ab060f6bc787cbbadd55afe4.bin",
-       "taille": 182217,
+       "fichier": "c94464218f064c8c484e1e64.bin",
+       "taille": 183999,
        "pages": 4,
        "corrige": {
         "id": "et-le-moteur-asynchrone-corrige-eleve-tp-3-preparation",
-        "wk": "4NFDj6pLRkRK0Uz6Pp5uM3FGemDfuvzN1C657eLIrqbT8RoJ0MU1oxmGLJzwIkDiBE5u/YwPYNDzL4CD"
+        "wk": "+TTHDeGmFha7WY/LbT3ulTa+rxLamDFPCj3MuYwhtpiu8I2iYX/uwE9rrYCHtFyaCjrckv6LnDIAxEm1"
        },
        "rubrique": "TP"
       },
@@ -810,24 +828,6 @@
        "fichier": "572100236ec476b66cdde464.bin",
        "format": "cartes",
        "ch": "le-moteur-asynchrone",
-       "cv": "et-chap-le-moteur-asynchrone",
-       "rubrique": "Réviser"
-      },
-      {
-       "titre": "TP 3 – Bilan des puissances du moteur asynchrone",
-       "type": "TP",
-       "fichier": "ea357abb99634f1992c38abb.bin",
-       "taille": 948897,
-       "pages": 18,
-       "cv": "et-chap-le-moteur-asynchrone",
-       "rubrique": "Réviser"
-      },
-      {
-       "titre": "TP 3 – Bilan des puissances du moteur asynchrone - coups de pouce",
-       "type": "TP",
-       "fichier": "990fb8f9cae5aebdc9021f71.bin",
-       "taille": 183919,
-       "pages": 4,
        "cv": "et-chap-le-moteur-asynchrone",
        "rubrique": "Réviser"
       }
@@ -2258,9 +2258,9 @@
   }
  ],
  "outilsWk": {
-  "et": "aKhN16kulwoFA/r/14cGy1P3svm2QO5MZrjDaiXajSVl8gWKgiObdk9EzaTPHdzpvjUW6HnVJNXEPA+A",
-  "cira": "igjj8F1RgPL7gJpDtwiGTncMSg+j33d6b6Dx92IKBOtIao0tYdBGM7Xkaiyuh33gsOkTDEK/mAEwvpOA",
-  "cim": "ksSAap6C0P6OdM1Uqj8HSTcjVvIRi/4WGwlNScgSnJdZhQ0mh6ziMZLhfStW5QLKy/gD3YClj9QVajaN"
+  "et": "JrLDNJfM3BKyowVSi6kX7o8Beo8BjBGfZgBxAp8Z22X1kNX/pZGclEvafcKUQMZY7iOA61VNidBEdtEU",
+  "cira": "4ktXm93iyXofAfNbqzmTEk35869+OhkEFxuW1xoYm/wgrwiNT2IwjzWRu7yZuI+7c2nJQjlZ4SWjf/h0",
+  "cim": "irVeE7jGoK6BZtyKLlAHkeUnSfCtd5xtHmxmawqaGGBaxKKUMbNTe0Q/k3iqlyZS3WJ7w8jR9s1w4mr+"
  },
  "outils": [
   {
