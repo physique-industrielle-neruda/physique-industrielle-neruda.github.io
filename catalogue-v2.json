@@ -695,8 +695,8 @@
       {
        "titre": "Exercice 1",
        "type": "Exercices",
-       "fichier": "83b8ef11076a3d4eb231d293.bin",
-       "taille": 103405,
+       "fichier": "4c9af5d1a4cc657f1b466de5.bin",
+       "taille": 104207,
        "pages": 1,
        "cv": "et-chap-le-moteur-asynchrone",
        "rubrique": "Exercices"
@@ -725,8 +725,8 @@
       {
        "titre": "Exercice 2",
        "type": "Exercices",
-       "fichier": "8b4d6a91dd2c36faa118a405.bin",
-       "taille": 105970,
+       "fichier": "59feaf29d6d8aead0da26ba3.bin",
+       "taille": 106590,
        "pages": 2,
        "cv": "et-chap-le-moteur-asynchrone",
        "rubrique": "Exercices"
@@ -755,8 +755,8 @@
       {
        "titre": "Exercice 3",
        "type": "Exercices",
-       "fichier": "25222ea26149076042792205.bin",
-       "taille": 137011,
+       "fichier": "1037f9f033a056c2003739fa.bin",
+       "taille": 137707,
        "pages": 2,
        "cv": "et-chap-le-moteur-asynchrone",
        "rubrique": "Exercices"
@@ -785,8 +785,8 @@
       {
        "titre": "Exercice 4",
        "type": "Exercices",
-       "fichier": "cf9f8f9ef7ab4eedc987f543.bin",
-       "taille": 116987,
+       "fichier": "2fe40793045ec7990ce72d09.bin",
+       "taille": 117710,
        "pages": 2,
        "cv": "et-chap-le-moteur-asynchrone",
        "rubrique": "Exercices"
@@ -2258,9 +2258,9 @@
   }
  ],
  "outilsWk": {
-  "et": "JrLDNJfM3BKyowVSi6kX7o8Beo8BjBGfZgBxAp8Z22X1kNX/pZGclEvafcKUQMZY7iOA61VNidBEdtEU",
-  "cira": "4ktXm93iyXofAfNbqzmTEk35869+OhkEFxuW1xoYm/wgrwiNT2IwjzWRu7yZuI+7c2nJQjlZ4SWjf/h0",
-  "cim": "irVeE7jGoK6BZtyKLlAHkeUnSfCtd5xtHmxmawqaGGBaxKKUMbNTe0Q/k3iqlyZS3WJ7w8jR9s1w4mr+"
+  "et": "x8dgI6ZsWYZEy81poDGPHp0CKQnf82CLPQ8dDvQtxrac5NWNGpKNKNGxx7ODWC9pzIs/LmHP054Q86tM",
+  "cira": "kiR02vxsA1Ndxshga4PwnGWVbElSnl4Z8kRoFR98GwzUOj9OxaV/gezDnqR/FSMAuZlQmBsS9HMgG7rg",
+  "cim": "wDZu37hUYHP3m1bBk1Hm60E0rz09+QBgdPU5FLG60Scong6puLwkCVf1u2QE4X6pEFxaVRngWg5cHU3o"
  },
  "outils": [
   {
