@@ -205,6 +205,12 @@ async function loadAll(){
   const p = await getDoc(doc(db, "prive", "cles"));
   MAITRE = p.exists() && p.data().corriges ? await crypto.subtle.importKey("raw", b64(p.data().corriges), "AES-GCM", false, ["decrypt"]) : null;
 }
+/* Élèves inscrits dans deux classes (ex. 2ET / 2ETA) : leur compte (uid) n'est enregistré que dans une classe ;
+   on le retrouve par l'identifiant pour qu'ils reçoivent aussi les corrigés et évaluations de l'autre classe. */
+function elevesDe(c){
+  const uidDe = {}; CLASSES.forEach(k => (k.eleves || []).forEach(e => { if (e.uid) uidDe[e.login] = e.uid; }));
+  return (c.eleves || []).map(e => e.uid ? e : (uidDe[e.login] ? { ...e, uid: uidDe[e.login] } : e)).filter(e => e.uid);
+}
 function corriges(site){
   const c = CAT.classes.find(x => x.id === site); if (!c) return [];
   // Un chapitre verrouillé apparaît en tête de sa liste, comme un corrigé : « Ouvrir le chapitre » = transmettre sa clé
@@ -244,7 +250,7 @@ function classe(id, tab){
 }
 
 function paneCorriges(c){
-  const groups = corriges(c.site), total = (c.eleves || []).filter(e => e.uid).length;
+  const groups = corriges(c.site), total = elevesDe(c).length;
   const ma = /(\d)\s*(?:re|ère|e|ème)\s+ann[ée]e/i.exec(c.nom || ""), monAn = ma ? +ma[1] : null;
   let choix = null, last = {};
   if (!groups.length) { $("#pane").innerHTML = `<p class="empty">Aucun corrigé élève pour ce BTS pour l'instant.</p>`; return; }
@@ -278,7 +284,7 @@ function paneCorriges(c){
   };
   render({});
   // Un élève inscrit dans deux classes (cours dans l'une, TP dans l'autre) : son déblocage compte dans les deux listes
-  const mesUid = new Set((c.eleves || []).filter(e => e.uid).map(e => e.uid));
+  const mesUid = new Set(elevesDe(c).map(e => e.uid));
   unsub = onSnapshot(collection(db, "deblocages"), snap => {
     const counts = {}; snap.forEach(x => { const v = x.data(); if (mesUid.has(v.uid)) counts[v.doc] = (counts[v.doc] || 0) + 1; }); render(counts);
   }, e => toast("Lecture impossible : " + e.code));
@@ -288,7 +294,7 @@ function paneCorriges(c){
 function docEleves(cid, d){
   const c = CLASSES.find(x => x.id === cid);
   setBar(d.titre, c.nom, true);
-  const el = (c.eleves || []).filter(e => e.uid);
+  const el = elevesDe(c);
   if (!el.length) { $("#app").innerHTML = `<p class="empty">Créez d'abord les comptes des élèves (onglet « Élèves et comptes »).</p>`; return; }
   let on = new Set(), K = null;
   $("#app").innerHTML = `<div class="progress" aria-hidden="true"><i id="pb"></i></div><p class="note" id="pn"></p>
@@ -345,7 +351,7 @@ async function voirPdf(item, titre){
   } catch(e){ if (w) w.close(); toast(e.message === "cles" ? "Clés absentes : importez le fichier dans Réglages." : "Ouverture impossible."); }
 }
 function paneEvals(c){
-  const evs = evalsDe(c.id), el = (c.eleves || []).filter(e => e.uid);
+  const evs = evalsDe(c.id), el = elevesDe(c);
   if (!evs.length) { $("#pane").innerHTML = `<p class="empty">Aucune évaluation corrigée pour cette classe.</p>`; return; }
   const ids = new Set(evs.flatMap(e => e.copies.map(x => x.corrige.id))), mesUid = new Set(el.map(e => e.uid));
   const render = counts => {
@@ -363,7 +369,7 @@ function paneEvals(c){
 function evalEleves(cid, ev){
   const c = CLASSES.find(x => x.id === cid);
   setBar((ev.date ? fmtDate(ev.date) + " – " : "") + ev.titre, c.nom, true);
-  const el = (c.eleves || []).filter(e => e.uid).slice().sort((a, b) => a.nom.localeCompare(b.nom, "fr"));
+  const el = elevesDe(c).slice().sort((a, b) => a.nom.localeCompare(b.nom, "fr"));
   const cp = Object.fromEntries(ev.copies.map(x => [x.login, x]));
   const avec = el.filter(e => cp[e.login]);
   let on = new Set();
