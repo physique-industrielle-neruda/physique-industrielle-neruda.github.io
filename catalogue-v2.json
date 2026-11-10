@@ -459,6 +459,50 @@
        "pages": 2
       },
       {
+       "titre": "Corrigé Exercice 1",
+       "type": "Corrigé",
+       "fichier": "344cdc5730d88fb535322d78.bin",
+       "taille": 88191,
+       "pages": 2,
+       "corrige": {
+        "id": "et-le-hacheur-corrige-exercice-1",
+        "wk": "sPbkILPyI0YO9mIFh6FBKhCzENKIiRASE0NOAu2sRk/odF8agEOhP3s431yyNsLKofIOyOwyIsJASG28"
+       }
+      },
+      {
+       "titre": "Corrigé Exercice 2",
+       "type": "Corrigé",
+       "fichier": "4acac89199e33e021c8e91b7.bin",
+       "taille": 87864,
+       "pages": 2,
+       "corrige": {
+        "id": "et-le-hacheur-corrige-exercice-2",
+        "wk": "mY+hQpYlFCxUgysBlf7cGViFU/QGRLRZEc6IKClh1dAZjbzUXbNXXNkiMMnU9w9wpnQulW7gFl3V8jO1"
+       }
+      },
+      {
+       "titre": "Corrigé Exercice 3",
+       "type": "Corrigé",
+       "fichier": "f208576f22b4f4ae58ada677.bin",
+       "taille": 98491,
+       "pages": 2,
+       "corrige": {
+        "id": "et-le-hacheur-corrige-exercice-3",
+        "wk": "3pFw1rp21kBGHFMvEafIA8CIaa0Nc+K/5JLZPm37ssoYdm5RSKuHnYk34RhyKuE3yi9bBlQ55JHCldT5"
+       }
+      },
+      {
+       "titre": "Corrigé Exercice 4",
+       "type": "Corrigé",
+       "fichier": "1bad4a3f214dc71962fc4266.bin",
+       "taille": 89489,
+       "pages": 2,
+       "corrige": {
+        "id": "et-le-hacheur-corrige-exercice-4",
+        "wk": "OvsHmMFJfcJow16WNObF/L6GZlB9QUqHiLNetrRxHL+IURYiQkyBvGaVr3XMxvrNVhEaGByW+6D0ULAu"
+       }
+      },
+      {
        "titre": "Corrigé TP1 hacheur série",
        "type": "Corrigé",
        "fichier": "66c400b2ba2dffa91eeb91a9.bin",
@@ -2258,9 +2302,9 @@
   }
  ],
  "outilsWk": {
-  "et": "s/T/HiXnPxlLqxa3SJscPFE/VfZ7nqkilb5Wm0ufRjHRB+GYpX6OhKPREOshfy9TjdjdbpNrEN3XqHL7",
-  "cira": "6Prb34i5raCnW8s0DCejDnWyG2SyimKz7gWXARFEkwPqhTZny86/KX6R7/jVI6F5082146qHgekif0Zp",
-  "cim": "64UfjE8thxsVGEKF9uCj39/16tsYRa4BkofbDeAyGCnrFn1vuD5P8FeMd1hg9ZFiqtgBcKzzlCNV4f7p"
+  "et": "kZ2Evq4KvJtHvrPh1FNKg8OX/5QPJxtBgnB2H2F7Tio+7JfObR58eNp7sS8XrlteI3F27DzADg9CEIIt",
+  "cira": "4vh5zwlZE4Rkmbx46rZjJ0Nbe79hdLaXDP2bhxx66M9Iifb3tiMICom8NrIo+OREjenqHUF1f5Ckzn1K",
+  "cim": "vQpTD19aPKTCLFP/wdhOV8wUuHhXyZ4QiG+WrBLN/zz0L73ct5ZPcwZt7qGCCSlcR9fbygb8pnIYknpW"
  },
  "outils": [
   {
