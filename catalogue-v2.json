@@ -386,13 +386,288 @@
     },
     {
      "num": "",
+     "titre": "Statique des fluides",
+     "docs": [
+      {
+       "titre": "Prérequis",
+       "type": "Fiche",
+       "fichier": "3c5837e4c0ea14b2c783d9ae.bin",
+       "taille": 79006,
+       "pages": 1,
+       "cv": "et-chap-statique-des-fluides",
+       "rubrique": "Pour commencer"
+      },
+      {
+       "titre": "Essentiel du chapitre",
+       "type": "Cours",
+       "fichier": "c775d7809c9837cd5f52e906.bin",
+       "taille": 366918,
+       "pages": 6,
+       "cv": "et-chap-statique-des-fluides",
+       "rubrique": "Cours"
+      },
+      {
+       "titre": "Activité 1 – La pression dans le filtre à sable",
+       "type": "Activité",
+       "fichier": "f2afd573c96626b44fc3db5a.bin",
+       "taille": 326588,
+       "pages": 5,
+       "cv": "et-chap-statique-des-fluides",
+       "rubrique": "Activités"
+      },
+      {
+       "titre": "Activité 1 – La pression dans le filtre à sable - coups de pouce",
+       "type": "Activité",
+       "fichier": "517a0785aa17bff63f28573e.bin",
+       "taille": 85983,
+       "pages": 2,
+       "cv": "et-chap-statique-des-fluides",
+       "rubrique": "Activités"
+      },
+      {
+       "titre": "Corrigé Activité 1 – La pression dans le filtre à sable",
+       "type": "Corrigé",
+       "fichier": "08771d2dc00f0d6e0fc486c8.bin",
+       "taille": 101759,
+       "pages": 3,
+       "corrige": {
+        "id": "et-statique-des-fluides-corrige-activite-1-la-pression-dans-le-filtre-a-sa",
+        "wk": "vVS6kRiMGou1GBXgu46I7Fn8GDXo307BhaAQViEKuRli6aOw2BiOj9VslDVYykhKK4E1U3rjIyh5EwJ2"
+       },
+       "rubrique": "Activités"
+      },
+      {
+       "titre": "Activité 2 – La pression au robinet du hameau",
+       "type": "Activité",
+       "fichier": "b458c8200802e556a6270e0b.bin",
+       "taille": 365077,
+       "pages": 5,
+       "cv": "et-chap-statique-des-fluides",
+       "rubrique": "Activités"
+      },
+      {
+       "titre": "Activité 2 – La pression au robinet du hameau - coups de pouce",
+       "type": "Activité",
+       "fichier": "c42ce408995ea1bc163d9c18.bin",
+       "taille": 83918,
+       "pages": 2,
+       "cv": "et-chap-statique-des-fluides",
+       "rubrique": "Activités"
+      },
+      {
+       "titre": "Corrigé Activité 2 – La pression au robinet du hameau",
+       "type": "Corrigé",
+       "fichier": "15e09db2b8463819dfabfff4.bin",
+       "taille": 103324,
+       "pages": 2,
+       "corrige": {
+        "id": "et-statique-des-fluides-corrige-activite-2-la-pression-au-robinet-du-hamea",
+        "wk": "kGe6tKbd5uMwN4ef/Q16tRJ22BQf+DrKoIXFDoUG5cCKY1X7DNFh1ir0mWecgNClG+LqgaMy8j71Vk3I"
+       },
+       "rubrique": "Activités"
+      },
+      {
+       "titre": "Activité 3 – Le capteur de niveau de la bâche",
+       "type": "Activité",
+       "fichier": "4b9ff28be10c5ad232822e74.bin",
+       "taille": 348230,
+       "pages": 5,
+       "cv": "et-chap-statique-des-fluides",
+       "rubrique": "Activités"
+      },
+      {
+       "titre": "Activité 3 – Le capteur de niveau de la bâche - coups de pouce",
+       "type": "Activité",
+       "fichier": "bb414d65c687e939fc9fdd63.bin",
+       "taille": 81462,
+       "pages": 2,
+       "cv": "et-chap-statique-des-fluides",
+       "rubrique": "Activités"
+      },
+      {
+       "titre": "Corrigé Activité 3 – Le capteur de niveau de la bâche",
+       "type": "Corrigé",
+       "fichier": "ae73103ee82aa8d878409a9a.bin",
+       "taille": 97521,
+       "pages": 2,
+       "corrige": {
+        "id": "et-statique-des-fluides-corrige-activite-3-le-capteur-de-niveau-de-la-bach",
+        "wk": "1v5whX8iGrT9bnM0YLIk/KlEncx+4Y95mYeTAl/7LdRKRz5EDgtXm0n0hc+UtsTYkeBueoUNVRRVwVzQ"
+       },
+       "rubrique": "Activités"
+      },
+      {
+       "titre": "Fiche animation",
+       "type": "Fiche",
+       "fichier": "d8eba77dc88d2b26b69e6609.bin",
+       "taille": 124862,
+       "pages": 2,
+       "cv": "et-chap-statique-des-fluides",
+       "rubrique": "Animation"
+      },
+      {
+       "titre": "Animation – Statique des fluides",
+       "type": "Animation",
+       "fichier": "d150ed9983bed9c9fab88c95.bin",
+       "format": "html",
+       "cv": "et-chap-statique-des-fluides",
+       "rubrique": "Animation"
+      },
+      {
+       "titre": "Exercice 1 – Le pneu du chariot élévateur",
+       "type": "Exercices",
+       "fichier": "f7862c7fa3b97650dde3d7f4.bin",
+       "taille": 97656,
+       "pages": 1,
+       "cv": "et-chap-statique-des-fluides",
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 1 - coups de pouce",
+       "type": "Exercices",
+       "fichier": "e7197eb6e6f2e9aef1c93374.bin",
+       "taille": 70589,
+       "pages": 1,
+       "cv": "et-chap-statique-des-fluides",
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Corrigé Exercice 1",
+       "type": "Corrigé",
+       "fichier": "b047ff68850f3470a7298ccb.bin",
+       "taille": 71921,
+       "pages": 1,
+       "corrige": {
+        "id": "et-statique-des-fluides-corrige-exercice-1",
+        "wk": "ilxHfbSEKVOPl3YrJ1M7hJyFXx/plV1bH+BiAbPvOTBhzwI0N4VVJJHIV0DGaNb/Z9NVIj0TenMwQz6s"
+       },
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 2 – La cuve de fioul du diesel de secours",
+       "type": "Exercices",
+       "fichier": "c28aa79ab826bb0404d143f1.bin",
+       "taille": 90265,
+       "pages": 1,
+       "cv": "et-chap-statique-des-fluides",
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 2 - coups de pouce",
+       "type": "Exercices",
+       "fichier": "d40f100bce795aba1823ff5c.bin",
+       "taille": 72206,
+       "pages": 1,
+       "cv": "et-chap-statique-des-fluides",
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Corrigé Exercice 2",
+       "type": "Corrigé",
+       "fichier": "d7af580cbc6275c85efc2f2b.bin",
+       "taille": 88024,
+       "pages": 1,
+       "corrige": {
+        "id": "et-statique-des-fluides-corrige-exercice-2",
+        "wk": "gCDxLD5eP1CVQtgW1J8vuyWdCX/CKRIzrIzdi7untWd0q5cPtKDmkvZ6mF0IZ7JkRNnNiTzLagGSjD+H"
+       },
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 3 – Le vérin de levage d'un transformateur",
+       "type": "Exercices",
+       "fichier": "5da16ec3dda67c1a896f94d1.bin",
+       "taille": 103025,
+       "pages": 1,
+       "cv": "et-chap-statique-des-fluides",
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 3 - coups de pouce",
+       "type": "Exercices",
+       "fichier": "08cbdb63cd2995fd1e53329e.bin",
+       "taille": 65794,
+       "pages": 1,
+       "cv": "et-chap-statique-des-fluides",
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Corrigé Exercice 3",
+       "type": "Corrigé",
+       "fichier": "a451e1022dc521b1f20e881d.bin",
+       "taille": 89807,
+       "pages": 1,
+       "corrige": {
+        "id": "et-statique-des-fluides-corrige-exercice-3",
+        "wk": "rTsTgQTS8qwIOnRYu4X/RymWZlDE5OQvflXc9/EUTiHQkLu8kgmXzGR5cSXKAuYTbXjW92RSrEzIzBLp"
+       },
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 4 – La prise d'eau dans la Loire",
+       "type": "Exercices",
+       "fichier": "59c3cc780a4341b00d067280.bin",
+       "taille": 107127,
+       "pages": 1,
+       "cv": "et-chap-statique-des-fluides",
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 4 - coups de pouce",
+       "type": "Exercices",
+       "fichier": "2b1a98eebfc88481ef6dc049.bin",
+       "taille": 69619,
+       "pages": 1,
+       "cv": "et-chap-statique-des-fluides",
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Corrigé Exercice 4",
+       "type": "Corrigé",
+       "fichier": "1dae7cfa581154ca96e60cad.bin",
+       "taille": 75158,
+       "pages": 1,
+       "corrige": {
+        "id": "et-statique-des-fluides-corrige-exercice-4",
+        "wk": "l8xoSC/oSjXhcBhWkkRzN8r8TTBYuLWW553ks/ycNylfKdRJr9q7KqaESEsRFIWZqwOVOKw6oSR4LsBX"
+       },
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Bilan",
+       "type": "Fiche",
+       "fichier": "2d1db4536099c894ecfa2213.bin",
+       "taille": 70963,
+       "pages": 1,
+       "cv": "et-chap-statique-des-fluides",
+       "rubrique": "Réviser"
+      },
+      {
+       "titre": "cartes de révision",
+       "type": "Cartes",
+       "nombre": 10,
+       "fichier": "123b8ed35d85aa7dba8bbee4.bin",
+       "format": "cartes",
+       "ch": "statique-des-fluides",
+       "cv": "et-chap-statique-des-fluides",
+       "rubrique": "Réviser"
+      }
+     ],
+     "annee": 1,
+     "verrou": {
+      "id": "et-chap-statique-des-fluides",
+      "wk": "7UVqywl0RY7sDoC9RtJ56one0slFL5y/1Yqz58oy7rZERJQ1knmZsZO/ohpN4bQskDLtr8beblNR3/E+"
+     }
+    },
+    {
+     "num": "",
      "titre": "ADM – TP de mesure",
      "docs": [
       {
        "titre": "TP 1 – Four et gradateur",
        "type": "TP",
-       "fichier": "ed826d46813afb67de68d2c0.bin",
-       "taille": 500159,
+       "fichier": "4fc94b063f9a035a7ec75ceb.bin",
+       "taille": 500167,
        "pages": 8,
        "cv": "et-chap-adm-tp-de-mesure",
        "rubrique": "TP"
@@ -400,8 +675,8 @@
       {
        "titre": "TP 1 – Four et gradateur - coups de pouce",
        "type": "TP",
-       "fichier": "5fc2f0f51c79572bc7269820.bin",
-       "taille": 79519,
+       "fichier": "c9172f316faa53f2ed47a9da.bin",
+       "taille": 79377,
        "pages": 2,
        "cv": "et-chap-adm-tp-de-mesure",
        "rubrique": "TP"
@@ -421,20 +696,20 @@
       {
        "titre": "Corrigé TP 1 – préparation",
        "type": "Corrigé",
-       "fichier": "13c5c87e5d303eac09d8cab8.bin",
-       "taille": 74843,
+       "fichier": "3b005d7cb52aecbf647c3eec.bin",
+       "taille": 74682,
        "pages": 1,
        "corrige": {
         "id": "et-adm-tp-de-mesure-corrige-tp-1-preparation",
-        "wk": "HIoLsnaUCiwOfw/AjcL2fJqKb4FFjZN4JK5rGpJPuL7EJKKxVro0BA28sDpzF755Max8dEiIuzURpBK7"
+        "wk": "5agOkdb80WTGc1no9iMnmtjNp7CaO2PzVOL4GQRBhvUIw67t5Rw0BhfUio0Ei+9sp4vMShgVjTtusMCg"
        },
        "rubrique": "TP"
       },
       {
        "titre": "TP 2 – Bilan de puissance au TGBT",
        "type": "TP",
-       "fichier": "97518f48e332d36a76dd0537.bin",
-       "taille": 573625,
+       "fichier": "d0892fe9a1bcab453c6023fe.bin",
+       "taille": 489542,
        "pages": 8,
        "cv": "et-chap-adm-tp-de-mesure",
        "rubrique": "TP"
@@ -451,41 +726,41 @@
       {
        "titre": "Corrigé TP 2 – compte rendu",
        "type": "Corrigé",
-       "fichier": "49dc4e2d67bd8eee8577453c.bin",
-       "taille": 124783,
+       "fichier": "a9da49ef7982b1582b1ceabb.bin",
+       "taille": 125296,
        "pages": 2,
        "corrige": {
         "id": "et-adm-tp-de-mesure-corrige-tp-2-compte-rendu",
-        "wk": "p9wmt+0stWNs445tqYthQwEx5NmUL0CqqDBHS3yYFnQwypTD8Z354kwT1bT3EzxIYxSUyxNayG583+xQ"
+        "wk": "7RixVEJPjc9ezYHdocwqxUmo3PdIjxOMjvnJmbxvz8h+T0ruoH5NiPV+/dBMkWF3kUioRe55VxC988zt"
        },
        "rubrique": "TP"
       },
       {
        "titre": "Corrigé TP 2 – préparation",
        "type": "Corrigé",
-       "fichier": "d11a8087a48320aabb07e8bf.bin",
-       "taille": 130686,
+       "fichier": "a0c374deb7b4ff4750c802f0.bin",
+       "taille": 130713,
        "pages": 2,
        "corrige": {
         "id": "et-adm-tp-de-mesure-corrige-tp-2-preparation",
-        "wk": "aL/Ha2NatCKTfG2b44R2Q2b2h+EGIg6gsn5R3xLrqzV6IyyMipuPffj1YGMTyCkydLrKgEYZjhkYqBhc"
+        "wk": "/pGkTpx5eYBh0CTWKB+UAtHOfZS6+qulxemLXAXGKOTUJIBpiWyEcTyJXz5KEyHhIJf9r2PcGS1tlabi"
        },
        "rubrique": "TP"
       },
       {
        "titre": "TP 3 – Les courants du moteur asynchrone",
        "type": "TP",
-       "fichier": "12b8042c550a3fa15f3c7a8b.bin",
-       "taille": 554178,
-       "pages": 8,
+       "fichier": "dd1fcb0286234d129bb97882.bin",
+       "taille": 591399,
+       "pages": 9,
        "cv": "et-chap-adm-tp-de-mesure",
        "rubrique": "TP"
       },
       {
        "titre": "TP 3 – Les courants du moteur asynchrone - coups de pouce",
        "type": "TP",
-       "fichier": "f094bdde6f65debcbbacfdb9.bin",
-       "taille": 80814,
+       "fichier": "7a323fd519424393f12f8692.bin",
+       "taille": 80699,
        "pages": 2,
        "cv": "et-chap-adm-tp-de-mesure",
        "rubrique": "TP"
@@ -493,24 +768,24 @@
       {
        "titre": "Corrigé TP 3 – compte rendu",
        "type": "Corrigé",
-       "fichier": "8a680fcfff2dacccf6322f7d.bin",
-       "taille": 123439,
+       "fichier": "af0fa1b3e2d4dcdc94c86700.bin",
+       "taille": 123733,
        "pages": 3,
        "corrige": {
         "id": "et-adm-tp-de-mesure-corrige-tp-3-compte-rendu",
-        "wk": "UXoTHz5PmviDBaXRMW6FuP8vhDD4Q2a2g1jaIyTdNNZswLC06vkr+JQ5A5YLVkDJcPMc7jTLNms7epOM"
+        "wk": "IllWZxaAfauPxDDybf3TrkvOqIOQ2oN2pwjDr5cuLAth8AHWOAVt3NIEnPrTvDrCxf8FbTsc6yzxSGO1"
        },
        "rubrique": "TP"
       },
       {
        "titre": "Corrigé TP 3 – préparation",
        "type": "Corrigé",
-       "fichier": "51d7910f1cbb73fb63f1c241.bin",
-       "taille": 141309,
+       "fichier": "bbda69f6c21ae6b5e47467fe.bin",
+       "taille": 168458,
        "pages": 2,
        "corrige": {
         "id": "et-adm-tp-de-mesure-corrige-tp-3-preparation",
-        "wk": "UxO4xvx8C6VI1kr9UL6l8L3ZKo3R33xshzOU3Iz9ZAp5wxC9XVy6ekF03xO0kizkqtcN26Xmnj7hGlqc"
+        "wk": "03RDcYrOf7VXcf8/47fykKZ7Ci3bRJ6fS4bqcpvRqneWH9qsKkXbl3w1SxNvddemxC5TEgG1AdRlPFcP"
        },
        "rubrique": "TP"
       }
@@ -2439,9 +2714,9 @@
   }
  ],
  "outilsWk": {
-  "et": "Z1wtErSQnTR+av+WJ0swByzYvjDPiVNKrskoLVIsFG2pvIqHhENHQmugl9jOuwiNGw7ROxdePlwN0Pc4",
-  "cira": "QPobUjyEstUPhIkoLrg9BnbQtrpuqtmmp1CxpTsTQmj0L+UQK3Y7sYthAcUoBnnhzDEYSPs2Mw4Djx8l",
-  "cim": "m76L4RrHgWcoV3nv5TIw0jWQfNtTGVHDFgonfMd6QtqxXaAtG+UBXYgpw53vmDMFp1Z8DhIGgfCso5wo"
+  "et": "q9T3tD0rAIi6izGCo+V05AcXEmDocr6QNwpEW6Gb7JueJ9nyxXoJighoN86Y1i6IdmU/IG6MsQwaZ9Xh",
+  "cira": "Sk7g4MaKjRxPIrs+CYV+4p9j9TlT+XkpXwbKdaY6oXDxKQF1wv+30bxjkBGFhKfxt4IqEPMVj68qHzeb",
+  "cim": "r1luZ26msW3lpFifMgySWSp5KD7Mf6Qd5JfT014uciEvW2oe9MZcZ6fNOZxbgMVKmJootd+J8O2mWNTR"
  },
  "outils": [
   {
