@@ -57,6 +57,7 @@ button.row:active{background:var(--bg)}
 .row .main{flex:1;min-width:0}
 .row .t{display:block;font-weight:700}
 .row .m{display:block;font-size:.85rem;color:var(--muted)}
+.fold{flex:none;font-size:1.5rem;line-height:1}
 .chev{flex:none;width:9px;height:9px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(-45deg)}
 .count{flex:none;font-variant-numeric:tabular-nums;font-weight:700;font-size:.95rem;color:var(--ink);background:var(--bg);border:1px solid var(--grid);border-radius:20px;padding:2px 10px}
 .count.full{color:var(--ok);border-color:currentColor;background:var(--ok-soft)}
@@ -249,45 +250,88 @@ function classe(id, tab){
   if (tab === "corriges") paneCorriges(c); else if (tab === "evaluations") paneEvals(c); else paneEleves(c);
 }
 
+/* Rubrique d'un corrigé (Activités, TP, Exercices) : celle du catalogue, sinon devinée d'après le titre */
+const RUB_ORDRE = ["Activités", "TP", "Exercices", "Autres"];
+function rubriqueDe(d){
+  if (d.rubrique) return d.rubrique;
+  const t = (d.titre || "").toLowerCase();
+  if (/exercice/.test(t)) return "Exercices";
+  if (/\btp\s*\d|\btp\b/.test(t)) return "TP";
+  if (/activit/.test(t)) return "Activités";
+  return "Autres";
+}
+const plur = (n, s) => n + " " + s + (n > 1 ? "s" : "");
+function libDoc(d, n, total){
+  if (d.chapitre) return n === total && total ? "Chapitre ouvert à toute la classe" : n ? "Ouvert pour " + plur(n, "élève") : "Chapitre fermé aux élèves";
+  return n === total && total ? "Débloqué pour toute la classe" : n ? plur(n, "élève") + " débloqué" + (n > 1 ? "s" : "") : "Personne pour l'instant";
+}
+/* Comptage en direct des déblocages des élèves de la classe */
+function suivreDeblocages(c, cb){
+  const mesUid = new Set(elevesDe(c).map(e => e.uid));
+  unsub = onSnapshot(collection(db, "deblocages"), snap => {
+    const counts = {}; snap.forEach(x => { const v = x.data(); if (mesUid.has(v.uid)) counts[v.doc] = (counts[v.doc] || 0) + 1; }); cb(counts);
+  }, e => toast("Lecture impossible : " + e.code));
+}
+
+/* Onglet Corrigés : un dossier par chapitre, comme sur le site */
 function paneCorriges(c){
   const groups = corriges(c.site), total = elevesDe(c).length;
   const ma = /(\d)\s*(?:re|ère|e|ème)\s+ann[ée]e/i.exec(c.nom || ""), monAn = ma ? +ma[1] : null;
-  let choix = null, last = {};
   if (!groups.length) { $("#pane").innerHTML = `<p class="empty">Aucun corrigé élève pour ce BTS pour l'instant.</p>`; return; }
-  const render = (counts) => {
+  let choix = paneCorriges.niv[c.id] ?? null, last = {};
+  const dossier = g => {
+    const docs = g.docs.filter(d => !d.chapitre), lock = g.docs.find(d => d.chapitre);
+    const full = docs.filter(d => total && (last[d.corrige.id] || 0) === total).length;
+    const part = docs.filter(d => (last[d.corrige.id] || 0) > 0 && (last[d.corrige.id] || 0) < total).length;
+    let etat = "";
+    if (lock) { const n = last[lock.corrige.id] || 0; etat = n === total && total ? "🔓 Ouvert · " : n ? "🔓 Ouvert pour " + n + " · " : "🔒 Fermé · "; }
+    const m = etat + plur(docs.length, "corrigé") + (part ? " · " + part + " en cours" : "");
+    return `<button class="row" data-ch="${esc(g.ch.titre)}"><span class="fold" aria-hidden="true">📁</span><span class="main"><span class="t">${esc(g.ch.titre)}</span><span class="m">${m}</span></span>`
+      + (docs.length ? `<span class="count${full === docs.length && full ? " full" : ""}" title="Corrigés débloqués pour toute la classe">${full}/${docs.length}</span>` : "") + `<span class="chev"></span></button>`;
+  };
+  const render = counts => {
     last = counts;
-    const bloc = g => `<p class="sec">${esc(g.ch.titre)}</p><div class="card">` + g.docs.map(d => {
-      const n = counts[d.corrige.id] || 0;
-      const lib = d.chapitre ? (n === total && total ? "Chapitre ouvert à toute la classe" : n ? "Ouvert pour " + n + " élève" + (n>1?"s":"") : "Chapitre fermé aux élèves") : (n === total && total ? "Débloqué pour toute la classe" : n ? n + " élève" + (n>1?"s":"") + " débloqué" + (n>1?"s":"") : "Personne pour l'instant");
-      return `<button class="row" data-doc="${esc(d.corrige.id)}"><span class="main"><span class="t">${esc(d.titre)}</span><span class="m">${lib}</span></span><span class="count${n===total&&total?" full":""}">${n}/${total}</span><span class="chev"></span></button>`;
-    }).join("") + `</div>`;
-    // Chapitres rangés par niveau, choisis avec un menu déroulant (l'année de la classe ouverte par défaut)
     const annees = [...new Set(groups.map(g => g.ch.annee).filter(Boolean))].sort();
     const nomAn = a => a === 1 ? "1re année" : a + "e année";
     let html;
-    if (!annees.length) html = groups.map(bloc).join("");
+    if (!annees.length) html = `<div class="card">${groups.map(dossier).join("")}</div>`;
     else {
       if (choix === null) choix = annees.includes(monAn) ? monAn : annees[0];
       const opts = annees.map(a => `<option value="${a}"${choix === a ? " selected" : ""}>${nomAn(a)}${a === monAn ? " (ma classe)" : ""}</option>`).join("")
         + `<option value="0"${choix === 0 ? " selected" : ""}>Tous les niveaux</option>`;
       const vus = choix === 0 ? annees : [choix];
       html = `<label class="niveau">Niveau <select id="niv">${opts}</select></label>`
-        + vus.map(a => { const gs = groups.filter(g => g.ch.annee === a); return gs.length ? (choix === 0 ? `<p class="niv-titre">${nomAn(a)}</p>` : "") + gs.map(bloc).join("") : ""; }).join("")
-        + groups.filter(g => !g.ch.annee).map(bloc).join("");
+        + vus.map(a => { const gs = groups.filter(g => g.ch.annee === a); return gs.length ? (choix === 0 ? `<p class="niv-titre">${nomAn(a)}</p>` : "") + `<div class="card">${gs.map(dossier).join("")}</div>` : ""; }).join("");
+      const sans = groups.filter(g => !g.ch.annee); if (sans.length) html += `<div class="card">${sans.map(dossier).join("")}</div>`;
     }
-    $("#pane").innerHTML = html + (total ? "" : `<p class="note">Aucun compte élève n'est encore créé : onglet « Élèves et comptes ».</p>`);
-    const niv = $("#niv"); if (niv) niv.onchange = () => { choix = +niv.value; render(last); };
-    $("#pane").querySelectorAll(".row").forEach(b => b.onclick = () => {
-      const d = groups.flatMap(g => g.docs).find(x => x.corrige.id === b.dataset.doc);
-      go(docEleves, c.id, d);
-    });
+    $("#pane").innerHTML = html + `<p class="note">Touchez un chapitre pour voir ses corrigés. Le nombre à droite indique les corrigés débloqués pour toute la classe.</p>`
+      + (total ? "" : `<p class="note">Aucun compte élève n'est encore créé : onglet « Élèves et comptes ».</p>`);
+    const niv = $("#niv"); if (niv) niv.onchange = () => { choix = +niv.value; paneCorriges.niv[c.id] = choix; render(last); };
+    $("#pane").querySelectorAll(".row").forEach(b => b.onclick = () => go(chapitreCorriges, c.id, b.dataset.ch));
   };
   render({});
-  // Un élève inscrit dans deux classes (cours dans l'une, TP dans l'autre) : son déblocage compte dans les deux listes
-  const mesUid = new Set(elevesDe(c).map(e => e.uid));
-  unsub = onSnapshot(collection(db, "deblocages"), snap => {
-    const counts = {}; snap.forEach(x => { const v = x.data(); if (mesUid.has(v.uid)) counts[v.doc] = (counts[v.doc] || 0) + 1; }); render(counts);
-  }, e => toast("Lecture impossible : " + e.code));
+  suivreDeblocages(c, render);
+}
+paneCorriges.niv = {};   // niveau choisi, gardé au retour
+
+/* Un chapitre ouvert : accès au chapitre puis corrigés rangés par Activités / TP / Exercices */
+function chapitreCorriges(cid, titre){
+  const c = CLASSES.find(x => x.id === cid); if (!c) return home();
+  const g = corriges(c.site).find(x => x.ch.titre === titre); if (!g) return classe(cid, "corriges");
+  setBar(titre, c.nom, true);
+  const total = elevesDe(c).length;
+  const ligne = (d, counts) => { const n = counts[d.corrige.id] || 0;
+    return `<button class="row" data-doc="${esc(d.corrige.id)}"><span class="main"><span class="t">${esc(d.titre)}</span><span class="m">${libDoc(d, n, total)}</span></span><span class="count${n === total && total ? " full" : ""}">${n}/${total}</span><span class="chev"></span></button>`; };
+  const render = counts => {
+    const lock = g.docs.find(d => d.chapitre), docs = g.docs.filter(d => !d.chapitre);
+    const rubs = RUB_ORDRE.concat([...new Set(docs.map(rubriqueDe))].filter(r => !RUB_ORDRE.includes(r)));
+    let html = lock ? `<p class="sec">Accès au chapitre</p><div class="card">${ligne(lock, counts)}</div>` : "";
+    rubs.forEach(r => { const ds = docs.filter(d => rubriqueDe(d) === r); if (ds.length) html += `<p class="sec">${esc(r)}</p><div class="card">${ds.map(d => ligne(d, counts)).join("")}</div>`; });
+    $("#app").innerHTML = html || `<p class="empty">Aucun corrigé dans ce chapitre.</p>`;
+    $("#app").querySelectorAll(".row").forEach(b => b.onclick = () => go(docEleves, c.id, g.docs.find(x => x.corrige.id === b.dataset.doc)));
+  };
+  render({});
+  suivreDeblocages(c, render);
 }
 
 /* ---------- Un corrigé : la liste des élèves à cocher ---------- */
