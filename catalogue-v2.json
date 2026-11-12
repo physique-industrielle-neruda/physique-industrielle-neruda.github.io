@@ -2248,6 +2248,340 @@
       "id": "cira-chap-chaine-d-acquisition",
       "wk": "nweLNHyjxQpDZX5PTheQv47YSDCcVxCTxikap3VW0Ik5K1t5PbFxY3c3fUeFh3M2V80+I+RdvMRn/cZb"
      }
+    },
+    {
+     "num": "6",
+     "titre": "Amplification",
+     "docs": [
+      {
+       "titre": "Prérequis",
+       "type": "Fiche",
+       "fichier": "936fd0716ca041abedebbaa2.bin",
+       "taille": 102948,
+       "pages": 2,
+       "cv": "cira-chap-amplification",
+       "rubrique": "Pour commencer"
+      },
+      {
+       "titre": "Essentiel du chapitre",
+       "type": "Cours",
+       "fichier": "23b3bc9a5a84378cae2deaae.bin",
+       "taille": 560687,
+       "pages": 8,
+       "cv": "cira-chap-amplification",
+       "rubrique": "Cours"
+      },
+      {
+       "titre": "Activité 1 – L'ADI et le montage suiveur",
+       "type": "Activité",
+       "fichier": "8908064218adf1f2902c4590.bin",
+       "taille": 294540,
+       "pages": 5,
+       "cv": "cira-chap-amplification",
+       "rubrique": "Activités"
+      },
+      {
+       "titre": "Activité 1 – L'ADI et le montage suiveur - coups de pouce",
+       "type": "Activité",
+       "fichier": "a4347bc9e2fa9e204403ea08.bin",
+       "taille": 81977,
+       "pages": 2,
+       "cv": "cira-chap-amplification",
+       "rubrique": "Activités"
+      },
+      {
+       "titre": "Corrigé Activité 1 – L'ADI et le montage suiveur",
+       "type": "Corrigé",
+       "fichier": "6e305dcb8db6fa59e0a1c134.bin",
+       "taille": 102521,
+       "pages": 2,
+       "corrige": {
+        "id": "cira-amplification-corrige-activite-1-l-adi-et-le-montage-suiveur",
+        "wk": "yRvMzjRo+9H0NFtLaQYKKvkMUKAomQQ+uTZQ6mfyVBaeUu4hZTUdFCJhsjLFKFO86ppsH98pRgaoArOa"
+       },
+       "rubrique": "Activités"
+      },
+      {
+       "titre": "Activité 2 – Le soustracteur et le décalage de zéro",
+       "type": "Activité",
+       "fichier": "6ff3612f810ee49cfabffb87.bin",
+       "taille": 259479,
+       "pages": 5,
+       "cv": "cira-chap-amplification",
+       "rubrique": "Activités"
+      },
+      {
+       "titre": "Activité 2 – Le soustracteur et le décalage de zéro - coups de pouce",
+       "type": "Activité",
+       "fichier": "dc4cd4ab351538c91c30651d.bin",
+       "taille": 81441,
+       "pages": 1,
+       "cv": "cira-chap-amplification",
+       "rubrique": "Activités"
+      },
+      {
+       "titre": "Corrigé Activité 2 – Le soustracteur et le décalage de zéro",
+       "type": "Corrigé",
+       "fichier": "7420c6fd1786743c9e47fda1.bin",
+       "taille": 117997,
+       "pages": 2,
+       "corrige": {
+        "id": "cira-amplification-corrige-activite-2-le-soustracteur-et-le-decalage-",
+        "wk": "sUypAY8rjCOrWumZ/Zpmt8ctIf4OSantCTjRRxLsl6W6IK7bNN6a3orEiA9FtOTdFVyPLDAJZ1M/krPL"
+       },
+       "rubrique": "Activités"
+      },
+      {
+       "titre": "Activité 3 – L'amplificateur d'instrumentation",
+       "type": "Activité",
+       "fichier": "445730ae0e171236ef567d38.bin",
+       "taille": 286248,
+       "pages": 5,
+       "cv": "cira-chap-amplification",
+       "rubrique": "Activités"
+      },
+      {
+       "titre": "Activité 3 – L'amplificateur d'instrumentation - coups de pouce",
+       "type": "Activité",
+       "fichier": "5e1acd719b46c4b47f57af84.bin",
+       "taille": 78959,
+       "pages": 2,
+       "cv": "cira-chap-amplification",
+       "rubrique": "Activités"
+      },
+      {
+       "titre": "Corrigé Activité 3 – L'amplificateur d'instrumentation",
+       "type": "Corrigé",
+       "fichier": "b41a1aba7dcdb447481cd1aa.bin",
+       "taille": 111947,
+       "pages": 2,
+       "corrige": {
+        "id": "cira-amplification-corrige-activite-3-l-amplificateur-d-instrumentati",
+        "wk": "o8qE+0l1a7k2hcwmlyiOja6vEhfkopcNguJEtBdG0N6GnSTPVxThP9DfmON+uj0bXLnG8/4BzaZk3VOH"
+       },
+       "rubrique": "Activités"
+      },
+      {
+       "titre": "Fiche animation",
+       "type": "Fiche",
+       "fichier": "e6cc3863721bd399304e20bb.bin",
+       "taille": 135815,
+       "pages": 2,
+       "cv": "cira-chap-amplification",
+       "rubrique": "Animation"
+      },
+      {
+       "titre": "Animation – Amplification",
+       "type": "Animation",
+       "fichier": "f71409f8938909012c33853f.bin",
+       "format": "html",
+       "cv": "cira-chap-amplification",
+       "rubrique": "Animation"
+      },
+      {
+       "titre": "TP 1 – Amplificateurs non inverseur et inverseur",
+       "type": "TP",
+       "fichier": "7689e46060df9130c545be29.bin",
+       "taille": 419769,
+       "pages": 7,
+       "cv": "cira-chap-amplification",
+       "rubrique": "TP"
+      },
+      {
+       "titre": "TP 1 – Amplificateurs non inverseur et inverseur - coups de pouce",
+       "type": "TP",
+       "fichier": "4cd8ffa07fc54dd68c20e77b.bin",
+       "taille": 90776,
+       "pages": 2,
+       "cv": "cira-chap-amplification",
+       "rubrique": "TP"
+      },
+      {
+       "titre": "Corrigé TP 1 – Amplificateurs non inverseur et inverseur",
+       "type": "Corrigé",
+       "fichier": "97646f5f143578f1eb51bc06.bin",
+       "taille": 139284,
+       "pages": 3,
+       "corrige": {
+        "id": "cira-amplification-corrige-tp-1-amplificateurs-non-inverseur-et-inver",
+        "wk": "EP7hFMXcRchOXPN+94Ma5zNTLsLmVWpy/+h1WouWDY/9GC/fkqE/ZpHV8b3D1tvtcW7BY1D2FO0pLUKj"
+       },
+       "rubrique": "TP"
+      },
+      {
+       "titre": "TP 2 – Conditionneur à deux ADI pour la sonde Pt100",
+       "type": "TP",
+       "fichier": "8ba53335e9485f27537fed4c.bin",
+       "taille": 440538,
+       "pages": 7,
+       "cv": "cira-chap-amplification",
+       "rubrique": "TP"
+      },
+      {
+       "titre": "TP 2 – Conditionneur à deux ADI pour la sonde Pt100 - coups de pouce",
+       "type": "TP",
+       "fichier": "a7f7ffb54a23c39fca8d115a.bin",
+       "taille": 87094,
+       "pages": 2,
+       "cv": "cira-chap-amplification",
+       "rubrique": "TP"
+      },
+      {
+       "titre": "Corrigé TP 2 – Conditionneur à deux ADI pour la sonde Pt100",
+       "type": "Corrigé",
+       "fichier": "55efc5423eeec3c200426fcd.bin",
+       "taille": 143835,
+       "pages": 3,
+       "corrige": {
+        "id": "cira-amplification-corrige-tp-2-conditionneur-a-deux-adi-pour-la-sond",
+        "wk": "PYh9Bk1cXIAmywer/C4lSPXVXf64QrPnFSlLRvhU5jBBlxDfDpmEahfl7fi+w8fEeI1q7GDPFTX2ATGk"
+       },
+       "rubrique": "TP"
+      },
+      {
+       "titre": "Exercice 1 – Le débit d'une station d'épuration",
+       "type": "Exercices",
+       "fichier": "27c69a4bc2b93658783927dd.bin",
+       "taille": 115574,
+       "pages": 2,
+       "cv": "cira-chap-amplification",
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 1 - coups de pouce",
+       "type": "Exercices",
+       "fichier": "2706a9d481141ba5fa0104b0.bin",
+       "taille": 72007,
+       "pages": 1,
+       "cv": "cira-chap-amplification",
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Corrigé Exercice 1",
+       "type": "Corrigé",
+       "fichier": "694d510cd83cd9b47f49b139.bin",
+       "taille": 78055,
+       "pages": 1,
+       "corrige": {
+        "id": "cira-amplification-corrige-exercice-1",
+        "wk": "DIn65INyDtOb42PRbmFKx+g5OPrBdhyCa1aRzqq+UTh/BCWf2IOoSq0x62ewXwxqvdZ+3lO0O5ijZ3rJ"
+       },
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 2 – La vitesse d'un agitateur de fromagerie",
+       "type": "Exercices",
+       "fichier": "ff190041256ff00431da3ad2.bin",
+       "taille": 161777,
+       "pages": 2,
+       "cv": "cira-chap-amplification",
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 2 - coups de pouce",
+       "type": "Exercices",
+       "fichier": "2047ba51cd3a6a2f22638d57.bin",
+       "taille": 74091,
+       "pages": 1,
+       "cv": "cira-chap-amplification",
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Corrigé Exercice 2",
+       "type": "Corrigé",
+       "fichier": "bf61ec8e4e2012dee199daaf.bin",
+       "taille": 101367,
+       "pages": 2,
+       "corrige": {
+        "id": "cira-amplification-corrige-exercice-2",
+        "wk": "vuUje2iZKWCJIJ0YqNYq49EcHAc8fdIE3ew0aCQrY/DHoPKoMASUZIEGWrOABdLW6n1dFJidEMyc9RQY"
+       },
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 3 – Le bac de rinçage d'une ligne de traitement de surface",
+       "type": "Exercices",
+       "fichier": "b990bae32d5afeb924b26f99.bin",
+       "taille": 166467,
+       "pages": 2,
+       "cv": "cira-chap-amplification",
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 3 - coups de pouce",
+       "type": "Exercices",
+       "fichier": "bb4975f7aa946d2720c410d9.bin",
+       "taille": 72695,
+       "pages": 1,
+       "cv": "cira-chap-amplification",
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Corrigé Exercice 3",
+       "type": "Corrigé",
+       "fichier": "278167e3c5959a87a4f41e28.bin",
+       "taille": 97117,
+       "pages": 1,
+       "corrige": {
+        "id": "cira-amplification-corrige-exercice-3",
+        "wk": "iL6wKBGhhmFb6TmjvEeMgIrJCewJ/j0W28Qds22HI/HO2zbuo5WuANkeiOdA2Xb9p/7RIwC6ZGjnnLxU"
+       },
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 4 – Le pesage au crochet d'un pont roulant",
+       "type": "Exercices",
+       "fichier": "47e3ad53254054f916acaaca.bin",
+       "taille": 172170,
+       "pages": 2,
+       "cv": "cira-chap-amplification",
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 4 - coups de pouce",
+       "type": "Exercices",
+       "fichier": "4e91085cb2a9f3d0891dee05.bin",
+       "taille": 78684,
+       "pages": 1,
+       "cv": "cira-chap-amplification",
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Corrigé Exercice 4",
+       "type": "Corrigé",
+       "fichier": "829fb3acd021628051b54599.bin",
+       "taille": 99861,
+       "pages": 1,
+       "corrige": {
+        "id": "cira-amplification-corrige-exercice-4",
+        "wk": "X52pBwMMO9qpvErSAIdL8aOtAcC5VZo2VogsWkwcakbz+k+DkENTxSgeOZcsUQbkbqetyGmeNCBkZI4y"
+       },
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Bilan",
+       "type": "Fiche",
+       "fichier": "2c723d35a8699be2752ac35f.bin",
+       "taille": 119132,
+       "pages": 1,
+       "cv": "cira-chap-amplification",
+       "rubrique": "Réviser"
+      },
+      {
+       "titre": "cartes de révision",
+       "type": "Cartes",
+       "nombre": 10,
+       "fichier": "d0c942e98e00ae3ca91bb76b.bin",
+       "format": "cartes",
+       "ch": "amplification",
+       "cv": "cira-chap-amplification",
+       "rubrique": "Réviser"
+      }
+     ],
+     "verrou": {
+      "id": "cira-chap-amplification",
+      "wk": "N7UetOxBHqI4Agf8xKSzr8aVfgUI3rb64bMhzAL1913y1eoJpKkEtc3V16mIeqqTHNju2a6p5e7oWyms"
+     }
     }
    ]
   },
@@ -2714,9 +3048,9 @@
   }
  ],
  "outilsWk": {
-  "et": "q9T3tD0rAIi6izGCo+V05AcXEmDocr6QNwpEW6Gb7JueJ9nyxXoJighoN86Y1i6IdmU/IG6MsQwaZ9Xh",
-  "cira": "Sk7g4MaKjRxPIrs+CYV+4p9j9TlT+XkpXwbKdaY6oXDxKQF1wv+30bxjkBGFhKfxt4IqEPMVj68qHzeb",
-  "cim": "r1luZ26msW3lpFifMgySWSp5KD7Mf6Qd5JfT014uciEvW2oe9MZcZ6fNOZxbgMVKmJootd+J8O2mWNTR"
+  "et": "zjUvNSEvl4d6oKItUs2lsqTfa8RSzNbX/l+yH8tvxS2kDScpBwvypdCXgJhSDwKbx7q4GpK/rU5RTyw+",
+  "cira": "fIuB2YHYUP4uqyODVQulhuNMyHAY9vqN3BnvqdZx6i7QvN3nvOEx2HD3qPtTsY7GuLEqHNKSox96HvE5",
+  "cim": "F+X3FBBo61/nkgfmfWJoT7WvMjHrWsawuTR/GpaCuhZWZX4RUoDCkmCuVq1wiEm75ybdsbnMcK1a4heL"
  },
  "outils": [
   {
