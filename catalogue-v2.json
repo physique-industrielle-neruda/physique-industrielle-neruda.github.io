@@ -1043,6 +1043,18 @@
        "rubrique": "TP"
       },
       {
+       "titre": "Résultats TP 1",
+       "type": "Corrigé",
+       "fichier": "f8984fb46520ff600df9d51b.bin",
+       "taille": 97402,
+       "pages": 1,
+       "corrige": {
+        "id": "et-le-moteur-asynchrone-resultats-tp-1",
+        "wk": "9Wd05T7YKI/qbnp2v7DilehF7ln3pfoBa0W89FoJmoVyVnL34KmcIndb+HphR+7nSI0lAu+vVBvBeDQh"
+       },
+       "rubrique": "TP"
+      },
+      {
        "titre": "TP 2 – Baisser la tension ou la fréquence",
        "type": "TP",
        "fichier": "872c2dddf5bf36ff4c9cf3cf.bin",
@@ -1085,6 +1097,18 @@
        "rubrique": "TP"
       },
       {
+       "titre": "Résultats TP 2",
+       "type": "Corrigé",
+       "fichier": "ef80df75b45635492c6b8c75.bin",
+       "taille": 164652,
+       "pages": 2,
+       "corrige": {
+        "id": "et-le-moteur-asynchrone-resultats-tp-2",
+        "wk": "WX+BQ12aKLomcDeeUd/vdGtOhGmbIbQGARDVlxjeZe5TBvN8f1O005yMv9ur6B9vWOhlBpRxu+pSxegk"
+       },
+       "rubrique": "TP"
+      },
+      {
        "titre": "TP 3 – Bilan des puissances du moteur asynchrone",
        "type": "TP",
        "fichier": "ea357abb99634f1992c38abb.bin",
@@ -1123,6 +1147,18 @@
        "corrige": {
         "id": "et-le-moteur-asynchrone-corrige-eleve-tp-3-preparation",
         "wk": "+TTHDeGmFha7WY/LbT3ulTa+rxLamDFPCj3MuYwhtpiu8I2iYX/uwE9rrYCHtFyaCjrckv6LnDIAxEm1"
+       },
+       "rubrique": "TP"
+      },
+      {
+       "titre": "Résultats TP 3",
+       "type": "Corrigé",
+       "fichier": "e1ab93b2456d9bd9c12998a3.bin",
+       "taille": 87140,
+       "pages": 1,
+       "corrige": {
+        "id": "et-le-moteur-asynchrone-resultats-tp-3",
+        "wk": "GrBJwYqb2utDFWeguTKBVlz7CGW9HBJ/OchJTon5fW0RBjGyJiwGwBUgqcq18PvwEXWPXJOJt9C9xL6y"
        },
        "rubrique": "TP"
       },
@@ -3068,9 +3104,9 @@
   }
  ],
  "outilsWk": {
-  "et": "I2WF0zKyeAFOPHu5OSfKRhfEAtLwm1lwjVAxo1dHNkdgUsTm/83Ah2wovyZVmFY4DhyO9A2gJzRMS1yR",
-  "cira": "YikEyIY+JGSHTwZZcgfyh267ZpsuSXiaIJ9INoosoUnbolVyYDW5Mzr6XRHRRKlkTunU6eoPJV50zDtI",
-  "cim": "L8WuqyYa8ES4J3I9VUcQSAiM7WeuvTGil55026NuiElcmD02jROo8JptuysBvbetNmbGVtDGHaW01tSn"
+  "et": "Ki8qJc6/aufS64fc6V3SwLovRbPIGjp0DfMiKYA/grVAi29DikLocpp3YFEu6UMtKaFGektC0Q6jZKR4",
+  "cira": "I+GpNdTnQWvlYBti2mx1sQcLPs98Z+9s6M/tsO7GE6W8B8Yp9X1q1kLDnLtTo5Hm0juDTb8vTrd3sy+F",
+  "cim": "Wihodk4KZXugalU1SozAk/UT45Hp33PCzx7VpcWDTNbZW2RD1Ds+hKeqU6F6XLxQeGfJNsfCckw8tIO8"
  },
  "outils": [
   {
