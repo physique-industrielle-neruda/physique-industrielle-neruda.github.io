@@ -151,8 +151,11 @@ a.open{text-decoration:none;display:inline-block}
 .sous .nb{font-weight:400;font-size:.85rem;color:var(--muted);flex:1}
 .sous .chev{width:9px;height:9px}
 .sous[open]>summary{border-bottom:1px solid var(--grid);border-radius:8px 8px 0 0}
-.sous[open] .chev{transform:rotate(45deg)}
+.sous[open]>summary .chev{transform:rotate(45deg)}
 .chap .sous ul.docs{padding:0 12px 2px}
+.sous .sous{margin:8px 12px;background:var(--bg)}
+.sous .sous>summary{font-weight:600;padding:7px 10px}
+.sous .sous .folder{width:20px;height:17px}
 .chap>.sous:last-child{margin-bottom:14px}
 
 footer{color:var(--muted);font-size:.86rem;margin:48px 0 32px;padding-top:16px;border-top:1px solid var(--grid)}
@@ -514,11 +517,45 @@ function chapBlock(c, ch, docs, forceOpen, outil){
     const m = g.docs.length;
     sd.innerHTML = `<summary>${FOLDER}<span>${esc(g.r)}</span><span class="nb">${m} document${m > 1 ? "s" : ""}</span><span class="chev" aria-hidden="true"></span></summary>`;
     sd.addEventListener("toggle", () => { if (sd.open) opened.add(k); else opened.delete(k); });
-    const ul = document.createElement("ul"); ul.className = "docs";
-    g.docs.forEach(d => ul.appendChild(docRow(c, d)));
-    sd.appendChild(ul); s.appendChild(sd);
+    // Activités, TP, Exercices : un sous-dossier par activité / TP / exercice (énoncé, coups de pouce, corrigés, résultats)
+    if (["Activités", "TP", "Exercices"].includes(g.r)) remplirParNumero(c, g.docs, sd, k, forceOpen);
+    else {
+      const ul = document.createElement("ul"); ul.className = "docs";
+      g.docs.forEach(d => ul.appendChild(docRow(c, d)));
+      sd.appendChild(ul);
+    }
+    s.appendChild(sd);
   });
   return s;
+}
+
+function numeroDoc(d){
+  const n = d.titre.normalize("NFKD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  const m = n.match(/\b(tp|exercice|activite|td)\s*(\d+)/);
+  return m ? (m[1] === "activite" ? "Activité" : m[1] === "exercice" ? "Exercice" : m[1].toUpperCase()) + " " + m[2] : null;
+}
+function remplirParNumero(c, docs, parent, k0, forceOpen){
+  const seuls = [], paquets = [];
+  docs.forEach(d => {
+    const num = numeroDoc(d);
+    if (!num) { seuls.push(d); return; }
+    let p = paquets.find(x => x.num === num); if (!p) paquets.push(p = {num, docs: []}); p.docs.push(d);
+  });
+  if (seuls.length) { const ul = document.createElement("ul"); ul.className = "docs"; seuls.forEach(d => ul.appendChild(docRow(c, d))); parent.appendChild(ul); }
+  paquets.forEach(p => {
+    // Nom du sous-dossier : titre de l'énoncé (ni corrigé, ni coup de pouce, ni résultats)
+    const enonce = p.docs.find(d => !d.corrige && d.type !== "Corrigé" && !/coups?\s+de\s+pouce|r[ée]sultats|corrig/i.test(d.titre));
+    const nom = enonce ? enonce.titre : p.num;
+    const k = k0 + "/" + p.num;
+    const b = document.createElement("details"); b.className = "sous";
+    if (forceOpen || opened.has(k)) b.open = true;
+    const m = p.docs.length;
+    b.innerHTML = `<summary>${FOLDER}<span>${esc(nom)}</span><span class="nb">${m} document${m > 1 ? "s" : ""}</span><span class="chev" aria-hidden="true"></span></summary>`;
+    b.addEventListener("toggle", () => { if (b.open) opened.add(k); else opened.delete(k); });
+    const ul = document.createElement("ul"); ul.className = "docs";
+    p.docs.forEach(d => ul.appendChild(docRow(c, d)));
+    b.appendChild(ul); parent.appendChild(b);
+  });
 }
 
 function render(){
