@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Changer mon mot de passe – Physique industrielle</title>
+<style>
+body{margin:0;background:#F4F6F9;font-family:Arial,sans-serif;color:#222}
+.card{max-width:420px;margin:48px auto;background:#fff;border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,.08);overflow:hidden}
+h1{margin:0;background:#1F3864;color:#fff;font-size:18px;padding:16px 20px}
+form{padding:18px 20px}label{display:block;font-size:13px;font-weight:bold;margin:12px 0 4px}
+input{width:100%;box-sizing:border-box;padding:9px;border:1px solid #bbb;border-radius:6px;font-size:15px}
+button{margin-top:18px;width:100%;padding:11px;background:#C55A11;color:#fff;border:0;border-radius:6px;font-size:15px;font-weight:bold;cursor:pointer}
+button:disabled{opacity:.6}.msg{margin-top:14px;font-size:14px}.err{color:#C00000}.ok{color:#3F7A3A;font-weight:bold}
+.note{font-size:12px;color:#5A6577;padding:0 20px 18px}
+</style></head><body>
+<div class="card"><h1>Changer mon mot de passe</h1>
+<form id="f" autocomplete="off">
+<label for="id">Identifiant</label><input id="id" autocomplete="username" required>
+<label for="old">Mot de passe actuel</label><input id="old" type="password" autocomplete="current-password" required>
+<label for="n1">Nouveau mot de passe (6 caractères minimum)</label><input id="n1" type="password" autocomplete="new-password" minlength="6" required>
+<label for="n2">Nouveau mot de passe, à nouveau</label><input id="n2" type="password" autocomplete="new-password" minlength="6" required>
+<button id="go">Changer le mot de passe</button><div class="msg" id="m"></div></form>
+<p class="note">Réservé aux comptes professeur et invités. Les mots de passe des élèves se gèrent dans l'appli professeur.</p></div>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, updatePassword, signOut, inMemoryPersistence, setPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+const FB = {"apiKey":"AIzaSyDH32Ma0shVbsIHR0xNJbahb5MO0RKHRS0","authDomain":"physique-neruda.firebaseapp.com","projectId":"physique-neruda","storageBucket":"physique-neruda.firebasestorage.app","messagingSenderId":"62730174289","appId":"1:62730174289:web:588c846aadd4eec2109d70"};
+const DOMAINE = "@physique-neruda.firebaseapp.com";
+const app = initializeApp(FB), auth = getAuth(app), db = getFirestore(app);
+const $ = s => document.querySelector(s), m = $("#m");
+const say = (t, ok) => { m.className = "msg " + (ok ? "ok" : "err"); m.textContent = t; };
+$("#f").onsubmit = async ev => {
+  ev.preventDefault(); say("", true);
+  const id = $("#id").value.trim().toLowerCase(), n1 = $("#n1").value;
+  if (n1 !== $("#n2").value) return say("Les deux nouveaux mots de passe sont différents.");
+  $("#go").disabled = true;
+  try {
+    await setPersistence(auth, inMemoryPersistence);
+    const cred = await signInWithEmailAndPassword(auth, id.includes("@") ? id : id + DOMAINE, $("#old").value);
+    const e = await getDoc(doc(db, "eleves", cred.user.uid));
+    const autorise = id === "prof" || (e.exists() && (e.data().premium || e.data().site === "tous"));
+    if (!autorise) { await signOut(auth); throw { code: "refus" }; }
+    await updatePassword(cred.user, n1);
+    await signOut(auth); $("#f").reset();
+    say("Mot de passe changé. Utilise-le dès ta prochaine connexion au site.", true);
+  } catch (x) {
+    const c = x.code || "";
+    say(c === "refus" ? "Ce compte est un compte élève : son mot de passe se change dans l'appli professeur."
+      : c === "auth/too-many-requests" ? "Trop d'essais, patiente quelques minutes."
+      : c === "auth/weak-password" ? "Nouveau mot de passe trop court (6 caractères minimum)."
+      : (c === "auth/invalid-credential" || c === "auth/wrong-password" || c === "auth/user-not-found" || c === "auth/invalid-email") ? "Identifiant ou mot de passe actuel incorrect."
+      : "Erreur : " + c);
+  } finally { $("#go").disabled = false; }
+};
+</script></body></html>
