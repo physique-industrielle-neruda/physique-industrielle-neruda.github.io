@@ -2310,15 +2310,6 @@
      "titre": "Amplification",
      "docs": [
       {
-       "titre": "Prérequis",
-       "type": "Fiche",
-       "fichier": "936fd0716ca041abedebbaa2.bin",
-       "taille": 102948,
-       "pages": 2,
-       "cv": "cira-chap-amplification",
-       "rubrique": "Pour commencer"
-      },
-      {
        "titre": "Essentiel du chapitre",
        "type": "Cours",
        "fichier": "23b3bc9a5a84378cae2deaae.bin",
@@ -3104,9 +3095,9 @@
   }
  ],
  "outilsWk": {
-  "et": "Ki8qJc6/aufS64fc6V3SwLovRbPIGjp0DfMiKYA/grVAi29DikLocpp3YFEu6UMtKaFGektC0Q6jZKR4",
-  "cira": "I+GpNdTnQWvlYBti2mx1sQcLPs98Z+9s6M/tsO7GE6W8B8Yp9X1q1kLDnLtTo5Hm0juDTb8vTrd3sy+F",
-  "cim": "Wihodk4KZXugalU1SozAk/UT45Hp33PCzx7VpcWDTNbZW2RD1Ds+hKeqU6F6XLxQeGfJNsfCckw8tIO8"
+  "et": "wq0qHKsrMkaYdS9VFQPLT65XKxG2tuRCLBA4QYzPeALxQh95uhfIjep5CcqH5CiiajWWQ3WmlUJOP3lt",
+  "cira": "3XQea+QvsrUpZB9yLJJahzJ563S+UEzdSa1o69L5vV6y9VusUCEgnnbre19ZTSOSA+7Eyyao8fX9G0r9",
+  "cim": "frTklopE0RYj+nGu8S0Yw4dtaY8Kl2iDpN6aRyMC0iLT0Ynh4SXQ4G51ujHdh8cw+NYeHQEKWRkm0yoc"
  },
  "outils": [
   {

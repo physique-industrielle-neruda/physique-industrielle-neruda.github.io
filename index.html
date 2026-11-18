@@ -195,11 +195,6 @@ li.fresh{animation:fresh 2.4s ease-out}
 .rv ul.fl .t small.ok{color:var(--ok);font-weight:700}
 .rv .msg{border-radius:8px;padding:10px 12px;margin:10px 0 0;font-weight:700;background:var(--ok-soft);color:var(--ok)}
 .btn.ghost{background:none;color:var(--ink);border:1px solid var(--ink)}
-.relance{display:flex;gap:12px;align-items:center;flex-wrap:wrap;background:var(--accent-soft);border:1px solid var(--accent);border-left:6px solid var(--accent);border-radius:10px;padding:12px 16px;margin:12px 0 16px}
-.relance .ico{flex:none;font-size:1.5rem;line-height:1}
-.relance .txt{flex:1;min-width:200px}
-.relance .txt strong{display:block;color:var(--accent);font-size:1.05rem}
-.relance .txt span{color:var(--text)}
 .tst{background:var(--surface);border:1px solid var(--grid);border-radius:10px;padding:6px 16px 16px;margin:14px 0}
 .tst .cons{background:#FFF2CC;color:#18212F;border-radius:8px;padding:10px 12px;margin:12px 0}
 .tst .qq{border-top:1px solid var(--grid);padding:14px 0}
@@ -618,7 +613,6 @@ function render(){
     const head = document.createElement("div"); head.className = "classhead";
     head.innerHTML = `<h2>${esc(c.nom)}</h2><span class="status is-open">Documents ouverts</span>`;
     view.appendChild(head);
-    if (!q && eleveRev() && c.id === S.site) { const rl = relanceFiches(); if (rl) view.appendChild(rl); }
     if (!q && !S.prof && !S.tous) view.appendChild(mesEvals(c));
     if (!c.chapitres.length) { const p = document.createElement("p"); p.className = "empty"; p.textContent = "Aucun document pour l'instant."; view.appendChild(p); }
     if (chaps.some(x => x.ch.annee)) {
@@ -656,19 +650,6 @@ function fichesAFaire(){
   let n = 0;
   for (const t of testsVisibles()) { const r = MT[t.id]; if (r) n += (r.aRevoir || []).filter(f => !MF[cleF(t.id, f)]).length; }
   return n;
-}
-// Bandeau de relance au-dessus des chapitres tant que des fiches de révision restent à travailler
-function relanceFiches(){
-  const parChap = [];
-  for (const t of testsVisibles()) { const r = MT[t.id]; if (!r) continue;
-    const n = (r.aRevoir || []).filter(f => !MF[cleF(t.id, f)]).length; if (n) parChap.push({chap: t.chapitre, n}); }
-  const n = parChap.reduce((a, x) => a + x.n, 0); if (!n) return null;
-  const d = document.createElement("div"); d.className = "relance"; d.setAttribute("role", "status");
-  d.innerHTML = `<span class="ico" aria-hidden="true">📌</span><div class="txt"><strong>Tu as ${n} fiche${n > 1 ? "s" : ""} de révision à faire</strong>`
-    + `<span>${parChap.map(x => esc(x.chap) + " : " + x.n + " fiche" + (x.n > 1 ? "s" : "")).join(" · ")}. Fais-les avant la prochaine séance pour bien démarrer le chapitre.</span></div>`
-    + `<button class="btn" type="button">Voir mes fiches</button>`;
-  d.querySelector("button").onclick = () => { location.hash = "revisions"; };
-  return d;
 }
 function suivreRevisions(uid){
   if (!testsVisibles().length) return;
