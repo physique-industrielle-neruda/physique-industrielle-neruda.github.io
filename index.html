@@ -176,6 +176,44 @@ li.fresh{animation:fresh 2.4s ease-out}
 @keyframes fresh{0%{background:var(--ok-soft)}100%{background:transparent}}
 @media (prefers-reduced-motion: reduce){li.fresh{animation:none}}
 [hidden]{display:none!important}
+
+/* == Mes révisions (tests d'entrée + fiches de révision) == */
+.rv-intro{color:var(--muted);margin:4px 0 10px}
+.rv{background:var(--surface);border:1px solid var(--grid);border-radius:10px;margin:14px 0;box-shadow:var(--shadow);overflow:hidden}
+.rv>.hd{display:flex;gap:12px;align-items:center;padding:14px 16px;border-bottom:1px solid var(--grid)}
+.rv>.hd .folder{flex:none;width:34px;height:28px;color:var(--accent)}
+.rv>.hd h3{flex:1;font-size:1.45rem;font-weight:600}
+.rv>.hd .tag{font-size:.8rem;font-weight:700;border-radius:20px;padding:3px 10px;white-space:nowrap;background:var(--accent-soft);color:var(--accent)}
+.rv>.hd .tag.ok{background:var(--ok-soft);color:var(--ok)}
+.rv .bd{padding:12px 16px}
+.rv .bd p{margin:0 0 10px}
+.rv ul.fl{list-style:none;margin:0;padding:0}
+.rv ul.fl li{display:flex;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--grid)}
+.rv ul.fl li:first-child{border-top:0}
+.rv ul.fl .t{flex:1;font-weight:700}
+.rv ul.fl .t small{display:block;font-weight:400;color:var(--muted)}
+.rv ul.fl .t small.ok{color:var(--ok);font-weight:700}
+.rv .msg{border-radius:8px;padding:10px 12px;margin:10px 0 0;font-weight:700;background:var(--ok-soft);color:var(--ok)}
+.btn.ghost{background:none;color:var(--ink);border:1px solid var(--ink)}
+.relance{display:flex;gap:12px;align-items:center;flex-wrap:wrap;background:var(--accent-soft);border:1px solid var(--accent);border-left:6px solid var(--accent);border-radius:10px;padding:12px 16px;margin:12px 0 16px}
+.relance .ico{flex:none;font-size:1.5rem;line-height:1}
+.relance .txt{flex:1;min-width:200px}
+.relance .txt strong{display:block;color:var(--accent);font-size:1.05rem}
+.relance .txt span{color:var(--text)}
+.tst{background:var(--surface);border:1px solid var(--grid);border-radius:10px;padding:6px 16px 16px;margin:14px 0}
+.tst .cons{background:#FFF2CC;color:#18212F;border-radius:8px;padding:10px 12px;margin:12px 0}
+.tst .qq{border-top:1px solid var(--grid);padding:14px 0}
+.tst .qq .n{color:var(--accent);font-weight:700}
+.tst .qq svg.fig{display:block;max-width:100%;height:auto;margin:8px auto;background:#fff;border-radius:6px}
+.tst .qq .ln{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px}
+.tst .qq input{font:inherit;width:150px;padding:8px 10px;border:1px solid var(--grid);border-radius:8px;background:var(--bg);color:var(--text)}
+.tst .qq .pv{font-weight:700;margin-top:6px}.tst .qq .pv.ok{color:var(--ok)}.tst .qq .pv.ko{color:var(--accent)}
+.tst .act{display:flex;flex-wrap:wrap;gap:10px;margin-top:6px}
+.fiche-ov{position:fixed;inset:0;z-index:50;background:var(--bg);display:flex;flex-direction:column}
+.fiche-ov .bar{display:flex;align-items:center;gap:10px;padding:10px 14px;background:#1F3864;color:#fff}
+.fiche-ov .bar b{flex:1;font-size:1.05rem}
+.fiche-ov .bar button{font:inherit;font-weight:700;border:0;border-radius:8px;padding:8px 14px;background:#fff;color:#1F3864;cursor:pointer}
+.fiche-ov iframe{flex:1;border:0;width:100%;background:#F4F6F9}
 </style>
 </head>
 <body>
@@ -207,7 +245,7 @@ li.fresh{animation:fresh 2.4s ease-out}
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut, setPersistence, browserLocalPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, doc, getDoc, getDocs, collection, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, doc, getDoc, getDocs, setDoc, collection, query, where, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const FB = {"apiKey":"AIzaSyDH32Ma0shVbsIHR0xNJbahb5MO0RKHRS0","authDomain":"physique-neruda.firebaseapp.com","projectId":"physique-neruda","storageBucket":"physique-neruda.firebasestorage.app","messagingSenderId":"62730174289","appId":"1:62730174289:web:588c846aadd4eec2109d70"};
 const DOMAINE = "@physique-neruda.firebaseapp.com";
@@ -226,6 +264,8 @@ let EVAL = { evaluations: [] }, NOMS = {};
 /* Session : rôle, classe, clés */
 let S = { user:null, prof:false, evals:false, premium:false, tous:false, nom:"", site:null, groupe:null, keys:{}, maitre:null, corr:{} };
 let unsubCorr = null, fresh = new Set();
+/* Mes révisions : tests d'entrée et fiches de révision (revisions.json, Firestore « tests » et « revisions ») */
+let REV = { tests: [], fiches: {} }, MT = {}, MF = {}, unsubRev = [], VUE_REV = null;
 const opened = new Set();
 const fermes = new Set(); // dossiers d'année refermés par l'élève (sinon le sien s'ouvre tout seul)
 
@@ -428,6 +468,7 @@ function renderNav(){
   const items = visibleClasses().map(c => ({id:c.id, n:c.court, mini:c.mini||c.court, s:c.sous}));
   if (S.evals) items.push({id:"evaluations", n:"Évaluations", mini:"Évals", s:"Copies corrigées et bilans"});
   if (!S.user) items.push({id:"connexion", n:"Connexion", mini:"Connexion", s:"Accès aux cours de votre BTS"});
+  if (S.user && testsVisibles().length) { const n = fichesAFaire(); items.push({id:"revisions", n:"Mes révisions", mini:"Révisions", s: n ? n + " fiche" + (n > 1 ? "s" : "") + " à travailler" : "Tests d'entrée et fiches"}); }
   if (S.user && (CAT.outils || []).length) items.push({id:"outils", n:"Outils", mini:"Outils", s:"Fiches méthodes et simulations"});
   for (const it of items) {
     const b = document.createElement("button");
@@ -560,8 +601,10 @@ function remplirParNumero(c, docs, parent, k0, forceOpen){
 
 function render(){
   renderNav(); renderWho();
-  $("#searchBox").hidden = !S.user;
+  if (current === "revisions" && VUE_REV) return;   // test ou fiche en cours : ne pas effacer
+  $("#searchBox").hidden = !S.user || current === "revisions";
   const view = $("#view"); view.innerHTML = "";
+  if (current === "revisions") { renderRevisions(view); return; }
   if (current === "connexion") { view.appendChild(loginBox()); return; }
   if (current === "evaluations" && S.evals) { renderEvaluationsProf(view); return; }
   const q = $("#q").value.trim().toLowerCase();
@@ -575,6 +618,7 @@ function render(){
     const head = document.createElement("div"); head.className = "classhead";
     head.innerHTML = `<h2>${esc(c.nom)}</h2><span class="status is-open">Documents ouverts</span>`;
     view.appendChild(head);
+    if (!q && eleveRev() && c.id === S.site) { const rl = relanceFiches(); if (rl) view.appendChild(rl); }
     if (!q && !S.prof && !S.tous) view.appendChild(mesEvals(c));
     if (!c.chapitres.length) { const p = document.createElement("p"); p.className = "empty"; p.textContent = "Aucun document pour l'instant."; view.appendChild(p); }
     if (chaps.some(x => x.ch.annee)) {
@@ -598,6 +642,176 @@ function render(){
     chaps.forEach(x => { found += x.docs.length; view.appendChild(chapBlock(c, x.ch, x.docs, !!q)); });
   }
   if (q && !found) { const p = document.createElement("p"); p.className = "empty"; p.textContent = "Aucun document ne correspond à « " + $("#q").value.trim() + " »."; view.appendChild(p); }
+}
+
+
+/* ================= Mes révisions ================= */
+function testsVisibles(){
+  if (!S.user) return [];
+  return (REV.tests || []).filter(t => S.prof || S.tous || t.site === S.site);
+}
+const eleveRev = () => S.user && !S.prof && !S.premium;
+const cleF = (t, f) => t + "__" + f;
+function fichesAFaire(){
+  let n = 0;
+  for (const t of testsVisibles()) { const r = MT[t.id]; if (r) n += (r.aRevoir || []).filter(f => !MF[cleF(t.id, f)]).length; }
+  return n;
+}
+// Bandeau de relance au-dessus des chapitres tant que des fiches de révision restent à travailler
+function relanceFiches(){
+  const parChap = [];
+  for (const t of testsVisibles()) { const r = MT[t.id]; if (!r) continue;
+    const n = (r.aRevoir || []).filter(f => !MF[cleF(t.id, f)]).length; if (n) parChap.push({chap: t.chapitre, n}); }
+  const n = parChap.reduce((a, x) => a + x.n, 0); if (!n) return null;
+  const d = document.createElement("div"); d.className = "relance"; d.setAttribute("role", "status");
+  d.innerHTML = `<span class="ico" aria-hidden="true">📌</span><div class="txt"><strong>Tu as ${n} fiche${n > 1 ? "s" : ""} de révision à faire</strong>`
+    + `<span>${parChap.map(x => esc(x.chap) + " : " + x.n + " fiche" + (x.n > 1 ? "s" : "")).join(" · ")}. Fais-les avant la prochaine séance pour bien démarrer le chapitre.</span></div>`
+    + `<button class="btn" type="button">Voir mes fiches</button>`;
+  d.querySelector("button").onclick = () => { location.hash = "revisions"; };
+  return d;
+}
+function suivreRevisions(uid){
+  if (!testsVisibles().length) return;
+  unsubRev.push(onSnapshot(query(collection(db, "tests"), where("uid", "==", uid)), snap => {
+    MT = {}; snap.forEach(x => { const v = x.data(); MT[v.test] = v; }); render();
+  }, () => {}));
+  unsubRev.push(onSnapshot(query(collection(db, "revisions"), where("uid", "==", uid)), snap => {
+    MF = {}; snap.forEach(x => { const v = x.data(); MF[cleF(v.test, v.fiche)] = v; }); render();
+  }, () => {}));
+}
+async function lireRev(fichier){
+  const key = await outilsKey(); if (!key) throw new Error("cle");
+  return (await decryptBlob(BASE + "docs/revisions/" + fichier, key, "text/plain")).text();
+}
+let katexP = null;
+function katex(el){
+  if (!katexP) katexP = new Promise(ok => {
+    const u = "https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/";
+    const l = document.createElement("link"); l.rel = "stylesheet"; l.href = u + "katex.min.css"; document.head.appendChild(l);
+    const a = document.createElement("script"); a.src = u + "katex.min.js";
+    a.onload = () => { const b = document.createElement("script"); b.src = u + "contrib/auto-render.min.js"; b.onload = ok; document.head.appendChild(b); };
+    document.head.appendChild(a);
+  });
+  katexP.then(() => window.renderMathInElement && renderMathInElement(el, { delimiters: [{left:"$$", right:"$$", display:true}, {left:"$", right:"$", display:false}] }));
+}
+const nombre = s => { s = String(s ?? "").trim().replace(/\s/g, "").replace(",", "."); return s === "" || isNaN(+s) ? null : +s; };
+const juste = (q, v) => v !== null && Math.abs(v - q.reponse) <= Math.max(Math.abs(q.reponse) * (q.tolerance ?? 0.02), 1e-9);
+const dateFr = ts => { try { return (ts && ts.toDate ? ts.toDate() : new Date()).toLocaleDateString("fr-FR"); } catch(_) { return ""; } };
+
+function renderRevisions(view){
+  const head = document.createElement("div"); head.className = "classhead";
+  head.innerHTML = `<h2>Mes révisions</h2>`;
+  view.appendChild(head);
+  const intro = document.createElement("p"); intro.className = "rv-intro";
+  intro.textContent = S.prof || S.premium
+    ? "Aperçu professeur : le test (sans envoi) et toutes ses fiches. Les élèves ne voient que les fiches de leurs compétences à retravailler."
+    : "Avant un nouveau chapitre, fais le test d'entrée. Selon tes réponses, des fiches de révision s'ouvrent ici. Termine-les avant le début du chapitre.";
+  view.appendChild(intro);
+  for (const t of testsVisibles()) view.appendChild(carteTest(t));
+}
+
+function carteTest(t){
+  const box = document.createElement("div"); box.className = "rv";
+  const r = eleveRev() ? MT[t.id] : null;
+  const ids = r ? (r.aRevoir || []) : [];
+  const faites = ids.filter(f => MF[cleF(t.id, f)]).length;
+  const tag = !eleveRev() ? "" : !r ? `<span class="tag">Test à faire</span>` : faites === ids.length ? `<span class="tag ok">Prêt pour le chapitre</span>` : `<span class="tag">${ids.length - faites} fiche${ids.length - faites > 1 ? "s" : ""} à travailler</span>`;
+  box.innerHTML = `<div class="hd">${FOLDER}<h3>${esc(t.chapitre)}</h3>${tag}</div><div class="bd"></div>`;
+  const bd = box.querySelector(".bd");
+  if (!eleveRev()) {
+    bd.innerHTML = `<p>${esc(t.titre)} · ${t.nb} questions · ${esc(t.duree)}</p><div class="act"><button class="btn" type="button">Voir le test (aperçu)</button></div>`;
+    bd.querySelector("button").onclick = () => ouvrirTest(t, true);
+    bd.appendChild(listeFiches(t, null));
+    return box;
+  }
+  if (!r) {
+    bd.innerHTML = `<p><strong>${esc(t.titre)}</strong><br>${t.nb} questions · environ ${esc(t.duree)}. Tu le fais une seule fois, seul, avec ta calculatrice.</p><button class="btn" type="button">Commencer le test</button>`;
+    bd.querySelector("button").onclick = () => ouvrirTest(t, false);
+    return box;
+  }
+  bd.innerHTML = `<p>Test fait le ${esc(dateFr(r.date))}.</p>`;
+  if (!ids.length) { bd.innerHTML += `<div class="msg">Aucune fiche à revoir : tu es prêt pour le chapitre.</div>`; return box; }
+  bd.innerHTML += `<p>Tes fiches de révision : lis le rappel et l'exemple, puis réussis les trois questions de « Je m'entraîne ».</p>`;
+  bd.appendChild(listeFiches(t, ids));
+  if (faites === ids.length) bd.insertAdjacentHTML("beforeend", `<div class="msg">Toutes tes fiches sont terminées. Ton professeur est prévenu : tu es prêt pour le chapitre.</div>`);
+  return box;
+}
+
+function listeFiches(t, ids){
+  const ul = document.createElement("ul"); ul.className = "fl";
+  (ids || t.fiches || []).forEach(f => {
+    const fi = REV.fiches[f]; if (!fi) return;
+    const fait = ids && MF[cleF(t.id, f)];
+    const li = document.createElement("li");
+    li.innerHTML = `<span class="t">${esc(fi.titre)}<small${fait ? ' class="ok"' : ""}>${!ids ? "Fiche de révision" : fait ? "✓ Terminée le " + esc(dateFr(fait.date)) : "À travailler"}</small></span><button class="btn${fait ? " ghost" : ""}" type="button">${fait ? "Revoir" : "Ouvrir"}</button>`;
+    li.querySelector("button").onclick = () => ouvrirFiche(t, f);
+    ul.appendChild(li);
+  });
+  return ul;
+}
+
+async function ouvrirTest(t, apercu){
+  const view = $("#view");
+  let T;
+  try { T = JSON.parse(await lireRev(t.fichier)); } catch(e) { toast("Impossible d'ouvrir le test. Rechargez la page."); return; }
+  VUE_REV = "test"; window.scrollTo(0, 0);
+  view.innerHTML = "";
+  const box = document.createElement("div"); box.className = "tst";
+  box.innerHTML = `<div class="classhead"><h2>${esc(T.titre)}</h2>${apercu ? '<span class="status">Aperçu professeur : rien n\'est envoyé</span>' : ""}</div>
+    <div class="cons">${esc(T.consigne || "")}</div>`
+    + T.questions.map((q, i) => `<div class="qq"><div><span class="n">${i + 1}.</span> ${q.enonce}</div>${q.figure || ""}
+      <div class="ln"><input inputmode="decimal" aria-label="Réponse ${i + 1}" autocomplete="off"> <span>${esc(q.unite || "")}</span></div><div class="pv"></div></div>`).join("")
+    + `<p class="err"></p><div class="act"><button class="btn" type="button" id="envoi">${apercu ? "Vérifier (aperçu)" : "Envoyer mes réponses"}</button><button class="btn ghost" type="button" id="annul">Revenir</button></div>`;
+  view.appendChild(box); katex(box);
+  box.querySelector("#annul").onclick = () => { if (apercu || confirm("Quitter le test ? Tes réponses ne seront pas gardées.")) { VUE_REV = null; render(); } };
+  box.querySelector("#envoi").onclick = async () => {
+    const champs = [...box.querySelectorAll(".qq input")];
+    const rep = champs.map(x => x.value.trim());
+    const ok = T.questions.map((q, i) => juste(q, nombre(rep[i])));
+    if (apercu) {
+      box.querySelectorAll(".qq .pv").forEach((d, i) => { const q = T.questions[i];
+        d.className = "pv " + (ok[i] ? "ok" : "ko");
+        d.textContent = (ok[i] ? "✓ Juste" : "✗ Attendu : " + String(q.reponse).replace(".", ",") + " " + (q.unite || "")) + " · fiche « " + (REV.fiches[q.fiche] || {}).titre + " »"; });
+      return;
+    }
+    const vides = rep.filter(x => x === "").length, err = box.querySelector(".err");
+    const pasNombre = rep.some(x => x !== "" && nombre(x) === null);
+    if (pasNombre) { err.textContent = "Une réponse n'est pas un nombre : écris seulement le nombre (la virgule est acceptée)."; return; }
+    if (!confirm((vides ? "Tu n'as pas répondu à " + vides + " question" + (vides > 1 ? "s" : "") + ". " : "") + "Envoyer tes réponses ? Tu ne pourras plus les modifier.")) return;
+    const aRevoir = [...new Set(T.questions.filter((q, i) => !ok[i]).map(q => q.fiche))];
+    const btn = box.querySelector("#envoi"); btn.disabled = true; btn.textContent = "Envoi…";
+    try {
+      await setDoc(doc(db, "tests", S.user.uid + "__" + t.id), { uid: S.user.uid, test: t.id, nom: S.nom, classe: S.groupe || "",
+        reponses: rep, justes: ok, score: ok.filter(Boolean).length, sur: ok.length, aRevoir, date: serverTimestamp() });
+    } catch(e) { btn.disabled = false; btn.textContent = "Envoyer mes réponses"; err.textContent = "Envoi impossible. Vérifie ta connexion et réessaie."; return; }
+    window.scrollTo(0, 0);
+    box.innerHTML = `<div class="classhead"><h2>Test envoyé</h2></div>`
+      + (aRevoir.length ? `<p>Merci ! ${aRevoir.length} fiche${aRevoir.length > 1 ? "s" : ""} de révision ${aRevoir.length > 1 ? "se sont ouvertes" : "s'est ouverte"} pour toi :</p><ul>${aRevoir.map(f => "<li>" + esc((REV.fiches[f] || {}).titre || f) + "</li>").join("")}</ul><p>Travaille-les avant le début du chapitre.</p>`
+        : `<p>Merci ! Aucune fiche à revoir : tu es prêt pour le chapitre.</p>`)
+      + `<button class="btn" type="button">${aRevoir.length ? "Voir mes fiches" : "Terminer"}</button>`;
+    box.querySelector("button").onclick = () => { VUE_REV = null; render(); };
+  };
+}
+
+async function ouvrirFiche(t, f){
+  const fi = REV.fiches[f]; if (!fi) return;
+  let html;
+  try { html = await lireRev(fi.fichier); } catch(e) { toast("Impossible d'ouvrir la fiche. Rechargez la page."); return; }
+  const ov = document.createElement("div"); ov.className = "fiche-ov";
+  ov.innerHTML = `<div class="bar"><b>${esc(fi.titre)}</b><button type="button">Fermer</button></div><iframe title="${esc(fi.titre)}"></iframe>`;
+  const fr = ov.querySelector("iframe"); fr.srcdoc = html;
+  document.body.appendChild(ov); document.body.style.overflow = "hidden";
+  const onMsg = async e => {
+    if (e.source !== fr.contentWindow || !e.data || e.data.type !== "fiche-terminee") return;
+    if (!eleveRev() || MF[cleF(t.id, f)]) return;
+    try {
+      await setDoc(doc(db, "revisions", S.user.uid + "__" + t.id + "__" + f), { uid: S.user.uid, test: t.id, fiche: f, nom: S.nom, classe: S.groupe || "",
+        erreurs: +e.data.erreurs || 0, date: serverTimestamp() });
+      toast("Fiche terminée, bravo !");
+    } catch(_) { toast("La fiche n'a pas pu être enregistrée. Vérifie ta connexion, puis refais la dernière question."); }
+  };
+  window.addEventListener("message", onMsg);
+  ov.querySelector("button").onclick = () => { window.removeEventListener("message", onMsg); ov.remove(); document.body.style.overflow = ""; render(); };
 }
 
 function renderOutils(view, q){
@@ -644,14 +858,16 @@ function loginBox(){
 
 function route(){
   const h = location.hash.slice(1);
+  VUE_REV = null;
   const ids = visibleClasses().map(c => c.id);
   if (!S.user) current = "connexion";
-  else current = (h === "evaluations" && S.evals) ? h : ids.includes(h) || (h === "outils" && (CAT.outils || []).length) ? h : (S.site || ids[0]);
+  else current = (h === "evaluations" && S.evals) ? h : (h === "revisions" && testsVisibles().length) ? h : ids.includes(h) || (h === "outils" && (CAT.outils || []).length) ? h : (S.site || ids[0]);
   render();
 }
 
 async function startSession(user){
   if (unsubCorr) { unsubCorr(); unsubCorr = null; }
+  unsubRev.forEach(f => f()); unsubRev = []; MT = {}; MF = {}; VUE_REV = null;
   S = { user:null, prof:false, evals:false, premium:false, tous:false, nom:"", site:null, groupe:null, keys:{}, maitre:null, corr:{} };
   KO = null;
   if (!user) return;
@@ -700,6 +916,7 @@ async function startSession(user){
       if (!first) for (const id in now) if (!before.has(id)) { fresh.add(id); toast(id.startsWith("eval-") ? "Ta copie corrigée est disponible dans « Mes évaluations »." : chapInfo(id) ? "Un nouveau chapitre vient d'être ouvert !" : "Un corrigé vient d'être débloqué !"); }
       first = false; S.corr = now; render();
     }, () => {});
+    suivreRevisions(user.uid);
   } catch(x) {
     toast("Problème de connexion au serveur. Rechargez la page.");
   }
@@ -708,6 +925,7 @@ async function startSession(user){
 (async function init(){
   try {
     CAT = await fetch(BASE + "catalogue-v2.json", {cache:"no-cache"}).then(r => r.json());
+    REV = await fetch(BASE + "revisions.json", {cache:"no-cache"}).then(r => r.ok ? r.json() : REV).catch(() => REV);
     EVAL = await fetch(BASE + "evaluations.json", {cache:"no-cache"}).then(r => r.ok ? r.json() : { evaluations: [] }).catch(() => ({ evaluations: [] }));
     $("#who").textContent = CAT.auteur || "";
     if (CAT.titre) document.querySelector("h1").textContent = CAT.titre;

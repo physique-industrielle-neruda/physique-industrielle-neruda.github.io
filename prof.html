@@ -114,6 +114,21 @@ label.f{display:block;font-size:.9rem;color:var(--muted);margin-top:10px}
   .carte .u{font-size:9pt;margin-top:8px;color:#333}
 }
 [hidden]{display:none!important}
+/* Tests d'entrée */
+.notif{background:#FFF7E0;border:1px solid #E8C35A;border-radius:12px;padding:12px 14px;margin:14px 0}
+.notif h2{font-size:1.05rem;margin:0 0 6px}
+.notif .it{display:flex;gap:10px;align-items:center;padding:8px 0;border-top:1px solid #EBD9A3}
+.notif .it:first-of-type{border-top:0}
+.notif .it span{flex:1}
+.notif .it small{display:block;color:var(--muted)}
+.mini{font:inherit;font-size:.85rem;font-weight:700;border:1px solid var(--ink);background:none;color:var(--ink);border-radius:8px;padding:5px 10px;cursor:pointer}
+.st-ok{color:#1f7a3f;font-weight:700}.st-cours{color:#b45309;font-weight:700}.st-non{color:var(--muted)}
+.qrow{display:flex;gap:10px;padding:8px 14px;border-top:1px solid var(--grid)}
+.qrow:first-child{border-top:0}
+.qrow .r{flex:none;width:22px;font-weight:700}
+.qrow .r.ok{color:#1f7a3f}.qrow .r.ko{color:#b4372b}
+.qrow span.x{flex:1}
+.qrow small{display:block;color:var(--muted)}
 </style>
 </head>
 <body>
@@ -146,6 +161,7 @@ const enc = new TextEncoder();
 function toast(m){ const t = $("#toast"); t.textContent = m; t.style.display = "block"; clearTimeout(toast.t); toast.t = setTimeout(() => t.style.display = "none", 3500); }
 
 let CAT = null, CLASSES = [], MAITRE = null, unsub = null, EVAL = { evaluations: [] };
+let REV = { tests: [], fiches: {} }, SITES = {}, KOUT = null;   // tests d'entrée (revisions.json) et clés des BTS
 let stack = [];   // pile d'écrans pour le bouton retour
 
 function setBar(title, sub, canBack){
@@ -199,11 +215,13 @@ function loginScreen(){
 /* ---------- Données ---------- */
 async function loadAll(){
   CAT = await fetch(BASE + "catalogue-v2.json", {cache:"no-cache"}).then(r => r.json());
+  REV = await fetch(BASE + "revisions.json", {cache:"no-cache"}).then(r => r.ok ? r.json() : REV).catch(() => REV);
   EVAL = await fetch(BASE + "evaluations.json", {cache:"no-cache"}).then(r => r.ok ? r.json() : { evaluations: [] }).catch(() => ({ evaluations: [] }));
   const snap = await getDocs(collection(db, "classes"));
   CLASSES = []; snap.forEach(d => CLASSES.push({ id:d.id, ...d.data() }));
   CLASSES.sort((a, b) => (a.ordre ?? 99) - (b.ordre ?? 99));
   const p = await getDoc(doc(db, "prive", "cles"));
+  SITES = p.exists() ? (p.data().sites || {}) : {};
   MAITRE = p.exists() && p.data().corriges ? await crypto.subtle.importKey("raw", b64(p.data().corriges), "AES-GCM", false, ["decrypt"]) : null;
 }
 /* Élèves inscrits dans deux classes (ex. 2ET / 2ETA) : leur compte (uid) n'est enregistré que dans une classe ;
@@ -236,18 +254,19 @@ function home(){
     const n = (c.eleves || []).length, nc = corriges(c.site).reduce((a, x) => a + x.docs.filter(d => !d.chapitre).length, 0);
     return `<button class="row" data-id="${esc(c.id)}"><span class="main"><span class="t">${esc(c.nom)}</span><span class="m">${n} élève${n>1?"s":""} · ${nc} corrigé${nc>1?"s":""}</span></span><span class="chev"></span></button>`;
   }).join("");
-  $("#app").innerHTML = `<div class="card">${html}</div>`;
-  $("#app").querySelectorAll(".row").forEach(b => b.onclick = () => go(classe, b.dataset.id, "corriges"));
+  $("#app").innerHTML = `<div id="notif"></div><div class="card">${html}</div>`;
+  $("#app").querySelectorAll(".card .row").forEach(b => b.onclick = () => go(classe, b.dataset.id, "corriges"));
+  if ((REV.tests || []).length) suivreTests(etat => afficherNotif(etat));
 }
 
 /* ---------- Une classe ---------- */
 function classe(id, tab){
   const c = CLASSES.find(x => x.id === id); if (!c) return home();
-  setBar(c.nom, tab === "corriges" ? "Corrigés à débloquer" : tab === "evaluations" ? "Évaluations corrigées" : "Élèves et comptes", true);
-  const tabs = `<div class="tabs" role="tablist"><button role="tab" aria-selected="${tab==="corriges"}" data-t="corriges">Corrigés</button><button role="tab" aria-selected="${tab==="evaluations"}" data-t="evaluations">Évaluations</button><button role="tab" aria-selected="${tab==="eleves"}" data-t="eleves">Élèves et comptes</button></div>`;
+  setBar(c.nom, tab === "corriges" ? "Corrigés à débloquer" : tab === "evaluations" ? "Évaluations corrigées" : tab === "tests" ? "Tests d'entrée" : "Élèves et comptes", true);
+  const tabs = `<div class="tabs" role="tablist"><button role="tab" aria-selected="${tab==="corriges"}" data-t="corriges">Corrigés</button><button role="tab" aria-selected="${tab==="evaluations"}" data-t="evaluations">Évaluations</button>${testsDe(c.site).length ? `<button role="tab" aria-selected="${tab==="tests"}" data-t="tests">Tests</button>` : ""}<button role="tab" aria-selected="${tab==="eleves"}" data-t="eleves">Élèves</button></div>`;
   $("#app").innerHTML = tabs + `<div id="pane"></div>`;
   $("#app").querySelectorAll(".tabs button").forEach(b => b.onclick = () => { stack[stack.length-1] = [classe, [id, b.dataset.t]]; stopLive(); classe(id, b.dataset.t); });
-  if (tab === "corriges") paneCorriges(c); else if (tab === "evaluations") paneEvals(c); else paneEleves(c);
+  if (tab === "corriges") paneCorriges(c); else if (tab === "evaluations") paneEvals(c); else if (tab === "tests") paneTests(c); else paneEleves(c);
 }
 
 /* Rubrique d'un corrigé (Activités, TP, Exercices) : celle du catalogue, sinon devinée d'après le titre */
@@ -501,6 +520,117 @@ function printCards(c){
     <div class="l">Mot de passe : <b>${esc(e.mdp)}</b></div>
     <div class="u">Garde cette fiche. Ne communique pas ton mot de passe.</div></div>`).join("")}</div>`;
   window.print();
+}
+
+
+/* ---------- Tests d'entrée et fiches de révision ---------- */
+const testsDe = site => (REV.tests || []).filter(t => t.site === site);
+/* Écoute en direct des tests faits et des fiches terminées (tous les élèves) */
+function suivreTests(cb){
+  let T = null, F = null;
+  const go2 = () => { if (T && F) cb(etatTests(T, F)); };
+  const a = onSnapshot(collection(db, "tests"), snap => { T = []; snap.forEach(x => T.push({ id: x.id, ...x.data() })); go2(); }, e => toast("Lecture des tests impossible : " + e.code));
+  const b = onSnapshot(collection(db, "revisions"), snap => { F = []; snap.forEach(x => F.push(x.data())); go2(); }, () => {});
+  unsub = () => { a(); b(); };
+}
+function etatTests(T, F){
+  const faites = {}; F.forEach(f => { faites[f.uid + "__" + f.test + "__" + f.fiche] = f; });
+  return T.map(t => {
+    const fiches = (t.aRevoir || []).map(f => ({ id: f, fait: faites[t.uid + "__" + t.test + "__" + f] || null }));
+    return { ...t, fiches, pret: fiches.every(x => x.fait) };
+  });
+}
+const titreTest = id => ((REV.tests || []).find(t => t.id === id) || {}).chapitre || id;
+const titreFiche = id => (REV.fiches[id] || {}).titre || id;
+const jour = ts => { try { return ts && ts.toDate ? ts.toDate().toLocaleDateString("fr-FR") : ""; } catch(_) { return ""; } };
+function afficherNotif(etat){
+  const box = $("#notif"); if (!box) return;
+  const nv = etat.filter(t => t.pret && !t.vuProf);
+  if (!nv.length) { box.innerHTML = ""; return; }
+  box.innerHTML = `<div class="notif"><h2>🔔 Prêts à commencer le chapitre</h2>` + nv.map(t =>
+    `<div class="it"><span><b>${esc(t.nom)}</b> – ${esc(titreTest(t.test))}<small>${t.fiches.length ? "Test fait, " + plur(t.fiches.length, "fiche") + " de révision " + (t.fiches.length > 1 ? "terminées" : "terminée") : "Test fait, aucune fiche à revoir"}</small></span><button class="mini" data-id="${esc(t.id)}">Vu</button></div>`).join("")
+    + (nv.length > 1 ? `<div style="text-align:right;margin-top:6px"><button class="mini" id="tousvus">Tout marquer comme vu</button></div>` : "") + `</div>`;
+  const vu = ids => Promise.all(ids.map(id => setDoc(doc(db, "tests", id), { vuProf: true }, { merge: true }))).catch(e => toast("Impossible : " + e.code));
+  box.querySelectorAll("[data-id]").forEach(b => b.onclick = () => vu([b.dataset.id]));
+  const t = box.querySelector("#tousvus"); if (t) t.onclick = () => vu(nv.map(x => x.id));
+}
+
+function paneTests(c){
+  const tests = testsDe(c.site), el = elevesDe(c);
+  const render = etat => {
+    $("#pane").innerHTML = tests.map((t, k) => {
+      const rows = el.map(e => {
+        const r = etat.find(x => x.uid === e.uid && x.test === t.id);
+        let m, cl;
+        if (!r) { m = "Test pas encore fait"; cl = "st-non"; }
+        else {
+          const nf = r.fiches.filter(x => x.fait).length;
+          m = r.score + "/" + r.sur + " · " + (r.fiches.length ? "fiches terminées : " + nf + "/" + r.fiches.length : "aucune fiche à revoir");
+          cl = r.pret ? "st-ok" : "st-cours"; m = (r.pret ? "✅ Prêt · " : "En cours · ") + m;
+        }
+        return `<button class="row" data-u="${esc(e.uid)}" data-k="${k}"><span class="main"><span class="t">${esc(e.nom)}</span><span class="m ${cl}">${esc(m)}</span></span><span class="chev"></span></button>`;
+      }).join("");
+      const n = etat.filter(x => x.test === t.id && el.some(e => e.uid === x.uid)), prets = n.filter(x => x.pret).length;
+      return `<h2 style="margin:16px 4px 6px;font-size:1.15rem">${esc(t.chapitre)}</h2><p class="note" style="margin:0 4px 8px">${n.length}/${el.length} test${n.length > 1 ? "s" : ""} fait${n.length > 1 ? "s" : ""} · ${prets} prêt${prets > 1 ? "s" : ""} pour le chapitre</p><div class="card">${rows}</div>`;
+    }).join("") + `<p class="note">Le test et les fiches se font sur le site, onglet « Mes révisions ». Les fiches des compétences ratées s'ouvrent toutes seules pour l'élève. Une fiche n'est « terminée » que lorsque ses trois questions sont réussies.</p>`;
+    $("#pane").querySelectorAll(".row").forEach(b => b.onclick = () => {
+      const e = el.find(x => x.uid === b.dataset.u), t = tests[+b.dataset.k];
+      const r = etat.find(x => x.uid === e.uid && x.test === t.id);
+      if (r) go(testEleve, c.id, t.id, e.uid); else toast(e.nom + " n'a pas encore fait le test.");
+    });
+  };
+  $("#pane").innerHTML = `<p class="empty">Chargement…</p>`;
+  suivreTests(render);
+}
+
+let CACHE_TESTS = {};
+async function cleOutils(){
+  if (KOUT) return KOUT;
+  for (const id in SITES) {
+    const wk = CAT.outilsWk && CAT.outilsWk[id]; if (!wk) continue;
+    try {
+      const k = await crypto.subtle.importKey("raw", b64(SITES[id]), "AES-GCM", false, ["decrypt"]);
+      const w = b64(wk);
+      KOUT = await crypto.subtle.importKey("raw", await crypto.subtle.decrypt({name:"AES-GCM", iv:w.slice(0,12), additionalData:enc.encode("outils")}, k, w.slice(12)), "AES-GCM", false, ["decrypt"]);
+      return KOUT;
+    } catch(_){}
+  }
+  return null;
+}
+async function contenuTest(t){
+  if (CACHE_TESTS[t.id]) return CACHE_TESTS[t.id];
+  const k = await cleOutils(); if (!k) return null;
+  const buf = new Uint8Array(await (await fetch(BASE + "docs/revisions/" + t.fichier, {cache:"no-cache"})).arrayBuffer());
+  return CACHE_TESTS[t.id] = JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({name:"AES-GCM", iv:buf.slice(0,12)}, k, buf.slice(12))));
+}
+const sansLatex = s => String(s || "").replace(/\$([^$]*)\$/g, (m, x) => x.replace(/\\text\{([^}]*)\}/g, "$1").replace(/\\Omega/g, "Ω").replace(/\\log/g, "log").replace(/\\ /g, " ").replace(/\{,\}/g, ",").replace(/_(\w)/g, "$1").replace(/[{}\\]/g, ""));
+
+function testEleve(cid, tid, uid){
+  const c = CLASSES.find(x => x.id === cid), t = (REV.tests || []).find(x => x.id === tid), e = elevesDe(c).find(x => x.uid === uid);
+  setBar(e.nom, "Test d'entrée – " + t.chapitre, true);
+  $("#app").innerHTML = `<p class="empty">Chargement…</p>`;
+  let T = null; contenuTest(t).then(x => { T = x; }).catch(() => {});
+  suivreTests(async etat => {
+    const r = etat.find(x => x.uid === uid && x.test === tid);
+    if (!r) { $("#app").innerHTML = `<p class="empty">Le test a été effacé.</p>`; return; }
+    try { T = T || await contenuTest(t); } catch(_){}
+    const qs = (r.justes || []).map((ok, i) => {
+      const q = T && T.questions[i];
+      return `<div class="qrow"><span class="r ${ok ? "ok" : "ko"}">${ok ? "✓" : "✗"}</span><span class="x">Question ${i + 1}${q ? " – " + esc(titreFiche(q.fiche)) : ""}<small>${q ? esc(sansLatex(q.enonce)) + "<br>" : ""}Réponse : ${esc((r.reponses || [])[i] || "(vide)")}${q ? " " + esc(q.unite || "") + (ok ? "" : " · attendu " + esc(String(q.reponse).replace(".", ",")) + " " + esc(q.unite || "")) : ""}</small></span></div>`;
+    }).join("");
+    const fs = r.fiches.map(f => `<div class="qrow"><span class="r ${f.fait ? "ok" : "ko"}">${f.fait ? "✓" : "…"}</span><span class="x">${esc(titreFiche(f.id))}<small>${f.fait ? "Terminée le " + jour(f.fait.date) + " · " + (f.fait.erreurs ? plur(f.fait.erreurs, "réponse fausse") + " avant de réussir" : "réussie du premier coup") : "Pas encore terminée"}</small></span></div>`).join("");
+    $("#app").innerHTML = `<p class="note" style="margin:14px 4px 6px">Fait le ${jour(r.date)} · <b>${r.score}/${r.sur}</b> · ${r.pret ? '<span class="st-ok">✅ Prêt pour le chapitre</span>' : '<span class="st-cours">Fiches en cours</span>'}</p>
+      <h2 style="margin:14px 4px 6px;font-size:1.1rem">Fiches de révision ouvertes</h2><div class="card">${fs || '<div class="qrow"><span class="x">Aucune : toutes les compétences sont acquises.</span></div>'}</div>
+      <h2 style="margin:14px 4px 6px;font-size:1.1rem">Réponses au test</h2><div class="card">${qs}</div>
+      <div class="btns"><button class="btn ghost" id="redo">Faire refaire le test</button></div>`;
+    $("#redo").onclick = async () => {
+      if (!confirm("Effacer le test de " + e.nom + " et ses fiches terminées ? Il pourra refaire le test.")) return;
+      try {
+        await Promise.all(r.fiches.filter(f => f.fait).map(f => deleteDoc(doc(db, "revisions", uid + "__" + tid + "__" + f.id))));
+        await deleteDoc(doc(db, "tests", r.id)); toast("Test effacé."); $("#back").click();
+      } catch(x){ toast("Impossible : " + x.code); }
+    };
+  });
 }
 
 /* ---------- Réglages : import du fichier ---------- */

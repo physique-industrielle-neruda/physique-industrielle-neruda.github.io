@@ -1,0 +1,58 @@
+{
+ "version": 1,
+ "tests": [
+  {
+   "id": "cira-amplification",
+   "site": "cira",
+   "titre": "Test d'entrée – Amplification",
+   "chapitre": "Amplification",
+   "duree": "15 min",
+   "nb": 10,
+   "fiches": [
+    "puissances-de-10-et-conversions",
+    "loi-d-ohm",
+    "loi-des-mailles",
+    "loi-des-noeuds",
+    "pont-diviseur-de-tension",
+    "signal-4-20-ma",
+    "decalage-de-zero-et-gain",
+    "logarithme-et-decibels"
+   ],
+   "fichier": "cc2121bedce72b554b9ec2f7.bin"
+  }
+ ],
+ "fiches": {
+  "decalage-de-zero-et-gain": {
+   "titre": "Décalage de zéro et gain",
+   "fichier": "47f214b423f7df27ed865a66.bin"
+  },
+  "logarithme-et-decibels": {
+   "titre": "Logarithme et décibels",
+   "fichier": "8ec6689be9c9dc4bc37dd323.bin"
+  },
+  "loi-d-ohm": {
+   "titre": "Loi d'Ohm",
+   "fichier": "7c32bea689d027eb56928a78.bin"
+  },
+  "loi-des-mailles": {
+   "titre": "Loi des mailles",
+   "fichier": "e1a5a867a4f591bcacde148f.bin"
+  },
+  "loi-des-noeuds": {
+   "titre": "Loi des nœuds",
+   "fichier": "26b7b99c95c8461467ed6d51.bin"
+  },
+  "pont-diviseur-de-tension": {
+   "titre": "Pont diviseur de tension",
+   "fichier": "c31cb222f66a44ae77cca954.bin"
+  },
+  "puissances-de-10-et-conversions": {
+   "titre": "Puissances de 10 et conversions",
+   "fichier": "c576a54e5ac38bc3db42ee18.bin"
+  },
+  "signal-4-20-ma": {
+   "titre": "Signal 4-20 mA",
+   "fichier": "e4c85c52d7ed2731a4e303e9.bin"
+  }
+ }
+}
