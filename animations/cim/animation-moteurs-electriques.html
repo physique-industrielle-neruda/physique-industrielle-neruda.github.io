@@ -114,6 +114,7 @@ table.pts th{color:var(--muted);font-weight:500}
 
 .seg.two{grid-template-columns:1fr 1fr}
 
+.masq{font-style:italic;opacity:.6;font-weight:400}
 </style>
 </head>
 <body>
@@ -488,6 +489,29 @@ const PARTS = [
 ];
 const answers = {};
 PARTS.forEach((p) => { answers[p.id] = p.qs.map(() => ({ val: '', ok: null, tries: 0 })); });
+/* ---------- Masquage des réponses (19/11/2026) ----------
+   Tant qu'un élève n'a pas répondu à une question (réponse juste ou correction affichée),
+   les valeurs du banc qui donnent sa réponse sont remplacées par « masqué ».
+   Clés : « s:<titre de la valeur> » (pupitre des valeurs), « o:<id> » (valeur d'un réglage),
+   « i:<id> » (case de saisie), « g:<début d'un texte du graphique> », « x:<expression régulière d'un texte du graphique> ». */
+const MASQUE = {"0": {"g:n₀ = ": [0], "s:n (tr/min)": [3, 8], "s:I (A)": [4], "s:E (V)": [5], "s:Pa (W)": [6], "s:η": [7], "s:Pu (W)": [7], "s:PJ": [7], "s:Id direct": [10]}, "1": {"g:nS = ": [1], "s:n (tr/min)": [3, 8], "s:g (%)": [4], "s:Pu (W)": [5], "s:Démarrage": [7]}, "2": {"s:n (tr/min)": [1, 4], "s:T (N·m)": [2], "s:g (%)": [1, 4], "s:Pu (W)": [3, 5], "s:Démarrage": [0]}};
+function qFaite(pi, qi) { const a = answers[PARTS[pi].id][qi]; return !!a && (a.ok || a.tries >= 2); }
+function masquer() {
+  const pi = PARTS.findIndex((p) => p.id === cur), R = MASQUE[pi]; if (!R) return;
+  for (const [cle, need] of Object.entries(R)) {
+    if (need.every((i) => qFaite(pi, i))) continue;
+    const t = cle.slice(0, 2), k = cle.slice(2);
+    if (t === 's:') document.querySelectorAll('.stat').forEach((e) => { const kk = e.querySelector('.k'), v = e.querySelector('.v'); if (kk && v && kk.textContent.trim().startsWith(k) && v.textContent !== 'masqué') { v.innerHTML = '<span class="masq" title="Réponds d’abord à la question correspondante">masqué</span>'; } });
+    else if (t === 'o:') { const e = document.getElementById(k); if (e && e.textContent !== 'masqué') { e.innerHTML = '<span class="masq">masqué</span>'; } }
+    else if (t === 'i:') { const e = document.getElementById(k); if (e && document.activeElement !== e && e.value !== '') e.value = ''; }
+    else if (t === 'g:') document.querySelectorAll('svg text').forEach((e) => { if (e.textContent.startsWith(k) && e.textContent !== k + '?') e.textContent = k + '?'; });
+    else if (t === 'x:') { const re = new RegExp(k); document.querySelectorAll('svg text').forEach((e) => { if (re.test(e.textContent)) e.textContent = '?'; }); }
+  }
+}
+function rafraichir() { try { sync(); } catch (e) {} masquer(); }
+new MutationObserver(masquer).observe(document.body, { subtree: true, childList: true, characterData: true });
+['input', 'change', 'click', 'keyup'].forEach((ev) => document.addEventListener(ev, () => setTimeout(masquer, 0)));
+
 let cur = 'A';
 const valA = (q) => (typeof q.a === 'function' ? q.a() : q.a);
 function renderChips() {
@@ -526,7 +550,7 @@ function check(p, i) {
     if (!isFinite(v)) return;
     a.ok = Math.abs(v - valA(q)) <= q.tol;
   }
-  a.tries++;
+  a.tries++; setTimeout(rafraichir, 0);
   feedback(p, i, true); renderChips();
 }
 function feedback(p, i) {

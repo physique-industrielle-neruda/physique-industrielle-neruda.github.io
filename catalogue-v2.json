@@ -499,7 +499,7 @@
       {
        "titre": "Animation – Statique des fluides",
        "type": "Animation",
-       "fichier": "d150ed9983bed9c9fab88c95.bin",
+       "fichier": "708045c2e3f1ab77096dd506.bin",
        "format": "html",
        "cv": "et-chap-statique-des-fluides",
        "rubrique": "Animation"
@@ -835,7 +835,7 @@
       {
        "titre": "animation le hacheur",
        "type": "Animation",
-       "fichier": "8fee0fede3fde5aeaf9461bf.bin",
+       "fichier": "4141c71e9e91fdaf322d349e.bin",
        "format": "html",
        "cv": "et-chap-le-hacheur"
       },
@@ -2086,7 +2086,7 @@
       {
        "titre": "Animation – Chaîne d'acquisition",
        "type": "Animation",
-       "fichier": "7049249fdae566a9c7bea4a7.bin",
+       "fichier": "826093468ded85ce679c79b2.bin",
        "format": "html",
        "cv": "cira-chap-chaine-d-acquisition",
        "rubrique": "Animation"
@@ -2471,7 +2471,7 @@
       {
        "titre": "Animation – Amplification",
        "type": "Animation",
-       "fichier": "f71409f8938909012c33853f.bin",
+       "fichier": "409c3c09845193e38c758272.bin",
        "format": "html",
        "cv": "cira-chap-amplification",
        "rubrique": "Animation"
@@ -3086,9 +3086,9 @@
   }
  ],
  "outilsWk": {
-  "et": "Y1RZYrRzxdtsa7IGoO79wfmSBIebVxqsrhMDnWspGToHxFF9PoQW85GMYJNfIMfXDMMKPXBaciUyde13",
-  "cira": "rWTZ0Oil3rOjMRDUwlw+tL1S4rz0GgZ+ba7S9DEKQ5M/A1zrOj9M40EOaxuaOcUOCmuNKT0Ju03ew+UY",
-  "cim": "quJAVSYU9LJCSzsjac6yqltrs4DqzObSK7CXFnq81Z6w7NIBoWC2gbWhVtmnMvUP6wqRXZMYs5+zrwuR"
+  "et": "LqEvL81Mf+lvpUeqMX9N3LGiN/s6OgAb1zlDRP2Lz/NZDZamflR7z435NZFUGKNvVB+Q9Gmu4OztiFSP",
+  "cira": "G+NzAW2Y0Aca8c+qQMW2GjTiot4cwUhg7LXhE0xIHr3WNVRMVm8w53wyx+lzwE0klMzhpHgDm/sU58K3",
+  "cim": "lPrS029J8VgHFREkv6Ir9RptTvF6MR0XLgHHBxcOthbkaHgls/dnrlPmqhdeQVm5DKJsD2axGogIzNqW"
  },
  "outils": [
   {

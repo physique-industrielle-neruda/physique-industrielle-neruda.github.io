@@ -3,7 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}#calc mjx-container,.fb mjx-container{display:inline-block;max-width:100%;overflow-x:auto;overflow-y:hidden;vertical-align:middle}</style>
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}#calc mjx-container,.fb mjx-container{display:inline-block;max-width:100%;overflow-x:auto;overflow-y:hidden;vertical-align:middle}.masq{font-style:italic;opacity:.6;font-weight:400}
+</style>
 <script>
 window.MathJax = { tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] },
   chtml: { scale: 1.05 }, options: { enableMenu: false }, startup: { typeset: false } };
@@ -667,6 +668,29 @@ const PARTS = [
     ] },
 ];
 const answers = {}; let part = 0;
+/* ---------- Masquage des réponses (19/11/2026) ----------
+   Tant qu'un élève n'a pas répondu à une question (réponse juste ou correction affichée),
+   les valeurs du banc qui donnent sa réponse sont remplacées par « masqué ».
+   Clés : « s:<titre de la valeur> » (pupitre des valeurs), « o:<id> » (valeur d'un réglage),
+   « i:<id> » (case de saisie), « g:<début d'un texte du graphique> », « x:<expression régulière d'un texte du graphique> ». */
+const MASQUE = {"0": {"o:o-fe": [1], "o:o-bits": [2], "s:CAN ": [2], "s:Quantum": [3, 4]}, "2": {"o:o-fc": [0], "s:Gain du filtre": [2], "s:Soit, en décibels": [2, 3]}};
+function qFaite(pi, qi) { const a = answers[PARTS[pi].id + qi]; return !!a && (a.ok || a.tries >= 2); }
+function masquer() {
+  const pi = part, R = MASQUE[pi]; if (!R) return;
+  for (const [cle, need] of Object.entries(R)) {
+    if (need.every((i) => qFaite(pi, i))) continue;
+    const t = cle.slice(0, 2), k = cle.slice(2);
+    if (t === 's:') document.querySelectorAll('.stat').forEach((e) => { const kk = e.querySelector('.k'), v = e.querySelector('.v'); if (kk && v && kk.textContent.trim().startsWith(k) && v.textContent !== 'masqué') { v.innerHTML = '<span class="masq" title="Réponds d’abord à la question correspondante">masqué</span>'; } });
+    else if (t === 'o:') { const e = document.getElementById(k); if (e && e.textContent !== 'masqué') { e.innerHTML = '<span class="masq">masqué</span>'; } }
+    else if (t === 'i:') { const e = document.getElementById(k); if (e && document.activeElement !== e && e.value !== '') e.value = ''; }
+    else if (t === 'g:') document.querySelectorAll('svg text').forEach((e) => { if (e.textContent.startsWith(k) && e.textContent !== k + '?') e.textContent = k + '?'; });
+    else if (t === 'x:') { const re = new RegExp(k); document.querySelectorAll('svg text').forEach((e) => { if (re.test(e.textContent)) e.textContent = '?'; }); }
+  }
+}
+function rafraichir() { try { buildPanel(); buildNum(); draw(); } catch (e) {} masquer(); }
+new MutationObserver(masquer).observe(document.body, { subtree: true, childList: true, characterData: true });
+['input', 'change', 'click', 'keyup'].forEach((ev) => document.addEventListener(ev, () => setTimeout(masquer, 0)));
+
 function applySet(q) {
   if (q && q.set && q.set.preset) { const { preset, ...rest } = q.set; load(preset, rest); }
   else { PARTS[part].load(); if (q && q.set) { Object.assign(st, q.set); if (q.set.noise) newNoise(); st.Fe = clampFe(st.Fe); buildPanel(); draw(); } }
@@ -700,7 +724,7 @@ function renderParts() {
         if (isNaN(n)) { slot.innerHTML = `<div class="fb bad">Entre une valeur numérique (la virgule est acceptée), sans l'unité.</div>`; return; }
         ok = Math.abs(n - q.a) <= q.tol + 1e-9;
       }
-      answers[id] = { v, ok, tries: (answers[id]?.tries || 0) + 1 };
+      answers[id] = { v, ok, tries: (answers[id]?.tries || 0) + 1 }; setTimeout(rafraichir, 0);
       slot.innerHTML = fbHtml(q, answers[id]); li.classList.toggle('done', ok);
     };
     li.querySelector('[data-check]').addEventListener('click', check);

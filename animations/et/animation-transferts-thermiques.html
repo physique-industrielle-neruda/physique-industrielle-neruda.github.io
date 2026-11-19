@@ -109,6 +109,7 @@ table.pts th{color:var(--muted);font-weight:500}
 .form label{font-size:.9rem}
 .small{font-size:.82rem;color:var(--muted)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+.masq{font-style:italic;opacity:.6;font-weight:400}
 </style>
 
 </head>
@@ -541,6 +542,29 @@ const PARTS = [
     ] },
 ];
 let part = 0; const answers = store.get('ans', {});
+/* ---------- Masquage des réponses (19/11/2026) ----------
+   Tant qu'un élève n'a pas répondu à une question (réponse juste ou correction affichée),
+   les valeurs du banc qui donnent sa réponse sont remplacées par « masqué ».
+   Clés : « s:<titre de la valeur> » (pupitre des valeurs), « o:<id> » (valeur d'un réglage),
+   « i:<id> » (case de saisie), « g:<début d'un texte du graphique> », « x:<expression régulière d'un texte du graphique> ». */
+const MASQUE = {"0": {"s:Δθ": [0], "s:Q = m·c·Δθ": [1, 2], "s:Q vaporisation": [5], "s:durée du palier": [5]}, "1": {"s:R₁": [1], "s:R₂": [1], "s:R totale": [1], "s:flux Φ": [2, 4], "s:énergie / 24 h": [3]}};
+function qFaite(pi, qi) { const a = answers[`${pi}-${qi}`]; return !!a && (a.ok || a.tries >= 2); }
+function masquer() {
+  const pi = part, R = MASQUE[pi]; if (!R) return;
+  for (const [cle, need] of Object.entries(R)) {
+    if (need.every((i) => qFaite(pi, i))) continue;
+    const t = cle.slice(0, 2), k = cle.slice(2);
+    if (t === 's:') document.querySelectorAll('.stat').forEach((e) => { const kk = e.querySelector('.k'), v = e.querySelector('.v'); if (kk && v && kk.textContent.trim().startsWith(k) && v.textContent !== 'masqué') { v.innerHTML = '<span class="masq" title="Réponds d’abord à la question correspondante">masqué</span>'; } });
+    else if (t === 'o:') { const e = document.getElementById(k); if (e && e.textContent !== 'masqué') { e.innerHTML = '<span class="masq">masqué</span>'; } }
+    else if (t === 'i:') { const e = document.getElementById(k); if (e && document.activeElement !== e && e.value !== '') e.value = ''; }
+    else if (t === 'g:') document.querySelectorAll('svg text').forEach((e) => { if (e.textContent.startsWith(k) && e.textContent !== k + '?') e.textContent = k + '?'; });
+    else if (t === 'x:') { const re = new RegExp(k); document.querySelectorAll('svg text').forEach((e) => { if (re.test(e.textContent)) e.textContent = '?'; }); }
+  }
+}
+function rafraichir() { try { buildCtrl(); draw(); } catch (e) {} masquer(); }
+new MutationObserver(masquer).observe(document.body, { subtree: true, childList: true, characterData: true });
+['input', 'change', 'click', 'keyup'].forEach((ev) => document.addEventListener(ev, () => setTimeout(masquer, 0)));
+
 function loadPart() {
   const P = PARTS[part]; st.view = 'q';
   if (P.mode === 'c') st.c = { ...DEF.c, T: [...DEF.c.T], I: 160, name: 'Q7' }; else st[P.mode] = { ...P.set };
@@ -573,7 +597,7 @@ function check(li, q) {
   else { v = li.querySelector('input[type=text]').value; const n = parseNum(v); if (isNaN(n)) { li.querySelector('.fb-slot').innerHTML = '<div class="fb bad">Entrez une valeur numérique (virgule acceptée).</div>'; return; } ok = Math.abs(n - q.a) <= q.tol; }
   const prev = answers[id] || {}, tries = (prev.tries || 0) + 1;
   const fb = ok ? `<div class="fb ok"><b>Correct.</b> ${q.ex}</div>` : `<div class="fb bad"><b>À revoir.</b> ${tries >= 2 ? q.ex : (q.hint ? 'Utilisez le coup de pouce, vérifiez les unités puis réessayez.' : 'Relisez la situation et réessayez.')}</div>`;
-  answers[id] = { v, ok: ok || prev.ok, tries, fb, first: prev.first ?? ok }; store.set('ans', answers);
+  answers[id] = { v, ok: ok || prev.ok, tries, fb, first: prev.first ?? ok }; store.set('ans', answers); setTimeout(rafraichir, 0);
   li.querySelector('.fb-slot').innerHTML = fb; li.classList.toggle('done', !!answers[id].ok); score();
 }
 function score() {

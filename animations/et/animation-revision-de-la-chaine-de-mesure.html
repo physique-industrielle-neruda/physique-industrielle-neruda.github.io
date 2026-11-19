@@ -101,8 +101,8 @@ footer{color:var(--muted);font-size:.85rem;text-align:center}
     <div class="ctl">
       <div class="lbl">Transmetteur de niveau d'une bâche (0 m → 8 m)</div>
       <div class="slider"><label for="h2">Hauteur d'eau h</label><output id="oh2">4,0 m</output><input id="h2" type="range" min="0" max="8" step="0.1" value="4"></div>
-      <div class="stat"><span>Courant envoyé</span><b id="oi2">12,00 mA</b></div>
-      <div class="stat"><span>Tension sur 250 Ω</span><b id="ou2">3,00 V</b></div>
+      <div class="stat"><span>Courant envoyé</span><b id="oi2">masqué</b></div>
+      <div class="stat"><span>Tension sur 250 Ω</span><b id="ou2">masqué</b></div>
       <label class="opts"><span><input type="checkbox" id="cut2"> Couper le câble</span></label>
       <div class="stat"><span>Automate</span><b id="oa2">mesure valide</b></div>
     </div>
@@ -123,8 +123,8 @@ footer{color:var(--muted);font-size:.85rem;text-align:center}
     <div class="ctl">
       <div class="lbl">Carte d'entrée 4-20 mA (PE = 16 mA)</div>
       <div class="slider"><label for="n4">Nombre de bits n</label><output id="on4">3 bits</output><input id="n4" type="range" min="2" max="12" step="1" value="3"></div>
-      <div class="stat"><span>Nombre de valeurs</span><b id="ov4">8</b></div>
-      <div class="stat"><span>Quantum q</span><b id="oq4">2 000 µA</b></div>
+      <div class="stat"><span>Nombre de valeurs</span><b id="ov4">masqué</b></div>
+      <div class="stat"><span>Quantum q</span><b id="oq4">masqué</b></div>
       <div class="hint" style="font-size:.85rem;color:var(--muted)">Le tracé montre un signal lent ; au-delà de 8 bits, les marches deviennent invisibles à l'écran.</div>
     </div>
   </div>
@@ -218,6 +218,12 @@ const Q={
     hint:"Résolution = plus petite variation visible ; précision = écart possible avec la vraie valeur.",sol:"Bonne résolution (0,01 °C) mais mauvaise précision (± 2 °C)."}
 };
 
+/* Masquage des réponses (19/11/2026) : les valeurs du banc qui donnent une réponse restent masquées
+   tant que l'élève n'a pas répondu à la question (réponse juste ou deux essais). */
+const FAIT={};
+const lk=l=>!l.every(n=>FAIT[n]);
+const MQ="masqué";
+function rafraichir(){try{draw2();draw4();}catch(e){}}
 function typeset(node){ if(window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([node]).catch(()=>{}); }
 
 function render(n){
@@ -255,10 +261,10 @@ function render(n){
     else if(q.type==="multi"){ empty=!v.length; ok=v.length===q.ok.length&&q.ok.every(i=>v.includes(i)); }
     else if(q.type==="match"){ empty=v.some(x=>!x); ok=v.every((x,i)=>x===q.items[i][1]); }
     if(empty){show("bad","Donne d'abord une réponse.");return;}
-    if(ok){show("ok","✓ Juste ! "+(q.sol?`<span style="color:var(--ink)">${q.sol}</span>`:""));sb.hidden=true;return;}
+    if(ok){FAIT[n]=1;setTimeout(rafraichir,0);show("ok","✓ Juste ! "+(q.sol?`<span style="color:var(--ink)">${q.sol}</span>`:""));sb.hidden=true;return;}
     tries++;
     show("bad","✗ Pas encore. "+(q.hint?"Indice : "+q.hint:"Relis le rappel."));
-    if(tries>=2) sb.hidden=false;
+    if(tries>=2){sb.hidden=false;FAIT[n]=1;setTimeout(rafraichir,0);}
   }
   b.addEventListener("click",check);
   sb.addEventListener("click",()=>show("sol","Réponse : "+q.sol));
@@ -283,8 +289,8 @@ function draw2(){
     el("circle",{cx:X(h),cy:Y(I),r:5,fill:css("--accent")},sv);
   } else { txt(sv,X(2.2),Y(1.2),"I = 0 mA : en dessous de 3,6 mA !",{fill:css("--bad"),"font-weight":"bold","font-size":14}); }
   $("oh2").textContent=fr(h,1)+" m";
-  $("oi2").textContent=fr(I,2)+" mA";
-  $("ou2").textContent=fr(0.25*I,2)+" V";
+  $("oi2").textContent=lk([5,6])?MQ:fr(I,2)+" mA";
+  $("ou2").textContent=lk([5,6,7])?MQ:fr(0.25*I,2)+" V";
   $("oa2").textContent=cut?"ALARME : défaut capteur":"mesure valide";
   $("oa2").style.color=cut?css("--bad"):css("--ok");
 }
@@ -331,8 +337,8 @@ function draw4(){
   el("path",{d:dq,fill:"none",stroke:css("--blue"),"stroke-width":2},sv);
   txt(sv,44,24,"analogique",{fill:css("--accent"),"font-weight":"bold"}); txt(sv,140,24,"quantifié par le CAN",{fill:css("--blue"),"font-weight":"bold"});
   txt(sv,4,Y(0)+4,"4 mA"); txt(sv,0,Y(1)+4,"20 mA");
-  $("on4").textContent=n+" bits"; $("ov4").textContent=N.toLocaleString("fr-FR");
-  const q=16000/N; $("oq4").textContent=(q>=100?fr(q,0):q>=10?fr(q,1):fr(q,2))+" µA";
+  $("on4").textContent=n+" bits"; $("ov4").textContent=lk([13])?MQ:N.toLocaleString("fr-FR");
+  const q=16000/N; $("oq4").textContent=lk([14])?MQ:(q>=100?fr(q,0):q>=10?fr(q,1):fr(q,2))+" µA";
 }
 $("n4").addEventListener("input",draw4);
 
