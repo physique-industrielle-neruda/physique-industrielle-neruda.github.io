@@ -1954,6 +1954,14 @@
        "rubrique": "Réviser"
       },
       {
+       "titre": "Fiche de révision – Exercices corrigés",
+       "type": "Fiche",
+       "fichier": "aa8a79e3c7d5aa2a2d89dc99.bin",
+       "taille": 273285,
+       "pages": 6,
+       "rubrique": "Réviser"
+      },
+      {
        "titre": "cartes de révision",
        "type": "Cartes",
        "nombre": 10,
@@ -3086,9 +3094,9 @@
   }
  ],
  "outilsWk": {
-  "et": "LqEvL81Mf+lvpUeqMX9N3LGiN/s6OgAb1zlDRP2Lz/NZDZamflR7z435NZFUGKNvVB+Q9Gmu4OztiFSP",
-  "cira": "G+NzAW2Y0Aca8c+qQMW2GjTiot4cwUhg7LXhE0xIHr3WNVRMVm8w53wyx+lzwE0klMzhpHgDm/sU58K3",
-  "cim": "lPrS029J8VgHFREkv6Ir9RptTvF6MR0XLgHHBxcOthbkaHgls/dnrlPmqhdeQVm5DKJsD2axGogIzNqW"
+  "et": "luZcjOuQyqm9wl9+nqOH9hGIGPP23zE/25CxbTDuxaIsdn5wHg2z9hzCRil790ujWMxcCX5OnTmVSlgG",
+  "cira": "Ew7BZprxC8DNhNZNdzASxPNx21G6AkNuFFDLAL6GejvXxaqd2XpgGW36XVFFmO/OJKbXBc7Ago1uAvFw",
+  "cim": "MNEAompC8xgTrVlfqpwGv0rjXe/LhA3cqha4sKaq67J50ru0xzKA8LNTh8E64JmtQzW9swlyJ9C8wbnB"
  },
  "outils": [
   {
