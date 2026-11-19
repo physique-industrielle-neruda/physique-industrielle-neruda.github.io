@@ -2310,22 +2310,13 @@
      "titre": "Amplification",
      "docs": [
       {
-       "titre": "Essentiel du chapitre",
-       "type": "Cours",
-       "fichier": "23b3bc9a5a84378cae2deaae.bin",
-       "taille": 560687,
-       "pages": 8,
-       "cv": "cira-chap-amplification",
-       "rubrique": "Cours"
-      },
-      {
        "titre": "Activité 1 – L'ADI et le montage suiveur",
        "type": "Activité",
        "fichier": "8908064218adf1f2902c4590.bin",
        "taille": 294540,
        "pages": 5,
        "cv": "cira-chap-amplification",
-       "rubrique": "Activités"
+       "rubrique": "Activités et TP"
       },
       {
        "titre": "Activité 1 – L'ADI et le montage suiveur - coups de pouce",
@@ -2334,7 +2325,7 @@
        "taille": 81977,
        "pages": 2,
        "cv": "cira-chap-amplification",
-       "rubrique": "Activités"
+       "rubrique": "Activités et TP"
       },
       {
        "titre": "Corrigé Activité 1 – L'ADI et le montage suiveur",
@@ -2346,7 +2337,37 @@
         "id": "cira-amplification-corrige-activite-1-l-adi-et-le-montage-suiveur",
         "wk": "yRvMzjRo+9H0NFtLaQYKKvkMUKAomQQ+uTZQ6mfyVBaeUu4hZTUdFCJhsjLFKFO86ppsH98pRgaoArOa"
        },
-       "rubrique": "Activités"
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "TP 1 – Amplificateurs non inverseur et inverseur",
+       "type": "TP",
+       "fichier": "7689e46060df9130c545be29.bin",
+       "taille": 419769,
+       "pages": 7,
+       "cv": "cira-chap-amplification",
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "TP 1 – Amplificateurs non inverseur et inverseur - coups de pouce",
+       "type": "TP",
+       "fichier": "4cd8ffa07fc54dd68c20e77b.bin",
+       "taille": 90776,
+       "pages": 2,
+       "cv": "cira-chap-amplification",
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "Corrigé TP 1 – Amplificateurs non inverseur et inverseur",
+       "type": "Corrigé",
+       "fichier": "97646f5f143578f1eb51bc06.bin",
+       "taille": 139284,
+       "pages": 3,
+       "corrige": {
+        "id": "cira-amplification-corrige-tp-1-amplificateurs-non-inverseur-et-inver",
+        "wk": "EP7hFMXcRchOXPN+94Ma5zNTLsLmVWpy/+h1WouWDY/9GC/fkqE/ZpHV8b3D1tvtcW7BY1D2FO0pLUKj"
+       },
+       "rubrique": "Activités et TP"
       },
       {
        "titre": "Activité 2 – Le soustracteur et le décalage de zéro",
@@ -2355,7 +2376,7 @@
        "taille": 259479,
        "pages": 5,
        "cv": "cira-chap-amplification",
-       "rubrique": "Activités"
+       "rubrique": "Activités et TP"
       },
       {
        "titre": "Activité 2 – Le soustracteur et le décalage de zéro - coups de pouce",
@@ -2364,7 +2385,7 @@
        "taille": 81441,
        "pages": 1,
        "cv": "cira-chap-amplification",
-       "rubrique": "Activités"
+       "rubrique": "Activités et TP"
       },
       {
        "titre": "Corrigé Activité 2 – Le soustracteur et le décalage de zéro",
@@ -2376,7 +2397,37 @@
         "id": "cira-amplification-corrige-activite-2-le-soustracteur-et-le-decalage-",
         "wk": "sUypAY8rjCOrWumZ/Zpmt8ctIf4OSantCTjRRxLsl6W6IK7bNN6a3orEiA9FtOTdFVyPLDAJZ1M/krPL"
        },
-       "rubrique": "Activités"
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "TP 2 – Conditionneur à deux ADI pour la sonde Pt100",
+       "type": "TP",
+       "fichier": "8ba53335e9485f27537fed4c.bin",
+       "taille": 440538,
+       "pages": 7,
+       "cv": "cira-chap-amplification",
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "TP 2 – Conditionneur à deux ADI pour la sonde Pt100 - coups de pouce",
+       "type": "TP",
+       "fichier": "a7f7ffb54a23c39fca8d115a.bin",
+       "taille": 87094,
+       "pages": 2,
+       "cv": "cira-chap-amplification",
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "Corrigé TP 2 – Conditionneur à deux ADI pour la sonde Pt100",
+       "type": "Corrigé",
+       "fichier": "55efc5423eeec3c200426fcd.bin",
+       "taille": 143835,
+       "pages": 3,
+       "corrige": {
+        "id": "cira-amplification-corrige-tp-2-conditionneur-a-deux-adi-pour-la-sond",
+        "wk": "PYh9Bk1cXIAmywer/C4lSPXVXf64QrPnFSlLRvhU5jBBlxDfDpmEahfl7fi+w8fEeI1q7GDPFTX2ATGk"
+       },
+       "rubrique": "Activités et TP"
       },
       {
        "titre": "Activité 3 – L'amplificateur d'instrumentation",
@@ -2385,7 +2436,7 @@
        "taille": 286248,
        "pages": 5,
        "cv": "cira-chap-amplification",
-       "rubrique": "Activités"
+       "rubrique": "Activités et TP"
       },
       {
        "titre": "Activité 3 – L'amplificateur d'instrumentation - coups de pouce",
@@ -2394,7 +2445,7 @@
        "taille": 78959,
        "pages": 2,
        "cv": "cira-chap-amplification",
-       "rubrique": "Activités"
+       "rubrique": "Activités et TP"
       },
       {
        "titre": "Corrigé Activité 3 – L'amplificateur d'instrumentation",
@@ -2406,7 +2457,16 @@
         "id": "cira-amplification-corrige-activite-3-l-amplificateur-d-instrumentati",
         "wk": "o8qE+0l1a7k2hcwmlyiOja6vEhfkopcNguJEtBdG0N6GnSTPVxThP9DfmON+uj0bXLnG8/4BzaZk3VOH"
        },
-       "rubrique": "Activités"
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "Essentiel du chapitre",
+       "type": "Cours",
+       "fichier": "23b3bc9a5a84378cae2deaae.bin",
+       "taille": 560687,
+       "pages": 8,
+       "cv": "cira-chap-amplification",
+       "rubrique": "Cours"
       },
       {
        "titre": "Fiche animation",
@@ -2424,66 +2484,6 @@
        "format": "html",
        "cv": "cira-chap-amplification",
        "rubrique": "Animation"
-      },
-      {
-       "titre": "TP 1 – Amplificateurs non inverseur et inverseur",
-       "type": "TP",
-       "fichier": "7689e46060df9130c545be29.bin",
-       "taille": 419769,
-       "pages": 7,
-       "cv": "cira-chap-amplification",
-       "rubrique": "TP"
-      },
-      {
-       "titre": "TP 1 – Amplificateurs non inverseur et inverseur - coups de pouce",
-       "type": "TP",
-       "fichier": "4cd8ffa07fc54dd68c20e77b.bin",
-       "taille": 90776,
-       "pages": 2,
-       "cv": "cira-chap-amplification",
-       "rubrique": "TP"
-      },
-      {
-       "titre": "Corrigé TP 1 – Amplificateurs non inverseur et inverseur",
-       "type": "Corrigé",
-       "fichier": "97646f5f143578f1eb51bc06.bin",
-       "taille": 139284,
-       "pages": 3,
-       "corrige": {
-        "id": "cira-amplification-corrige-tp-1-amplificateurs-non-inverseur-et-inver",
-        "wk": "EP7hFMXcRchOXPN+94Ma5zNTLsLmVWpy/+h1WouWDY/9GC/fkqE/ZpHV8b3D1tvtcW7BY1D2FO0pLUKj"
-       },
-       "rubrique": "TP"
-      },
-      {
-       "titre": "TP 2 – Conditionneur à deux ADI pour la sonde Pt100",
-       "type": "TP",
-       "fichier": "8ba53335e9485f27537fed4c.bin",
-       "taille": 440538,
-       "pages": 7,
-       "cv": "cira-chap-amplification",
-       "rubrique": "TP"
-      },
-      {
-       "titre": "TP 2 – Conditionneur à deux ADI pour la sonde Pt100 - coups de pouce",
-       "type": "TP",
-       "fichier": "a7f7ffb54a23c39fca8d115a.bin",
-       "taille": 87094,
-       "pages": 2,
-       "cv": "cira-chap-amplification",
-       "rubrique": "TP"
-      },
-      {
-       "titre": "Corrigé TP 2 – Conditionneur à deux ADI pour la sonde Pt100",
-       "type": "Corrigé",
-       "fichier": "55efc5423eeec3c200426fcd.bin",
-       "taille": 143835,
-       "pages": 3,
-       "corrige": {
-        "id": "cira-amplification-corrige-tp-2-conditionneur-a-deux-adi-pour-la-sond",
-        "wk": "PYh9Bk1cXIAmywer/C4lSPXVXf64QrPnFSlLRvhU5jBBlxDfDpmEahfl7fi+w8fEeI1q7GDPFTX2ATGk"
-       },
-       "rubrique": "TP"
       },
       {
        "titre": "Exercice 1 – Le débit d'une station d'épuration",

@@ -270,7 +270,7 @@ function classe(id, tab){
 }
 
 /* Rubrique d'un corrigé (Activités, TP, Exercices) : celle du catalogue, sinon devinée d'après le titre */
-const RUB_ORDRE = ["Activités", "TP", "Exercices", "Autres"];
+const RUB_ORDRE = ["Activités et TP", "Activités", "TP", "Exercices", "Autres"];
 function rubriqueDe(d){
   if (d.rubrique) return d.rubrique;
   const t = (d.titre || "").toLowerCase();

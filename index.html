@@ -558,7 +558,7 @@ function chapBlock(c, ch, docs, forceOpen, outil){
   if (tEntree) { let g = groupes.find(x => x.r === "Pour commencer"); if (!g) groupes.unshift(g = {r: "Pour commencer", docs: []}); g.test = tEntree; }
   groupes.forEach(g => {
     const k = key + "/" + g.r;
-    if (g.test && !g.docs.length) { s.appendChild(sousTest(c, g.test, k, false)); return; }
+    if (g.test && !g.docs.length) { s.appendChild(sousTest(c, g.test, k, !fermes.has(k))); return; }
     const sd = document.createElement("details"); sd.className = "sous";
     if (forceOpen || opened.has(k)) sd.open = true;
     const m = g.docs.length;
@@ -566,7 +566,7 @@ function chapBlock(c, ch, docs, forceOpen, outil){
     sd.addEventListener("toggle", () => { if (sd.open) opened.add(k); else opened.delete(k); });
     if (g.test) { const ul = document.createElement("ul"); ul.className = "docs"; ul.appendChild(ligneTest(c, g.test)); sd.appendChild(ul); }
     // Activités, TP, Exercices : un sous-dossier par activité / TP / exercice (énoncé, coups de pouce, corrigés, résultats)
-    if (["Activités", "TP", "Exercices"].includes(g.r)) remplirParNumero(c, g.docs, sd, k, forceOpen);
+    if (["Activités", "TP", "Activités et TP", "Exercices"].includes(g.r)) remplirParNumero(c, g.docs, sd, k, forceOpen);
     else {
       const ul = document.createElement("ul"); ul.className = "docs";
       g.docs.forEach(d => ul.appendChild(docRow(c, d)));
@@ -831,11 +831,11 @@ function ligneTest(c, t){
   return li;
 }
 function sousTest(c, t, k0, ouvert){
-  const k = k0 + "/Pour commencer";
+  const k = k0.endsWith("/Pour commencer") ? k0 : k0 + "/Pour commencer";
   const sd = document.createElement("details"); sd.className = "sous";
   if (ouvert || opened.has(k)) sd.open = true;
   sd.innerHTML = `<summary>${FOLDER}<span>Pour commencer</span><span class="nb">1 document</span><span class="chev" aria-hidden="true"></span></summary>`;
-  sd.addEventListener("toggle", () => { if (sd.open) opened.add(k); else opened.delete(k); });
+  sd.addEventListener("toggle", () => { if (sd.open) { opened.add(k); fermes.delete(k); } else { opened.delete(k); fermes.add(k); } });
   const ul = document.createElement("ul"); ul.className = "docs"; ul.appendChild(ligneTest(c, t)); sd.appendChild(ul);
   return sd;
 }
