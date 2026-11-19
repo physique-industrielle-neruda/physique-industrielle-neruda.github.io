@@ -233,7 +233,11 @@ function elevesDe(c){
 function corriges(site){
   const c = CAT.classes.find(x => x.id === site); if (!c) return [];
   // Un chapitre verrouillé apparaît en tête de sa liste, comme un corrigé : « Ouvrir le chapitre » = transmettre sa clé
-  return c.chapitres.map(ch => ({ ch, docs: (ch.verrou ? [{ titre: "🔒 Accès au chapitre (dossier verrouillé)", chapitre: true, corrige: ch.verrou }] : []).concat(ch.docs.filter(d => d.corrige)) })).filter(x => x.docs.length);
+  // Test d'entrée sous son propre cadenas (19/11/2026) : à ouvrir avant le chapitre
+  const testDe = ch => ch.verrou && (REV.tests || []).find(t => t.site === site && t.verrou && t.verrou.chap === ch.verrou.id);
+  return c.chapitres.map(ch => { const t = testDe(ch);
+    return { ch, docs: (t ? [{ titre: "🔒 Accès au test d'entrée", chapitre: true, test: true, corrige: t.verrou }] : [])
+      .concat(ch.verrou ? [{ titre: "🔒 Accès au chapitre (dossier verrouillé)", chapitre: true, corrige: ch.verrou }] : []).concat(ch.docs.filter(d => d.corrige)) }; }).filter(x => x.docs.length);
 }
 async function unwrap(d){
   const w = b64(d.corrige.wk);
@@ -281,6 +285,7 @@ function rubriqueDe(d){
 }
 const plur = (n, s) => n + " " + s + (n > 1 ? "s" : "");
 function libDoc(d, n, total){
+  if (d.test) return n === total && total ? "Test ouvert à toute la classe" : n ? "Test ouvert pour " + plur(n, "élève") : "Test fermé aux élèves";
   if (d.chapitre) return n === total && total ? "Chapitre ouvert à toute la classe" : n ? "Ouvert pour " + plur(n, "élève") : "Chapitre fermé aux élèves";
   return n === total && total ? "Débloqué pour toute la classe" : n ? plur(n, "élève") + " débloqué" + (n > 1 ? "s" : "") : "Personne pour l'instant";
 }
@@ -299,11 +304,12 @@ function paneCorriges(c){
   if (!groups.length) { $("#pane").innerHTML = `<p class="empty">Aucun corrigé élève pour ce BTS pour l'instant.</p>`; return; }
   let choix = paneCorriges.niv[c.id] ?? null, last = {};
   const dossier = g => {
-    const docs = g.docs.filter(d => !d.chapitre), lock = g.docs.find(d => d.chapitre);
+    const docs = g.docs.filter(d => !d.chapitre), lock = g.docs.find(d => d.chapitre && !d.test), tlock = g.docs.find(d => d.test);
     const full = docs.filter(d => total && (last[d.corrige.id] || 0) === total).length;
     const part = docs.filter(d => (last[d.corrige.id] || 0) > 0 && (last[d.corrige.id] || 0) < total).length;
     let etat = "";
-    if (lock) { const n = last[lock.corrige.id] || 0; etat = n === total && total ? "🔓 Ouvert · " : n ? "🔓 Ouvert pour " + n + " · " : "🔒 Fermé · "; }
+    if (tlock) { const n = last[tlock.corrige.id] || 0; etat = n === total && total ? "Test 🔓 · " : n ? "Test 🔓 " + n + " · " : "Test 🔒 · "; }
+    if (lock) { const n = last[lock.corrige.id] || 0; etat += n === total && total ? "🔓 Ouvert · " : n ? "🔓 Ouvert pour " + n + " · " : "🔒 Fermé · "; }
     const m = etat + plur(docs.length, "corrigé") + (part ? " · " + part + " en cours" : "");
     return `<button class="row" data-ch="${esc(g.ch.titre)}"><span class="fold" aria-hidden="true">📁</span><span class="main"><span class="t">${esc(g.ch.titre)}</span><span class="m">${m}</span></span>`
       + (docs.length ? `<span class="count${full === docs.length && full ? " full" : ""}" title="Corrigés débloqués pour toute la classe">${full}/${docs.length}</span>` : "") + `<span class="chev"></span></button>`;
@@ -342,9 +348,9 @@ function chapitreCorriges(cid, titre){
   const ligne = (d, counts) => { const n = counts[d.corrige.id] || 0;
     return `<button class="row" data-doc="${esc(d.corrige.id)}"><span class="main"><span class="t">${esc(d.titre)}</span><span class="m">${libDoc(d, n, total)}</span></span><span class="count${n === total && total ? " full" : ""}">${n}/${total}</span><span class="chev"></span></button>`; };
   const render = counts => {
-    const lock = g.docs.find(d => d.chapitre), docs = g.docs.filter(d => !d.chapitre);
+    const locks = g.docs.filter(d => d.chapitre), docs = g.docs.filter(d => !d.chapitre);
     const rubs = RUB_ORDRE.concat([...new Set(docs.map(rubriqueDe))].filter(r => !RUB_ORDRE.includes(r)));
-    let html = lock ? `<p class="sec">Accès au chapitre</p><div class="card">${ligne(lock, counts)}</div>` : "";
+    let html = locks.length ? `<p class="sec">Accès au chapitre</p><div class="card">${locks.map(d => ligne(d, counts)).join("")}</div>` : "";
     rubs.forEach(r => { const ds = docs.filter(d => rubriqueDe(d) === r); if (ds.length) html += `<p class="sec">${esc(r)}</p><div class="card">${ds.map(d => ligne(d, counts)).join("")}</div>`; });
     $("#app").innerHTML = html || `<p class="empty">Aucun corrigé dans ce chapitre.</p>`;
     $("#app").querySelectorAll(".row").forEach(b => b.onclick = () => go(docEleves, c.id, g.docs.find(x => x.corrige.id === b.dataset.doc)));
@@ -366,9 +372,9 @@ function docEleves(cid, d){
     <div class="btns"><button class="btn ok" id="all">Tout débloquer</button><button class="btn ghost" id="none">Tout verrouiller</button></div>`;
   const boxes = [...$("#list").querySelectorAll("input")];
   const paint = () => {
-    boxes.forEach(b => { b.checked = on.has(b.dataset.uid); $(`[data-m="${b.dataset.uid}"]`).textContent = b.checked ? (d.chapitre ? "Chapitre ouvert" : "Corrigé débloqué") : "Verrouillé"; });
+    boxes.forEach(b => { b.checked = on.has(b.dataset.uid); $(`[data-m="${b.dataset.uid}"]`).textContent = b.checked ? (d.test ? "Test ouvert" : d.chapitre ? "Chapitre ouvert" : "Corrigé débloqué") : "Verrouillé"; });
     $("#pb").style.width = (100 * on.size / el.length) + "%";
-    $("#pn").textContent = `${on.size} / ${el.length} élèves ont accès ${d.chapitre ? "au chapitre" : "au corrigé"}.`;
+    $("#pn").textContent = `${on.size} / ${el.length} élèves ont accès ${d.test ? "au test d'entrée" : d.chapitre ? "au chapitre" : "au corrigé"}.`;
   };
   const key = async () => { if (!K) { if (!MAITRE) throw new Error("cles"); K = await unwrap(d); } return K; };
   const ref = uid => doc(db, "deblocages", d.corrige.id + "_" + uid);
@@ -386,12 +392,13 @@ function docEleves(cid, d){
     try {
       const k = val ? await key() : null, batch = writeBatch(db);
       el.forEach(e => { if (val) batch.set(ref(e.uid), { uid:e.uid, doc:d.corrige.id, classe:cid, cle:k, at:serverTimestamp() }); else batch.delete(ref(e.uid)); });
-      await batch.commit(); toast(d.chapitre ? (val ? "Chapitre ouvert à toute la classe." : "Chapitre refermé pour toute la classe.") : val ? "Corrigé débloqué pour toute la classe." : "Corrigé verrouillé pour toute la classe.");
+      await batch.commit(); toast(d.test ? (val ? "Test d'entrée ouvert à toute la classe." : "Test d'entrée refermé pour toute la classe.") : d.chapitre ? (val ? "Chapitre ouvert à toute la classe." : "Chapitre refermé pour toute la classe.") : val ? "Corrigé débloqué pour toute la classe." : "Corrigé verrouillé pour toute la classe.");
     } catch(e){ toast(e.message === "cles" ? "Clés absentes : importez le fichier dans Réglages." : "Échec, vérifiez la connexion."); }
   };
   $("#all").onclick = () => bulk(true);
   if (d.chapitre) { $("#all").textContent = "Ouvrir le chapitre à toute la classe"; $("#none").textContent = "Refermer le chapitre"; }
-  $("#none").onclick = () => { if (confirm(d.chapitre ? "Refermer ce chapitre pour toute la classe ?" : "Verrouiller ce corrigé pour toute la classe ?")) bulk(false); };
+  if (d.test) { $("#all").textContent = "Ouvrir le test à toute la classe"; $("#none").textContent = "Refermer le test"; }
+  $("#none").onclick = () => { if (confirm(d.test ? "Refermer ce test d'entrée pour toute la classe ?" : d.chapitre ? "Refermer ce chapitre pour toute la classe ?" : "Verrouiller ce corrigé pour toute la classe ?")) bulk(false); };
   paint();
   const mesUid = new Set(el.map(e => e.uid));
   unsub = onSnapshot(query(collection(db, "deblocages"), where("doc", "==", d.corrige.id)), snap => {
@@ -599,7 +606,13 @@ async function cleOutils(){
 }
 async function contenuTest(t){
   if (CACHE_TESTS[t.id]) return CACHE_TESTS[t.id];
-  const k = await cleOutils(); if (!k) return null;
+  let k;
+  if (t.verrou) {   // test sous son propre cadenas : clé du test enveloppée par la clé maître
+    if (!MAITRE) return null;
+    const w = b64(t.verrou.wk);
+    k = await crypto.subtle.importKey("raw", await crypto.subtle.decrypt({name:"AES-GCM", iv:w.slice(0,12), additionalData:enc.encode(t.verrou.id)}, MAITRE, w.slice(12)), "AES-GCM", false, ["decrypt"]);
+  } else k = await cleOutils();
+  if (!k) return null;
   const buf = new Uint8Array(await (await fetch(BASE + "docs/revisions/" + t.fichier, {cache:"no-cache"})).arrayBuffer());
   return CACHE_TESTS[t.id] = JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({name:"AES-GCM", iv:buf.slice(0,12)}, k, buf.slice(12))));
 }

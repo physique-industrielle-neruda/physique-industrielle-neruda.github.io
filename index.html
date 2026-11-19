@@ -463,7 +463,7 @@ function renderNav(){
   const items = visibleClasses().map(c => ({id:c.id, n:c.court, mini:c.mini||c.court, s:c.sous}));
   if (S.evals) items.push({id:"evaluations", n:"Évaluations", mini:"Évals", s:"Copies corrigées et bilans"});
   if (!S.user) items.push({id:"connexion", n:"Connexion", mini:"Connexion", s:"Accès aux cours de votre BTS"});
-  if (S.user && testsVisibles().length) { const n = fichesAFaire(); items.push({id:"revisions", n:"Mes révisions", mini:"Révisions", s: n ? n + " fiche" + (n > 1 ? "s" : "") + " à travailler" : "Tests d'entrée et fiches"}); }
+  if (S.user && testsOuverts().length) { const n = fichesAFaire(); items.push({id:"revisions", n:"Mes révisions", mini:"Révisions", s: n ? n + " fiche" + (n > 1 ? "s" : "") + " à travailler" : "Tests d'entrée et fiches"}); }
   if (S.user && (CAT.outils || []).length) items.push({id:"outils", n:"Outils", mini:"Outils", s:"Fiches méthodes et simulations"});
   for (const it of items) {
     const b = document.createElement("button");
@@ -657,6 +657,18 @@ function testsVisibles(){
   return (REV.tests || []).filter(t => S.prof || S.tous || t.site === S.site);
 }
 const eleveRev = () => S.user && !S.prof && !S.premium;
+/* Test d'entrée sous son propre cadenas (19/11/2026) : ouvert par le prof (clé du test), ou chapitre ouvert (clé du chapitre) */
+const testOK = t => !t.verrou || S.prof || S.premium || !!S.corr[t.verrou.id] || !!S.corr[t.verrou.chap];
+const testsOuverts = () => testsVisibles().filter(t => testOK(t) || MT[t.id]);
+async function testKey(t){
+  if (!t.verrou) return outilsKey();
+  const v = t.verrou;
+  const un = async (k, w) => { w = b64(w); return importKey(await crypto.subtle.decrypt({name:"AES-GCM", iv:w.slice(0,12), additionalData:enc.encode(v.id)}, k, w.slice(12))); };
+  if (S.corr[v.id]) return importKey(b64(S.corr[v.id]));
+  if (S.corr[v.chap]) return un(await importKey(b64(S.corr[v.chap])), v.wkc);
+  if ((S.prof || S.premium) && S.maitre) return un(S.maitre, v.wk);
+  throw new Error("cle");
+}
 const cleF = (t, f) => t + "__" + f;
 function fichesAFaire(){
   let n = 0;
@@ -700,7 +712,9 @@ function renderRevisions(view){
     ? "Aperçu professeur : le test (sans envoi) et toutes ses fiches. Les élèves ne voient que les fiches de leurs compétences à retravailler."
     : "Avant un nouveau chapitre, fais le test d'entrée. Selon tes réponses, des fiches de révision s'ouvrent ici. Termine-les avant le début du chapitre.";
   view.appendChild(intro);
-  for (const t of testsVisibles()) view.appendChild(carteTest(t));
+  const ts = testsOuverts();
+  if (!ts.length) { const p = document.createElement("p"); p.className = "empty"; p.textContent = "Aucun test d'entrée ouvert pour l'instant."; view.appendChild(p); }
+  for (const t of ts) view.appendChild(carteTest(t));
 }
 
 function carteTest(t){
@@ -746,7 +760,7 @@ function listeFiches(t, ids){
 async function ouvrirTest(t, apercu){
   const view = $("#view");
   let T;
-  try { T = JSON.parse(await lireRev(t.fichier)); } catch(e) { toast("Impossible d'ouvrir le test. Rechargez la page."); return; }
+  try { T = JSON.parse(await (await decryptBlob(BASE + "docs/revisions/" + t.fichier, await testKey(t), "text/plain")).text()); } catch(e) { toast("Impossible d'ouvrir le test. Rechargez la page."); return; }
   VUE_REV = "test"; window.scrollTo(0, 0);
   view.innerHTML = "";
   const box = document.createElement("div"); box.className = "tst";
@@ -812,7 +826,7 @@ async function ouvrirFiche(t, f){
 const sansAccent = x => String(x || "").normalize("NFKD").replace(/[̀-ͯ]/g, "").toLowerCase().trim();
 function testDuChapitre(c, ch){
   if (!S.user || !c || !c.id) return null;
-  return testsVisibles().find(t => t.site === c.id && sansAccent(t.chapitre) === sansAccent(ch.titre)) || null;
+  return testsVisibles().find(t => t.site === c.id && sansAccent(t.chapitre) === sansAccent(ch.titre) && (testOK(t) || MT[t.id])) || null;
 }
 function ligneTest(c, t){
   const li = document.createElement("li");
@@ -939,7 +953,7 @@ async function startSession(user){
     unsubCorr = onSnapshot(query(collection(db, "deblocages"), where("uid", "==", user.uid)), snap => {
       const before = new Set(Object.keys(S.corr)); const now = {};
       snap.forEach(x => { const v = x.data(); if (v.doc && v.cle) now[v.doc] = v.cle; });
-      if (!first) for (const id in now) if (!before.has(id)) { fresh.add(id); toast(id.startsWith("eval-") ? "Ta copie corrigée est disponible dans « Mes évaluations »." : chapInfo(id) ? "Un nouveau chapitre vient d'être ouvert !" : "Un corrigé vient d'être débloqué !"); }
+      if (!first) for (const id in now) if (!before.has(id)) { fresh.add(id); toast(id.startsWith("eval-") ? "Ta copie corrigée est disponible dans « Mes évaluations »." : id.startsWith("test-") ? "Un test d'entrée vient d'être ouvert : il est dans le dossier du chapitre." : chapInfo(id) ? "Un nouveau chapitre vient d'être ouvert !" : "Un corrigé vient d'être débloqué !"); }
       first = false; S.corr = now; render();
     }, () => {});
     suivreRevisions(user.uid);

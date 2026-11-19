@@ -18,7 +18,13 @@
     "decalage-de-zero-et-gain",
     "logarithme-et-decibels"
    ],
-   "fichier": "cc2121bedce72b554b9ec2f7.bin"
+   "verrou": {
+    "id": "test-cira-amplification",
+    "wk": "ftypSrGKGwM1wqbmjsYbyD9Siary4S/O2eW+0oKL1iU/8qcK+d8yr+gkIdO91qy5mQc2Har5qoJsH3gL",
+    "wkc": "aFs4efcMOx778nsRQpitvIt4OtDv0d7H9b0XMNA66+/Fp3qVvqnJaM1S2UA3Qh2mi03VCm/rNdapeinF",
+    "chap": "cira-chap-amplification"
+   },
+   "fichier": "56aec5bfadbf84f8f4cd2fe7.bin"
   },
   {
    "id": "et-statique-des-fluides",
@@ -36,7 +42,13 @@
     "masse-volumique",
     "proportionnalite-et-coefficient"
    ],
-   "fichier": "623fb5973ad8651b385dcceb.bin"
+   "verrou": {
+    "id": "test-et-statique-des-fluides",
+    "wk": "yk4+8XOqPYHUW65z5TbbdpeLyg4ZdHq3PDtBpPFPNcrlGhPysu/svzEW94l0xIbPQdt/Ums4e7se5LOy",
+    "wkc": "Iwo9J4P3lYTf5YZJGmSD5VUbwmWggzwifTOzlXvYJIGSh0oLqbEZDXe1Dg6KWyB0owEl75FWsXtvXmgh",
+    "chap": "et-chap-statique-des-fluides"
+   },
+   "fichier": "b7fee4e535349db7762d2093.bin"
   }
  ],
  "fiches": {
