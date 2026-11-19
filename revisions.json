@@ -19,12 +19,42 @@
     "logarithme-et-decibels"
    ],
    "fichier": "cc2121bedce72b554b9ec2f7.bin"
+  },
+  {
+   "id": "et-statique-des-fluides",
+   "site": "et",
+   "titre": "Test d'entrée – Statique des fluides",
+   "chapitre": "Statique des fluides",
+   "duree": "15 min",
+   "nb": 10,
+   "fiches": [
+    "puissances-de-10-et-conversions",
+    "conversions-de-surfaces-et-de-volumes",
+    "aire-d-un-disque",
+    "poids-et-masse",
+    "isoler-une-grandeur-dans-une-formule",
+    "masse-volumique",
+    "proportionnalite-et-coefficient"
+   ],
+   "fichier": "623fb5973ad8651b385dcceb.bin"
   }
  ],
  "fiches": {
+  "aire-d-un-disque": {
+   "titre": "Aire d'un disque",
+   "fichier": "6771ff26a041f32c0fb8dafd.bin"
+  },
+  "conversions-de-surfaces-et-de-volumes": {
+   "titre": "Conversions de surfaces et de volumes",
+   "fichier": "063a7c5937f5f3edba027ded.bin"
+  },
   "decalage-de-zero-et-gain": {
    "titre": "Décalage de zéro et gain",
    "fichier": "47f214b423f7df27ed865a66.bin"
+  },
+  "isoler-une-grandeur-dans-une-formule": {
+   "titre": "Isoler une grandeur dans une formule",
+   "fichier": "70d21d9367539976c4d5e4bc.bin"
   },
   "logarithme-et-decibels": {
    "titre": "Logarithme et décibels",
@@ -42,9 +72,21 @@
    "titre": "Loi des nœuds",
    "fichier": "26b7b99c95c8461467ed6d51.bin"
   },
+  "masse-volumique": {
+   "titre": "Masse volumique",
+   "fichier": "c328f00b60356c7e5c4533b5.bin"
+  },
+  "poids-et-masse": {
+   "titre": "Poids et masse",
+   "fichier": "168c76920d853350479e43b1.bin"
+  },
   "pont-diviseur-de-tension": {
    "titre": "Pont diviseur de tension",
    "fichier": "c31cb222f66a44ae77cca954.bin"
+  },
+  "proportionnalite-et-coefficient": {
+   "titre": "Proportionnalité et coefficient",
+   "fichier": "a6be57b231deae5271151767.bin"
   },
   "puissances-de-10-et-conversions": {
    "titre": "Puissances de 10 et conversions",

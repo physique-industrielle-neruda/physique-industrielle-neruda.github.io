@@ -389,31 +389,13 @@
      "titre": "Statique des fluides",
      "docs": [
       {
-       "titre": "Prérequis",
-       "type": "Fiche",
-       "fichier": "3c5837e4c0ea14b2c783d9ae.bin",
-       "taille": 79006,
-       "pages": 1,
-       "cv": "et-chap-statique-des-fluides",
-       "rubrique": "Pour commencer"
-      },
-      {
-       "titre": "Essentiel du chapitre",
-       "type": "Cours",
-       "fichier": "c775d7809c9837cd5f52e906.bin",
-       "taille": 366918,
-       "pages": 6,
-       "cv": "et-chap-statique-des-fluides",
-       "rubrique": "Cours"
-      },
-      {
        "titre": "Activité 1 – La pression dans le filtre à sable",
        "type": "Activité",
        "fichier": "f2afd573c96626b44fc3db5a.bin",
        "taille": 326588,
        "pages": 5,
        "cv": "et-chap-statique-des-fluides",
-       "rubrique": "Activités"
+       "rubrique": "Activités et TP"
       },
       {
        "titre": "Activité 1 – La pression dans le filtre à sable - coups de pouce",
@@ -422,7 +404,7 @@
        "taille": 85983,
        "pages": 2,
        "cv": "et-chap-statique-des-fluides",
-       "rubrique": "Activités"
+       "rubrique": "Activités et TP"
       },
       {
        "titre": "Corrigé Activité 1 – La pression dans le filtre à sable",
@@ -434,7 +416,7 @@
         "id": "et-statique-des-fluides-corrige-activite-1-la-pression-dans-le-filtre-a-sa",
         "wk": "vVS6kRiMGou1GBXgu46I7Fn8GDXo307BhaAQViEKuRli6aOw2BiOj9VslDVYykhKK4E1U3rjIyh5EwJ2"
        },
-       "rubrique": "Activités"
+       "rubrique": "Activités et TP"
       },
       {
        "titre": "Activité 2 – La pression au robinet du hameau",
@@ -443,7 +425,7 @@
        "taille": 365077,
        "pages": 5,
        "cv": "et-chap-statique-des-fluides",
-       "rubrique": "Activités"
+       "rubrique": "Activités et TP"
       },
       {
        "titre": "Activité 2 – La pression au robinet du hameau - coups de pouce",
@@ -452,7 +434,7 @@
        "taille": 83918,
        "pages": 2,
        "cv": "et-chap-statique-des-fluides",
-       "rubrique": "Activités"
+       "rubrique": "Activités et TP"
       },
       {
        "titre": "Corrigé Activité 2 – La pression au robinet du hameau",
@@ -464,7 +446,7 @@
         "id": "et-statique-des-fluides-corrige-activite-2-la-pression-au-robinet-du-hamea",
         "wk": "kGe6tKbd5uMwN4ef/Q16tRJ22BQf+DrKoIXFDoUG5cCKY1X7DNFh1ir0mWecgNClG+LqgaMy8j71Vk3I"
        },
-       "rubrique": "Activités"
+       "rubrique": "Activités et TP"
       },
       {
        "titre": "Activité 3 – Le capteur de niveau de la bâche",
@@ -473,7 +455,7 @@
        "taille": 348230,
        "pages": 5,
        "cv": "et-chap-statique-des-fluides",
-       "rubrique": "Activités"
+       "rubrique": "Activités et TP"
       },
       {
        "titre": "Activité 3 – Le capteur de niveau de la bâche - coups de pouce",
@@ -482,7 +464,7 @@
        "taille": 81462,
        "pages": 2,
        "cv": "et-chap-statique-des-fluides",
-       "rubrique": "Activités"
+       "rubrique": "Activités et TP"
       },
       {
        "titre": "Corrigé Activité 3 – Le capteur de niveau de la bâche",
@@ -494,7 +476,16 @@
         "id": "et-statique-des-fluides-corrige-activite-3-le-capteur-de-niveau-de-la-bach",
         "wk": "1v5whX8iGrT9bnM0YLIk/KlEncx+4Y95mYeTAl/7LdRKRz5EDgtXm0n0hc+UtsTYkeBueoUNVRRVwVzQ"
        },
-       "rubrique": "Activités"
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "Essentiel du chapitre",
+       "type": "Cours",
+       "fichier": "c775d7809c9837cd5f52e906.bin",
+       "taille": 366918,
+       "pages": 6,
+       "cv": "et-chap-statique-des-fluides",
+       "rubrique": "Cours"
       },
       {
        "titre": "Fiche animation",
@@ -3095,9 +3086,9 @@
   }
  ],
  "outilsWk": {
-  "et": "wq0qHKsrMkaYdS9VFQPLT65XKxG2tuRCLBA4QYzPeALxQh95uhfIjep5CcqH5CiiajWWQ3WmlUJOP3lt",
-  "cira": "3XQea+QvsrUpZB9yLJJahzJ563S+UEzdSa1o69L5vV6y9VusUCEgnnbre19ZTSOSA+7Eyyao8fX9G0r9",
-  "cim": "frTklopE0RYj+nGu8S0Yw4dtaY8Kl2iDpN6aRyMC0iLT0Ynh4SXQ4G51ujHdh8cw+NYeHQEKWRkm0yoc"
+  "et": "Y1RZYrRzxdtsa7IGoO79wfmSBIebVxqsrhMDnWspGToHxFF9PoQW85GMYJNfIMfXDMMKPXBaciUyde13",
+  "cira": "rWTZ0Oil3rOjMRDUwlw+tL1S4rz0GgZ+ba7S9DEKQ5M/A1zrOj9M40EOaxuaOcUOCmuNKT0Ju03ew+UY",
+  "cim": "quJAVSYU9LJCSzsjac6yqltrs4DqzObSK7CXFnq81Z6w7NIBoWC2gbWhVtmnMvUP6wqRXZMYs5+zrwuR"
  },
  "outils": [
   {
