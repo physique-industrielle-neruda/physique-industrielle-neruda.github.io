@@ -527,6 +527,15 @@ function docRow(c, d){
 const FOLDER = '<svg class="folder" viewBox="0 0 34 28" aria-hidden="true"><path d="M2 5a3 3 0 0 1 3-3h8l3 4h13a3 3 0 0 1 3 3v14a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3z" fill="currentColor" fill-opacity=".15" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>';
 function chapBlock(c, ch, docs, forceOpen, outil){
   const key = c.id + "/" + ch.titre;
+  const tEntree = !outil && !forceOpen ? testDuChapitre(c, ch) : null;
+  if (!outil && ch.verrou && !chapOK(ch) && tEntree) {
+    const s = document.createElement("details"); s.className = "chap";
+    if (opened.has(key)) s.open = true;
+    s.innerHTML = `<summary>${FOLDER}<h3><span>${esc(ch.titre)}</span><span class="count">${LOCK}Chapitre verrouillé · test d'entrée à faire avant le chapitre</span></h3><span class="chev" aria-hidden="true"></span></summary>`;
+    s.addEventListener("toggle", () => { if (s.open) opened.add(key); else opened.delete(key); });
+    s.appendChild(sousTest(c, tEntree, key, true));
+    return s;
+  }
   if (!outil && ch.verrou && !chapOK(ch)) {
     const f = document.createElement("div"); f.className = "chap ferme";
     f.innerHTML = `<summary>${FOLDER}<h3><span>${esc(ch.titre)}</span><span class="count">${LOCK}Chapitre verrouillé : le professeur l'ouvrira bientôt</span></h3></summary>`;
@@ -546,13 +555,16 @@ function chapBlock(c, ch, docs, forceOpen, outil){
   // Sous-dossiers du chapitre (Pour commencer, Cours, Activités, Animation, TP, Exercices, Réviser…)
   const groupes = [];
   docs.forEach(d => { const r = d.rubrique || "Autres documents"; let g = groupes.find(x => x.r === r); if (!g) groupes.push(g = {r, docs: []}); g.docs.push(d); });
+  if (tEntree) { let g = groupes.find(x => x.r === "Pour commencer"); if (!g) groupes.unshift(g = {r: "Pour commencer", docs: []}); g.test = tEntree; }
   groupes.forEach(g => {
     const k = key + "/" + g.r;
+    if (g.test && !g.docs.length) { s.appendChild(sousTest(c, g.test, k, false)); return; }
     const sd = document.createElement("details"); sd.className = "sous";
     if (forceOpen || opened.has(k)) sd.open = true;
     const m = g.docs.length;
     sd.innerHTML = `<summary>${FOLDER}<span>${esc(g.r)}</span><span class="nb">${m} document${m > 1 ? "s" : ""}</span><span class="chev" aria-hidden="true"></span></summary>`;
     sd.addEventListener("toggle", () => { if (sd.open) opened.add(k); else opened.delete(k); });
+    if (g.test) { const ul = document.createElement("ul"); ul.className = "docs"; ul.appendChild(ligneTest(c, g.test)); sd.appendChild(ul); }
     // Activités, TP, Exercices : un sous-dossier par activité / TP / exercice (énoncé, coups de pouce, corrigés, résultats)
     if (["Activités", "TP", "Exercices"].includes(g.r)) remplirParNumero(c, g.docs, sd, k, forceOpen);
     else {
@@ -596,7 +608,7 @@ function remplirParNumero(c, docs, parent, k0, forceOpen){
 
 function render(){
   renderNav(); renderWho();
-  if (current === "revisions" && VUE_REV) return;   // test ou fiche en cours : ne pas effacer
+  if (VUE_REV) return;   // test en cours ou résultat affiché : ne pas effacer
   $("#searchBox").hidden = !S.user || current === "revisions";
   const view = $("#view"); view.innerHTML = "";
   if (current === "revisions") { renderRevisions(view); return; }
@@ -706,8 +718,8 @@ function carteTest(t){
     return box;
   }
   if (!r) {
-    bd.innerHTML = `<p><strong>${esc(t.titre)}</strong><br>${t.nb} questions · environ ${esc(t.duree)}. Tu le fais une seule fois, seul, avec ta calculatrice.</p><button class="btn" type="button">Commencer le test</button>`;
-    bd.querySelector("button").onclick = () => ouvrirTest(t, false);
+    bd.innerHTML = `<p>Fais d'abord le <strong>test d'entrée</strong> : il est dans le dossier du chapitre « ${esc(t.chapitre)} », rubrique « Pour commencer ». Tes fiches de révision apparaîtront ensuite ici.</p><button class="btn" type="button">Aller au chapitre</button>`;
+    bd.querySelector("button").onclick = () => { opened.add(t.site + "/" + t.chapitre); opened.add(t.site + "/" + t.chapitre + "/Pour commencer"); location.hash = t.site; };
     return box;
   }
   bd.innerHTML = `<p>Test fait le ${esc(dateFr(r.date))}.</p>`;
@@ -770,7 +782,7 @@ async function ouvrirTest(t, apercu){
       + (aRevoir.length ? `<p>Merci ! ${aRevoir.length} fiche${aRevoir.length > 1 ? "s" : ""} de révision ${aRevoir.length > 1 ? "se sont ouvertes" : "s'est ouverte"} pour toi :</p><ul>${aRevoir.map(f => "<li>" + esc((REV.fiches[f] || {}).titre || f) + "</li>").join("")}</ul><p>Travaille-les avant le début du chapitre.</p>`
         : `<p>Merci ! Aucune fiche à revoir : tu es prêt pour le chapitre.</p>`)
       + `<button class="btn" type="button">${aRevoir.length ? "Voir mes fiches" : "Terminer"}</button>`;
-    box.querySelector("button").onclick = () => { VUE_REV = null; render(); };
+    box.querySelector("button").onclick = () => { VUE_REV = null; if (aRevoir.length && location.hash !== "#revisions") location.hash = "revisions"; else render(); };
   };
 }
 
@@ -793,6 +805,39 @@ async function ouvrirFiche(t, f){
   };
   window.addEventListener("message", onMsg);
   ov.querySelector("button").onclick = () => { window.removeEventListener("message", onMsg); ov.remove(); document.body.style.overflow = ""; render(); };
+}
+
+
+/* Test d'entrée rangé dans le dossier de son chapitre (rubrique « Pour commencer ») */
+const sansAccent = x => String(x || "").normalize("NFKD").replace(/[̀-ͯ]/g, "").toLowerCase().trim();
+function testDuChapitre(c, ch){
+  if (!S.user || !c || !c.id) return null;
+  return testsVisibles().find(t => t.site === c.id && sansAccent(t.chapitre) === sansAccent(ch.titre)) || null;
+}
+function ligneTest(c, t){
+  const li = document.createElement("li");
+  const r = eleveRev() ? MT[t.id] : null;
+  let meta, bouton;
+  if (!eleveRev()) { meta = t.nb + " questions · " + t.duree + " · aperçu professeur (rien n'est envoyé)"; bouton = "Aperçu"; }
+  else if (!r) { meta = t.nb + " questions · environ " + t.duree + " · à faire une seule fois, seul, avec ta calculatrice"; bouton = "Commencer"; }
+  else {
+    const ids = r.aRevoir || [], reste = ids.filter(f => !MF[cleF(t.id, f)]).length;
+    meta = "Fait le " + dateFr(r.date) + " · " + (!ids.length ? "aucune fiche à revoir" : reste ? reste + " fiche" + (reste > 1 ? "s" : "") + " à travailler dans « Mes révisions »" : "fiches terminées");
+    bouton = ids.length ? "Mes fiches" : null;
+  }
+  li.innerHTML = `<span class="type tp">Test</span><span class="title">${esc(t.titre)}<span class="meta">${esc(meta)}</span></span><span class="actions">${bouton ? `<button class="open" type="button">${bouton}</button>` : ""}</span>`;
+  const b = li.querySelector("button");
+  if (b) b.onclick = () => { if (eleveRev() && r) location.hash = "revisions"; else ouvrirTest(t, !eleveRev()); };
+  return li;
+}
+function sousTest(c, t, k0, ouvert){
+  const k = k0 + "/Pour commencer";
+  const sd = document.createElement("details"); sd.className = "sous";
+  if (ouvert || opened.has(k)) sd.open = true;
+  sd.innerHTML = `<summary>${FOLDER}<span>Pour commencer</span><span class="nb">1 document</span><span class="chev" aria-hidden="true"></span></summary>`;
+  sd.addEventListener("toggle", () => { if (sd.open) opened.add(k); else opened.delete(k); });
+  const ul = document.createElement("ul"); ul.className = "docs"; ul.appendChild(ligneTest(c, t)); sd.appendChild(ul);
+  return sd;
 }
 
 function renderOutils(view, q){
