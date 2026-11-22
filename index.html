@@ -209,6 +209,11 @@ li.fresh{animation:fresh 2.4s ease-out}
 .fiche-ov .bar b{flex:1;font-size:1.05rem}
 .fiche-ov .bar button{font:inherit;font-weight:700;border:0;border-radius:8px;padding:8px 14px;background:#fff;color:#1F3864;cursor:pointer}
 .fiche-ov iframe{flex:1;border:0;width:100%;background:#F4F6F9}
+/* Points de cours en ligne (22/11/2026) */
+.type.pdc{background:#E2EFDA;color:#3F7A3A;border-color:#3F7A3A}
+li.pdc-fait .meta{color:#1f7a3f;font-weight:600}
+li.pdc-cours .meta{color:#b45309;font-weight:600}
+li.pdc-gris{opacity:.6}
 </style>
 </head>
 <body>
@@ -261,6 +266,8 @@ let S = { user:null, prof:false, evals:false, premium:false, tous:false, nom:"",
 let unsubCorr = null, fresh = new Set();
 /* Mes révisions : tests d'entrée et fiches de révision (revisions.json, Firestore « tests » et « revisions ») */
 let REV = { tests: [], fiches: {} }, MT = {}, MF = {}, unsubRev = [], VUE_REV = null;
+/* Points de cours en ligne (Firestore « pointsdecours/<uid>__<id> ») */
+let MP = {};
 const opened = new Set();
 const fermes = new Set(); // dossiers d'année refermés par l'élève (sinon le sien s'ouvre tout seul)
 
@@ -484,6 +491,7 @@ function renderWho(){
 }
 
 function docRow(c, d){
+  if (d.type === "Point de cours") return pdcRow(c, d);
   const li = document.createElement("li");
   if (d.lien) {
     const href = /^https?:/.test(d.lien) ? d.lien : BASE + d.lien;
@@ -556,6 +564,12 @@ function chapBlock(c, ch, docs, forceOpen, outil){
   const groupes = [];
   docs.forEach(d => { const r = d.rubrique || "Autres documents"; let g = groupes.find(x => x.r === r); if (!g) groupes.push(g = {r, docs: []}); g.docs.push(d); });
   if (tEntree) { let g = groupes.find(x => x.r === "Pour commencer"); if (!g) groupes.unshift(g = {r: "Pour commencer", docs: []}); g.test = tEntree; }
+  // Dossier « Points de cours » (22/11/2026) : tous les points de cours du chapitre, pour réviser (après le cours)
+  const pdcs = docs.filter(d => d.type === "Point de cours");
+  if (pdcs.length) {
+    const apres = ["Cours", "Activités et TP", "Activités", "Pour commencer"].map(r => groupes.findIndex(x => x.r === r)).find(i => i >= 0);
+    groupes.splice(apres === undefined ? groupes.length : apres + 1, 0, {r: "Points de cours", docs: pdcs.map(d => ({...d, revision: true}))});
+  }
   groupes.forEach(g => {
     const k = key + "/" + g.r;
     if (g.test && !g.docs.length) { s.appendChild(sousTest(c, g.test, k, !fermes.has(k))); return; }
@@ -822,6 +836,65 @@ async function ouvrirFiche(t, f){
 }
 
 
+/* ================= Points de cours en ligne (22/11/2026) =================
+   Page « Point de cours – Activité n » : chiffrée avec la clé du corrigé de l'activité (débloquée en même temps).
+   L'élève répond étape par étape ; la page envoie point-de-cours-etape / -erreur / -termine ;
+   l'avancement est enregistré dans Firestore « pointsdecours » (lu en direct par l'appli professeur). */
+function suivrePdc(uid){
+  unsubRev.push(onSnapshot(query(collection(db, "pointsdecours"), where("uid", "==", uid)), snap => {
+    MP = {}; snap.forEach(x => { const v = x.data(); MP[v.pdc] = v; }); render();
+  }, () => {}));
+}
+const aPdc = id => CAT.classes.some(c => c.chapitres.some(ch => ch.docs.some(d => d.type === "Point de cours" && d.corrige.id === id)));
+const pdcOuvert = d => S.prof || S.premium || !!S.corr[d.corrige.id];
+function pdcRow(c, d){
+  const li = document.createElement("li");
+  const ok = pdcOuvert(d), st = MP[d.pdc], fait = st && st.termine;
+  if (!ok) {
+    li.className = "pdc-gris";
+    li.innerHTML = `<span class="type pdc locked">${LOCK}Point de cours</span>
+      <span class="title">${esc(d.titre)}<span class="meta">${d.revision ? "À construire après " + esc(/^TP/.test(d.activite || "") ? "le " + d.activite : "l'" + (d.activite || "activité").replace(/^A/, "a")) : "Verrouillé : il se débloque avec le corrigé, quand le professeur a vérifié ton travail"}</span></span>
+      <span class="actions"><span class="open locked">${LOCK}Verrouillé</span></span>`;
+    return li;
+  }
+  if (fresh.has(d.corrige.id) && !st) li.classList.add("fresh");
+  const eleve = eleveRev();
+  const meta = !eleve ? "Construction guidée, bouton « Vérifier »" : fait ? "✓ Terminé · à relire pour réviser" : st ? "En cours : " + (st.etape || 0) + "/" + (st.total || "?") + " étapes" : "À construire : réponds et clique sur « Vérifier »";
+  if (eleve) li.classList.add(fait ? "pdc-fait" : st ? "pdc-cours" : "pdc-afaire");
+  li.innerHTML = `<span class="type pdc">Point de cours</span><span class="title">${esc(d.titre)}<span class="meta">${meta}</span></span>
+    <span class="actions"><button class="open" type="button">${!eleve || fait ? "Ouvrir" : st ? "Continuer" : "Construire"}</button></span>`;
+  li.querySelector("button").onclick = () => ouvrirPdc(c, d);
+  return li;
+}
+async function ouvrirPdc(c, d){
+  let html;
+  try {
+    const key = await corrKey(d); if (!key) throw new Error("verrou");
+    html = await (await decryptBlob(BASE + "docs/" + c.id + "/" + d.fichier, key, "text/html;charset=utf-8")).text();
+  } catch(e) { toast(e.message === "verrou" ? "Ce point de cours n'est pas encore débloqué." : "Impossible d'ouvrir le point de cours. Rechargez la page."); return; }
+  const eleve = eleveRev(), deja = MP[d.pdc] && MP[d.pdc].termine;
+  if (deja || !eleve) html = html.replace("</head>", "<script>window.PDC_FAIT = true;<\/script></head>");   // affichage complet, pour réviser
+  const ov = document.createElement("div"); ov.className = "fiche-ov";
+  ov.innerHTML = `<div class="bar"><b>${esc(d.titre)}</b><button type="button">Fermer</button></div><iframe title="${esc(d.titre)}"></iframe>`;
+  const fr = ov.querySelector("iframe"); fr.srcdoc = html;
+  document.body.appendChild(ov); document.body.style.overflow = "hidden";
+  const onMsg = async e => {
+    if (e.source !== fr.contentWindow || !e.data || !/^point-de-cours-(etape|erreur|termine)$/.test(e.data.type)) return;
+    if (!eleve || (MP[d.pdc] && MP[d.pdc].termine)) return;
+    const av = MP[d.pdc] || {}, termine = e.data.type === "point-de-cours-termine";
+    const v = { uid: S.user.uid, pdc: d.pdc, corrige: d.corrige.id, titre: d.titre, activite: d.activite || "", site: c.id,
+      nom: S.nom, classe: S.groupe || "", etape: Math.max(+e.data.etape || 0, termine ? +e.data.total || 0 : 0, av.etape || 0),
+      total: +e.data.total || 0, erreurs: Math.max(+e.data.erreurs || 0, av.erreurs || 0), termine, date: serverTimestamp() };
+    MP[d.pdc] = v;
+    try {
+      await setDoc(doc(db, "pointsdecours", S.user.uid + "__" + d.pdc), v);
+      if (termine) toast("Point de cours terminé, bravo ! Tu peux passer à la suite.");
+    } catch(_) { toast("Ton avancement n'a pas pu être enregistré. Vérifie ta connexion."); }
+  };
+  window.addEventListener("message", onMsg);
+  ov.querySelector("button").onclick = () => { window.removeEventListener("message", onMsg); ov.remove(); document.body.style.overflow = ""; render(); };
+}
+
 /* Test d'entrée rangé dans le dossier de son chapitre (rubrique « Pour commencer ») */
 const sansAccent = x => String(x || "").normalize("NFKD").replace(/[̀-ͯ]/g, "").toLowerCase().trim();
 function testDuChapitre(c, ch){
@@ -907,7 +980,7 @@ function route(){
 
 async function startSession(user){
   if (unsubCorr) { unsubCorr(); unsubCorr = null; }
-  unsubRev.forEach(f => f()); unsubRev = []; MT = {}; MF = {}; VUE_REV = null;
+  unsubRev.forEach(f => f()); unsubRev = []; MT = {}; MF = {}; MP = {}; VUE_REV = null;
   S = { user:null, prof:false, evals:false, premium:false, tous:false, nom:"", site:null, groupe:null, keys:{}, maitre:null, corr:{} };
   KO = null;
   if (!user) return;
@@ -953,10 +1026,11 @@ async function startSession(user){
     unsubCorr = onSnapshot(query(collection(db, "deblocages"), where("uid", "==", user.uid)), snap => {
       const before = new Set(Object.keys(S.corr)); const now = {};
       snap.forEach(x => { const v = x.data(); if (v.doc && v.cle) now[v.doc] = v.cle; });
-      if (!first) for (const id in now) if (!before.has(id)) { fresh.add(id); toast(id.startsWith("eval-") ? "Ta copie corrigée est disponible dans « Mes évaluations »." : id.startsWith("test-") ? "Un test d'entrée vient d'être ouvert : il est dans le dossier du chapitre." : chapInfo(id) ? "Un nouveau chapitre vient d'être ouvert !" : "Un corrigé vient d'être débloqué !"); }
+      if (!first) for (const id in now) if (!before.has(id)) { fresh.add(id); toast(id.startsWith("eval-") ? "Ta copie corrigée est disponible dans « Mes évaluations »." : id.startsWith("test-") ? "Un test d'entrée vient d'être ouvert : il est dans le dossier du chapitre." : chapInfo(id) ? "Un nouveau chapitre vient d'être ouvert !" : aPdc(id) ? "Ton corrigé et ton point de cours sont débloqués !" : "Un corrigé vient d'être débloqué !"); }
       first = false; S.corr = now; render();
     }, () => {});
     suivreRevisions(user.uid);
+    suivrePdc(user.uid);
   } catch(x) {
     toast("Problème de connexion au serveur. Rechargez la page.");
   }

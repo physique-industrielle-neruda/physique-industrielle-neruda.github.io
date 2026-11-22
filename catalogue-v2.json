@@ -391,8 +391,8 @@
       {
        "titre": "Activité 1 – La pression dans le filtre à sable",
        "type": "Activité",
-       "fichier": "f2afd573c96626b44fc3db5a.bin",
-       "taille": 326588,
+       "fichier": "6b4b6735e1eb8932bab8e0e0.bin",
+       "taille": 323103,
        "pages": 5,
        "cv": "et-chap-statique-des-fluides",
        "rubrique": "Activités et TP"
@@ -409,20 +409,34 @@
       {
        "titre": "Corrigé Activité 1 – La pression dans le filtre à sable",
        "type": "Corrigé",
-       "fichier": "08771d2dc00f0d6e0fc486c8.bin",
-       "taille": 101759,
+       "fichier": "3980f83de0ffa23dca27ddb5.bin",
+       "taille": 101728,
        "pages": 3,
        "corrige": {
         "id": "et-statique-des-fluides-corrige-activite-1-la-pression-dans-le-filtre-a-sa",
-        "wk": "vVS6kRiMGou1GBXgu46I7Fn8GDXo307BhaAQViEKuRli6aOw2BiOj9VslDVYykhKK4E1U3rjIyh5EwJ2"
+        "wk": "pxLayu59OS5kcPRVcfwi/KNeOHZqIR+nfebhXBoNUq2Wwm3NZ/vo+VqjFtgVHwjNiFArQYm9yvWgd5um"
        },
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "Point de cours – Activité 1",
+       "type": "Point de cours",
+       "format": "pdc",
+       "fichier": "b35df4438b68efa534b52487.bin",
+       "taille": 15233,
+       "corrige": {
+        "id": "et-statique-des-fluides-corrige-activite-1-la-pression-dans-le-filtre-a-sa",
+        "wk": "pxLayu59OS5kcPRVcfwi/KNeOHZqIR+nfebhXBoNUq2Wwm3NZ/vo+VqjFtgVHwjNiFArQYm9yvWgd5um"
+       },
+       "pdc": "et-statique-des-fluides-pdc-activite-1",
+       "activite": "Activité 1",
        "rubrique": "Activités et TP"
       },
       {
        "titre": "Activité 2 – La pression au robinet du hameau",
        "type": "Activité",
-       "fichier": "b458c8200802e556a6270e0b.bin",
-       "taille": 365077,
+       "fichier": "f676af5069a030bc8c53cc61.bin",
+       "taille": 361590,
        "pages": 5,
        "cv": "et-chap-statique-des-fluides",
        "rubrique": "Activités et TP"
@@ -439,20 +453,34 @@
       {
        "titre": "Corrigé Activité 2 – La pression au robinet du hameau",
        "type": "Corrigé",
-       "fichier": "15e09db2b8463819dfabfff4.bin",
-       "taille": 103324,
+       "fichier": "c61c176d29b9ea6549513903.bin",
+       "taille": 103473,
        "pages": 2,
        "corrige": {
         "id": "et-statique-des-fluides-corrige-activite-2-la-pression-au-robinet-du-hamea",
-        "wk": "kGe6tKbd5uMwN4ef/Q16tRJ22BQf+DrKoIXFDoUG5cCKY1X7DNFh1ir0mWecgNClG+LqgaMy8j71Vk3I"
+        "wk": "toBbl0BInxOSHDbmry9Jx7KGxGxqa3lXEsjFYzKzC81q2ml8Ga7s4JbmOs7SCD8l+hgBMxIgeaq2ogab"
        },
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "Point de cours – Activité 2",
+       "type": "Point de cours",
+       "format": "pdc",
+       "fichier": "8a445da020abc54810f5df61.bin",
+       "taille": 14831,
+       "corrige": {
+        "id": "et-statique-des-fluides-corrige-activite-2-la-pression-au-robinet-du-hamea",
+        "wk": "toBbl0BInxOSHDbmry9Jx7KGxGxqa3lXEsjFYzKzC81q2ml8Ga7s4JbmOs7SCD8l+hgBMxIgeaq2ogab"
+       },
+       "pdc": "et-statique-des-fluides-pdc-activite-2",
+       "activite": "Activité 2",
        "rubrique": "Activités et TP"
       },
       {
        "titre": "Activité 3 – Le capteur de niveau de la bâche",
        "type": "Activité",
-       "fichier": "4b9ff28be10c5ad232822e74.bin",
-       "taille": 348230,
+       "fichier": "a78f4d522dc87a1401cde056.bin",
+       "taille": 346051,
        "pages": 5,
        "cv": "et-chap-statique-des-fluides",
        "rubrique": "Activités et TP"
@@ -469,13 +497,27 @@
       {
        "titre": "Corrigé Activité 3 – Le capteur de niveau de la bâche",
        "type": "Corrigé",
-       "fichier": "ae73103ee82aa8d878409a9a.bin",
-       "taille": 97521,
+       "fichier": "b1327678bb548fe51a41c84f.bin",
+       "taille": 97638,
        "pages": 2,
        "corrige": {
         "id": "et-statique-des-fluides-corrige-activite-3-le-capteur-de-niveau-de-la-bach",
-        "wk": "1v5whX8iGrT9bnM0YLIk/KlEncx+4Y95mYeTAl/7LdRKRz5EDgtXm0n0hc+UtsTYkeBueoUNVRRVwVzQ"
+        "wk": "SW/UmdqkMwOW9cJ+YmPPogvwkhDJxl1MUua1G8SLiVd8Ne4ojqP/mMUz/hhUsOnybeUWHDRP1x/PhwSy"
        },
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "Point de cours – Activité 3",
+       "type": "Point de cours",
+       "format": "pdc",
+       "fichier": "62eb95b60b0e3ef5a576797b.bin",
+       "taille": 14988,
+       "corrige": {
+        "id": "et-statique-des-fluides-corrige-activite-3-le-capteur-de-niveau-de-la-bach",
+        "wk": "SW/UmdqkMwOW9cJ+YmPPogvwkhDJxl1MUua1G8SLiVd8Ne4ojqP/mMUz/hhUsOnybeUWHDRP1x/PhwSy"
+       },
+       "pdc": "et-statique-des-fluides-pdc-activite-3",
+       "activite": "Activité 3",
        "rubrique": "Activités et TP"
       },
       {
@@ -3094,9 +3136,9 @@
   }
  ],
  "outilsWk": {
-  "et": "luZcjOuQyqm9wl9+nqOH9hGIGPP23zE/25CxbTDuxaIsdn5wHg2z9hzCRil790ujWMxcCX5OnTmVSlgG",
-  "cira": "Ew7BZprxC8DNhNZNdzASxPNx21G6AkNuFFDLAL6GejvXxaqd2XpgGW36XVFFmO/OJKbXBc7Ago1uAvFw",
-  "cim": "MNEAompC8xgTrVlfqpwGv0rjXe/LhA3cqha4sKaq67J50ru0xzKA8LNTh8E64JmtQzW9swlyJ9C8wbnB"
+  "et": "NGmGQZJpwVasMTp1vJN0CvQu+SgVmh54yfr3kU9O9S2ohfUj+pqlmIdq3LyTD05GmkpbRCUNtiCWXDWt",
+  "cira": "oh3FySaXwKLzXb9GavPzdkz4UY3aXTDsbiSgp4QPS/jZXnaLFgOn7lPdvZbrezQUV7ViEUTabhBF4T3+",
+  "cim": "vP3wV+6DXMOUAUEsGl+Qs9sJcygqIiLyB3Jkci+l5IDzD0SZNRQvEy1OATOBDJLVr6o0S3qGLd+9AbOP"
  },
  "outils": [
   {

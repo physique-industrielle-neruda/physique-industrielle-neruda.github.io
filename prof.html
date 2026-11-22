@@ -237,7 +237,7 @@ function corriges(site){
   const testDe = ch => ch.verrou && (REV.tests || []).find(t => t.site === site && t.verrou && t.verrou.chap === ch.verrou.id);
   return c.chapitres.map(ch => { const t = testDe(ch);
     return { ch, docs: (t ? [{ titre: "🔒 Accès au test d'entrée", chapitre: true, test: true, corrige: t.verrou }] : [])
-      .concat(ch.verrou ? [{ titre: "🔒 Accès au chapitre (dossier verrouillé)", chapitre: true, corrige: ch.verrou }] : []).concat(ch.docs.filter(d => d.corrige)) }; }).filter(x => x.docs.length);
+      .concat(ch.verrou ? [{ titre: "🔒 Accès au chapitre (dossier verrouillé)", chapitre: true, corrige: ch.verrou }] : []).concat(ch.docs.filter(d => d.corrige && d.type !== "Point de cours").map(d => ch.docs.some(p => p.type === "Point de cours" && p.corrige.id === d.corrige.id) ? { ...d, avecPdc: true } : d)) }; }).filter(x => x.docs.length);
 }
 async function unwrap(d){
   const w = b64(d.corrige.wk);
@@ -266,11 +266,11 @@ function home(){
 /* ---------- Une classe ---------- */
 function classe(id, tab){
   const c = CLASSES.find(x => x.id === id); if (!c) return home();
-  setBar(c.nom, tab === "corriges" ? "Corrigés à débloquer" : tab === "evaluations" ? "Évaluations corrigées" : tab === "tests" ? "Tests d'entrée" : "Élèves et comptes", true);
-  const tabs = `<div class="tabs" role="tablist"><button role="tab" aria-selected="${tab==="corriges"}" data-t="corriges">Corrigés</button><button role="tab" aria-selected="${tab==="evaluations"}" data-t="evaluations">Évaluations</button>${testsDe(c.site).length ? `<button role="tab" aria-selected="${tab==="tests"}" data-t="tests">Tests</button>` : ""}<button role="tab" aria-selected="${tab==="eleves"}" data-t="eleves">Élèves</button></div>`;
+  setBar(c.nom, tab === "corriges" ? "Corrigés à débloquer" : tab === "evaluations" ? "Évaluations corrigées" : tab === "tests" ? "Tests d'entrée" : tab === "pdc" ? "Points de cours" : "Élèves et comptes", true);
+  const tabs = `<div class="tabs" role="tablist"><button role="tab" aria-selected="${tab==="corriges"}" data-t="corriges">Corrigés</button><button role="tab" aria-selected="${tab==="evaluations"}" data-t="evaluations">Évaluations</button>${testsDe(c.site).length ? `<button role="tab" aria-selected="${tab==="tests"}" data-t="tests">Tests</button>` : ""}${pdcsDe(c.site).length ? `<button role="tab" aria-selected="${tab==="pdc"}" data-t="pdc">Points de cours</button>` : ""}<button role="tab" aria-selected="${tab==="eleves"}" data-t="eleves">Élèves</button></div>`;
   $("#app").innerHTML = tabs + `<div id="pane"></div>`;
   $("#app").querySelectorAll(".tabs button").forEach(b => b.onclick = () => { stack[stack.length-1] = [classe, [id, b.dataset.t]]; stopLive(); classe(id, b.dataset.t); });
-  if (tab === "corriges") paneCorriges(c); else if (tab === "evaluations") paneEvals(c); else if (tab === "tests") paneTests(c); else paneEleves(c);
+  if (tab === "corriges") paneCorriges(c); else if (tab === "evaluations") paneEvals(c); else if (tab === "tests") paneTests(c); else if (tab === "pdc") panePdc(c); else paneEleves(c);
 }
 
 /* Rubrique d'un corrigé (Activités, TP, Exercices) : celle du catalogue, sinon devinée d'après le titre */
@@ -287,7 +287,7 @@ const plur = (n, s) => n + " " + s + (n > 1 ? "s" : "");
 function libDoc(d, n, total){
   if (d.test) return n === total && total ? "Test ouvert à toute la classe" : n ? "Test ouvert pour " + plur(n, "élève") : "Test fermé aux élèves";
   if (d.chapitre) return n === total && total ? "Chapitre ouvert à toute la classe" : n ? "Ouvert pour " + plur(n, "élève") : "Chapitre fermé aux élèves";
-  return n === total && total ? "Débloqué pour toute la classe" : n ? plur(n, "élève") + " débloqué" + (n > 1 ? "s" : "") : "Personne pour l'instant";
+  return (n === total && total ? "Débloqué pour toute la classe" : n ? plur(n, "élève") + " débloqué" + (n > 1 ? "s" : "") : "Personne pour l'instant") + (d.avecPdc ? " · avec le point de cours" : "");
 }
 /* Comptage en direct des déblocages des élèves de la classe */
 function suivreDeblocages(c, cb){
@@ -529,6 +529,41 @@ function printCards(c){
   window.print();
 }
 
+
+/* ---------- Points de cours en ligne (22/11/2026) ----------
+   L'élève construit le point de cours de fin d'activité sur le site (débloqué avec le corrigé de l'activité).
+   Firestore « pointsdecours/<uid>__<id> » : etape, total, erreurs, termine. Suivi en direct, élève par élève. */
+function pdcsDe(site){
+  const c = CAT.classes.find(x => x.id === site); if (!c) return [];
+  return c.chapitres.map(ch => ({ ch, docs: ch.docs.filter(d => d.type === "Point de cours") })).filter(x => x.docs.length);
+}
+function panePdc(c){
+  const groupes = pdcsDe(c.site), el = elevesDe(c), mesUid = new Set(el.map(e => e.uid));
+  let P = null, D = null;
+  const render = () => {
+    if (!P || !D) return;
+    $("#pane").innerHTML = groupes.slice().reverse().map(g => {
+      const cartes = g.docs.map(d => {
+        let nf = 0, nc = 0;
+        const rows = el.map(e => {
+          const v = P[e.uid + "__" + d.pdc], ouvert = D.has(d.corrige.id + "_" + e.uid);
+          let m, cl;
+          if (v && v.termine) { nf++; m = "🟢 Terminé · " + (v.erreurs ? plur(v.erreurs, "erreur") : "aucune erreur") + (jour(v.date) ? " · " + jour(v.date) : ""); cl = "st-ok"; }
+          else if (v) { nc++; m = "🟠 En cours · étape " + (v.etape || 0) + "/" + (v.total || "?") + (v.erreurs ? " · " + plur(v.erreurs, "erreur") : ""); cl = "st-cours"; }
+          else { m = ouvert ? "⚪ Pas commencé (débloqué)" : "🔒 Pas encore débloqué (corrigé de l'activité)"; cl = "st-non"; }
+          return `<div class="row" style="cursor:default"><span class="main"><span class="t">${esc(e.nom)}</span><span class="m ${cl}">${esc(m)}</span></span></div>`;
+        }).join("");
+        return `<p class="sec">${esc(d.activite || d.titre)} – ${nf}/${el.length} terminé${nf > 1 ? "s" : ""}${nc ? " · " + nc + " en cours" : ""}</p><div class="card">${rows}</div>`;
+      }).join("");
+      return `<h2 style="margin:16px 4px 2px;font-size:1.15rem">${esc(g.ch.titre)}</h2>${cartes}`;
+    }).join("") + `<p class="note">Le point de cours se débloque en même temps que le corrigé de l'activité (onglet Corrigés). L'élève le construit sur le site avec le bouton « Vérifier » ; après deux essais faux, la réponse s'affiche (comptée comme une erreur). Un élève qui a beaucoup d'erreurs a peut-être cliqué au hasard : va le voir.</p>`;
+  };
+  $("#pane").innerHTML = `<p class="empty">Chargement…</p>`;
+  const a = onSnapshot(collection(db, "pointsdecours"), snap => { P = {}; snap.forEach(x => { const v = x.data(); if (mesUid.has(v.uid)) P[v.uid + "__" + v.pdc] = v; }); render(); },
+    e => { $("#pane").innerHTML = `<p class="empty">Lecture impossible (${esc(e.code)}).</p>`; });
+  const b = onSnapshot(collection(db, "deblocages"), snap => { D = new Set(); snap.forEach(x => D.add(x.id)); render(); }, () => { D = new Set(); render(); });
+  unsub = () => { a(); b(); };
+}
 
 /* ---------- Tests d'entrée et fiches de révision ---------- */
 const testsDe = site => (REV.tests || []).filter(t => t.site === site);
