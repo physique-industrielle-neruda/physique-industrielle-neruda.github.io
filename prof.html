@@ -70,6 +70,17 @@ details.annee>summary::-webkit-details-marker{display:none}
 details.annee>summary::before{content:"▸";color:var(--muted);transition:transform .15s}
 details.annee[open]>summary::before{transform:rotate(90deg)}
 details.annee[open]>summary{margin-bottom:4px}
+.grille{overflow-x:auto;padding:0}
+.grille table{border-collapse:collapse;width:100%;font-size:.9rem}
+.grille th,.grille td{padding:10px 4px;text-align:center;border-top:1px solid var(--grid);white-space:nowrap}
+.grille tr:first-child th{border-top:0}
+.grille .nom{text-align:left;padding-left:14px;position:sticky;left:0;background:var(--surface);max-width:130px;overflow:hidden;text-overflow:ellipsis;font-weight:700}
+.grille th.col{font-size:.8rem;color:var(--muted);cursor:pointer;min-width:44px}
+.grille td.c{cursor:pointer;font-size:1.05rem;min-width:44px}
+.grille td.c.busy{opacity:.35}
+.grille tr.tot td{font-size:.75rem;color:var(--muted);font-weight:700}
+.dot{display:inline-block;width:15px;height:15px;border-radius:50%;vertical-align:middle}
+.dot.non{background:#B4B2A9}.dot.cours{background:#EF9F27}.dot.fini{background:#639922}
 .sec{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:22px 4px 0}
 .tabs{display:flex;gap:6px;margin:14px 0 4px;background:var(--surface);border:1px solid var(--grid);border-radius:10px;padding:4px}
 .tabs button{flex:1;border:0;background:none;padding:9px;border-radius:7px;font-weight:700;color:var(--muted);cursor:pointer}
@@ -237,7 +248,7 @@ function corriges(site){
   const testDe = ch => ch.verrou && (REV.tests || []).find(t => t.site === site && t.verrou && t.verrou.chap === ch.verrou.id);
   return c.chapitres.map(ch => { const t = testDe(ch);
     return { ch, docs: (t ? [{ titre: "🔒 Accès au test d'entrée", chapitre: true, test: true, corrige: t.verrou }] : [])
-      .concat(ch.verrou ? [{ titre: "🔒 Accès au chapitre (dossier verrouillé)", chapitre: true, corrige: ch.verrou }] : []).concat(ch.docs.filter(d => d.corrige && d.type !== "Point de cours").map(d => ch.docs.some(p => p.type === "Point de cours" && p.corrige.id === d.corrige.id) ? { ...d, avecPdc: true } : d)) }; }).filter(x => x.docs.length);
+      .concat(ch.verrou ? [{ titre: "🔒 Accès au chapitre (dossier verrouillé)", chapitre: true, corrige: ch.verrou }] : []).concat(ch.docs.filter(d => d.corrige && d.type !== "Point de cours").map(d => { const p = ch.docs.find(p => p.type === "Point de cours" && p.corrige.id === d.corrige.id); return p ? { ...d, avecPdc: true, pdc: p.pdc } : d; })) }; }).filter(x => x.docs.length);
 }
 async function unwrap(d){
   const w = b64(d.corrige.wk);
@@ -267,7 +278,7 @@ function home(){
 function classe(id, tab){
   const c = CLASSES.find(x => x.id === id); if (!c) return home();
   setBar(c.nom, tab === "corriges" ? "Corrigés à débloquer" : tab === "evaluations" ? "Évaluations corrigées" : tab === "tests" ? "Tests d'entrée" : tab === "pdc" ? "Points de cours" : "Élèves et comptes", true);
-  const tabs = `<div class="tabs" role="tablist"><button role="tab" aria-selected="${tab==="corriges"}" data-t="corriges">Corrigés</button><button role="tab" aria-selected="${tab==="evaluations"}" data-t="evaluations">Évaluations</button>${testsDe(c.site).length ? `<button role="tab" aria-selected="${tab==="tests"}" data-t="tests">Tests</button>` : ""}${pdcsDe(c.site).length ? `<button role="tab" aria-selected="${tab==="pdc"}" data-t="pdc">Points de cours</button>` : ""}<button role="tab" aria-selected="${tab==="eleves"}" data-t="eleves">Élèves</button></div>`;
+  const tabs = `<div class="tabs" role="tablist"><button role="tab" aria-selected="${tab==="corriges"}" data-t="corriges">Corrigés</button><button role="tab" aria-selected="${tab==="evaluations"}" data-t="evaluations">Évaluations</button>${testsDe(c.site).length ? `<button role="tab" aria-selected="${tab==="tests"}" data-t="tests">Tests</button>` : ""}<button role="tab" aria-selected="${tab==="eleves"}" data-t="eleves">Élèves</button></div>`;
   $("#app").innerHTML = tabs + `<div id="pane"></div>`;
   $("#app").querySelectorAll(".tabs button").forEach(b => b.onclick = () => { stack[stack.length-1] = [classe, [id, b.dataset.t]]; stopLive(); classe(id, b.dataset.t); });
   if (tab === "corriges") paneCorriges(c); else if (tab === "evaluations") paneEvals(c); else if (tab === "tests") paneTests(c); else if (tab === "pdc") panePdc(c); else paneEleves(c);
@@ -344,6 +355,7 @@ function chapitreCorriges(cid, titre){
   const c = CLASSES.find(x => x.id === cid); if (!c) return home();
   const g = corriges(c.site).find(x => x.ch.titre === titre); if (!g) return classe(cid, "corriges");
   setBar(titre, c.nom, true);
+  if (g.docs.some(d => d.avecPdc)) return chapitreGrille(c, g);
   const total = elevesDe(c).length;
   const ligne = (d, counts) => { const n = counts[d.corrige.id] || 0;
     return `<button class="row" data-doc="${esc(d.corrige.id)}"><span class="main"><span class="t">${esc(d.titre)}</span><span class="m">${libDoc(d, n, total)}</span></span><span class="count${n === total && total ? " full" : ""}">${n}/${total}</span><span class="chev"></span></button>`; };
@@ -359,22 +371,84 @@ function chapitreCorriges(cid, titre){
   suivreDeblocages(c, render);
 }
 
+/* ---------- Chapitre en tableau (22/11/2026) : élèves en lignes, corrigés en colonnes ----------
+   Une case = débloquer / reverrouiller le corrigé de cet élève (et son point de cours).
+   Pastille : gris pas commencé, orange en cours, vert terminé. Titre de colonne = toute la classe. */
+const courtDe = d => { const t = d.titre || ""; let m;
+  if ((m = /activit[ée]\s*(\d+)/i.exec(t))) return "A" + m[1];
+  if ((m = /\btp\s*(\d+)/i.exec(t))) return "TP" + m[1];
+  if ((m = /exercice\s*(\d+)/i.exec(t))) return "Ex" + m[1];
+  return t.replace(/^corrig[ée]\s*/i, "").slice(0, 4); };
+function chapitreGrille(c, g){
+  setBar(g.ch.titre, c.nom, true);
+  const el = elevesDe(c), mesUid = new Set(el.map(e => e.uid));
+  const locks = g.docs.filter(d => d.chapitre), docs = g.docs.filter(d => !d.chapitre);
+  if (!el.length) { $("#app").innerHTML = `<p class="empty">Créez d'abord les comptes des élèves (onglet « Élèves et comptes »).</p>`; return; }
+  let D = new Set(), P = {}, counts = {}, busy = new Set();
+  const cles = {};
+  const key = async d => { if (!cles[d.corrige.id]) { if (!MAITRE) throw new Error("cles"); cles[d.corrige.id] = await unwrap(d); } return cles[d.corrige.id]; };
+  const ref = (d, uid) => doc(db, "deblocages", d.corrige.id + "_" + uid);
+  const caseDe = (d, uid) => {
+    if (!D.has(d.corrige.id + "_" + uid)) return "🔒";
+    if (!d.avecPdc) return `<span style="color:var(--ok);font-weight:700">✓</span>`;
+    const v = P[uid + "__" + d.pdc];
+    return v && v.termine ? `<span class="dot fini" title="Point de cours terminé"></span>` : v ? `<span class="dot cours" title="Point de cours en cours"></span>` : `<span class="dot non" title="Point de cours pas commencé"></span>`;
+  };
+  const render = () => {
+    let html = locks.length ? `<p class="sec">Accès au chapitre</p><div class="card">${locks.map(d => { const n = counts[d.corrige.id] || 0;
+      return `<button class="row" data-lock="${esc(d.corrige.id)}"><span class="main"><span class="t">${esc(d.titre)}</span><span class="m">${libDoc(d, n, el.length)}</span></span><span class="count${n === el.length ? " full" : ""}">${n}/${el.length}</span><span class="chev"></span></button>`; }).join("")}</div>` : "";
+    html += `<p class="sec">Corrigés</p><div class="card grille"><table><tr><th class="nom">Élève</th>${docs.map((d, j) => `<th class="col" data-j="${j}" title="${esc(d.titre)}">${esc(courtDe(d))}</th>`).join("")}</tr>`
+      + el.map(e => `<tr><td class="nom">${esc(e.nom)}</td>${docs.map((d, j) => `<td class="c${busy.has(d.corrige.id + "_" + e.uid) ? " busy" : ""}" data-j="${j}" data-uid="${esc(e.uid)}">${caseDe(d, e.uid)}</td>`).join("")}</tr>`).join("")
+      + `<tr class="tot"><td class="nom">Ouverts</td>${docs.map(d => `<td>${counts[d.corrige.id] || 0}/${el.length}</td>`).join("")}</tr></table></div>`
+      + `<p class="note">Touche une case pour débloquer le corrigé de l'élève (et son point de cours) ; touche-la à nouveau pour le reverrouiller. Touche le titre d'une colonne pour toute la classe.<br>🔒 verrouillé · <span class="dot non"></span> point de cours pas commencé · <span class="dot cours"></span> en cours · <span class="dot fini"></span> terminé · ✓ corrigé ouvert (sans point de cours)</p>`;
+    const sx = $(".grille") ? $(".grille").scrollLeft : 0;
+    $("#app").innerHTML = html; if ($(".grille")) $(".grille").scrollLeft = sx;
+    $("#app").querySelectorAll("[data-lock]").forEach(b => b.onclick = () => go(docEleves, c.id, locks.find(x => x.corrige.id === b.dataset.lock)));
+    $("#app").querySelectorAll("td.c").forEach(td => td.onclick = async () => {
+      const d = docs[+td.dataset.j], uid = td.dataset.uid, id = d.corrige.id + "_" + uid; if (busy.has(id)) return;
+      const val = !D.has(id); busy.add(id); render();
+      try { if (val) await setDoc(ref(d, uid), { uid, doc:d.corrige.id, classe:c.id, cle: await key(d), at: serverTimestamp() }); else await deleteDoc(ref(d, uid)); }
+      catch(e){ toast(e.message === "cles" ? "Clés absentes : importez le fichier dans Réglages." : "Échec, vérifiez la connexion."); }
+      busy.delete(id); render();
+    });
+    $("#app").querySelectorAll("th.col").forEach(th => th.onclick = async () => {
+      const d = docs[+th.dataset.j], tous = el.every(e => D.has(d.corrige.id + "_" + e.uid));
+      if (!confirm((tous ? "Reverrouiller « " : "Débloquer « ") + d.titre + " » pour toute la classe ?")) return;
+      try { const k = tous ? null : await key(d), batch = writeBatch(db);
+        el.forEach(e => { if (tous) batch.delete(ref(d, e.uid)); else batch.set(ref(d, e.uid), { uid:e.uid, doc:d.corrige.id, classe:c.id, cle:k, at:serverTimestamp() }); });
+        await batch.commit(); toast(tous ? "Corrigé reverrouillé pour toute la classe." : "Corrigé débloqué pour toute la classe."); }
+      catch(e){ toast(e.message === "cles" ? "Clés absentes : importez le fichier dans Réglages." : "Échec, vérifiez la connexion."); }
+    });
+  };
+  render();
+  const a = onSnapshot(collection(db, "deblocages"), snap => {
+    D = new Set(); counts = {};
+    snap.forEach(x => { const v = x.data(); if (mesUid.has(v.uid)) { D.add(v.doc + "_" + v.uid); counts[v.doc] = (counts[v.doc] || 0) + 1; } }); render();
+  }, e => toast("Lecture impossible : " + e.code));
+  const b = onSnapshot(collection(db, "pointsdecours"), snap => {
+    P = {}; snap.forEach(x => { const v = x.data(); if (mesUid.has(v.uid)) P[v.uid + "__" + v.pdc] = v; }); render();
+  }, () => {});
+  unsub = () => { a(); b(); };
+}
+
 /* ---------- Un corrigé : la liste des élèves à cocher ---------- */
 function docEleves(cid, d){
   const c = CLASSES.find(x => x.id === cid);
   setBar(d.titre, c.nom, true);
   const el = elevesDe(c);
   if (!el.length) { $("#app").innerHTML = `<p class="empty">Créez d'abord les comptes des élèves (onglet « Élèves et comptes »).</p>`; return; }
-  let on = new Set(), K = null;
+  let on = new Set(), K = null, P = {};
   $("#app").innerHTML = `<div class="progress" aria-hidden="true"><i id="pb"></i></div><p class="note" id="pn"></p>
     <div class="card" id="list">${el.map(e => `<label class="row" style="cursor:pointer"><span class="main"><span class="t">${esc(e.nom)}</span><span class="m" data-m="${esc(e.uid)}">Verrouillé</span></span>
       <span class="sw"><input type="checkbox" data-uid="${esc(e.uid)}" aria-label="Débloquer pour ${esc(e.nom)}"><span></span></span></label>`).join("")}</div>
     <div class="btns"><button class="btn ok" id="all">Tout débloquer</button><button class="btn ghost" id="none">Tout verrouiller</button></div>`;
   const boxes = [...$("#list").querySelectorAll("input")];
   const paint = () => {
-    boxes.forEach(b => { b.checked = on.has(b.dataset.uid); $(`[data-m="${b.dataset.uid}"]`).textContent = b.checked ? (d.test ? "Test ouvert" : d.chapitre ? "Chapitre ouvert" : "Corrigé débloqué") : "Verrouillé"; });
+    const etatPdc = uid => { const v = P[uid]; return v && v.termine ? "🟢 Point de cours terminé" : v ? "🟠 Point de cours en cours" : "⚪ Point de cours pas commencé"; };
+    boxes.forEach(b => { b.checked = on.has(b.dataset.uid); $(`[data-m="${b.dataset.uid}"]`).textContent = b.checked ? (d.test ? "Test ouvert" : d.chapitre ? "Chapitre ouvert" : d.avecPdc ? etatPdc(b.dataset.uid) : "Corrigé débloqué") : "🔒 Verrouillé"; });
     $("#pb").style.width = (100 * on.size / el.length) + "%";
-    $("#pn").textContent = `${on.size} / ${el.length} élèves ont accès ${d.test ? "au test d'entrée" : d.chapitre ? "au chapitre" : "au corrigé"}.`;
+    const nf = d.avecPdc ? el.filter(e => P[e.uid] && P[e.uid].termine).length : 0;
+    $("#pn").textContent = `${on.size} / ${el.length} élèves ont accès ${d.test ? "au test d'entrée" : d.chapitre ? "au chapitre" : "au corrigé"}.` + (d.avecPdc ? ` Points de cours terminés : ${nf} / ${on.size}.` : "");
   };
   const key = async () => { if (!K) { if (!MAITRE) throw new Error("cles"); K = await unwrap(d); } return K; };
   const ref = uid => doc(db, "deblocages", d.corrige.id + "_" + uid);
@@ -401,9 +475,14 @@ function docEleves(cid, d){
   $("#none").onclick = () => { if (confirm(d.test ? "Refermer ce test d'entrée pour toute la classe ?" : d.chapitre ? "Refermer ce chapitre pour toute la classe ?" : "Verrouiller ce corrigé pour toute la classe ?")) bulk(false); };
   paint();
   const mesUid = new Set(el.map(e => e.uid));
-  unsub = onSnapshot(query(collection(db, "deblocages"), where("doc", "==", d.corrige.id)), snap => {
+  const a = onSnapshot(query(collection(db, "deblocages"), where("doc", "==", d.corrige.id)), snap => {
     on = new Set(); snap.forEach(x => { const u = x.data().uid; if (mesUid.has(u)) on.add(u); }); paint();
   }, e => toast("Lecture impossible : " + e.code));
+  /* Point de cours lié (22/11/2026) : état affiché sous le nom de l'élève, plus d'onglet à part */
+  const b = d.avecPdc ? onSnapshot(collection(db, "pointsdecours"), snap => {
+    P = {}; snap.forEach(x => { const v = x.data(); if (mesUid.has(v.uid) && v.pdc === d.pdc) P[v.uid] = v; }); paint();
+  }, () => {}) : () => {};
+  unsub = () => { a(); b(); };
 }
 
 /* == Évaluations == */
