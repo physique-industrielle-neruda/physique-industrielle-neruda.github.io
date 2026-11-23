@@ -180,7 +180,13 @@ li.fresh{animation:fresh 2.4s ease-out}
 /* == Mes révisions (tests d'entrée + fiches de révision) == */
 .rv-intro{color:var(--muted);margin:4px 0 10px}
 .rv{background:var(--surface);border:1px solid var(--grid);border-radius:10px;margin:14px 0;box-shadow:var(--shadow);overflow:hidden}
-.rv>.hd{display:flex;gap:12px;align-items:center;padding:14px 16px;border-bottom:1px solid var(--grid)}
+.rv>.hd{display:flex;gap:12px;align-items:center;padding:14px 16px;border-bottom:1px solid var(--grid);cursor:pointer;user-select:none}
+.rv>.hd:hover{background:var(--accent-soft)}
+.rv>.hd:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.rv>.hd .chev{flex:none;width:18px;height:18px;color:var(--muted);transition:transform .2s}
+.rv.open>.hd .chev{transform:rotate(90deg)}
+.rv:not(.open)>.hd{border-bottom:0}
+.rv:not(.open)>.bd{display:none}
 .rv>.hd .folder{flex:none;width:34px;height:28px;color:var(--accent)}
 .rv>.hd h3{flex:1;font-size:1.45rem;font-weight:600}
 .rv>.hd .tag{font-size:.8rem;font-weight:700;border-radius:20px;padding:3px 10px;white-space:nowrap;background:var(--accent-soft);color:var(--accent)}
@@ -731,13 +737,21 @@ function renderRevisions(view){
   for (const t of ts) view.appendChild(carteTest(t));
 }
 
+const RV_OUVERTS = new Set();
 function carteTest(t){
   const box = document.createElement("div"); box.className = "rv";
   const r = eleveRev() ? MT[t.id] : null;
   const ids = r ? (r.aRevoir || []) : [];
   const faites = ids.filter(f => MF[cleF(t.id, f)]).length;
   const tag = !eleveRev() ? "" : !r ? `<span class="tag">Test à faire</span>` : faites === ids.length ? `<span class="tag ok">Prêt pour le chapitre</span>` : `<span class="tag">${ids.length - faites} fiche${ids.length - faites > 1 ? "s" : ""} à travailler</span>`;
-  box.innerHTML = `<div class="hd">${FOLDER}<h3>${esc(t.chapitre)}</h3>${tag}</div><div class="bd"></div>`;
+  box.innerHTML = `<div class="hd" role="button" tabindex="0"><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>${FOLDER}<h3>${esc(t.chapitre)}</h3>${tag}</div><div class="bd"></div>`;
+  /* Menu déroulant (23/11/2026) : chapitre replié par défaut, l'état est gardé entre deux affichages */
+  const hd = box.querySelector(".hd");
+  const maj = () => { const o = RV_OUVERTS.has(t.id); box.classList.toggle("open", o); hd.setAttribute("aria-expanded", o); };
+  const bascule = () => { RV_OUVERTS.has(t.id) ? RV_OUVERTS.delete(t.id) : RV_OUVERTS.add(t.id); maj(); };
+  hd.onclick = bascule;
+  hd.onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); bascule(); } };
+  maj();
   const bd = box.querySelector(".bd");
   if (!eleveRev()) {
     bd.innerHTML = `<p>${esc(t.titre)} · ${t.nb} questions · ${esc(t.duree)}</p><div class="act"><button class="btn" type="button">Voir le test (aperçu)</button></div>`;
