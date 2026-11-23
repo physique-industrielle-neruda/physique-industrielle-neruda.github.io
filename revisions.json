@@ -27,6 +27,29 @@
    "fichier": "56aec5bfadbf84f8f4cd2fe7.bin"
   },
   {
+   "id": "et-sources-conversions-et-stockage-de-l-energie",
+   "site": "et",
+   "titre": "Test d'entrée – Sources, conversions et stockage de l'énergie",
+   "chapitre": "Sources, conversions et stockage de l'énergie",
+   "duree": "15 min",
+   "nb": 10,
+   "fiches": [
+    "puissances-de-10-et-conversions",
+    "energie-puissance-et-duree",
+    "pourcentages",
+    "rendement",
+    "isoler-une-grandeur-dans-une-formule",
+    "puissance-electrique"
+   ],
+   "verrou": {
+    "id": "test-et-sources-conversions-et-stockage-de-l-energie",
+    "wk": "nMB6vDASD5zJb3lVCR5moY27TSU2gkuRDrqU8fo+nDfVBq0vUkxXEnYjT+OXbH8K/98BBvg2rVLAdeCL",
+    "wkc": "Guk/EA8kE44pUaCrkXNun9FTwKwrM1w8i2IrbsTVs7s2J+xZ7t1kX3rRTmncMF3s3omPonTop41HFeWi",
+    "chap": "et-chap-sources-conversions-et-stockage-de-l-energie"
+   },
+   "fichier": "8a0bc539b09b0d1bfb84d4f5.bin"
+  },
+  {
    "id": "et-statique-des-fluides",
    "site": "et",
    "titre": "Test d'entrée – Statique des fluides",
@@ -96,17 +119,33 @@
    "titre": "Pont diviseur de tension",
    "fichier": "c31cb222f66a44ae77cca954.bin"
   },
+  "pourcentages": {
+   "titre": "Pourcentages",
+   "fichier": "93b54422060c04b01728d61a.bin"
+  },
   "proportionnalite-et-coefficient": {
    "titre": "Proportionnalité et coefficient",
    "fichier": "a6be57b231deae5271151767.bin"
+  },
+  "puissance-electrique": {
+   "titre": "Puissance électrique",
+   "fichier": "510b31412cfe557355c167a2.bin"
   },
   "puissances-de-10-et-conversions": {
    "titre": "Puissances de 10 et conversions",
    "fichier": "c576a54e5ac38bc3db42ee18.bin"
   },
+  "rendement": {
+   "titre": "Rendement",
+   "fichier": "2e1117de8bb090d1fd51f776.bin"
+  },
   "signal-4-20-ma": {
    "titre": "Signal 4-20 mA",
    "fichier": "e4c85c52d7ed2731a4e303e9.bin"
+  },
+  "energie-puissance-et-duree": {
+   "titre": "Énergie, puissance et durée",
+   "fichier": "0e72e289f562403f2a123590.bin"
   }
  }
 }

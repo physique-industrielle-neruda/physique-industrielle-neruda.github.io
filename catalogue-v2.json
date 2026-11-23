@@ -1762,6 +1762,358 @@
       }
      ],
      "annee": 2
+    },
+    {
+     "num": "",
+     "titre": "Sources, conversions et stockage de l'énergie",
+     "docs": [
+      {
+       "titre": "Activité 1 – Le facteur de charge d'un réacteur",
+       "type": "Activité",
+       "fichier": "11daa36ba9b8d0f9e74112d1.bin",
+       "taille": 261399,
+       "pages": 5,
+       "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "Activité 1 – Le facteur de charge d'un réacteur - coups de pouce",
+       "type": "Activité",
+       "fichier": "a4b027fad98c0d26ea535114.bin",
+       "taille": 91588,
+       "pages": 2,
+       "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "Corrigé Activité 1 – Le facteur de charge d'un réacteur",
+       "type": "Corrigé",
+       "fichier": "b8c9e1602748db6ee8d48a97.bin",
+       "taille": 122700,
+       "pages": 3,
+       "corrige": {
+        "id": "et-sources-conversions-et-stockage-de-l-ene-corrige-activite-1-le-facteur-de-charge-d-un-react",
+        "wk": "3gaP612WPCkYO5a9l61ncf8WYencaxUgZX4vW1sHn4HJPLL+Rqk4wz5PgBe65O0BuFAk23ArO7zRju9a"
+       },
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "Point de cours – Activité 1",
+       "type": "Point de cours",
+       "format": "pdc",
+       "fichier": "5900b11323961147b84adcd3.bin",
+       "taille": 15724,
+       "corrige": {
+        "id": "et-sources-conversions-et-stockage-de-l-ene-corrige-activite-1-le-facteur-de-charge-d-un-react",
+        "wk": "3gaP612WPCkYO5a9l61ncf8WYencaxUgZX4vW1sHn4HJPLL+Rqk4wz5PgBe65O0BuFAk23ArO7zRju9a"
+       },
+       "pdc": "et-sources-conversions-et-stockage-de-l-ene-pdc-activite-1",
+       "activite": "Activité 1",
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "Activité 2 – Le rendement du diesel d'ultime secours",
+       "type": "Activité",
+       "fichier": "4d46b40192cb0a3f8786812a.bin",
+       "taille": 341457,
+       "pages": 6,
+       "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "Activité 2 – Le rendement du diesel d'ultime secours - coups de pouce",
+       "type": "Activité",
+       "fichier": "cbdd5d9eb4477b70f308b5f3.bin",
+       "taille": 81969,
+       "pages": 2,
+       "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "Corrigé Activité 2 – Le rendement du diesel d'ultime secours",
+       "type": "Corrigé",
+       "fichier": "a7200e5ce171b92fa91cc7bd.bin",
+       "taille": 112437,
+       "pages": 3,
+       "corrige": {
+        "id": "et-sources-conversions-et-stockage-de-l-ene-corrige-activite-2-le-rendement-du-diesel-d-ultime",
+        "wk": "K2CNvVgoC/ueD5GX13KwvC1A/8TNF3eSTcpoh8M0XeGoB2dVwrVsUwsKjeoPBWZoutQCDNWJGMLDnUkS"
+       },
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "Point de cours – Activité 2",
+       "type": "Point de cours",
+       "format": "pdc",
+       "fichier": "0cbae64595528c64e90d800f.bin",
+       "taille": 16101,
+       "corrige": {
+        "id": "et-sources-conversions-et-stockage-de-l-ene-corrige-activite-2-le-rendement-du-diesel-d-ultime",
+        "wk": "K2CNvVgoC/ueD5GX13KwvC1A/8TNF3eSTcpoh8M0XeGoB2dVwrVsUwsKjeoPBWZoutQCDNWJGMLDnUkS"
+       },
+       "pdc": "et-sources-conversions-et-stockage-de-l-ene-pdc-activite-2",
+       "activite": "Activité 2",
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "Activité 3 – L'autonomie de la batterie 125 V",
+       "type": "Activité",
+       "fichier": "b35e9a4bedaf8d7da3cf7857.bin",
+       "taille": 230805,
+       "pages": 5,
+       "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "Activité 3 – L'autonomie de la batterie 125 V - coups de pouce",
+       "type": "Activité",
+       "fichier": "b7e7b9e5ddcb8cc5e5bbe8d0.bin",
+       "taille": 87134,
+       "pages": 2,
+       "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "Corrigé Activité 3 – L'autonomie de la batterie 125 V",
+       "type": "Corrigé",
+       "fichier": "58ffb4a0ac1c38a1519d315e.bin",
+       "taille": 103662,
+       "pages": 3,
+       "corrige": {
+        "id": "et-sources-conversions-et-stockage-de-l-ene-corrige-activite-3-l-autonomie-de-la-batterie-125-",
+        "wk": "9ej2MIW52zyC/F0Mm4jq0SiyXAYjdUm+QChf9R5JT5cKkVOs1XW+zBb071F2Fhwue9527O3r2R/1aDJ9"
+       },
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "Point de cours – Activité 3",
+       "type": "Point de cours",
+       "format": "pdc",
+       "fichier": "f2ca5b53127c7afd0a794b1f.bin",
+       "taille": 15662,
+       "corrige": {
+        "id": "et-sources-conversions-et-stockage-de-l-ene-corrige-activite-3-l-autonomie-de-la-batterie-125-",
+        "wk": "9ej2MIW52zyC/F0Mm4jq0SiyXAYjdUm+QChf9R5JT5cKkVOs1XW+zBb071F2Fhwue9527O3r2R/1aDJ9"
+       },
+       "pdc": "et-sources-conversions-et-stockage-de-l-ene-pdc-activite-3",
+       "activite": "Activité 3",
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "Activité 4 – Un projet d'ombrière solaire",
+       "type": "Activité",
+       "fichier": "7b3f7e1c5012667a42dda5c4.bin",
+       "taille": 573911,
+       "pages": 6,
+       "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "Activité 4 – Un projet d'ombrière solaire - coups de pouce",
+       "type": "Activité",
+       "fichier": "6d1769f7d763ee34b57d8213.bin",
+       "taille": 96734,
+       "pages": 2,
+       "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "Corrigé Activité 4 – Un projet d'ombrière solaire",
+       "type": "Corrigé",
+       "fichier": "b41feed9c55eaa699ef1bbb9.bin",
+       "taille": 128006,
+       "pages": 3,
+       "corrige": {
+        "id": "et-sources-conversions-et-stockage-de-l-ene-corrige-activite-4-un-projet-d-ombriere-solaire",
+        "wk": "mojZjvQCkvy9r75wDdjrlv9HKGmXfTWlw49qMYZzHKJC1QgfZgjIIV/ynPYZ0t/AU1H7ftB6wNRt2b9V"
+       },
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "Point de cours – Activité 4",
+       "type": "Point de cours",
+       "format": "pdc",
+       "fichier": "0e4f4c7691346da06cc6b2ec.bin",
+       "taille": 15558,
+       "corrige": {
+        "id": "et-sources-conversions-et-stockage-de-l-ene-corrige-activite-4-un-projet-d-ombriere-solaire",
+        "wk": "mojZjvQCkvy9r75wDdjrlv9HKGmXfTWlw49qMYZzHKJC1QgfZgjIIV/ynPYZ0t/AU1H7ftB6wNRt2b9V"
+       },
+       "pdc": "et-sources-conversions-et-stockage-de-l-ene-pdc-activite-4",
+       "activite": "Activité 4",
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "L'essentiel du dossier",
+       "type": "Cours",
+       "fichier": "7d8f458ded3ae287ca8af7fd.bin",
+       "taille": 388566,
+       "pages": 7,
+       "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
+       "rubrique": "Cours"
+      },
+      {
+       "titre": "Fiche animation",
+       "type": "Fiche",
+       "fichier": "94dc72f752cebb90df4904c1.bin",
+       "taille": 142795,
+       "pages": 2,
+       "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
+       "rubrique": "Animation"
+      },
+      {
+       "titre": "Animation – Sources, conversions et stockage de l'énergie",
+       "type": "Animation",
+       "fichier": "2a85ae16a11e71585eee847f.bin",
+       "format": "html",
+       "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
+       "rubrique": "Animation"
+      },
+      {
+       "titre": "Exercice 1 – La centrale solaire au sol",
+       "type": "Exercices",
+       "fichier": "ea9af39efe101b0eb967804a.bin",
+       "taille": 121610,
+       "pages": 1,
+       "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 1 - coups de pouce",
+       "type": "Exercices",
+       "fichier": "e47787da2d72474043812d9a.bin",
+       "taille": 71112,
+       "pages": 1,
+       "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Corrigé Exercice 1",
+       "type": "Corrigé",
+       "fichier": "7bc0ddbfd02c391f98695f03.bin",
+       "taille": 71471,
+       "pages": 1,
+       "corrige": {
+        "id": "et-sources-conversions-et-stockage-de-l-ene-corrige-exercice-1",
+        "wk": "x931befAnvoQJ5yRGpjiPP8sNJklWmLcT48A0iI3jOt5GE/ZNH3YCfDXubjy9/dqfVuJtjQLa+hfMlu6"
+       },
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 2 – Le monte-charge de la papeterie",
+       "type": "Exercices",
+       "fichier": "a1d4720d5fa98c9d1891fe7f.bin",
+       "taille": 111578,
+       "pages": 2,
+       "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 2 - coups de pouce",
+       "type": "Exercices",
+       "fichier": "20abb8400f27027a42b3fc35.bin",
+       "taille": 71467,
+       "pages": 1,
+       "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Corrigé Exercice 2",
+       "type": "Corrigé",
+       "fichier": "31486ed7ddd3b2996e70df45.bin",
+       "taille": 90861,
+       "pages": 1,
+       "corrige": {
+        "id": "et-sources-conversions-et-stockage-de-l-ene-corrige-exercice-2",
+        "wk": "PAJjm/4QQF7MQXijuE9Utr9PukFOfmOMEhBamcIWOXR+hh812E3nggL+RKQs8lHzek9qzYE6v4qmpjgK"
+       },
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 3 – Le chauffe-eau thermodynamique de la caserne",
+       "type": "Exercices",
+       "fichier": "18df7eb1ca66022cb7e93743.bin",
+       "taille": 117252,
+       "pages": 1,
+       "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 3 - coups de pouce",
+       "type": "Exercices",
+       "fichier": "481f64735ff8af8bc1f0d863.bin",
+       "taille": 72512,
+       "pages": 1,
+       "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Corrigé Exercice 3",
+       "type": "Corrigé",
+       "fichier": "91c8309c3b6e074017d89074.bin",
+       "taille": 86131,
+       "pages": 1,
+       "corrige": {
+        "id": "et-sources-conversions-et-stockage-de-l-ene-corrige-exercice-3",
+        "wk": "Khg6h0Y8Pk6o/BCXtxIY09QXKnaJStdLpBX3ODG9xbDgTujW2feYbTaedqX/XYBXgzyHmRQekEU9CMBo"
+       },
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 4 – Les batteries de la station de captage",
+       "type": "Exercices",
+       "fichier": "14a33c5cfc7eccccf497d7ab.bin",
+       "taille": 112683,
+       "pages": 1,
+       "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 4 - coups de pouce",
+       "type": "Exercices",
+       "fichier": "e95798a0cfb154309aacaefc.bin",
+       "taille": 76140,
+       "pages": 1,
+       "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Corrigé Exercice 4",
+       "type": "Corrigé",
+       "fichier": "acc9aa7156e6f4ec4ffc1db5.bin",
+       "taille": 73775,
+       "pages": 1,
+       "corrige": {
+        "id": "et-sources-conversions-et-stockage-de-l-ene-corrige-exercice-4",
+        "wk": "fcMaEzsnw/jtYjrzMt/9gz/HhZZRBOyiXnTWj/Bsj+LeLxrT/FKEVMAILn2VPFI67/M7eGIY8lQ2Gn+u"
+       },
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Bilan",
+       "type": "Fiche",
+       "fichier": "6dcec13bec9428f7fd61ea3d.bin",
+       "taille": 70761,
+       "pages": 1,
+       "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
+       "rubrique": "Réviser"
+      },
+      {
+       "titre": "cartes de révision",
+       "type": "Cartes",
+       "nombre": 10,
+       "fichier": "5b17aecc93fd4b69673f0ddb.bin",
+       "format": "cartes",
+       "ch": "sources-conversions-et-stockage-de-l-energie",
+       "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
+       "rubrique": "Réviser"
+      }
+     ],
+     "annee": 2,
+     "verrou": {
+      "id": "et-chap-sources-conversions-et-stockage-de-l-energie",
+      "wk": "W70W31iGhUl8nC3IPUGnkioHrO7GOQJOxLR4qN8Pc0u/k9Aw6/y9LZ4+yuXun8Yd3P09auCp3TA1/qse"
+     }
     }
    ]
   },
@@ -3136,9 +3488,9 @@
   }
  ],
  "outilsWk": {
-  "et": "NGmGQZJpwVasMTp1vJN0CvQu+SgVmh54yfr3kU9O9S2ohfUj+pqlmIdq3LyTD05GmkpbRCUNtiCWXDWt",
-  "cira": "oh3FySaXwKLzXb9GavPzdkz4UY3aXTDsbiSgp4QPS/jZXnaLFgOn7lPdvZbrezQUV7ViEUTabhBF4T3+",
-  "cim": "vP3wV+6DXMOUAUEsGl+Qs9sJcygqIiLyB3Jkci+l5IDzD0SZNRQvEy1OATOBDJLVr6o0S3qGLd+9AbOP"
+  "et": "GuvBpCFrq1jasbL2ZBZd/8ePfdB+VURkzqD4lkEmjpAQD1Ept3jyihbb70WyUNaXqsm/ciMLDsoCzPtr",
+  "cira": "ODLtH/9DR8Hv7A9MVoHf/+mIg2yU5jpetXA7qKCh86WVMnlqQE8gi3TclZHtomfrpHM2WLYW0JytwCKr",
+  "cim": "ULnZe0UgkO/aY/7NikOyEdsl/dSQgHqP+1fxC4FNE2jbnsNfl/1F9B4oZhBvrQMjVxISPvO3dZ4Cj6Vm"
  },
  "outils": [
   {
