@@ -866,6 +866,53 @@ function pdcRow(c, d){
   li.querySelector("button").onclick = () => ouvrirPdc(c, d);
   return li;
 }
+/* Vue professeur d'un point de cours (23/11/2026) : déroulé complet proposé à l'élève (questions, propositions, bonne
+   réponse, indice, phrase ajoutée), injecté dans la page du point de cours pour le compte prof et les invités premium.
+   La fonction est exécutée DANS l'iframe : elle n'utilise que les variables de la page (A, E, etat, cur, erreurs…). */
+function pdcDeroule(){
+  const go = () => {
+    if (typeof A === "undefined" || !A.etapes) return;
+    const st = document.createElement("style");
+    st.textContent = `.prof-dr{margin-top:22px}.prof-dr .h{background:#C55A11;color:#fff;font-weight:bold;font-size:14px;letter-spacing:.4px;padding:8px 14px;border-radius:8px 8px 0 0}
+      .prof-dr .box{background:#fff;border:2px solid #C55A11;border-top:0;border-radius:0 0 8px 8px;padding:6px 14px 10px}
+      .prof-dr .et{padding:10px 0;border-bottom:1px dashed #e0c3ad}.prof-dr .et:last-child{border-bottom:0}
+      .prof-dr .n{color:#C55A11;font-weight:bold}.prof-dr .ty{font-size:12px;color:#5A6577;margin-left:6px}
+      .prof-dr ul{margin:6px 0 0;padding-left:22px}.prof-dr li.bon{color:#1f7a3f;font-weight:bold}.prof-dr li.bon::after{content:"  ✓ bonne réponse";font-size:12px}
+      .prof-dr .rep{color:#1f7a3f;font-weight:bold;background:#e3f4ea;border-radius:4px;padding:0 4px}
+      .prof-dr .props{font-size:13px;color:#5A6577;margin-top:4px}
+      .prof-dr .ind{margin-top:6px;background:#FFF2CC;border-radius:6px;padding:6px 10px;font-size:14px}.prof-dr .ind b{color:#C55A11}
+      .prof-dr .ph{margin-top:6px;background:#E2EFDA;border-radius:6px;padding:6px 10px;font-size:14px}.prof-dr .ph b{color:#3F7A3A}
+      .prof-dr .tester{margin-top:12px}`;
+    document.head.appendChild(st);
+    const h = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));
+    const fr = v => String(v).replace(".", ",");
+    const lib = {choix: "choix multiple", menus: "menus déroulants", nombres: "valeurs à saisir"};
+    const bloc = (e, i) => {
+      let c = "";
+      if (e.type === "choix") c = `<ul>${e.options.map((o, k) => `<li${k === e.bon ? ' class="bon"' : ""}>${o}</li>`).join("")}</ul>`;
+      else if (e.type === "menus") {
+        let t = e.texte; e.menus.forEach((m, k) => { t = t.replace("{" + k + "}", `<span class="rep">${h(m[e.bons[k]])}</span>`); });
+        c = `<div>${t}</div>` + e.menus.map((m, k) => `<div class="props">Menu ${k + 1} : ${m.map(h).join(" / ")}</div>`).join("");
+      } else c = (e.champs || []).map(f => `<div>${f.av} <span class="rep">${fr(f.r)}</span> ${f.ap}${f.tol ? ` <span class="props">(accepté à ± ${fr(f.tol)})</span>` : ""}</div>`).join("");
+      return `<div class="et"><div><span class="n">Étape ${i + 1}.</span> ${e.q}<span class="ty">(${lib[e.type] || e.type})</span></div>${c}
+        ${e.indice ? `<div class="ind"><b>Indice (après la 1re erreur) :</b> ${e.indice}</div>` : ""}
+        <div class="ph"><b>Phrase ajoutée au point de cours :</b> ${e.phrase}</div></div>`;
+    };
+    const sec = document.createElement("section"); sec.className = "prof-dr";
+    sec.innerHTML = `<div class="h">VUE PROFESSEUR – DÉROULÉ PROPOSÉ À L'ÉLÈVE (${A.etapes.length} étapes)</div><div class="box">
+      <p class="props">L'élève voit une étape à la fois. Après une erreur, l'indice s'affiche ; après deux erreurs, la bonne réponse est donnée et la phrase est marquée « corrigé ».</p>
+      ${A.etapes.map(bloc).join("")}
+      <div class="tester"><button type="button" class="btn">Tester comme un élève</button> <span class="props">(rien n'est enregistré)</span></div></div>`;
+    document.querySelector("main").appendChild(sec);
+    const z = document.getElementById("zone"); if (z) z.innerHTML = "";
+    if (window.renderMathInElement) renderMathInElement(sec, {delimiters:[{left:"$$",right:"$$",display:true},{left:"$",right:"$",display:false}], throwOnError:false});
+    sec.querySelector("button").onclick = () => {
+      try { etat.length = 0; cur = 0; erreurs = 0; document.getElementById("consigne").hidden = false; document.getElementById("prog").hidden = false;
+        dessinerPdc(-1); etape(); window.scrollTo(0, 0); } catch(_) {}
+    };
+  };
+  if (document.readyState === "complete") go(); else window.addEventListener("load", go);
+}
 async function ouvrirPdc(c, d){
   let html;
   try {
@@ -874,6 +921,7 @@ async function ouvrirPdc(c, d){
   } catch(e) { toast(e.message === "verrou" ? "Ce point de cours n'est pas encore débloqué." : "Impossible d'ouvrir le point de cours. Rechargez la page."); return; }
   const eleve = eleveRev(), deja = MP[d.pdc] && MP[d.pdc].termine;
   if (deja || !eleve) html = html.replace("</head>", "<script>window.PDC_FAIT = true;<\/script></head>");   // affichage complet, pour réviser
+  if (!eleve) html = html.replace("</body>", () => "<script>(" + pdcDeroule.toString() + ")();<\/script></body>");   // vue professeur : déroulé complet (questions + réponses)
   const ov = document.createElement("div"); ov.className = "fiche-ov";
   ov.innerHTML = `<div class="bar"><b>${esc(d.titre)}</b><button type="button">Fermer</button></div><iframe title="${esc(d.titre)}"></iframe>`;
   const fr = ov.querySelector("iframe"); fr.srcdoc = html;
