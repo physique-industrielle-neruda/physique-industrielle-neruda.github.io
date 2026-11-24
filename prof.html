@@ -260,7 +260,8 @@ async function syncOuvertures(snap){
     const t = v.at.toMillis(); if (!o[v.doc] || t < o[v.doc]) o[v.doc] = t; });
   const js = JSON.stringify(Object.keys(o).sort().map(k => [k, o[k]]));
   if (js === OUVERT_ENR) return; OUVERT_ENR = js;
-  try { await updateDoc(doc(db, "prive", "cles"), { ouvertures: o }); } catch(_){}
+  try { await updateDoc(doc(db, "prive", "cles"), { ouvertures: o }); }
+  catch(e){ OUVERT_ENR = null; toast("Ordre des dossiers du site non enregistré (" + (e.code || "erreur") + ")."); }
 }
 function elevesDe(c){
   const uidDe = {}; CLASSES.forEach(k => (k.eleves || []).forEach(e => { if (e.uid) uidDe[e.login] = e.uid; }));
