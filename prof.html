@@ -313,7 +313,8 @@ function libDoc(d, n, total){
 function suivreDeblocages(c, cb){
   const mesUid = new Set(elevesDe(c).map(e => e.uid));
   unsub = onSnapshot(collection(db, "deblocages"), snap => {
-    const counts = {}; snap.forEach(x => { const v = x.data(); if (mesUid.has(v.uid)) counts[v.doc] = (counts[v.doc] || 0) + 1; }); cb(counts);
+    const counts = {}, prem = {}; snap.forEach(x => { const v = x.data(); if (mesUid.has(v.uid)) { counts[v.doc] = (counts[v.doc] || 0) + 1;
+      const t = v.at && v.at.toMillis ? v.at.toMillis() : Date.now(); if (!prem[v.doc] || t < prem[v.doc]) prem[v.doc] = t; } }); cb(counts, prem);
   }, e => toast("Lecture impossible : " + e.code));
 }
 
@@ -334,8 +335,23 @@ function paneCorriges(c){
     return `<button class="row" data-ch="${esc(g.ch.titre)}"><span class="fold" aria-hidden="true">📁</span><span class="main"><span class="t">${esc(g.ch.titre)}</span><span class="m">${m}</span></span>`
       + (docs.length ? `<span class="count${full === docs.length && full ? " full" : ""}" title="Corrigés débloqués pour toute la classe">${full}/${docs.length}</span>` : "") + `<span class="chev"></span></button>`;
   };
-  const render = counts => {
-    last = counts;
+  /* Ordre des dossiers (24/11/2026), comme sur le site : le plus récemment ouvert à la classe en haut,
+     puis les plus anciens ; les chapitres encore fermés à toute la classe en bas. */
+  const idx = new Map(groups.map((g, i) => [g, i]));
+  const ordonner = (counts, prem) => {
+    const lockDe = g => g.docs.find(d => d.chapitre && !d.test);
+    const etat = g => { const l = lockDe(g); return !l ? 1 : (counts[l.corrige.id] || 0) > 0 ? 0 : 2; };
+    const date = g => prem[lockDe(g).corrige.id] || 0;
+    groups.sort((a, b) => { const ea = etat(a), eb = etat(b);
+      if (ea !== eb) return ea - eb;
+      if (ea === 0 && date(a) !== date(b)) return date(b) - date(a);
+      if (ea === 2) return idx.get(a) - idx.get(b);
+      const na = parseFloat(a.ch.num), nb = parseFloat(b.ch.num);
+      if (!isNaN(na) && !isNaN(nb) && na !== nb) return nb - na;
+      return idx.get(b) - idx.get(a); });
+  };
+  const render = (counts, prem = {}) => {
+    last = counts; ordonner(counts, prem);
     const annees = [...new Set(groups.map(g => g.ch.annee).filter(Boolean))].sort();
     const nomAn = a => a === 1 ? "1re année" : a + "e année";
     let html;
@@ -351,11 +367,12 @@ function paneCorriges(c){
     }
     $("#pane").innerHTML = html + `<p class="note">Touchez un chapitre pour voir ses corrigés. Le nombre à droite indique les corrigés débloqués pour toute la classe.</p>`
       + (total ? "" : `<p class="note">Aucun compte élève n'est encore créé : onglet « Élèves et comptes ».</p>`);
-    const niv = $("#niv"); if (niv) niv.onchange = () => { choix = +niv.value; paneCorriges.niv[c.id] = choix; render(last); };
+    const niv = $("#niv"); if (niv) niv.onchange = () => { choix = +niv.value; paneCorriges.niv[c.id] = choix; render(last, lastPrem); };
     $("#pane").querySelectorAll(".row").forEach(b => b.onclick = () => go(chapitreCorriges, c.id, b.dataset.ch));
   };
+  let lastPrem = {};
   render({});
-  suivreDeblocages(c, render);
+  suivreDeblocages(c, (counts, prem) => { lastPrem = prem; render(counts, prem); });
 }
 paneCorriges.niv = {};   // niveau choisi, gardé au retour
 

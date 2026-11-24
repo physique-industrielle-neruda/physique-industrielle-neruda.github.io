@@ -268,7 +268,7 @@ const size = n => n > 1e6 ? (n/1e6).toFixed(1).replace(".", ",") + " Mo" : Math.
 let CAT = null, current = null, booted = false;
 let EVAL = { evaluations: [] }, NOMS = {};
 /* Session : rôle, classe, clés */
-let S = { user:null, prof:false, evals:false, premium:false, tous:false, nom:"", site:null, groupe:null, keys:{}, maitre:null, corr:{} };
+let S = { user:null, prof:false, evals:false, premium:false, tous:false, nom:"", site:null, groupe:null, keys:{}, maitre:null, corr:{}, corrAt:{} };
 let unsubCorr = null, fresh = new Set();
 /* Mes révisions : tests d'entrée et fiches de révision (revisions.json, Firestore « tests » et « revisions ») */
 let REV = { tests: [], fiches: {} }, MT = {}, MF = {}, unsubRev = [], VUE_REV = null;
@@ -335,6 +335,34 @@ function anneeOK(ch){
   return !(g && g.annee === 1 && ch.annee > 1);
 }
 const chapOK = ch => !ch.verrou || S.prof || S.premium || !!S.corr[ch.verrou.id];
+/* Ordre des dossiers (24/11/2026) : le plus récemment débloqué tout en haut, puis les plus anciens ;
+   les chapitres encore verrouillés restent en bas et remontent en tête quand ils sont ouverts.
+   Date = déblocage de l'élève (son propre accès) ; pour le professeur, 1er déblocage dans une classe. */
+let OUV = null;   // professeur / invité premium : id du verrou -> date du 1er déblocage
+function ordreChaps(c, xs){
+  const idx = new Map(c.chapitres.map((ch, i) => [ch, i]));
+  const date = ch => S.corrAt[ch.verrou.id] || (OUV && OUV[ch.verrou.id]) || 0;
+  const etat = ch => {
+    if (!ch.verrou) return 1;                                     // ancien chapitre, jamais sous cadenas
+    if (S.prof || S.premium) return OUV ? (OUV[ch.verrou.id] ? 0 : 2) : 0;
+    return S.corr[ch.verrou.id] ? 0 : 2;
+  };
+  return xs.slice().sort((a, b) => {
+    const A = a.ch, B = b.ch, ea = etat(A), eb = etat(B);
+    if (ea !== eb) return ea - eb;
+    if (ea === 0 && date(B) !== date(A)) return date(B) - date(A);
+    if (ea === 2) return idx.get(A) - idx.get(B);
+    const na = parseFloat(A.num), nb = parseFloat(B.num);
+    if (!isNaN(na) && !isNaN(nb) && na !== nb) return nb - na;
+    return idx.get(B) - idx.get(A);
+  });
+}
+async function chargerOuvertures(){
+  OUV = null;
+  try { const snap = await getDocs(collection(db, "deblocages")); const o = {};
+    snap.forEach(x => { const v = x.data(); if (!v.doc || !chapInfo(v.doc)) return; const t = v.at && v.at.toMillis ? v.at.toMillis() : Date.now(); if (!o[v.doc] || t < o[v.doc]) o[v.doc] = t; });
+    OUV = o; } catch(_){ OUV = null; }
+}
 async function chapKey(id){
   if (S.corr[id]) return importKey(b64(S.corr[id]));
   const v = chapInfo(id);
@@ -640,8 +668,9 @@ function render(){
   if (S.user && (q || current === "outils")) found += renderOutils(view, q);
   const classes = q ? visibleClasses() : visibleClasses().filter(c => c.id === current);
   for (const c of classes) {
-    const chaps = c.chapitres.filter(anneeOK).map(ch => ({ch, docs: ch.docs.filter(d => !q || (chapOK(ch) && (d.titre + " " + d.type + " " + ch.titre).toLowerCase().includes(q)))}))
+    let chaps = c.chapitres.filter(anneeOK).map(ch => ({ch, docs: ch.docs.filter(d => !q || (chapOK(ch) && (d.titre + " " + d.type + " " + ch.titre).toLowerCase().includes(q)))}))
       .filter(x => x.docs.length);
+    chaps = ordreChaps(c, chaps);
     if (q && !chaps.length) continue;
     const head = document.createElement("div"); head.className = "classhead";
     head.innerHTML = `<h2>${esc(c.nom)}</h2><span class="status is-open">Documents ouverts</span>`;
@@ -1090,7 +1119,7 @@ function route(){
 async function startSession(user){
   if (unsubCorr) { unsubCorr(); unsubCorr = null; }
   unsubRev.forEach(f => f()); unsubRev = []; MT = {}; MF = {}; MP = {}; VUE_REV = null;
-  S = { user:null, prof:false, evals:false, premium:false, tous:false, nom:"", site:null, groupe:null, keys:{}, maitre:null, corr:{} };
+  S = { user:null, prof:false, evals:false, premium:false, tous:false, nom:"", site:null, groupe:null, keys:{}, maitre:null, corr:{}, corrAt:{} };
   KO = null;
   if (!user) return;
   try {
@@ -1103,6 +1132,7 @@ async function startSession(user){
         if (k.corriges) S.maitre = await crypto.subtle.importKey("raw", b64(k.corriges), "AES-GCM", false, ["decrypt"]);
       }
       Object.assign(S, { user, prof:true, evals:true, nom:"Professeur" });
+      await chargerOuvertures();
       await nomsEvals();
       try { const cs = await getDocs(collection(db, "classes")); cs.forEach(x => { const v = x.data(); NOMS[x.id] = { nom: v.nom || x.id, eleves: Object.fromEntries((v.eleves || []).map(e => [e.login, e.nom])) }; }); } catch(_){}
       return;
@@ -1120,6 +1150,7 @@ async function startSession(user){
       }
       Object.assign(S, { user, nom, site:null, tous:true, premium:true, groupe:classe, evals: user.email === "professeur" + DOMAINE });
       if (S.evals) await nomsEvals();
+      await chargerOuvertures();
       return;
     }
     if (site === "tous") {
@@ -1133,10 +1164,10 @@ async function startSession(user){
     }
     let first = true;
     unsubCorr = onSnapshot(query(collection(db, "deblocages"), where("uid", "==", user.uid)), snap => {
-      const before = new Set(Object.keys(S.corr)); const now = {};
-      snap.forEach(x => { const v = x.data(); if (v.doc && v.cle) now[v.doc] = v.cle; });
+      const before = new Set(Object.keys(S.corr)); const now = {}, at = {};
+      snap.forEach(x => { const v = x.data(); if (v.doc && v.cle) { now[v.doc] = v.cle; at[v.doc] = v.at && v.at.toMillis ? v.at.toMillis() : Date.now(); } });
       if (!first) for (const id in now) if (!before.has(id)) { fresh.add(id); toast(id.startsWith("eval-") ? "Ta copie corrigée est disponible dans « Mes évaluations »." : id.startsWith("test-") ? "Un test d'entrée vient d'être ouvert : il est dans le dossier du chapitre." : chapInfo(id) ? "Un nouveau chapitre vient d'être ouvert !" : aPdc(id) ? "Ton corrigé et ton point de cours sont débloqués !" : "Un corrigé vient d'être débloqué !"); }
-      first = false; S.corr = now; render();
+      first = false; S.corr = now; S.corrAt = at; render();
     }, () => {});
     suivreRevisions(user.uid);
     suivrePdc(user.uid);
