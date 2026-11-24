@@ -128,9 +128,11 @@
       {
        "titre": "activité 1. spectres et sources lumineuses du hall turbine - coups de pouce",
        "type": "Activité",
-       "fichier": "ffdaceed9866cef5dfdf558f.bin",
-       "taille": 76103,
-       "pages": 1,
+       "format": "pouce",
+       "fichier": "25946f333876fc24968ce10a.bin",
+       "taille": 11164,
+       "pouce": "pouce:et-lumiere-et-photometrie-corrige-eleve-activite-1",
+       "lie": "et-lumiere-et-photometrie-corrige-eleve-activite-1",
        "rubrique": "Activités"
       },
       {
@@ -144,9 +146,11 @@
       {
        "titre": "activité 2. relamping de la salle des machines - coups de pouce",
        "type": "Activité",
-       "fichier": "4aaa7571e467046ab927ea1e.bin",
-       "taille": 79513,
-       "pages": 1,
+       "format": "pouce",
+       "fichier": "bb188554b83204e72588d57a.bin",
+       "taille": 10881,
+       "pouce": "pouce:et-lumiere-et-photometrie-corrige-eleve-activite-2",
+       "lie": "et-lumiere-et-photometrie-corrige-eleve-activite-2",
        "rubrique": "Activités"
       },
       {
@@ -160,9 +164,11 @@
       {
        "titre": "activité 3. contrôle de l'éclairement au luxmètre - coups de pouce",
        "type": "Activité",
-       "fichier": "a5671711a578381c79cc2b3f.bin",
-       "taille": 76581,
-       "pages": 1,
+       "format": "pouce",
+       "fichier": "9d294d5951362ea13734c174.bin",
+       "taille": 11017,
+       "pouce": "pouce:et-lumiere-et-photometrie-corrige-eleve-activite-3",
+       "lie": "et-lumiere-et-photometrie-corrige-eleve-activite-3",
        "rubrique": "Activités"
       },
       {
@@ -196,9 +202,11 @@
       {
        "titre": "Exercice 1 - coups de pouce",
        "type": "Exercices",
-       "fichier": "c1eeb66075ea0849f30443c1.bin",
-       "taille": 72408,
-       "pages": 1,
+       "format": "pouce",
+       "fichier": "5ea9acab2ad16474d089e5b0.bin",
+       "taille": 10212,
+       "pouce": "pouce:et-lumiere-et-photometrie-corrige-eleve-exercice-1",
+       "lie": "et-lumiere-et-photometrie-corrige-eleve-exercice-1",
        "rubrique": "Exercices"
       },
       {
@@ -212,9 +220,11 @@
       {
        "titre": "Exercice 2 - coups de pouce",
        "type": "Exercices",
-       "fichier": "b89a6deed735136cca246de1.bin",
-       "taille": 70785,
-       "pages": 1,
+       "format": "pouce",
+       "fichier": "e22b6a2cd49203621cb2a98d.bin",
+       "taille": 10157,
+       "pouce": "pouce:et-lumiere-et-photometrie-corrige-eleve-exercice-2",
+       "lie": "et-lumiere-et-photometrie-corrige-eleve-exercice-2",
        "rubrique": "Exercices"
       },
       {
@@ -228,9 +238,11 @@
       {
        "titre": "Exercice 3 - coups de pouce",
        "type": "Exercices",
-       "fichier": "c255977e7a7875c36ddf4da6.bin",
-       "taille": 73660,
-       "pages": 1,
+       "format": "pouce",
+       "fichier": "67d6360f9e858e16ffa6e92e.bin",
+       "taille": 9978,
+       "pouce": "pouce:et-lumiere-et-photometrie-corrige-eleve-exercice-3",
+       "lie": "et-lumiere-et-photometrie-corrige-eleve-exercice-3",
        "rubrique": "Exercices"
       },
       {
@@ -244,9 +256,11 @@
       {
        "titre": "Exercice 4 - coups de pouce",
        "type": "Exercices",
-       "fichier": "6f33e17be9065270ead02493.bin",
-       "taille": 70151,
-       "pages": 1,
+       "format": "pouce",
+       "fichier": "2da1bbacfe602fbfe9f68ee4.bin",
+       "taille": 9756,
+       "pouce": "pouce:et-lumiere-et-photometrie-corrige-eleve-exercice-4",
+       "lie": "et-lumiere-et-photometrie-corrige-eleve-exercice-4",
        "rubrique": "Exercices"
       },
       {
@@ -298,9 +312,11 @@
       {
        "titre": "Activité 1 – Boucle 4-20 mA du pressuriseur du réacteur nucléaire - coups de pouce",
        "type": "Activité",
-       "fichier": "9ff9990feb01c64cb744884f.bin",
-       "taille": 90783,
-       "pages": 2,
+       "format": "pouce",
+       "fichier": "bc26c64b377a2f6389327ed7.bin",
+       "taille": 12310,
+       "pouce": "pouce:et-les-chaines-de-mesure-corrige-eleve-activite-1-boucle-4-20-ma-du-pressur",
+       "lie": "et-les-chaines-de-mesure-corrige-eleve-activite-1-boucle-4-20-ma-du-pressur",
        "rubrique": "Activités"
       },
       {
@@ -314,9 +330,11 @@
       {
        "titre": "Activité 2 – Numérisation d'une mesure de température - coups de pouce",
        "type": "Activité",
-       "fichier": "b171f2ff21fd2853c32078db.bin",
-       "taille": 89815,
-       "pages": 2,
+       "format": "pouce",
+       "fichier": "9aa5dc1e432bbf1ffb984d53.bin",
+       "taille": 12047,
+       "pouce": "pouce:et-les-chaines-de-mesure-corrige-eleve-activite-2-numerisation-d-une-mesure",
+       "lie": "et-les-chaines-de-mesure-corrige-eleve-activite-2-numerisation-d-une-mesure",
        "rubrique": "Activités"
       },
       {
@@ -330,9 +348,11 @@
       {
        "titre": "Activité 3 – Temps de réponse et précision d'une sonde Pt100 - coups de pouce",
        "type": "Activité",
-       "fichier": "c25638fce99f187bf1af948d.bin",
-       "taille": 83047,
-       "pages": 2,
+       "format": "pouce",
+       "fichier": "f7b3ffe28b5ea4515b32f3d7.bin",
+       "taille": 11271,
+       "pouce": "pouce:et-les-chaines-de-mesure-corrige-eleve-activite-3-temps-de-reponse-et-preci",
+       "lie": "et-les-chaines-de-mesure-corrige-eleve-activite-3-temps-de-reponse-et-preci",
        "rubrique": "Activités"
       },
       {
@@ -366,9 +386,11 @@
       {
        "titre": "Exercice 1 - coups de pouce",
        "type": "Exercices",
-       "fichier": "96df7a2d026b3152e040c6b7.bin",
-       "taille": 74302,
-       "pages": 1,
+       "format": "pouce",
+       "fichier": "c2d4472f21aebbee0773f787.bin",
+       "taille": 9930,
+       "pouce": "pouce:et-les-chaines-de-mesure-corrige-eleve-exercice-1",
+       "lie": "et-les-chaines-de-mesure-corrige-eleve-exercice-1",
        "rubrique": "Exercices"
       },
       {
@@ -382,9 +404,11 @@
       {
        "titre": "Exercice 2 - coups de pouce",
        "type": "Exercices",
-       "fichier": "a9bc890de2af77a3f9a18c36.bin",
-       "taille": 71054,
-       "pages": 1,
+       "format": "pouce",
+       "fichier": "2ec7be1d08da0d3e81b1ea7a.bin",
+       "taille": 9677,
+       "pouce": "pouce:et-les-chaines-de-mesure-corrige-eleve-exercice-2",
+       "lie": "et-les-chaines-de-mesure-corrige-eleve-exercice-2",
        "rubrique": "Exercices"
       },
       {
@@ -398,9 +422,11 @@
       {
        "titre": "Exercice 3 - coups de pouce",
        "type": "Exercices",
-       "fichier": "8578f5c72bd4ca8f093f9595.bin",
-       "taille": 71618,
-       "pages": 1,
+       "format": "pouce",
+       "fichier": "0ef878fc6c7cc09cf14b5aa3.bin",
+       "taille": 9774,
+       "pouce": "pouce:et-les-chaines-de-mesure-corrige-eleve-exercice-3",
+       "lie": "et-les-chaines-de-mesure-corrige-eleve-exercice-3",
        "rubrique": "Exercices"
       },
       {
@@ -414,9 +440,11 @@
       {
        "titre": "Exercice 4 - coups de pouce",
        "type": "Exercices",
-       "fichier": "6684a375b4b62ce11aadfc86.bin",
-       "taille": 70921,
-       "pages": 1,
+       "format": "pouce",
+       "fichier": "5b658fb355d5fb822d7a12bf.bin",
+       "taille": 9499,
+       "pouce": "pouce:et-les-chaines-de-mesure-corrige-eleve-exercice-4",
+       "lie": "et-les-chaines-de-mesure-corrige-eleve-exercice-4",
        "rubrique": "Exercices"
       },
       {

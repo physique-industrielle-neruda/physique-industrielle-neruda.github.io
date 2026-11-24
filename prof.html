@@ -79,6 +79,8 @@ details.annee[open]>summary{margin-bottom:4px}
 .grille td.c{cursor:pointer;font-size:1.05rem;min-width:44px}
 .grille td.c.busy{opacity:.35}
 .grille tr.tot td{font-size:.75rem;color:var(--muted);font-weight:700}
+.grille th.tcol{white-space:normal;min-width:96px;max-width:130px;line-height:1.2}
+.grille small.tsc{display:block;font-size:.72rem;color:var(--muted);margin-top:2px}
 .dot{display:inline-block;width:15px;height:15px;border-radius:50%;vertical-align:middle}
 .cpg td{font-size:.78rem;white-space:normal;line-height:1.35;min-width:52px}
 .cp{display:inline-block;border-radius:9px;padding:0 6px;margin:1px;font-weight:700;font-size:.75rem}
@@ -282,7 +284,7 @@ function home(){
 function classe(id, tab){
   const c = CLASSES.find(x => x.id === id); if (!c) return home();
   setBar(c.nom, tab === "corriges" ? "Corrigés à débloquer" : tab === "evaluations" ? "Évaluations corrigées" : tab === "tests" ? "Tests d'entrée" : tab === "pdc" ? "Points de cours" : "Élèves et comptes", true);
-  const tabs = `<div class="tabs" role="tablist"><button role="tab" aria-selected="${tab==="corriges"}" data-t="corriges">Corrigés</button><button role="tab" aria-selected="${tab==="evaluations"}" data-t="evaluations">Évaluations</button>${testsDe(c.site).length ? `<button role="tab" aria-selected="${tab==="tests"}" data-t="tests">Tests</button>` : ""}<button role="tab" aria-selected="${tab==="eleves"}" data-t="eleves">Élèves</button></div>`;
+  const tabs = `<div class="tabs" role="tablist"><button role="tab" aria-selected="${tab==="corriges"}" data-t="corriges">Corrigés</button><button role="tab" aria-selected="${tab==="evaluations"}" data-t="evaluations">Évaluations</button>${testsClasse(c).length ? `<button role="tab" aria-selected="${tab==="tests"}" data-t="tests">Tests</button>` : ""}<button role="tab" aria-selected="${tab==="eleves"}" data-t="eleves">Élèves</button></div>`;
   $("#app").innerHTML = tabs + `<div id="pane"></div>`;
   $("#app").querySelectorAll(".tabs button").forEach(b => b.onclick = () => { stack[stack.length-1] = [classe, [id, b.dataset.t]]; stopLive(); classe(id, b.dataset.t); });
   if (tab === "corriges") paneCorriges(c); else if (tab === "evaluations") paneEvals(c); else if (tab === "tests") paneTests(c); else if (tab === "pdc") panePdc(c); else paneEleves(c);
@@ -695,32 +697,65 @@ function afficherNotif(etat){
   const t = box.querySelector("#tousvus"); if (t) t.onclick = () => vu(nv.map(x => x.id));
 }
 
+/* Onglet Tests (24/11/2026) : seulement les tests du niveau de la classe (1re / 2e année),
+   en tableau : élèves en lignes, un test (= un chapitre) par colonne, cadenas comme pour les corrigés. */
+const anDeClasse = c => { const m = /(\d)\s*(?:re|ère|e|ème)\s+ann[ée]e/i.exec(c.nom || ""); return m ? +m[1] : null; };
+const anDuTest = t => { const k = (CAT && CAT.classes || []).find(x => x.id === t.site); if (!k || !t.verrou) return null;
+  const ch = k.chapitres.find(h => h.verrou && h.verrou.id === t.verrou.chap); return ch && ch.annee ? ch.annee : null; };
+const testsClasse = c => { const a = anDeClasse(c); return testsDe(c.site).filter(t => { const b = anDuTest(t); return !a || !b || a === b; }); };
 function paneTests(c){
-  const tests = testsDe(c.site), el = elevesDe(c);
-  const render = etat => {
-    $("#pane").innerHTML = tests.map((t, k) => {
-      const rows = el.map(e => {
-        const r = etat.find(x => x.uid === e.uid && x.test === t.id);
-        let m, cl;
-        if (!r) { m = "Test pas encore fait"; cl = "st-non"; }
-        else {
-          const nf = r.fiches.filter(x => x.fait).length;
-          m = r.score + "/" + r.sur + " · " + (r.fiches.length ? "fiches terminées : " + nf + "/" + r.fiches.length : "aucune fiche à revoir");
-          cl = r.pret ? "st-ok" : "st-cours"; m = (r.pret ? "✅ Prêt · " : "En cours · ") + m;
-        }
-        return `<button class="row" data-u="${esc(e.uid)}" data-k="${k}"><span class="main"><span class="t">${esc(e.nom)}</span><span class="m ${cl}">${esc(m)}</span></span><span class="chev"></span></button>`;
-      }).join("");
-      const n = etat.filter(x => x.test === t.id && el.some(e => e.uid === x.uid)), prets = n.filter(x => x.pret).length;
-      return `<h2 style="margin:16px 4px 6px;font-size:1.15rem">${esc(t.chapitre)}</h2><p class="note" style="margin:0 4px 8px">${n.length}/${el.length} test${n.length > 1 ? "s" : ""} fait${n.length > 1 ? "s" : ""} · ${prets} prêt${prets > 1 ? "s" : ""} pour le chapitre</p><div class="card">${rows}</div>`;
-    }).join("") + `<p class="note">Le test et les fiches se font sur le site, onglet « Mes révisions ». Les fiches des compétences ratées s'ouvrent toutes seules pour l'élève. Une fiche n'est « terminée » que lorsque ses trois questions sont réussies.</p>`;
-    $("#pane").querySelectorAll(".row").forEach(b => b.onclick = () => {
-      const e = el.find(x => x.uid === b.dataset.u), t = tests[+b.dataset.k];
-      const r = etat.find(x => x.uid === e.uid && x.test === t.id);
-      if (r) go(testEleve, c.id, t.id, e.uid); else toast(e.nom + " n'a pas encore fait le test.");
+  const tests = testsClasse(c), el = elevesDe(c), mesUid = new Set(el.map(e => e.uid));
+  if (!tests.length) { $("#pane").innerHTML = `<p class="empty">Aucun test d'entrée pour cette classe.</p>`; return; }
+  if (!el.length) { $("#pane").innerHTML = `<p class="empty">Créez d'abord les comptes des élèves (onglet « Élèves et comptes »).</p>`; return; }
+  let etat = [], D = new Set(), busy = new Set(); const cles = {};
+  const lockDe = t => t.verrou ? { titre: t.titre, test: true, chapitre: true, corrige: t.verrou } : null;
+  const key = async t => { if (!cles[t.id]) { if (!MAITRE) throw new Error("cles"); cles[t.id] = await unwrap(lockDe(t)); } return cles[t.id]; };
+  const ref = (t, uid) => doc(db, "deblocages", t.verrou.id + "_" + uid);
+  const ouvert = (t, uid) => !t.verrou || D.has(t.verrou.id + "_" + uid);
+  const court = t => { const s = t.chapitre || t.titre || ""; return s.length > 18 ? s.slice(0, 16) + "…" : s; };
+  const caseDe = (t, uid) => {
+    const r = etat.find(x => x.uid === uid && x.test === t.id);
+    if (r) { const nf = r.fiches.filter(x => x.fait).length;
+      return `<span class="dot ${r.pret ? "fini" : "cours"}" title="${r.pret ? "Prêt pour le chapitre" : "Fiches de révision en cours"}"></span><small class="tsc">${esc(r.score + "/" + r.sur)}${r.fiches.length ? " · fiches " + nf + "/" + r.fiches.length : ""}</small>`; }
+    return ouvert(t, uid) ? `<span class="dot non" title="Test ouvert, pas encore fait"></span>` : "🔒";
+  };
+  const render = () => {
+    const sx = $(".grille") ? $(".grille").scrollLeft : 0;
+    const tot = t => { const fait = etat.filter(x => x.test === t.id && mesUid.has(x.uid)), prets = fait.filter(x => x.pret).length;
+      const ouv = el.filter(e => ouvert(t, e.uid)).length;
+      return `${t.verrou ? "🔓 " + ouv + "/" + el.length + "<br>" : ""}faits ${fait.length}/${el.length}<br>prêts ${prets}/${el.length}`; };
+    $("#pane").innerHTML = `<div class="card grille"><table><tr><th class="nom">Élève</th>${tests.map((t, j) => `<th class="col tcol" data-j="${j}" title="${esc(t.titre)}">${esc(court(t))}</th>`).join("")}</tr>`
+      + el.map(e => `<tr><td class="nom">${esc(e.nom)}</td>${tests.map((t, j) => `<td class="c${busy.has(t.id + "_" + e.uid) ? " busy" : ""}" data-j="${j}" data-uid="${esc(e.uid)}">${caseDe(t, e.uid)}</td>`).join("")}</tr>`).join("")
+      + `<tr class="tot"><td class="nom">Classe</td>${tests.map(t => `<td>${tot(t)}</td>`).join("")}</tr></table></div>`
+      + `<p class="note">🔒 test fermé : touche la case pour l'ouvrir à l'élève (touche-la à nouveau pour le refermer tant qu'il ne l'a pas fait). Touche le titre d'une colonne pour toute la classe. Une fois le test fait, touche la case pour voir ses réponses.<br><span class="dot non"></span> ouvert, pas encore fait · <span class="dot cours"></span> fait, fiches de révision en cours · <span class="dot fini"></span> prêt pour le chapitre</p>`
+      + `<p class="note">Le test et les fiches se font sur le site, onglet « Mes révisions ». Les fiches des compétences ratées s'ouvrent toutes seules pour l'élève. Une fiche n'est « terminée » que lorsque ses trois questions sont réussies.</p>`;
+    if ($(".grille")) $(".grille").scrollLeft = sx;
+    $("#pane").querySelectorAll("td.c").forEach(td => td.onclick = async () => {
+      const t = tests[+td.dataset.j], uid = td.dataset.uid, id = t.id + "_" + uid;
+      if (etat.some(x => x.uid === uid && x.test === t.id)) return go(testEleve, c.id, t.id, uid);
+      if (!t.verrou || busy.has(id)) return;
+      const val = !D.has(t.verrou.id + "_" + uid); busy.add(id); render();
+      try { if (val) await setDoc(ref(t, uid), { uid, doc:t.verrou.id, classe:c.id, cle: await key(t), at: serverTimestamp() }); else await deleteDoc(ref(t, uid)); }
+      catch(e){ toast(e.message === "cles" ? "Clés absentes : importez le fichier dans Réglages." : "Échec, vérifiez la connexion."); }
+      busy.delete(id); render();
+    });
+    $("#pane").querySelectorAll("th.tcol").forEach(th => th.onclick = async () => {
+      const t = tests[+th.dataset.j]; if (!t.verrou) return toast("Ce test n'a pas de cadenas.");
+      const tous = el.every(e => ouvert(t, e.uid));
+      if (!confirm((tous ? "Refermer le test « " : "Ouvrir le test « ") + t.chapitre + " » pour toute la classe ?")) return;
+      try { const k = tous ? null : await key(t), batch = writeBatch(db);
+        el.forEach(e => { if (tous) batch.delete(ref(t, e.uid)); else batch.set(ref(t, e.uid), { uid:e.uid, doc:t.verrou.id, classe:c.id, cle:k, at:serverTimestamp() }); });
+        await batch.commit(); toast(tous ? "Test d'entrée refermé pour toute la classe." : "Test d'entrée ouvert à toute la classe."); }
+      catch(e){ toast(e.message === "cles" ? "Clés absentes : importez le fichier dans Réglages." : "Échec, vérifiez la connexion."); }
     });
   };
   $("#pane").innerHTML = `<p class="empty">Chargement…</p>`;
-  suivreTests(render);
+  suivreTests(x => { etat = x; render(); });
+  const u1 = unsub;
+  const u2 = onSnapshot(collection(db, "deblocages"), snap => {
+    D = new Set(); snap.forEach(x => { const v = x.data(); if (mesUid.has(v.uid)) D.add(v.doc + "_" + v.uid); }); render();
+  }, e => toast("Lecture impossible : " + e.code));
+  unsub = () => { u1(); u2(); };
 }
 
 let CACHE_TESTS = {};
