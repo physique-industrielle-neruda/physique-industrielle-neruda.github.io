@@ -149,6 +149,8 @@ label.f{display:block;font-size:.9rem;color:var(--muted);margin-top:10px}
 .qrow .r.ok{color:#1f7a3f}.qrow .r.ko{color:#b4372b}
 .qrow span.x{flex:1}
 .qrow small{display:block;color:var(--muted)}
+/* Cadenas dessinés (24/11/2026) : fermé rouge, anse baissée ; ouvert vert, anse levée et pivotée */
+.lk{display:inline-block;width:1.25em;height:1.25em;vertical-align:-.25em}
 </style>
 </head>
 <body>
@@ -887,6 +889,23 @@ onAuthStateChanged(auth, async user => {
   try { await loadAll(); home(); }
   catch(e){ $("#app").innerHTML = `<p class="empty">Chargement impossible (${esc(e.code || e.message)}). Vérifiez la connexion puis rechargez.</p>`; setBar("Corrigés", "", false); }
 });
+</script>
+<script>
+/* Remplace les émojis 🔒/🔓 par des cadenas dessinés bien distincts (24/11/2026) */
+(function(){
+  const F='<svg class="lk" viewBox="0 0 24 24" aria-label="verrouillé"><path d="M7 11V7.5a5 5 0 0 1 10 0V11" fill="none" stroke="#B42318" stroke-width="2.6" stroke-linecap="round"/><rect x="4" y="10.5" width="16" height="12" rx="2.5" fill="#B42318"/><circle cx="12" cy="15.6" r="1.7" fill="#fff"/><rect x="11.1" y="16" width="1.8" height="3.6" rx=".9" fill="#fff"/></svg>';
+  const O='<svg class="lk" viewBox="0 0 24 24" aria-label="ouvert"><path d="M17 11V6.5a5 5 0 0 0-9.6-2" fill="none" stroke="#2E7D32" stroke-width="2.6" stroke-linecap="round" transform="rotate(-28 17 11) translate(0 -2.5)"/><rect x="4" y="10.5" width="16" height="12" rx="2.5" fill="#2E7D32"/><path d="M8.3 16.6l2.5 2.5 4.9-5" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  const RX=/[\u{1F512}\u{1F513}]/u, SKIP=/^(SCRIPT|STYLE|TEXTAREA|INPUT|OPTION|SELECT|TITLE)$/;
+  function fix(root){
+    const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode:n=>RX.test(n.nodeValue)&&n.parentNode&&!SKIP.test(n.parentNode.nodeName)?1:2});
+    const L=[]; while(w.nextNode()) L.push(w.currentNode);
+    L.forEach(n=>{ const sp=document.createElement("span");
+      sp.innerHTML=n.nodeValue.replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c])).replace(/\u{1F512}\uFE0F?/gu,F).replace(/\u{1F513}\uFE0F?/gu,O);
+      const fr=document.createDocumentFragment(); while(sp.firstChild) fr.appendChild(sp.firstChild); n.parentNode.replaceChild(fr,n); });
+  }
+  const go=()=>{ fix(document.body); new MutationObserver(ms=>ms.forEach(m=>{ if(m.type==="characterData"){ if(m.target.parentNode) fix(m.target.parentNode); } else m.addedNodes.forEach(a=>{ if(a.nodeType===3){ if(a.parentNode) fix(a.parentNode); } else if(a.nodeType===1) fix(a); }); })).observe(document.body,{childList:true,subtree:true,characterData:true}); };
+  document.readyState==="loading"?document.addEventListener("DOMContentLoaded",go):go();
+})();
 </script>
 </body>
 </html>
