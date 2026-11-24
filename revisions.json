@@ -27,6 +27,30 @@
    "fichier": "56aec5bfadbf84f8f4cd2fe7.bin"
   },
   {
+   "id": "et-les-chaines-de-mesure",
+   "site": "et",
+   "titre": "Test d'entrée – Les chaînes de mesure",
+   "chapitre": "Les chaînes de mesure",
+   "duree": "15 min",
+   "nb": 10,
+   "fiches": [
+    "loi-d-ohm",
+    "loi-des-mailles",
+    "fonction-affine",
+    "puissances-de-2-et-nombres-binaires",
+    "periode-et-frequence",
+    "systeme-du-premier-ordre",
+    "pourcentages"
+   ],
+   "verrou": {
+    "id": "test-et-les-chaines-de-mesure",
+    "wk": "OqcuUVQs/0/xTPdSKPtF2M0TKDYtUXd9eoOR/5IRagukMjn31i5dta7YO9EmCnoYc6pah2rk7wYymPox",
+    "wkc": "0iN6GA90Cu/VHK715c0pPq+QODfQz8qQCn8GEStNS9qeteRHMkx/nSK6CMMpkJCfNJYDXCw39xM9c5Kp",
+    "chap": "et-chap-les-chaines-de-mesure"
+   },
+   "fichier": "beb3ebc828c650dbd8b0cff8.bin"
+  },
+  {
    "id": "et-sources-conversions-et-stockage-de-l-energie",
    "site": "et",
    "titre": "Test d'entrée – Sources, conversions et stockage de l'énergie",
@@ -87,6 +111,10 @@
    "titre": "Décalage de zéro et gain",
    "fichier": "47f214b423f7df27ed865a66.bin"
   },
+  "fonction-affine": {
+   "titre": "Fonction affine",
+   "fichier": "1b2699150701c00328cb37fc.bin"
+  },
   "isoler-une-grandeur-dans-une-formule": {
    "titre": "Isoler une grandeur dans une formule",
    "fichier": "70d21d9367539976c4d5e4bc.bin"
@@ -135,6 +163,14 @@
    "titre": "Puissances de 10 et conversions",
    "fichier": "c576a54e5ac38bc3db42ee18.bin"
   },
+  "puissances-de-2-et-nombres-binaires": {
+   "titre": "Puissances de 2 et nombres binaires",
+   "fichier": "4310734ed09c947b3d033e2e.bin"
+  },
+  "periode-et-frequence": {
+   "titre": "Période et fréquence",
+   "fichier": "6b448ed48d0f0516340b3f88.bin"
+  },
   "rendement": {
    "titre": "Rendement",
    "fichier": "2e1117de8bb090d1fd51f776.bin"
@@ -142,6 +178,10 @@
   "signal-4-20-ma": {
    "titre": "Signal 4-20 mA",
    "fichier": "e4c85c52d7ed2731a4e303e9.bin"
+  },
+  "systeme-du-premier-ordre": {
+   "titre": "Système du premier ordre",
+   "fichier": "d62db112c862fccb8266696e.bin"
   },
   "energie-puissance-et-duree": {
    "titre": "Énergie, puissance et durée",

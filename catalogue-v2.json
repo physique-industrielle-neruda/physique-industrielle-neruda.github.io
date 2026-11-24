@@ -1432,37 +1432,32 @@
      "titre": "Les chaînes de mesure",
      "docs": [
       {
-       "titre": "Prérequis",
-       "type": "Fiche",
-       "fichier": "5f32bbe694f660b8ada23de5.bin",
-       "taille": 156722,
-       "pages": 4,
-       "rubrique": "Pour commencer"
-      },
-      {
        "titre": "Essentiel du chapitre",
        "type": "Cours",
-       "fichier": "6916fe481ef09a40a092642d.bin",
+       "fichier": "4676a0567460355870aad788.bin",
        "taille": 716085,
        "pages": 8,
+       "cv": "et-chap-les-chaines-de-mesure",
        "rubrique": "Cours"
       },
       {
        "titre": "Activité 1 – Boucle 4-20 mA du pressuriseur du réacteur nucléaire",
        "type": "Activité",
-       "fichier": "73bc4059ff7121b46fb2cc05.bin",
+       "fichier": "83426bb313f3cb91e7d9cf47.bin",
        "taille": 351862,
        "pages": 6,
+       "cv": "et-chap-les-chaines-de-mesure",
        "rubrique": "Activités"
       },
       {
        "titre": "Activité 1 – Boucle 4-20 mA du pressuriseur du réacteur nucléaire - coups de pouce",
        "type": "Activité",
        "format": "pouce",
-       "fichier": "bc26c64b377a2f6389327ed7.bin",
+       "fichier": "71b5df8b02c4d4c24e4b97b2.bin",
        "taille": 12310,
        "pouce": "pouce:et-les-chaines-de-mesure-corrige-eleve-activite-1-boucle-4-20-ma-du-pressur",
        "lie": "et-les-chaines-de-mesure-corrige-eleve-activite-1-boucle-4-20-ma-du-pressur",
+       "cv": "et-chap-les-chaines-de-mesure",
        "rubrique": "Activités"
       },
       {
@@ -1480,19 +1475,21 @@
       {
        "titre": "Activité 2 – Numérisation d'une mesure de température",
        "type": "Activité",
-       "fichier": "324683483cf6d49905f36072.bin",
+       "fichier": "1f921466c1050424dfe39a21.bin",
        "taille": 316708,
        "pages": 5,
+       "cv": "et-chap-les-chaines-de-mesure",
        "rubrique": "Activités"
       },
       {
        "titre": "Activité 2 – Numérisation d'une mesure de température - coups de pouce",
        "type": "Activité",
        "format": "pouce",
-       "fichier": "9aa5dc1e432bbf1ffb984d53.bin",
+       "fichier": "667e92d4a6e3788584caef12.bin",
        "taille": 12047,
        "pouce": "pouce:et-les-chaines-de-mesure-corrige-eleve-activite-2-numerisation-d-une-mesure",
        "lie": "et-les-chaines-de-mesure-corrige-eleve-activite-2-numerisation-d-une-mesure",
+       "cv": "et-chap-les-chaines-de-mesure",
        "rubrique": "Activités"
       },
       {
@@ -1510,19 +1507,21 @@
       {
        "titre": "Activité 3 – Temps de réponse et précision d'une sonde Pt100",
        "type": "Activité",
-       "fichier": "de99d8e70de908f73cb810b8.bin",
+       "fichier": "23fb42804754df67a05b85cc.bin",
        "taille": 207367,
        "pages": 4,
+       "cv": "et-chap-les-chaines-de-mesure",
        "rubrique": "Activités"
       },
       {
        "titre": "Activité 3 – Temps de réponse et précision d'une sonde Pt100 - coups de pouce",
        "type": "Activité",
        "format": "pouce",
-       "fichier": "f7b3ffe28b5ea4515b32f3d7.bin",
+       "fichier": "8d13862e5864e0ba2d53e892.bin",
        "taille": 11271,
        "pouce": "pouce:et-les-chaines-de-mesure-corrige-eleve-activite-3-temps-de-reponse-et-preci",
        "lie": "et-les-chaines-de-mesure-corrige-eleve-activite-3-temps-de-reponse-et-preci",
+       "cv": "et-chap-les-chaines-de-mesure",
        "rubrique": "Activités"
       },
       {
@@ -1540,39 +1539,46 @@
       {
        "titre": "Fiche animation",
        "type": "Fiche",
-       "fichier": "d7bbd17729c713c26229de93.bin",
+       "fichier": "6450aaaa0179f1f79be2e852.bin",
        "taille": 150705,
        "pages": 2,
+       "cv": "et-chap-les-chaines-de-mesure",
        "rubrique": "Animation"
       },
       {
        "titre": "Animation – Révision de la chaîne de mesure",
        "type": "Animation",
-       "lien": "animations/et/animation-revision-de-la-chaine-de-mesure.html",
+       "fichier": "4bc86afa46285ea3ea06be3d.bin",
+       "format": "html",
+       "cv": "et-chap-les-chaines-de-mesure",
        "rubrique": "Animation"
       },
       {
        "titre": "Simulation – Banc de la chaîne de mesure",
        "type": "Animation",
-       "lien": "animations/et/simulation-banc-de-la-chaine-de-mesure.html",
+       "fichier": "2909ebfb1444865b2673cea1.bin",
+       "format": "html",
+       "cv": "et-chap-les-chaines-de-mesure",
        "rubrique": "Animation"
       },
       {
        "titre": "Exercice 1",
        "type": "Exercices",
-       "fichier": "853e7372f81377d3e8538810.bin",
+       "fichier": "7cd3ff7a066461a23263d8ff.bin",
        "taille": 121851,
        "pages": 1,
+       "cv": "et-chap-les-chaines-de-mesure",
        "rubrique": "Exercices"
       },
       {
        "titre": "Exercice 1 - coups de pouce",
        "type": "Exercices",
        "format": "pouce",
-       "fichier": "c2d4472f21aebbee0773f787.bin",
+       "fichier": "c657a56cb1e5691b00ad7967.bin",
        "taille": 9930,
        "pouce": "pouce:et-les-chaines-de-mesure-corrige-eleve-exercice-1",
        "lie": "et-les-chaines-de-mesure-corrige-eleve-exercice-1",
+       "cv": "et-chap-les-chaines-de-mesure",
        "rubrique": "Exercices"
       },
       {
@@ -1590,19 +1596,21 @@
       {
        "titre": "Exercice 2",
        "type": "Exercices",
-       "fichier": "3865161c2d5810d508cc78c1.bin",
+       "fichier": "b24c4e4d43009cba20365ed2.bin",
        "taille": 105487,
        "pages": 1,
+       "cv": "et-chap-les-chaines-de-mesure",
        "rubrique": "Exercices"
       },
       {
        "titre": "Exercice 2 - coups de pouce",
        "type": "Exercices",
        "format": "pouce",
-       "fichier": "2ec7be1d08da0d3e81b1ea7a.bin",
+       "fichier": "ae7f1ca138e3d2a1bf9fdb2c.bin",
        "taille": 9677,
        "pouce": "pouce:et-les-chaines-de-mesure-corrige-eleve-exercice-2",
        "lie": "et-les-chaines-de-mesure-corrige-eleve-exercice-2",
+       "cv": "et-chap-les-chaines-de-mesure",
        "rubrique": "Exercices"
       },
       {
@@ -1620,19 +1628,21 @@
       {
        "titre": "Exercice 3",
        "type": "Exercices",
-       "fichier": "08975100511575faf1863e8f.bin",
+       "fichier": "e2ee227f3a5e349d1d2f157f.bin",
        "taille": 139425,
        "pages": 1,
+       "cv": "et-chap-les-chaines-de-mesure",
        "rubrique": "Exercices"
       },
       {
        "titre": "Exercice 3 - coups de pouce",
        "type": "Exercices",
        "format": "pouce",
-       "fichier": "0ef878fc6c7cc09cf14b5aa3.bin",
+       "fichier": "075a8b368802672cbf6e4c05.bin",
        "taille": 9774,
        "pouce": "pouce:et-les-chaines-de-mesure-corrige-eleve-exercice-3",
        "lie": "et-les-chaines-de-mesure-corrige-eleve-exercice-3",
+       "cv": "et-chap-les-chaines-de-mesure",
        "rubrique": "Exercices"
       },
       {
@@ -1650,19 +1660,21 @@
       {
        "titre": "Exercice 4",
        "type": "Exercices",
-       "fichier": "4dc38021682970cdcb2a7565.bin",
+       "fichier": "4b0cd75519102688e52f5f88.bin",
        "taille": 154080,
        "pages": 1,
+       "cv": "et-chap-les-chaines-de-mesure",
        "rubrique": "Exercices"
       },
       {
        "titre": "Exercice 4 - coups de pouce",
        "type": "Exercices",
        "format": "pouce",
-       "fichier": "5b658fb355d5fb822d7a12bf.bin",
+       "fichier": "e649c07dc3d20fcf8b3c9b15.bin",
        "taille": 9499,
        "pouce": "pouce:et-les-chaines-de-mesure-corrige-eleve-exercice-4",
        "lie": "et-les-chaines-de-mesure-corrige-eleve-exercice-4",
+       "cv": "et-chap-les-chaines-de-mesure",
        "rubrique": "Exercices"
       },
       {
@@ -1680,20 +1692,28 @@
       {
        "titre": "Bilan",
        "type": "Fiche",
-       "fichier": "35675400c24e0a6ac25f84e0.bin",
+       "fichier": "25b7beb313f31fa7efef32af.bin",
        "taille": 119061,
        "pages": 2,
+       "cv": "et-chap-les-chaines-de-mesure",
        "rubrique": "Réviser"
       },
       {
        "titre": "cartes de révision",
        "type": "Cartes",
        "nombre": 10,
-       "lien": "cartes.html?c=et&ch=les-chaines-de-mesure",
+       "fichier": "245c3c273c98ed2b378eb787.bin",
+       "format": "cartes",
+       "ch": "les-chaines-de-mesure",
+       "cv": "et-chap-les-chaines-de-mesure",
        "rubrique": "Réviser"
       }
      ],
-     "annee": 2
+     "annee": 2,
+     "verrou": {
+      "id": "et-chap-les-chaines-de-mesure",
+      "wk": "++h1n1tFtZaH6sM1s5v1IXmkAYXRDyz4BXTOWqe1qevwHv4/v3p4hBf7T5tN9oFnwc1PA2MQn4nQaYui"
+     }
     },
     {
      "num": "",
@@ -3616,9 +3636,9 @@
   }
  ],
  "outilsWk": {
-  "et": "x9sl3aLIFJPiYKMsUOLwAsbWVkhY3b0RqFMNtz6m4PzMJ46nsuN/Iwyi7z/zKrL0CnR5zmvOrYD+WuId",
-  "cira": "za+bfm+FjH0w6GQ/69mg28fpo+dDyDy07iyc94LEYrw2WcKtwmUFbX37mkabeb08CvKXW5HxwUcCRsq1",
-  "cim": "2EM6vHCsjPKvx2bqJxTX6yjYNX2ES4qrk/zceCJeSSgBbkHwjCd52KoKRP/2zvV0aBoxH4pWxAOnH5A1"
+  "et": "HqP20C12mYcdh52NsK9RBgThx+Mt3aZYqP2n1S1cf1RmO/lgBHpCbz8BXYyr/5NpN7ntM0CZ3AgS4mxq",
+  "cira": "tuCSUuWDKKyTu+DZK66wkJwW6ZJoPgJoeYFZTqpSeOtMSbxDw/ySP//1MOo3pShxhHHFL2dxClibeh56",
+  "cim": "NHe7OsGDbfs4rcQZyYLFqaRXtoD7ewEF0l4ghEuQMgIezK1Kl27C/FxGVqPaBk9rFbWY/YlK1ZYtmVK3"
  },
  "outils": [
   {
