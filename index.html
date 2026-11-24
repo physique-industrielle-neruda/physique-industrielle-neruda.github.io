@@ -252,6 +252,7 @@ li.pdc-gris{opacity:.6}
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut, setPersistence, browserLocalPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore, doc, getDoc, getDocs, setDoc, collection, query, where, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { profil as calcProfil, profilHtml, synthese, PROFIL_CSS } from "./competences.js";
 
 const FB = {"apiKey":"AIzaSyDH32Ma0shVbsIHR0xNJbahb5MO0RKHRS0","authDomain":"physique-neruda.firebaseapp.com","projectId":"physique-neruda","storageBucket":"physique-neruda.firebasestorage.app","messagingSenderId":"62730174289","appId":"1:62730174289:web:588c846aadd4eec2109d70"};
 const DOMAINE = "@physique-neruda.firebaseapp.com";
@@ -391,6 +392,7 @@ async function openDoc(cls, d, download){
       return;
     }
     const url = URL.createObjectURL(blob);
+    if (w && !download && d.type === "Animation") ANIMS.set(w, { c: cls, d });
     if (w && !download) { w.location.href = url; }
     else { const a = document.createElement("a"); a.href = url; a.download = d.titre + ".pdf"; document.body.appendChild(a); a.click(); a.remove(); }
     setTimeout(() => URL.revokeObjectURL(url), 120000);
@@ -528,6 +530,8 @@ function renderWho(){
 }
 
 function docRow(c, d){
+  if (d.type === "Profil") return profilRow(c, d);
+  if (d.format === "parcours") return parcoursRow(c, d);
   if (d.type === "Point de cours") return pdcRow(c, d);
   if (d.format === "pouce") return pouceRow(c, d);
   const li = document.createElement("li");
@@ -607,6 +611,11 @@ function chapBlock(c, ch, docs, forceOpen, outil){
   if (pdcs.length) {
     const apres = ["Cours", "Activités et TP", "Activités", "Pour commencer"].map(r => groupes.findIndex(x => x.r === r)).find(i => i >= 0);
     groupes.splice(apres === undefined ? groupes.length : apres + 1, 0, {r: "Points de cours", docs: pdcs.map(d => ({...d, revision: true}))});
+  }
+  if (ch.competences && !outil) {
+    let g = groupes.find(x => x.r === "Mon profil de compétences");
+    if (!g) { const i = groupes.findIndex(x => x.r === "Exercices"); groupes.splice(i >= 0 ? i + 1 : groupes.length, 0, g = { r: "Mon profil de compétences", docs: [] }); }
+    g.docs = [{ titre: "Mon profil de compétences", type: "Profil" }].concat(g.docs).map(d => ({ ...d, _c: c, _ch: ch }));
   }
   groupes.forEach(g => {
     const k = key + "/" + g.r;
@@ -1024,13 +1033,116 @@ async function ouvrirPouce(c, d){
   const onMsg = async e => {
     if (e.source !== fr.contentWindow || !e.data || e.data.type !== "pouce-niveau" || !eleve) return;
     const av = (MP[d.pouce] && MP[d.pouce].niveaux) || {}, niveaux = Object.assign({}, av);
-    Object.entries(e.data.niveaux || {}).forEach(([q, n]) => { n = Math.min(3, Math.max(1, +n || 1)); if (n > (niveaux[q] || 1)) niveaux[q] = n; });
+    Object.entries(e.data.niveaux || {}).forEach(([q, n]) => { n = Math.min(3, Math.max(1, +n || 1)); if (n > (niveaux[q] || 0)) niveaux[q] = n; });
     if (MP[d.pouce] && JSON.stringify(niveaux) === JSON.stringify(av)) return;   // rien de nouveau
     const v = { uid: S.user.uid, pdc: d.pouce, type: "pouce", corrige: d.lie || "", titre: d.titre, activite: "", site: c.id,
       nom: S.nom, classe: S.groupe || "", niveaux, etape: Math.max(1, ...Object.values(niveaux)), total: +e.data.total || 0,
       erreurs: 0, termine: false, date: serverTimestamp() };
     MP[d.pouce] = v;
     try { await setDoc(doc(db, "pointsdecours", S.user.uid + "__" + d.pouce), v); } catch(_) {}
+  };
+  window.addEventListener("message", onMsg);
+  ov.querySelector("button").onclick = () => { window.removeEventListener("message", onMsg); ov.remove(); document.body.style.overflow = ""; render(); };
+}
+
+
+/* ================= Profil de compétences (24/11/2026, prototype BTS CIRA « Amplification ») =================
+   Compétences de la démarche scientifique (S'approprier, Analyser, Réaliser, Valider, Communiquer), d'après :
+   - les coups de pouce ouverts (questions étiquetées dans « competences.json » du chapitre → catalogue « competences ») ;
+   - les réponses de l'animation (1er essai, 2e essai ou correction), Firestore « pointsdecours/<uid>__anim:<chapitre> ».
+   Calcul : competences.js (partagé avec l'appli professeur). Rien n'est noté.
+   « Mon parcours avant l'évaluation » : page chiffrée comme un corrigé (le professeur l'ouvre dans l'appli) ; elle reçoit
+   le profil et renvoie l'avancement → Firestore « pointsdecours/<uid>__parcours:<id> ». */
+const ANIMS = new Map();   // fenêtres d'animation ouvertes → { c, d }
+(() => { const st = document.createElement("style"); st.textContent = PROFIL_CSS
+  + ".type.cpt{color:#1F3864;border-color:currentColor;background:#DEEAF6}.cpf-ov{flex:1;overflow:auto;background:#F4F6F9;color:#18212F}"
+  + ".cpf-ov .in{max-width:760px;margin:0 auto;padding:16px 14px 40px}.cpf-ov h2{color:#1F3864;margin:0 0 6px;font-size:1.3rem}"
+  + ".cpf-ov .syn{background:#DEEAF6;border-radius:8px;padding:10px 14px;margin:12px 0}.cpf-ov .ex{font-size:14px;color:#5A6577;margin:12px 0}"
+  + ".cpf-ov .demo{background:#E2EFDA;color:#3F7A3A;border-radius:8px;padding:8px 12px;font-size:14px;margin:0 0 12px}";
+  document.head.appendChild(st); })();
+const chapDe = (cid, d) => { const c = (CAT.classes || []).find(x => x.id === cid); return c ? c.chapitres.find(ch => ch.docs.includes(d)) : null; };
+const animId = ch => "anim:" + (ch.verrou ? ch.verrou.id : ch.titre);
+window.addEventListener("message", async e => {
+  if (!e.data || e.data.type !== "anim-reponse") return;
+  const info = ANIMS.get(e.source); if (!info || !eleveRev()) return;
+  const ch = chapDe(info.c, info.d); if (!ch || !ch.competences) return;
+  const id = animId(ch), rep = Object.assign({}, MP[id] && MP[id].reponses), n = String(e.data.n), old = rep[n];
+  if (old && (old.ok || old.t >= 2)) return;          // seuls les deux premiers essais comptent
+  rep[n] = { t: Math.min(2, +e.data.essai || 1), ok: !!e.data.ok };
+  const v = { uid: S.user.uid, pdc: id, type: "anim", site: info.c, chap: ch.verrou ? ch.verrou.id : "", titre: info.d.titre, activite: "",
+    nom: S.nom, classe: S.groupe || "", reponses: rep, etape: Object.keys(rep).length, total: 0, erreurs: 0, termine: false, date: serverTimestamp() };
+  MP[id] = v;
+  try { await setDoc(doc(db, "pointsdecours", S.user.uid + "__" + id), v); } catch(_) {}
+});
+function donneesProfil(ch){
+  const pouces = {};
+  ch.docs.filter(d => d.format === "pouce").forEach(d => { const k = numeroDoc(d); if (!k) return;
+    const st = MP[d.pouce]; pouces[k] = { niveaux: (st && st.niveaux) || {}, valide: !!S.corr[d.lie] }; });
+  const an = MP[animId(ch)];
+  return calcProfil(ch.competences.questions, pouces, an ? an.reponses : {});
+}
+const EXEMPLE_PROFIL = { APP: { score: 2.6, nP: 3, nA: 0, niveau: "solide" }, ANA: { score: 1.0, nP: 8, nA: 4, niveau: "fragile" },
+  REA: { score: 2.5, nP: 10, nA: 7, niveau: "solide", alerte: null }, VAL: { score: 1.7, nP: 6, nA: 2, niveau: "moyen" }, COM: { score: 2.0, nP: 3, nA: 0, niveau: "moyen" } };
+function profilRow(c, d){
+  const li = document.createElement("li"), eleve = eleveRev();
+  let meta = "Graphique de tes compétences, mis à jour au fil du dossier · rien n'est noté";
+  if (!eleve) meta = "Aperçu professeur : chaque élève voit son propre profil (détail par élève dans l'appli, onglet « Compétences »)";
+  else { const pr = donneesProfil(d._ch), nb = Object.values(pr).filter(x => x.score != null).length; if (!nb) meta = "Se construit au fil du dossier (activités vérifiées, animation) · rien n'est noté"; }
+  li.innerHTML = `<span class="type cpt">Profil</span><span class="title">${esc(d.titre)}<span class="meta">${esc(meta)}</span></span>
+    <span class="actions"><button class="open" type="button">Voir</button></span>`;
+  li.querySelector("button").onclick = () => ouvrirProfil(d);
+  return li;
+}
+function ouvrirProfil(d){
+  const eleve = eleveRev(), pr = eleve ? donneesProfil(d._ch) : EXEMPLE_PROFIL;
+  const ov = document.createElement("div"); ov.className = "fiche-ov";
+  ov.innerHTML = `<div class="bar"><b>Mon profil de compétences – ${esc(d._ch.titre)}</b><button type="button">Fermer</button></div>
+    <div class="cpf-ov"><div class="in">${eleve ? "" : `<div class="demo">Aperçu professeur : exemple fictif. Les vrais profils sont dans l'appli professeur, onglet « Compétences ».</div>`}
+    <h2>Où j'en suis</h2>
+    <p class="ex">Ce profil montre ton <b>autonomie</b> dans les compétences de la démarche scientifique du référentiel. Il est construit à partir des coups de pouce que tu as ouverts dans les activités, les TP et les exercices vérifiés par le professeur, et de tes réponses à l'animation. <b>Rien n'est noté</b> : c'est un repère pour préparer l'évaluation.</p>
+    ${profilHtml(pr)}<div class="syn">${esc(synthese(pr))}</div>
+    <p class="ex">Avant l'évaluation, ton professeur ouvre « Mon parcours avant l'évaluation » : des exercices choisis d'après ce profil. L'évaluation sera la même pour toute la classe.</p></div></div>`;
+  document.body.appendChild(ov); document.body.style.overflow = "hidden";
+  ov.querySelector("button").onclick = () => { ov.remove(); document.body.style.overflow = ""; };
+}
+const parcoursId = d => "parcours:" + d.corrige.id;
+function parcoursRow(c, d){
+  const li = document.createElement("li"), eleve = eleveRev(), ok = S.prof || S.premium || !!S.corr[d.corrige.id];
+  if (!ok) {
+    li.innerHTML = `<span class="type cpt locked">${LOCK}Parcours</span><span class="title">${esc(d.titre)}<span class="meta">Le professeur l'ouvre à la fin du dossier, avant l'évaluation</span></span>
+      <span class="actions"><span class="open locked">${LOCK}Verrouillé</span></span>`;
+    return li;
+  }
+  const st = MP[parcoursId(d)];
+  const meta = !eleve ? "Aperçu professeur : tester un parcours et voir toute la banque avec les corrections"
+    : st && st.fini ? "Parcours terminé ✓" : st ? (st.etape || 0) + " exercice" + ((st.etape || 0) > 1 ? "s" : "") + " terminé" + ((st.etape || 0) > 1 ? "s" : "") + " · continue dans l'ordre"
+    : "Exercices choisis pour toi d'après ton profil · brouillon et calculatrice";
+  li.innerHTML = `<span class="type cpt">Parcours</span><span class="title">${esc(d.titre)}<span class="meta">${esc(meta)}</span></span>
+    <span class="actions"><button class="open" type="button">${st ? "Continuer" : "Ouvrir"}</button></span>`;
+  li.querySelector("button").onclick = () => ouvrirParcours(c, d);
+  return li;
+}
+async function ouvrirParcours(c, d){
+  let html;
+  try { const key = await corrKey(d); if (!key) throw new Error("verrou");
+    html = await (await decryptBlob(BASE + "docs/" + c.id + "/" + d.fichier, key, "text/html;charset=utf-8")).text();
+  } catch(e) { toast(e.message === "verrou" ? "Ce parcours n'est pas encore ouvert." : "Impossible d'ouvrir le parcours. Rechargez la page."); return; }
+  const eleve = eleveRev(), id = parcoursId(d), st = MP[id], pr = eleve ? donneesProfil(d._ch) : {};
+  const init = "<script>window.PARCOURS_PROFIL = " + JSON.stringify(pr) + "; window.PARCOURS_SYNTHESE = " + JSON.stringify(eleve ? synthese(pr) : "")
+    + "; window.PARCOURS_ETAT = " + JSON.stringify(eleve && st ? { plan: st.plan, res: st.res } : {}) + (eleve ? "" : "; window.PARCOURS_PROF = true") + ";<\/script></head>";
+  html = html.replace("</head>", () => init);
+  const ov = document.createElement("div"); ov.className = "fiche-ov";
+  ov.innerHTML = `<div class="bar"><b>${esc(d.titre)}</b><button type="button">Fermer</button></div><iframe title="${esc(d.titre)}"></iframe>`;
+  const fr = ov.querySelector("iframe"); fr.srcdoc = html;
+  document.body.appendChild(ov); document.body.style.overflow = "hidden";
+  const onMsg = async e => {
+    if (e.source !== fr.contentWindow || !e.data || e.data.type !== "parcours" || !eleve) return;
+    const plan = e.data.plan || [], res = e.data.res || {};
+    const finis = plan.filter(p => { const r = res[p.id] || {}; return Object.keys(r).length && Object.values(r).every(x => x.ok || x.t >= 2); }).length;
+    const v = { uid: S.user.uid, pdc: id, type: "parcours", site: c.id, titre: d.titre, activite: "", nom: S.nom, classe: S.groupe || "",
+      plan, res, fini: !!e.data.fini, etape: finis, total: plan.length, erreurs: 0, termine: false, date: serverTimestamp() };
+    MP[id] = v;
+    try { await setDoc(doc(db, "pointsdecours", S.user.uid + "__" + id), v); } catch(_) {}
   };
   window.addEventListener("message", onMsg);
   ov.querySelector("button").onclick = () => { window.removeEventListener("message", onMsg); ov.remove(); document.body.style.overflow = ""; render(); };

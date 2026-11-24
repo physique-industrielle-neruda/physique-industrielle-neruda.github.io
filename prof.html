@@ -167,6 +167,7 @@ label.f{display:block;font-size:.9rem;color:var(--muted);margin-top:10px}
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore, doc, getDoc, getDocs, setDoc, deleteDoc, collection, query, where, onSnapshot, serverTimestamp, writeBatch, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { profil as calcProfil, profilHtml, synthese, PROFIL_CSS, COMPS, LIBS as CLIBS, NIVEAUX, niveauDe, pointsAnim } from "./competences.js";
 
 const FB = {"apiKey":"AIzaSyDH32Ma0shVbsIHR0xNJbahb5MO0RKHRS0","authDomain":"physique-neruda.firebaseapp.com","projectId":"physique-neruda","storageBucket":"physique-neruda.firebasestorage.app","messagingSenderId":"62730174289","appId":"1:62730174289:web:588c846aadd4eec2109d70"};
 const DOMAINE = "@physique-neruda.firebaseapp.com";
@@ -303,11 +304,11 @@ function home(){
 /* ---------- Une classe ---------- */
 function classe(id, tab){
   const c = CLASSES.find(x => x.id === id); if (!c) return home();
-  setBar(c.nom, tab === "corriges" ? "Corrigés à débloquer" : tab === "evaluations" ? "Évaluations corrigées" : tab === "tests" ? "Tests d'entrée" : tab === "pdc" ? "Points de cours" : "Élèves et comptes", true);
-  const tabs = `<div class="tabs" role="tablist"><button role="tab" aria-selected="${tab==="corriges"}" data-t="corriges">Corrigés</button><button role="tab" aria-selected="${tab==="evaluations"}" data-t="evaluations">Évaluations</button>${testsClasse(c).length ? `<button role="tab" aria-selected="${tab==="tests"}" data-t="tests">Tests</button>` : ""}<button role="tab" aria-selected="${tab==="eleves"}" data-t="eleves">Élèves</button></div>`;
+  setBar(c.nom, tab === "corriges" ? "Corrigés à débloquer" : tab === "evaluations" ? "Évaluations corrigées" : tab === "tests" ? "Tests d'entrée" : tab === "pdc" ? "Points de cours" : tab === "competences" ? "Profils de compétences" : "Élèves et comptes", true);
+  const tabs = `<div class="tabs" role="tablist"><button role="tab" aria-selected="${tab==="corriges"}" data-t="corriges">Corrigés</button><button role="tab" aria-selected="${tab==="evaluations"}" data-t="evaluations">Évaluations</button>${testsClasse(c).length ? `<button role="tab" aria-selected="${tab==="tests"}" data-t="tests">Tests</button>` : ""}${chapsCompetences(c).length ? `<button role="tab" aria-selected="${tab==="competences"}" data-t="competences">Compétences</button>` : ""}<button role="tab" aria-selected="${tab==="eleves"}" data-t="eleves">Élèves</button></div>`;
   $("#app").innerHTML = tabs + `<div id="pane"></div>`;
   $("#app").querySelectorAll(".tabs button").forEach(b => b.onclick = () => { stack[stack.length-1] = [classe, [id, b.dataset.t]]; stopLive(); classe(id, b.dataset.t); });
-  if (tab === "corriges") paneCorriges(c); else if (tab === "evaluations") paneEvals(c); else if (tab === "tests") paneTests(c); else if (tab === "pdc") panePdc(c); else paneEleves(c);
+  if (tab === "corriges") paneCorriges(c); else if (tab === "evaluations") paneEvals(c); else if (tab === "tests") paneTests(c); else if (tab === "pdc") panePdc(c); else if (tab === "competences") paneCompetences(c); else paneEleves(c);
 }
 
 /* Rubrique d'un corrigé (Activités, TP, Exercices) : celle du catalogue, sinon devinée d'après le titre */
@@ -423,13 +424,14 @@ const courtDe = d => { const t = d.titre || ""; let m, b;
   else if ((m = /\btp\s*(\d+)/i.exec(t))) b = "TP" + m[1];
   else if ((m = /exercice\s*(\d+)/i.exec(t))) b = "Ex" + m[1];
   else if (/annale/i.test(t)) return "Annale";
+  else if (/parcours/i.test(t)) return "Parcours";
   else return t.replace(/^corrig[ée]\s*/i, "").slice(0, 6);
   if (/r[ée]sultat/i.test(t)) return b + " rés.";
   if (/pr[ée]paration/i.test(t)) return b + " prép.";
   if (/compte\s*rendu/i.test(t)) return b + " CR";
   return b; };
 /* Ordre des colonnes : activités et TP dans l'ordre du dossier, puis exercices (annale en dernier) ; pour un même TP : préparation, compte rendu, résultats */
-const rangDe = d => { const b = baseDe(d); return /^Ex/.test(b) ? 1 : b === "Annale" ? 2 : 0; };
+const rangDe = d => { const b = baseDe(d); return /^Ex/.test(b) ? 1 : b === "Annale" ? 2 : b === "Parcours" ? 3 : 0; };
 const baseDe = d => courtDe(d).split(" ")[0];
 const subDe = d => /pr[ée]paration/i.test(d.titre) ? 0 : /r[ée]sultat/i.test(d.titre) ? 2 : 1;
 const ordonner = ds => { const first = {}; ds.forEach((d, i) => { const b = baseDe(d); if (!(b in first)) first[b] = i; });
@@ -446,7 +448,7 @@ function chapitreGrille(c, g){
   const ref = (d, uid) => doc(db, "deblocages", d.corrige.id + "_" + uid);
   /* Coups de pouce en cascade (24/11/2026) : niveaux atteints par question, Firestore « pointsdecours » (pdc = "pouce:<corrigé>") */
   const pouceDe = (d, uid) => { const v = P[uid + "__pouce:" + d.corrige.id]; if (!v) return "–";
-    const q = Object.entries(v.niveaux || {}).filter(([, n]) => n > 1);
+    const q = Object.entries(v.niveaux || {}).filter(([, n]) => n >= 1);
     return q.length ? q.map(([k, n]) => `<span class="cp n${n}">${esc(k)} ${n}</span>`).join("") : `<span class="cp vu">lu</span>`; };
   /* Tableau des coups de pouce affiché dès que le dossier a des fiches en cascade, même si personne ne les a encore ouvertes (24/11/2026) */
   const pouceIds = new Set((g.ch.docs || []).filter(x => x.pouce).map(x => x.pouce));
@@ -497,6 +499,96 @@ function chapitreGrille(c, g){
     P = {}; aPouce = aPouceBase;
     snap.forEach(x => { const v = x.data(); if (mesUid.has(v.uid)) { P[v.uid + "__" + v.pdc] = v; if (v.type === "pouce" && docs.some(d => "pouce:" + d.corrige.id === v.pdc)) aPouce = true; } }); render();
   }, () => {});
+  unsub = () => { a(); b(); };
+}
+
+
+/* ================= Onglet « Compétences » (24/11/2026, prototype BTS CIRA « Amplification ») =================
+   Profil de chaque élève (compétences de la démarche scientifique) calculé comme sur le site (competences.js) :
+   coups de pouce ouverts dans les activités / TP / exercices dont le corrigé est débloqué + réponses de l'animation.
+   Parcours avant l'évaluation : Firestore « pointsdecours/<uid>__parcours:<id> » (plan, réponses), suivi en direct. */
+(() => { const st = document.createElement("style"); st.textContent = PROFIL_CSS
+  + ".cg td.k{font-size:.75rem;font-weight:700;min-width:62px}.cg td.k span{display:inline-block;border-radius:9px;padding:1px 6px}"
+  + ".cg tr.el{cursor:pointer}.cg td.pc{font-size:.78rem;white-space:normal;min-width:90px}.al{color:#C0392B;font-weight:700}"
+  + ".exl{display:flex;gap:8px;align-items:center;padding:8px 14px;border-top:1px solid var(--grid);font-size:.9rem}.exl:first-child{border-top:0}.exl b{flex:1}";
+  document.head.appendChild(st); })();
+const chapsCompetences = c => { const k = CAT.classes.find(x => x.id === c.site); return k ? k.chapitres.filter(ch => ch.competences) : []; };
+const numDoc = t => { const n = (t || "").normalize("NFKD").replace(/[̀-ͯ]/g, "").toLowerCase().match(/\b(tp|exercice|activite)\s*(\d+)/);
+  return n ? (n[1] === "activite" ? "Activité" : n[1] === "exercice" ? "Exercice" : "TP") + " " + n[2] : null; };
+const animIdP = ch => "anim:" + (ch.verrou ? ch.verrou.id : ch.titre);
+const libEx = id => id === "EVAL" ? "Type évaluation" : id === "DEFI" ? "Défi ★" : (CLIBS[id.split("-")[0]] || id) + " · niv. " + id.split("-")[1];
+function profilDe(ch, uid, P, D){
+  const pouces = {};
+  ch.docs.filter(d => d.format === "pouce").forEach(d => { const k = numDoc(d.titre); if (!k) return;
+    const v = P[uid + "__" + d.pouce]; pouces[k] = { niveaux: (v && v.niveaux) || {}, valide: D.has(d.lie + "_" + uid) }; });
+  const a = P[uid + "__" + animIdP(ch)];
+  return calcProfil(ch.competences.questions, pouces, a ? a.reponses : {});
+}
+function etatParcours(v){
+  if (!v) return { txt: "–", rates: 0 };
+  const res = v.res || {}; let rates = 0;
+  Object.values(res).forEach(r => Object.values(r).forEach(q => { if (q.t >= 2 && !q.ok) rates++; }));
+  const req = (v.plan || []).filter(p => !p.opt).length;
+  return { txt: v.fini ? "✓ terminé" : (v.etape || 0) + " / " + req, rates, en: !v.fini };
+}
+function paneCompetences(c){
+  const chs = chapsCompetences(c);
+  $("#pane").innerHTML = `<div class="card">${chs.map((ch, i) => `<button class="row" data-i="${i}"><span class="main"><span class="t">${esc(ch.titre)}</span><span class="m">Profil de compétences · parcours avant l'évaluation</span></span><span class="chev"></span></button>`).join("")}</div>
+    <p class="note">Profil calculé d'après les coups de pouce ouverts (seulement dans les activités, TP et exercices dont tu as débloqué le corrigé) et les réponses à l'animation. Rien n'est noté : chaque élève ne voit que son propre profil.</p>`;
+  $("#pane").querySelectorAll(".row").forEach(b => b.onclick = () => go(chapitreCompetences, c, chs[+b.dataset.i]));
+}
+function chapitreCompetences(c, ch){
+  setBar(ch.titre, c.nom + " · compétences", true);
+  const el = elevesDe(c), mesUid = new Set(el.map(e => e.uid));
+  if (!el.length) { $("#app").innerHTML = `<p class="empty">Créez d'abord les comptes des élèves (onglet « Élèves et comptes »).</p>`; return; }
+  const parc = ch.docs.find(d => d.format === "parcours");
+  let P = {}, D = new Set();
+  const cs = COMPS.filter(k => Object.values(ch.competences.questions).some(q => Object.values(q).includes(k)));
+  const caseK = x => { if (!x) return "–"; const N = NIVEAUX[x.niveau];
+    return `<span style="background:${N.fond};color:${N.couleur}" title="${x.score != null ? x.score.toFixed(1).replace(".", ",") + " / 3" : ""}">${x.niveau === "vide" ? "…" : esc(N.lib)}</span>${x.alerte === "auto" ? ' <span class="al" title="Autonome en activité mais animation ratée">!</span>' : ""}`; };
+  const render = () => {
+    const prs = el.map(e => profilDe(ch, e.uid, P, D));
+    const moyenne = k => { const xs = prs.map(p => p[k] && p[k].score).filter(x => x != null); return xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : null; };
+    const enDirect = parc ? el.filter(e => { const v = P[e.uid + "__parcours:" + parc.corrige.id]; return v && !v.fini; }) : [];
+    const alertes = parc ? el.map(e => ({ e, s: etatParcours(P[e.uid + "__parcours:" + parc.corrige.id]) })).filter(x => x.s.rates) : [];
+    let html = `<div class="card grille cg"><table><tr><th class="nom">Élève</th>${cs.map(k => `<th>${esc(CLIBS[k])}</th>`).join("")}${parc ? "<th>Parcours</th>" : ""}</tr>`
+      + el.map((e, i) => { const v = parc && P[e.uid + "__parcours:" + parc.corrige.id], s = etatParcours(v);
+          return `<tr class="el" data-i="${i}"><td class="nom">${esc(e.nom)}</td>${cs.map(k => `<td class="k">${caseK(prs[i][k])}</td>`).join("")}${parc ? `<td class="pc">${D.has(parc.corrige.id + "_" + e.uid) ? esc(s.txt) + (s.rates ? ` <span class="al">⚠ ${s.rates}</span>` : "") : "🔒"}</td>` : ""}</tr>`; }).join("")
+      + `<tr class="tot"><td class="nom">Classe</td>${cs.map(k => { const m = moyenne(k); return `<td class="k">${m == null ? "–" : caseK({ niveau: niveauDe(m), score: m })}</td>`; }).join("")}${parc ? "<td></td>" : ""}</tr></table></div>`
+      + `<p class="note">Touche un élève pour le détail. <b>!</b> autonome en activité mais l'animation montre que ce n'est pas fixé · <span class="al">⚠ n</span> questions du parcours ratées deux fois : va le voir. « … » pas encore assez d'éléments (moins de 3 questions).${parc ? " Le parcours s'ouvre dans l'onglet Corrigés (colonne « Parcours »)." : ""}</p>`;
+    if (enDirect.length || alertes.length) html += `<p class="sec">Parcours en cours</p><div class="card">${(alertes.length ? alertes : enDirect.map(e => ({ e, s: etatParcours(P[e.uid + "__parcours:" + parc.corrige.id]) })))
+      .map(x => `<div class="exl"><b>${esc(x.e.nom)}</b><span>${esc(x.s.txt)}</span>${x.s.rates ? `<span class="al">⚠ ${x.s.rates} ratée${x.s.rates > 1 ? "s" : ""} deux fois</span>` : ""}</div>`).join("")}</div>`;
+    $("#app").innerHTML = html;
+    $("#app").querySelectorAll("tr.el").forEach(tr => tr.onclick = () => go(eleveCompetences, c, ch, el[+tr.dataset.i]));
+  };
+  render();
+  const a = onSnapshot(collection(db, "deblocages"), snap => { D = new Set(); snap.forEach(x => { const v = x.data(); if (mesUid.has(v.uid)) D.add(v.doc + "_" + v.uid); }); render(); }, e => toast("Lecture impossible : " + e.code));
+  const b = onSnapshot(collection(db, "pointsdecours"), snap => { P = {}; snap.forEach(x => { const v = x.data(); if (mesUid.has(v.uid)) P[v.uid + "__" + v.pdc] = v; }); render(); }, () => {});
+  unsub = () => { a(); b(); };
+}
+function eleveCompetences(c, ch, e){
+  setBar(e.nom, ch.titre, true);
+  const mesUid = new Set([e.uid]), parc = ch.docs.find(d => d.format === "parcours");
+  let P = {}, D = new Set();
+  const render = () => {
+    const pr = profilDe(ch, e.uid, P, D);
+    const pouces = ch.docs.filter(d => d.format === "pouce").map(d => { const k = numDoc(d.titre), v = P[e.uid + "__" + d.pouce], tags = ch.competences.questions[k] || {};
+      const nv = Object.entries((v && v.niveaux) || {}).filter(([q, n]) => n >= 1);
+      return `<div class="exl"><b>${esc(k || d.titre)}</b><span>${D.has(d.lie + "_" + e.uid) ? "" : "corrigé non débloqué (pas compté) · "}${v ? (nv.length ? nv.map(([q, n]) => `<span class="cp n${n}">${esc(q)} ${n}</span><small> ${esc(tags[q] || "")}</small>`).join(" ") : "fiche ouverte, aucun coup de pouce") : "fiche jamais ouverte"}</span></div>`; }).join("");
+    const an = P[e.uid + "__" + animIdP(ch)], rep = (an && an.reponses) || {}, tagsA = ch.competences.questions.Animation || {};
+    const anim = Object.keys(tagsA).map(n => { const p = pointsAnim(rep[n]); return `<span class="cp ${p === 3 ? "" : p === 2 ? "n1" : p === 0 ? "n3" : ""}" title="${esc(tagsA[n])}">${esc(n)} ${p === 3 ? "✓" : p === 2 ? "2e" : p === 0 ? "✗" : "–"}</span>`; }).join(" ");
+    const v = parc && P[e.uid + "__parcours:" + parc.corrige.id];
+    const parcH = !parc ? "" : !v ? `<p class="note">Parcours pas encore commencé${D.has(parc.corrige.id + "_" + e.uid) ? "" : " (verrouillé : à ouvrir dans l'onglet Corrigés)"}.</p>`
+      : `<div class="card">${(v.plan || []).map(p => { const r = (v.res || {})[p.id] || {}, q = Object.values(r), ok = q.filter(x => x.ok && x.t <= 2).length, ko = q.filter(x => x.t >= 2 && !x.ok).length;
+          return `<div class="exl"><b>${esc(libEx(p.id))}${p.opt ? " (facultatif)" : ""}</b><span>${q.length ? ok + " juste" + (ok > 1 ? "s" : "") + (ko ? ` · <span class="al">${ko} ratée${ko > 1 ? "s" : ""} deux fois</span>` : "") : "–"}</span></div>`; }).join("")}</div>`;
+    $("#app").innerHTML = `<div class="card" style="padding:14px">${profilHtml(pr, { detail: true })}<p class="note">${esc(synthese(pr))}</p></div>
+      ${parc ? `<p class="sec">Parcours avant l'évaluation</p>${parcH}` : ""}
+      <p class="sec">Coups de pouce ouverts</p><div class="card">${pouces}</div>
+      <p class="sec">Animation</p><div class="card" style="padding:12px 14px">${anim}<p class="note">✓ juste au 1er essai · 2e juste au 2e essai · ✗ correction affichée · – pas répondu</p></div>`;
+  };
+  render();
+  const a = onSnapshot(query(collection(db, "deblocages"), where("uid", "==", e.uid)), snap => { D = new Set(); snap.forEach(x => { const v = x.data(); D.add(v.doc + "_" + v.uid); }); render(); }, () => {});
+  const b = onSnapshot(query(collection(db, "pointsdecours"), where("uid", "==", e.uid)), snap => { P = {}; snap.forEach(x => { const v = x.data(); P[v.uid + "__" + v.pdc] = v; }); render(); }, () => {});
   unsub = () => { a(); b(); };
 }
 

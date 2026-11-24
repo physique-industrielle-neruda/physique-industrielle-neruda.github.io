@@ -2827,8 +2827,8 @@
        "titre": "Activité 1 – L'ADI et le montage suiveur - coups de pouce",
        "type": "Activité",
        "format": "pouce",
-       "fichier": "29b9fffdb7b0417c599a6dc2.bin",
-       "taille": 11200,
+       "fichier": "21e05b1e7060ee46757e4c32.bin",
+       "taille": 12479,
        "pouce": "pouce:cira-amplification-corrige-activite-1-l-adi-et-le-montage-suiveur",
        "lie": "cira-amplification-corrige-activite-1-l-adi-et-le-montage-suiveur",
        "cv": "cira-chap-amplification",
@@ -2859,8 +2859,8 @@
        "titre": "TP 1 – Amplificateurs non inverseur et inverseur - coups de pouce",
        "type": "TP",
        "format": "pouce",
-       "fichier": "07e841107fe963fad065bfac.bin",
-       "taille": 12503,
+       "fichier": "dce323e60dbad9d0c4a01f7a.bin",
+       "taille": 13821,
        "pouce": "pouce:cira-amplification-corrige-tp-1-amplificateurs-non-inverseur-et-inver",
        "lie": "cira-amplification-corrige-tp-1-amplificateurs-non-inverseur-et-inver",
        "cv": "cira-chap-amplification",
@@ -2891,8 +2891,8 @@
        "titre": "Activité 2 – Le soustracteur et le décalage de zéro - coups de pouce",
        "type": "Activité",
        "format": "pouce",
-       "fichier": "9ba2f791145ded716b1f5896.bin",
-       "taille": 10623,
+       "fichier": "4ab38ea71af730536f1be453.bin",
+       "taille": 11889,
        "pouce": "pouce:cira-amplification-corrige-activite-2-le-soustracteur-et-le-decalage-",
        "lie": "cira-amplification-corrige-activite-2-le-soustracteur-et-le-decalage-",
        "cv": "cira-chap-amplification",
@@ -2923,8 +2923,8 @@
        "titre": "TP 2 – Conditionneur à deux ADI pour la sonde Pt100 - coups de pouce",
        "type": "TP",
        "format": "pouce",
-       "fichier": "df6cad9574d620fc4541b3d1.bin",
-       "taille": 11572,
+       "fichier": "7ddf55dec29ec4bb03396419.bin",
+       "taille": 12864,
        "pouce": "pouce:cira-amplification-corrige-tp-2-conditionneur-a-deux-adi-pour-la-sond",
        "lie": "cira-amplification-corrige-tp-2-conditionneur-a-deux-adi-pour-la-sond",
        "cv": "cira-chap-amplification",
@@ -2955,8 +2955,8 @@
        "titre": "Activité 3 – L'amplificateur d'instrumentation - coups de pouce",
        "type": "Activité",
        "format": "pouce",
-       "fichier": "68ae64ca27721b69d860f8bd.bin",
-       "taille": 10862,
+       "fichier": "c183762f2c700e52983ae83a.bin",
+       "taille": 12141,
        "pouce": "pouce:cira-amplification-corrige-activite-3-l-amplificateur-d-instrumentati",
        "lie": "cira-amplification-corrige-activite-3-l-amplificateur-d-instrumentati",
        "cv": "cira-chap-amplification",
@@ -2995,7 +2995,7 @@
       {
        "titre": "Animation – Amplification",
        "type": "Animation",
-       "fichier": "409c3c09845193e38c758272.bin",
+       "fichier": "324092d65602063cb52387f0.bin",
        "format": "html",
        "cv": "cira-chap-amplification",
        "rubrique": "Animation"
@@ -3013,8 +3013,8 @@
        "titre": "Exercice 1 - coups de pouce",
        "type": "Exercices",
        "format": "pouce",
-       "fichier": "a82bb46a2baaea4c3be27034.bin",
-       "taille": 10058,
+       "fichier": "fc85c9a930f6a604566aa027.bin",
+       "taille": 11311,
        "pouce": "pouce:cira-amplification-corrige-exercice-1",
        "lie": "cira-amplification-corrige-exercice-1",
        "cv": "cira-chap-amplification",
@@ -3045,8 +3045,8 @@
        "titre": "Exercice 2 - coups de pouce",
        "type": "Exercices",
        "format": "pouce",
-       "fichier": "e8378af29a69426c7813bd4e.bin",
-       "taille": 10159,
+       "fichier": "1a83192bebed88a2c61ebc20.bin",
+       "taille": 11412,
        "pouce": "pouce:cira-amplification-corrige-exercice-2",
        "lie": "cira-amplification-corrige-exercice-2",
        "cv": "cira-chap-amplification",
@@ -3077,8 +3077,8 @@
        "titre": "Exercice 3 - coups de pouce",
        "type": "Exercices",
        "format": "pouce",
-       "fichier": "3812c1809ea5bae50a181147.bin",
-       "taille": 9771,
+       "fichier": "26a5685b2eedf7fe9f14c883.bin",
+       "taille": 11011,
        "pouce": "pouce:cira-amplification-corrige-exercice-3",
        "lie": "cira-amplification-corrige-exercice-3",
        "cv": "cira-chap-amplification",
@@ -3109,8 +3109,8 @@
        "titre": "Exercice 4 - coups de pouce",
        "type": "Exercices",
        "format": "pouce",
-       "fichier": "edf060f1c497c774e266b3ce.bin",
-       "taille": 10133,
+       "fichier": "58d6cdf2b01b9d36fa59db42.bin",
+       "taille": 11386,
        "pouce": "pouce:cira-amplification-corrige-exercice-4",
        "lie": "cira-amplification-corrige-exercice-4",
        "cv": "cira-chap-amplification",
@@ -3127,6 +3127,18 @@
         "wk": "X52pBwMMO9qpvErSAIdL8aOtAcC5VZo2VogsWkwcakbz+k+DkENTxSgeOZcsUQbkbqetyGmeNCBkZI4y"
        },
        "rubrique": "Exercices"
+      },
+      {
+       "titre": "Mon parcours avant l'évaluation",
+       "type": "Parcours",
+       "format": "parcours",
+       "fichier": "ca7e90ac2163b86e55186383.bin",
+       "taille": 36277,
+       "corrige": {
+        "id": "cira-amplification-parcours",
+        "wk": "7pwEF/wLf8XnPA57OK5m10s3K2FV2EdhmzK0zpXEoB7XVTN9nSRIHL69aliTwZeoFLU2y1Plskivs2Sk"
+       },
+       "rubrique": "Mon profil de compétences"
       },
       {
        "titre": "Bilan",
@@ -3151,6 +3163,95 @@
      "verrou": {
       "id": "cira-chap-amplification",
       "wk": "N7UetOxBHqI4Agf8xKSzr8aVfgUI3rb64bMhzAL1913y1eoJpKkEtc3V16mIeqqTHNju2a6p5e7oWyms"
+     },
+     "competences": {
+      "referentiel": "BTS CIRA",
+      "questions": {
+       "Activité 1": {
+        "A2": "VAL",
+        "A3": "REA",
+        "B1": "APP",
+        "B2": "REA",
+        "B3": "ANA",
+        "B4": "COM"
+       },
+       "TP 1": {
+        "A3": "ANA",
+        "A4": "ANA",
+        "A5": "VAL",
+        "B2": "REA",
+        "B3": "VAL",
+        "C2": "APP",
+        "C3": "ANA",
+        "D3": "APP",
+        "E1": "VAL"
+       },
+       "Activité 2": {
+        "A1": "REA",
+        "A4": "REA",
+        "B1": "ANA",
+        "B4": "REA",
+        "B5": "COM"
+       },
+       "TP 2": {
+        "A1": "REA",
+        "A3": "ANA",
+        "A4": "VAL",
+        "B1": "REA",
+        "B3": "REA",
+        "C1": "VAL",
+        "D1": "VAL"
+       },
+       "Activité 3": {
+        "A2": "REA",
+        "A3": "VAL",
+        "A4": "ANA",
+        "B2": "REA",
+        "B3": "VAL",
+        "B4": "COM"
+       },
+       "Exercice 1": {
+        "Q2": "ANA",
+        "Q3": "ANA",
+        "Q4": "REA",
+        "Q5": "ANA"
+       },
+       "Exercice 2": {
+        "Q2": "ANA",
+        "Q3": "APP",
+        "Q4": "REA",
+        "Q5": "VAL"
+       },
+       "Exercice 3": {
+        "Q2": "REA",
+        "Q3": "REA",
+        "Q5": "ANA"
+       },
+       "Exercice 4": {
+        "Q1": "REA",
+        "Q2": "REA",
+        "Q3": "REA",
+        "Q4": "VAL"
+       },
+       "Animation": {
+        "1.1": "REA",
+        "1.2": "REA",
+        "1.3": "ANA",
+        "1.4": "REA",
+        "1.5": "ANA",
+        "2.1": "REA",
+        "2.2": "ANA",
+        "2.3": "ANA",
+        "2.4": "REA",
+        "2.5": "VAL",
+        "3.1": "REA",
+        "3.2": "REA",
+        "3.3": "REA",
+        "3.4": "REA",
+        "3.5": "VAL",
+        "3.6": "ANA"
+       }
+      }
      }
     }
    ]
@@ -3636,9 +3737,9 @@
   }
  ],
  "outilsWk": {
-  "et": "HqP20C12mYcdh52NsK9RBgThx+Mt3aZYqP2n1S1cf1RmO/lgBHpCbz8BXYyr/5NpN7ntM0CZ3AgS4mxq",
-  "cira": "tuCSUuWDKKyTu+DZK66wkJwW6ZJoPgJoeYFZTqpSeOtMSbxDw/ySP//1MOo3pShxhHHFL2dxClibeh56",
-  "cim": "NHe7OsGDbfs4rcQZyYLFqaRXtoD7ewEF0l4ghEuQMgIezK1Kl27C/FxGVqPaBk9rFbWY/YlK1ZYtmVK3"
+  "et": "pVWlS/egqE+D6MHfXSJGpr7WZp+RsUr2er6C0y8sXBeTC9iHAGyWM0eshXC7BUaBzYGw9RoS57muCkOl",
+  "cira": "gaONmhoT9ZknfXbqkq1+Ju2gRWFvcT0tb4VvM0dRxxppHrS0wMLhSRNEqfpVT73eW6pAgru9npbjEhtY",
+  "cim": "TjTz2cvayo+/ed8FRxtWJcPRYBIp/Jpe9d5nD1+eUtzrQpwP35TY/VmHHFn6STwQpKAsOXqBrt9fbq0p"
  },
  "outils": [
   {
