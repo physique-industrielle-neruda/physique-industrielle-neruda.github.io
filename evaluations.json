@@ -1,7 +1,85 @@
 {
  "version": 1,
- "noms": "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",
+ "noms": "UN8mAnqvJyVaoUNvVBPtI4LyqBOkuhvLFucwGWwTUKMNHFskzwfx+8aUxZSj9ll8kkNitgqJqxLd5PQx6nKQZBIaixfTxPH3cZZ+ywFgYStd0+xsIdbQbjdctAbH0QKa2JY1usodxarh/pSC7NzfkdAWQ5WzCzM7jCbpCvGi9s8fL9wC5DXAvQLgBShy4hxrLC0Fq/GbImz9nKcATK5ousbY/+nLYy5zkvTmOVMyjvk2in0bmRh3stL8dNV0oe8eEkUSXOddiFu+awvKabdPXwvCe7A3MbqsBxA0tVWfanMktMb/QF9UZm9vY5J/X/f3b8I9TnbultW2DJ+lJ3iAZmIYr/2c54PMSsDemlpFGO/60PNNfWb3aD4CI0Zh116CnOsOdFApbzydk0YqjkkKdgtNKI8z7A/pO06LUMTo33M9mXMNmm1f+PSVF1ReR/A+rwt0ly2GorOk70si6Lm1UbgJ93SsdrnLNeoxbpKZU1O/hWSWk1GGoiQ9TdXvA9/ktNkvDqc1xkjSdsJklTngUBNWvtnAy1Oa4jIITqQ/Z+8tvNMOSw5KH/LeRZ+CRWf5m2/arU49A9V/62X/1N297bM6RaCvzt2ZO2J1Z9G9hXZpypWo1Fxr02Cu9EqjM9oK8hl69h/zbnELGwPpcbGGbLVLj+useMr7aI1OEjrc1lFkqtH+Hx5a9VYNikGPJW8daCzJfV5HuV5A8Gs5N4u/R+ygT8TzWe5j1iZOZMNtqysfeQxROeKy7Jums2Cytn+YOlz2qLknvFLhH4rVVO/KtFP1evciSkc4FYEZ/I9zuPGtewE8kDLArVEZ+OW7HZ1OzqET9VxwiatKy7CtzHb7QEKXyAv/6XLXmJtaUxRhgly33sj+G0+iAKYqfamW9Q9qzYpcuzoBAbf/RrUMxrbbkVxBt7m8GsG2FxqmqLgqrGOWbcavwZzDnRlznEIm6EoW+4EdbAQbxR6bczj5kGcv2dzPRgmvPl3AsGEP4ZOk4OHzf7MI5klgpLU6EHv7pVztGR5hI2/TrEe8XAGtDqUIQnOLl2cbL5RAdtroE9uhXoJntvW6M6dZR0f22h6+XTdehqwK13WHencfobCcwzIh/RgfVE04bLzf0cHjybmVWzZ22rP0Dg1E8R2ouXYfplBWGwE0Qs+ndCVviJ3eeamoc/iFL/NvfJxgSFPWPVFA6fpWm+Xe9kXRQWsRJ3Wu+XvUlQacP2lZlh1fib8O9MiuM3q3Xogof+awbvg3SnLC4aOnaaAH53xDy3uY3bxAI9ftGyFt8UTTabP/BCEkZs+PnCsHC/jvahMbzGtIlRT/JsBJoFrp/qZYwcKRCzGDHXl34wIr5ePnk2JflSKJppAvGop1PSj+eW8qFQUJ7rDpbVm0qmiykhVmh8l8inPUMZFPhIUSX/s9rAHhMe6/dLaSBkemjkhYJTqiODajfs0d+2TP+Y7TK2HleqP+QTm8cH8rbFTaIdbGjviaZXCDmitNpU/YXKreJ875aj17tVcBBoXEihrcanIE2nxJVqYSAKcXrIKPTGEPfj4xuuIysJfLmiZW/J/i4g29W1jWbW3DbR6kSXvfuoiF/xccWYiRAXyZaxaf4QG4BhCLe4zJslrZNDoW+DTx7S9aHP8XqOUcGtRXs4sHulCmAdBWSSFM4poZKSD7DWNTJSegVZNqUsyWh7Dd0GFjsnic1nDA3xRbF79JOSuyjHhrJca0DITsUdBJ/27cWJ4Af3Hs64DHOXZTYWpugPZSOwlmSqNQmebFIHumym2wXFFiQUCiESMYc7nu96gKMBQe5vFbGbWOz2ceM1C4GYkaEInJYuAIxg/P9H0Os9JFa7FVIIqqwGu3lN1iXjxLobFEPWhEx+teKS/QzJaIkEx8itWE2I15FsIoYHJkU1RmPD9jWkMgGTD02d2NdZuSU20cNZQ5gpjr24LbZcymgXaq02vhCxvyOuyzzxZFBiLIPXE0fVS+4Z1qTaULe42/jV5whI577gH6lAgoaFoqPC6hkd1fbkZxhPVKm1YkWN3leaPOtT+NyLPz1xyYd3GSr0+B1Z7DjZtleIUzzDaYsN9MzuBmZJG7GnwAJbm4HZ2gR9W1yMxU7tSEV6OY8pQ7fdiyGqdnyiJ16PrFN8/5MXMAFFUmaeR9Dl0C0Prw0pkS7/V7QoctaKTo+SGNaieR3YymlReAY3A/6ONr4OeQYLr066RpyvaAdfbe3JMOZoKYEEDSr9xxpu5WsORibzBnLDo14ggoKn3zpKD7CFORcTeByFQqoT+/gpcon9BPTpBaiqR1M45YbM7jxY9chxPOVQ3GdueXEPXrnU75jhpIWTFEP5iiRO0bNF2AVeZlIPowHq1kq7pVpypvmCJ3OtXCIKwRhzpmGFJY93hHqJBUyslpDBV7U187Gtuwneo6Gj022AE8QwNx5uhSHJJxGxdFpBFcNDBe1Lu8BiBXoggNXNt5ADCRCuhZ++NqxNC1+uIClsSJkO3Hd+Nt2p92qZdeI1S+Z2gSDUFuPGkOnGR8XUGrizb9M0MTzf566ucZk33wYO1Sh3jpwG0HYHtkQVUEY7nRebLdu2GVJq6YQ6PSr7bgNzmnQKT/rNYAyqWLsvYmUB+n5wMkbnPSMGzQdv2u4A6g2Q==",
  "evaluations": [
+  {
+   "id": "cim2/2026-11-24 Évaluation Les convertisseurs électromécaniques",
+   "classe": "cim2",
+   "site": "cim",
+   "titre": "Évaluation Les convertisseurs électromécaniques",
+   "date": "2026-11-24",
+   "copies": [
+    {
+     "login": "faycal.a",
+     "fichier": "eb81ea591081ec6fee6b6f3f.bin",
+     "taille": 858552,
+     "pages": 6,
+     "corrige": {
+      "id": "eval-8efdcaa56272789c9c47",
+      "wk": "8OhxFlUcUsKMfNOz6pWR6wMITrVIDQv4faoth1uQFZQGpXGgiJIZoDbQNwii2YnCFkHe5pc4pBfENLPL"
+     }
+    },
+    {
+     "login": "raphael.b",
+     "fichier": "9b613d07c82a9c9a683afa9e.bin",
+     "taille": 756636,
+     "pages": 6,
+     "corrige": {
+      "id": "eval-cb533ddffd1bd30a31f1",
+      "wk": "ohU95gWBtU0e2mrjDO0eSRnCE2xOPgAibyjqh388HIHyn/RfcKLufQCOu0TlbgOOayEmBm7lSmZ97HGF"
+     }
+    },
+    {
+     "login": "lucas.d2",
+     "fichier": "a42711af80ef7c4953452deb.bin",
+     "taille": 759047,
+     "pages": 6,
+     "corrige": {
+      "id": "eval-30fd33cf89897b5fa030",
+      "wk": "k790/0dnwxrHBp7i0PIQPloD3lT/JJlmm0ZDWf8TkxvaIEx+Mf6duCmxVmKAksWPdEocws228qkeXQJK"
+     }
+    },
+    {
+     "login": "benoit.h",
+     "fichier": "5f0d6fcd70c748f42407256d.bin",
+     "taille": 812897,
+     "pages": 6,
+     "corrige": {
+      "id": "eval-8455d5161c18670ec7c7",
+      "wk": "vJypkicw9op4HqSJy3yjop/54ZMNmCCvQqr/t69WTxrDuiV9Y9mEM7rwRcqigpm6klbYiFM0xVRhwLv4"
+     }
+    },
+    {
+     "login": "julien.l",
+     "fichier": "52a15ba724a015c5807220a5.bin",
+     "taille": 805974,
+     "pages": 6,
+     "corrige": {
+      "id": "eval-c0421fc724a267f55bc5",
+      "wk": "UEwujPLIkAu+j6+0Za2k7FjuWmN9lxepI767TmoxO9JfWpH/XZ4sCXmoiwtVn+1UzhJzeNMKFzNMfVOM"
+     }
+    },
+    {
+     "login": "yann.p",
+     "fichier": "d3d08dc3fb8b893d96c73423.bin",
+     "taille": 749247,
+     "pages": 6,
+     "corrige": {
+      "id": "eval-64a4fe96e004fa84263d",
+      "wk": "g9FBzjdHVe0aPDA5Ib70AKGBSnSZIRTAFuwnA/YPxHoZXAYf5npk3ds84n7T6cUn81Fuo2dy61m/WWVl"
+     }
+    }
+   ],
+   "bilan": {
+    "fichier": "b1df7824e41102963e9500ca.bin",
+    "taille": 33536,
+    "pages": 1,
+    "corrige": {
+     "id": "eval-32a3be9f2ec30d94701c",
+     "wk": "kvA7wIc9bPHjz4VvgS1C3VvoNCPuBP2aj9PAyBu5/jn6E1z4gawMXmFbCH3RBZO1vIktftlWtjhgnDsW"
+    }
+   }
+  },
   {
    "id": "cira1/2026-11-03 Évaluation chapitre 3 - Régime sinusoïdal",
    "classe": "cira1",
