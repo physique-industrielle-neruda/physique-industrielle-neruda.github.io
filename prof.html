@@ -413,7 +413,10 @@ function chapitreGrille(c, g){
   const pouceDe = (d, uid) => { const v = P[uid + "__pouce:" + d.corrige.id]; if (!v) return "–";
     const q = Object.entries(v.niveaux || {}).filter(([, n]) => n > 1);
     return q.length ? q.map(([k, n]) => `<span class="cp n${n}">${esc(k)} ${n}</span>`).join("") : `<span class="cp vu">lu</span>`; };
-  let aPouce = false;
+  /* Tableau des coups de pouce affiché dès que le dossier a des fiches en cascade, même si personne ne les a encore ouvertes (24/11/2026) */
+  const pouceIds = new Set((g.ch.docs || []).filter(x => x.pouce).map(x => x.pouce));
+  const aPouceBase = docs.some(d => d.corrige && pouceIds.has("pouce:" + d.corrige.id));
+  let aPouce = aPouceBase;
   const caseDe = (d, uid) => {
     if (!D.has(d.corrige.id + "_" + uid)) return "🔒";
     if (d.chapitre) return `<span title="${d.test ? "Test ouvert" : "Dossier ouvert"}">🔓</span>`;
@@ -456,7 +459,7 @@ function chapitreGrille(c, g){
     snap.forEach(x => { const v = x.data(); if (mesUid.has(v.uid)) { D.add(v.doc + "_" + v.uid); counts[v.doc] = (counts[v.doc] || 0) + 1; } }); render();
   }, e => toast("Lecture impossible : " + e.code));
   const b = onSnapshot(collection(db, "pointsdecours"), snap => {
-    P = {}; aPouce = false;
+    P = {}; aPouce = aPouceBase;
     snap.forEach(x => { const v = x.data(); if (mesUid.has(v.uid)) { P[v.uid + "__" + v.pdc] = v; if (v.type === "pouce" && docs.some(d => "pouce:" + d.corrige.id === v.pdc)) aPouce = true; } }); render();
   }, () => {});
   unsub = () => { a(); b(); };
