@@ -400,9 +400,11 @@
       {
        "titre": "Activité 1 – La pression dans le filtre à sable - coups de pouce",
        "type": "Activité",
-       "fichier": "517a0785aa17bff63f28573e.bin",
-       "taille": 85983,
-       "pages": 2,
+       "format": "pouce",
+       "fichier": "18ced4dffd8802d4ec32d4c8.bin",
+       "taille": 11501,
+       "pouce": "pouce:et-statique-des-fluides-corrige-activite-1-la-pression-dans-le-filtre-a-sa",
+       "lie": "et-statique-des-fluides-corrige-activite-1-la-pression-dans-le-filtre-a-sa",
        "cv": "et-chap-statique-des-fluides",
        "rubrique": "Activités et TP"
       },
@@ -444,9 +446,11 @@
       {
        "titre": "Activité 2 – La pression au robinet du hameau - coups de pouce",
        "type": "Activité",
-       "fichier": "c42ce408995ea1bc163d9c18.bin",
-       "taille": 83918,
-       "pages": 2,
+       "format": "pouce",
+       "fichier": "2cb15621ce5bc46ffa247044.bin",
+       "taille": 11550,
+       "pouce": "pouce:et-statique-des-fluides-corrige-activite-2-la-pression-au-robinet-du-hamea",
+       "lie": "et-statique-des-fluides-corrige-activite-2-la-pression-au-robinet-du-hamea",
        "cv": "et-chap-statique-des-fluides",
        "rubrique": "Activités et TP"
       },
@@ -488,9 +492,11 @@
       {
        "titre": "Activité 3 – Le capteur de niveau de la bâche - coups de pouce",
        "type": "Activité",
-       "fichier": "bb414d65c687e939fc9fdd63.bin",
-       "taille": 81462,
-       "pages": 2,
+       "format": "pouce",
+       "fichier": "d893a781e6dd7032e6b3e68b.bin",
+       "taille": 11071,
+       "pouce": "pouce:et-statique-des-fluides-corrige-activite-3-le-capteur-de-niveau-de-la-bach",
+       "lie": "et-statique-des-fluides-corrige-activite-3-le-capteur-de-niveau-de-la-bach",
        "cv": "et-chap-statique-des-fluides",
        "rubrique": "Activités et TP"
       },
@@ -558,9 +564,11 @@
       {
        "titre": "Exercice 1 - coups de pouce",
        "type": "Exercices",
-       "fichier": "e7197eb6e6f2e9aef1c93374.bin",
-       "taille": 70589,
-       "pages": 1,
+       "format": "pouce",
+       "fichier": "abed3748ea4255bcc5c9cb1c.bin",
+       "taille": 9500,
+       "pouce": "pouce:et-statique-des-fluides-corrige-exercice-1",
+       "lie": "et-statique-des-fluides-corrige-exercice-1",
        "cv": "et-chap-statique-des-fluides",
        "rubrique": "Exercices"
       },
@@ -588,9 +596,11 @@
       {
        "titre": "Exercice 2 - coups de pouce",
        "type": "Exercices",
-       "fichier": "d40f100bce795aba1823ff5c.bin",
-       "taille": 72206,
-       "pages": 1,
+       "format": "pouce",
+       "fichier": "5e4ac9281b01064479fe574c.bin",
+       "taille": 9629,
+       "pouce": "pouce:et-statique-des-fluides-corrige-exercice-2",
+       "lie": "et-statique-des-fluides-corrige-exercice-2",
        "cv": "et-chap-statique-des-fluides",
        "rubrique": "Exercices"
       },
@@ -618,9 +628,11 @@
       {
        "titre": "Exercice 3 - coups de pouce",
        "type": "Exercices",
-       "fichier": "08cbdb63cd2995fd1e53329e.bin",
-       "taille": 65794,
-       "pages": 1,
+       "format": "pouce",
+       "fichier": "0ffb5c26e5301e9153bceec3.bin",
+       "taille": 9145,
+       "pouce": "pouce:et-statique-des-fluides-corrige-exercice-3",
+       "lie": "et-statique-des-fluides-corrige-exercice-3",
        "cv": "et-chap-statique-des-fluides",
        "rubrique": "Exercices"
       },
@@ -648,9 +660,11 @@
       {
        "titre": "Exercice 4 - coups de pouce",
        "type": "Exercices",
-       "fichier": "2b1a98eebfc88481ef6dc049.bin",
-       "taille": 69619,
-       "pages": 1,
+       "format": "pouce",
+       "fichier": "c59f8ce735d245307b16dff2.bin",
+       "taille": 9670,
+       "pouce": "pouce:et-statique-des-fluides-corrige-exercice-4",
+       "lie": "et-statique-des-fluides-corrige-exercice-4",
        "cv": "et-chap-statique-des-fluides",
        "rubrique": "Exercices"
       },
@@ -1779,9 +1793,11 @@
       {
        "titre": "Activité 1 – Le facteur de charge d'un réacteur - coups de pouce",
        "type": "Activité",
-       "fichier": "a4b027fad98c0d26ea535114.bin",
-       "taille": 91588,
-       "pages": 2,
+       "format": "pouce",
+       "fichier": "1433733a9181cf75eccd67dd.bin",
+       "taille": 12178,
+       "pouce": "pouce:et-sources-conversions-et-stockage-de-l-ene-corrige-activite-1-le-facteur-de-charge-d-un-react",
+       "lie": "et-sources-conversions-et-stockage-de-l-ene-corrige-activite-1-le-facteur-de-charge-d-un-react",
        "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
        "rubrique": "Activités et TP"
       },
@@ -1823,9 +1839,11 @@
       {
        "titre": "Activité 2 – Le rendement du diesel d'ultime secours - coups de pouce",
        "type": "Activité",
-       "fichier": "cbdd5d9eb4477b70f308b5f3.bin",
-       "taille": 81969,
-       "pages": 2,
+       "format": "pouce",
+       "fichier": "93f7e0ac6938a248568c316c.bin",
+       "taille": 10928,
+       "pouce": "pouce:et-sources-conversions-et-stockage-de-l-ene-corrige-activite-2-le-rendement-du-diesel-d-ultime",
+       "lie": "et-sources-conversions-et-stockage-de-l-ene-corrige-activite-2-le-rendement-du-diesel-d-ultime",
        "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
        "rubrique": "Activités et TP"
       },
@@ -1867,9 +1885,11 @@
       {
        "titre": "Activité 3 – L'autonomie de la batterie 125 V - coups de pouce",
        "type": "Activité",
-       "fichier": "b7e7b9e5ddcb8cc5e5bbe8d0.bin",
-       "taille": 87134,
-       "pages": 2,
+       "format": "pouce",
+       "fichier": "02c444fb569a15d4ae1afd8e.bin",
+       "taille": 11393,
+       "pouce": "pouce:et-sources-conversions-et-stockage-de-l-ene-corrige-activite-3-l-autonomie-de-la-batterie-125-",
+       "lie": "et-sources-conversions-et-stockage-de-l-ene-corrige-activite-3-l-autonomie-de-la-batterie-125-",
        "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
        "rubrique": "Activités et TP"
       },
@@ -1911,9 +1931,11 @@
       {
        "titre": "Activité 4 – Un projet d'ombrière solaire - coups de pouce",
        "type": "Activité",
-       "fichier": "6d1769f7d763ee34b57d8213.bin",
-       "taille": 96734,
-       "pages": 2,
+       "format": "pouce",
+       "fichier": "1b062322c0c15b78df334ccc.bin",
+       "taille": 12377,
+       "pouce": "pouce:et-sources-conversions-et-stockage-de-l-ene-corrige-activite-4-un-projet-d-ombriere-solaire",
+       "lie": "et-sources-conversions-et-stockage-de-l-ene-corrige-activite-4-un-projet-d-ombriere-solaire",
        "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
        "rubrique": "Activités et TP"
       },
@@ -1981,9 +2003,11 @@
       {
        "titre": "Exercice 1 - coups de pouce",
        "type": "Exercices",
-       "fichier": "e47787da2d72474043812d9a.bin",
-       "taille": 71112,
-       "pages": 1,
+       "format": "pouce",
+       "fichier": "30747ab88136afa860672bfd.bin",
+       "taille": 9550,
+       "pouce": "pouce:et-sources-conversions-et-stockage-de-l-ene-corrige-exercice-1",
+       "lie": "et-sources-conversions-et-stockage-de-l-ene-corrige-exercice-1",
        "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
        "rubrique": "Exercices"
       },
@@ -2011,9 +2035,11 @@
       {
        "titre": "Exercice 2 - coups de pouce",
        "type": "Exercices",
-       "fichier": "20abb8400f27027a42b3fc35.bin",
-       "taille": 71467,
-       "pages": 1,
+       "format": "pouce",
+       "fichier": "1cfd235343d89aa9617d2de6.bin",
+       "taille": 9505,
+       "pouce": "pouce:et-sources-conversions-et-stockage-de-l-ene-corrige-exercice-2",
+       "lie": "et-sources-conversions-et-stockage-de-l-ene-corrige-exercice-2",
        "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
        "rubrique": "Exercices"
       },
@@ -2041,9 +2067,11 @@
       {
        "titre": "Exercice 3 - coups de pouce",
        "type": "Exercices",
-       "fichier": "481f64735ff8af8bc1f0d863.bin",
-       "taille": 72512,
-       "pages": 1,
+       "format": "pouce",
+       "fichier": "3fd5ed7fdcd9b44502d0d86a.bin",
+       "taille": 9564,
+       "pouce": "pouce:et-sources-conversions-et-stockage-de-l-ene-corrige-exercice-3",
+       "lie": "et-sources-conversions-et-stockage-de-l-ene-corrige-exercice-3",
        "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
        "rubrique": "Exercices"
       },
@@ -2071,9 +2099,11 @@
       {
        "titre": "Exercice 4 - coups de pouce",
        "type": "Exercices",
-       "fichier": "e95798a0cfb154309aacaefc.bin",
-       "taille": 76140,
-       "pages": 1,
+       "format": "pouce",
+       "fichier": "85fc634322732d2461e3f0c4.bin",
+       "taille": 9990,
+       "pouce": "pouce:et-sources-conversions-et-stockage-de-l-ene-corrige-exercice-4",
+       "lie": "et-sources-conversions-et-stockage-de-l-ene-corrige-exercice-4",
        "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
        "rubrique": "Exercices"
       },
@@ -2714,9 +2744,11 @@
       {
        "titre": "Activité 1 – L'ADI et le montage suiveur - coups de pouce",
        "type": "Activité",
-       "fichier": "a4347bc9e2fa9e204403ea08.bin",
-       "taille": 81977,
-       "pages": 2,
+       "format": "pouce",
+       "fichier": "b67dd5af3ca2990a1e4a7ec1.bin",
+       "taille": 10911,
+       "pouce": "pouce:cira-amplification-corrige-activite-1-l-adi-et-le-montage-suiveur",
+       "lie": "cira-amplification-corrige-activite-1-l-adi-et-le-montage-suiveur",
        "cv": "cira-chap-amplification",
        "rubrique": "Activités et TP"
       },
@@ -2744,9 +2776,11 @@
       {
        "titre": "TP 1 – Amplificateurs non inverseur et inverseur - coups de pouce",
        "type": "TP",
-       "fichier": "4cd8ffa07fc54dd68c20e77b.bin",
-       "taille": 90776,
-       "pages": 2,
+       "format": "pouce",
+       "fichier": "f621b391e3ac87c8395f6380.bin",
+       "taille": 12187,
+       "pouce": "pouce:cira-amplification-corrige-tp-1-amplificateurs-non-inverseur-et-inver",
+       "lie": "cira-amplification-corrige-tp-1-amplificateurs-non-inverseur-et-inver",
        "cv": "cira-chap-amplification",
        "rubrique": "Activités et TP"
       },
@@ -2774,9 +2808,11 @@
       {
        "titre": "Activité 2 – Le soustracteur et le décalage de zéro - coups de pouce",
        "type": "Activité",
-       "fichier": "dc4cd4ab351538c91c30651d.bin",
-       "taille": 81441,
-       "pages": 1,
+       "format": "pouce",
+       "fichier": "e3fc9458c9140cbba385b712.bin",
+       "taille": 10343,
+       "pouce": "pouce:cira-amplification-corrige-activite-2-le-soustracteur-et-le-decalage-",
+       "lie": "cira-amplification-corrige-activite-2-le-soustracteur-et-le-decalage-",
        "cv": "cira-chap-amplification",
        "rubrique": "Activités et TP"
       },
@@ -2804,9 +2840,11 @@
       {
        "titre": "TP 2 – Conditionneur à deux ADI pour la sonde Pt100 - coups de pouce",
        "type": "TP",
-       "fichier": "a7f7ffb54a23c39fca8d115a.bin",
-       "taille": 87094,
-       "pages": 2,
+       "format": "pouce",
+       "fichier": "4f31952f789bb64c348aeb20.bin",
+       "taille": 11274,
+       "pouce": "pouce:cira-amplification-corrige-tp-2-conditionneur-a-deux-adi-pour-la-sond",
+       "lie": "cira-amplification-corrige-tp-2-conditionneur-a-deux-adi-pour-la-sond",
        "cv": "cira-chap-amplification",
        "rubrique": "Activités et TP"
       },
@@ -2834,9 +2872,11 @@
       {
        "titre": "Activité 3 – L'amplificateur d'instrumentation - coups de pouce",
        "type": "Activité",
-       "fichier": "5e1acd719b46c4b47f57af84.bin",
-       "taille": 78959,
-       "pages": 2,
+       "format": "pouce",
+       "fichier": "62c1a798d2eac48c09e5a2e8.bin",
+       "taille": 10573,
+       "pouce": "pouce:cira-amplification-corrige-activite-3-l-amplificateur-d-instrumentati",
+       "lie": "cira-amplification-corrige-activite-3-l-amplificateur-d-instrumentati",
        "cv": "cira-chap-amplification",
        "rubrique": "Activités et TP"
       },
@@ -2890,9 +2930,11 @@
       {
        "titre": "Exercice 1 - coups de pouce",
        "type": "Exercices",
-       "fichier": "2706a9d481141ba5fa0104b0.bin",
-       "taille": 72007,
-       "pages": 1,
+       "format": "pouce",
+       "fichier": "94f0a54aa5b132b169b31eb2.bin",
+       "taille": 9787,
+       "pouce": "pouce:cira-amplification-corrige-exercice-1",
+       "lie": "cira-amplification-corrige-exercice-1",
        "cv": "cira-chap-amplification",
        "rubrique": "Exercices"
       },
@@ -2920,9 +2962,11 @@
       {
        "titre": "Exercice 2 - coups de pouce",
        "type": "Exercices",
-       "fichier": "2047ba51cd3a6a2f22638d57.bin",
-       "taille": 74091,
-       "pages": 1,
+       "format": "pouce",
+       "fichier": "c0d4e14b598fe0f6d3fb184c.bin",
+       "taille": 9888,
+       "pouce": "pouce:cira-amplification-corrige-exercice-2",
+       "lie": "cira-amplification-corrige-exercice-2",
        "cv": "cira-chap-amplification",
        "rubrique": "Exercices"
       },
@@ -2950,9 +2994,11 @@
       {
        "titre": "Exercice 3 - coups de pouce",
        "type": "Exercices",
-       "fichier": "bb4975f7aa946d2720c410d9.bin",
-       "taille": 72695,
-       "pages": 1,
+       "format": "pouce",
+       "fichier": "7ea3c960476d14c181c382a5.bin",
+       "taille": 9509,
+       "pouce": "pouce:cira-amplification-corrige-exercice-3",
+       "lie": "cira-amplification-corrige-exercice-3",
        "cv": "cira-chap-amplification",
        "rubrique": "Exercices"
       },
@@ -2980,9 +3026,11 @@
       {
        "titre": "Exercice 4 - coups de pouce",
        "type": "Exercices",
-       "fichier": "4e91085cb2a9f3d0891dee05.bin",
-       "taille": 78684,
-       "pages": 1,
+       "format": "pouce",
+       "fichier": "cde5b03b0cf77d27b617a4ee.bin",
+       "taille": 9862,
+       "pouce": "pouce:cira-amplification-corrige-exercice-4",
+       "lie": "cira-amplification-corrige-exercice-4",
        "cv": "cira-chap-amplification",
        "rubrique": "Exercices"
       },
@@ -3488,9 +3536,9 @@
   }
  ],
  "outilsWk": {
-  "et": "ie1CpgbOFRKN09s/WlXwp0StRKie2HnhRJnl/ESsqYLfJkncIjqGjyFygRaplJw6YM78GfU0Te91TuFU",
-  "cira": "dEYr4Xf4pFfNv7D9WZa5nN+MDFFLHShov/AIXv90bpspFCTiDQqVpt0ufkhZBLmdwUOx8AyJp6BxCojz",
-  "cim": "46Q4+jdNmpL01ofAnbqQmI95c46UTyWepzn4vb5OTO3pyzJRodUs8xrOEihGP/OBkop+OI2wOaToMM/q"
+  "et": "AoXDILkf3n+i7hNw7uMzSWR8LGD/dGBOpnfSCfyatu7//wjWhOZiQWGcbadllARYULUdw35+Ym4xTyQc",
+  "cira": "3Eow+NSMs/CgNjlmuHjRa8bzUDMy0Uab1qHe9dTfpPMtcioznch7yip0zPrVL+7Rndf/33Cz55LC25PS",
+  "cim": "isxNgyZMndPXyiyOMZJnDs5BaIKdFdpCTCpyqK7F7qRMDGAHDFuGroRRZQSk09xyI6jqNE3wpCMNueA+"
  },
  "outils": [
   {
