@@ -166,7 +166,7 @@ label.f{display:block;font-size:.9rem;color:var(--muted);margin-top:10px}
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, doc, getDoc, getDocs, setDoc, deleteDoc, collection, query, where, onSnapshot, serverTimestamp, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, doc, getDoc, getDocs, setDoc, deleteDoc, collection, query, where, onSnapshot, serverTimestamp, writeBatch, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const FB = {"apiKey":"AIzaSyDH32Ma0shVbsIHR0xNJbahb5MO0RKHRS0","authDomain":"physique-neruda.firebaseapp.com","projectId":"physique-neruda","storageBucket":"physique-neruda.firebasestorage.app","messagingSenderId":"62730174289","appId":"1:62730174289:web:588c846aadd4eec2109d70"};
 const DOMAINE = "@physique-neruda.firebaseapp.com";
@@ -244,10 +244,24 @@ async function loadAll(){
   CLASSES.sort((a, b) => (a.ordre ?? 99) - (b.ordre ?? 99));
   const p = await getDoc(doc(db, "prive", "cles"));
   SITES = p.exists() ? (p.data().sites || {}) : {};
+  if (p.exists()) { const o = p.data().ouvertures || {}; OUVERT_ENR = JSON.stringify(Object.keys(o).sort().map(k => [k, o[k]])); }
+  getDocs(collection(db, "deblocages")).then(syncOuvertures).catch(() => {});
   MAITRE = p.exists() && p.data().corriges ? await crypto.subtle.importKey("raw", b64(p.data().corriges), "AES-GCM", false, ["decrypt"]) : null;
 }
 /* Élèves inscrits dans deux classes (ex. 2ET / 2ETA) : leur compte (uid) n'est enregistré que dans une classe ;
    on le retrouve par l'identifiant pour qu'ils reçoivent aussi les corrigés et évaluations de l'autre classe. */
+/* Résumé des chapitres ouverts (24/11/2026) : date du 1er déblocage de chaque chapitre pour un vrai élève,
+   enregistrée dans prive/cles pour que le compte « professeur » du site range aussi les dossiers. */
+let OUVERT_ENR = null;
+async function syncOuvertures(snap){
+  const ids = new Set(); (CAT.classes || []).forEach(k => k.chapitres.forEach(ch => ch.verrou && ids.add(ch.verrou.id)));
+  const o = {};
+  snap.forEach(x => { const v = x.data(); if (!ids.has(v.doc) || v.classe === "invites" || !(v.at && v.at.toMillis)) return;
+    const t = v.at.toMillis(); if (!o[v.doc] || t < o[v.doc]) o[v.doc] = t; });
+  const js = JSON.stringify(Object.keys(o).sort().map(k => [k, o[k]]));
+  if (js === OUVERT_ENR) return; OUVERT_ENR = js;
+  try { await updateDoc(doc(db, "prive", "cles"), { ouvertures: o }); } catch(_){}
+}
 function elevesDe(c){
   const uidDe = {}; CLASSES.forEach(k => (k.eleves || []).forEach(e => { if (e.uid) uidDe[e.login] = e.uid; }));
   return (c.eleves || []).map(e => e.uid ? e : (uidDe[e.login] ? { ...e, uid: uidDe[e.login] } : e)).filter(e => e.uid);
@@ -315,6 +329,7 @@ function libDoc(d, n, total){
 function suivreDeblocages(c, cb){
   const mesUid = new Set(elevesDe(c).map(e => e.uid));
   unsub = onSnapshot(collection(db, "deblocages"), snap => {
+    syncOuvertures(snap);
     const counts = {}, prem = {}; snap.forEach(x => { const v = x.data(); if (mesUid.has(v.uid)) { counts[v.doc] = (counts[v.doc] || 0) + 1;
       const t = v.at && v.at.toMillis ? v.at.toMillis() : Date.now(); if (!prem[v.doc] || t < prem[v.doc]) prem[v.doc] = t; } }); cb(counts, prem);
   }, e => toast("Lecture impossible : " + e.code));

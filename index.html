@@ -344,7 +344,7 @@ function ordreChaps(c, xs){
   const date = ch => S.corrAt[ch.verrou.id] || (OUV && OUV[ch.verrou.id]) || 0;
   const etat = ch => {
     if (!ch.verrou) return 1;                                     // ancien chapitre, jamais sous cadenas
-    if (S.prof || S.premium) return OUV ? (OUV[ch.verrou.id] ? 0 : 2) : 0;
+    if (S.prof || S.premium) return OUV && OUV[ch.verrou.id] ? 0 : 2;
     return S.corr[ch.verrou.id] ? 0 : 2;
   };
   return xs.slice().sort((a, b) => {
@@ -357,11 +357,14 @@ function ordreChaps(c, xs){
     return idx.get(B) - idx.get(A);
   });
 }
-async function chargerOuvertures(){
-  OUV = null;
+/* Ouvert = débloqué pour au moins un vrai élève (les comptes invités ne comptent pas).
+   Si la liste des déblocages n'est pas lisible (invité premium « professeur »), on prend le résumé
+   que l'appli professeur enregistre dans prive/cles (champ « ouvertures »). */
+async function chargerOuvertures(resume){
+  OUV = {};
   try { const snap = await getDocs(collection(db, "deblocages")); const o = {};
-    snap.forEach(x => { const v = x.data(); if (!v.doc || !chapInfo(v.doc)) return; const t = v.at && v.at.toMillis ? v.at.toMillis() : Date.now(); if (!o[v.doc] || t < o[v.doc]) o[v.doc] = t; });
-    OUV = o; } catch(_){ OUV = null; }
+    snap.forEach(x => { const v = x.data(); if (!v.doc || !chapInfo(v.doc) || v.classe === "invites") return; const t = v.at && v.at.toMillis ? v.at.toMillis() : Date.now(); if (!o[v.doc] || t < o[v.doc]) o[v.doc] = t; });
+    OUV = o; } catch(_){ OUV = resume || {}; }
 }
 async function chapKey(id){
   if (S.corr[id]) return importKey(b64(S.corr[id]));
@@ -1132,7 +1135,7 @@ async function startSession(user){
         if (k.corriges) S.maitre = await crypto.subtle.importKey("raw", b64(k.corriges), "AES-GCM", false, ["decrypt"]);
       }
       Object.assign(S, { user, prof:true, evals:true, nom:"Professeur" });
-      await chargerOuvertures();
+      await chargerOuvertures(p.exists() ? p.data().ouvertures : null);
       await nomsEvals();
       try { const cs = await getDocs(collection(db, "classes")); cs.forEach(x => { const v = x.data(); NOMS[x.id] = { nom: v.nom || x.id, eleves: Object.fromEntries((v.eleves || []).map(e => [e.login, e.nom])) }; }); } catch(_){}
       return;
@@ -1150,7 +1153,7 @@ async function startSession(user){
       }
       Object.assign(S, { user, nom, site:null, tous:true, premium:true, groupe:classe, evals: user.email === "professeur" + DOMAINE });
       if (S.evals) await nomsEvals();
-      await chargerOuvertures();
+      await chargerOuvertures(p.exists() ? p.data().ouvertures : null);
       return;
     }
     if (site === "tous") {
