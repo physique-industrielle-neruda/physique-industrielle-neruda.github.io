@@ -78,6 +78,9 @@ details.annee[open]>summary{margin-bottom:4px}
 .grille th.col{font-size:.8rem;color:var(--muted);cursor:pointer;min-width:44px}
 .grille td.c{cursor:pointer;font-size:1.05rem;min-width:44px}
 .grille td.c.busy{opacity:.35}
+.grille th.lk,.grille td.lk{background:var(--accent-soft)}
+.grille th.lk{color:var(--accent)}
+.grille .sep{border-right:2px solid var(--grid)}
 .grille tr.tot td{font-size:.75rem;color:var(--muted);font-weight:700}
 .grille th.tcol{white-space:normal;min-width:96px;max-width:130px;line-height:1.2}
 .grille small.tsc{display:block;font-size:.72rem;color:var(--muted);margin-top:2px}
@@ -361,7 +364,7 @@ function chapitreCorriges(cid, titre){
   const c = CLASSES.find(x => x.id === cid); if (!c) return home();
   const g = corriges(c.site).find(x => x.ch.titre === titre); if (!g) return classe(cid, "corriges");
   setBar(titre, c.nom, true);
-  if (g.docs.some(d => d.avecPdc)) return chapitreGrille(c, g);
+  return chapitreGrille(c, g);   // tous les dossiers en tableau (24/11/2026)
   const total = elevesDe(c).length;
   const ligne = (d, counts) => { const n = counts[d.corrige.id] || 0;
     return `<button class="row" data-doc="${esc(d.corrige.id)}"><span class="main"><span class="t">${esc(d.titre)}</span><span class="m">${libDoc(d, n, total)}</span></span><span class="count${n === total && total ? " full" : ""}">${n}/${total}</span><span class="chev"></span></button>`; };
@@ -380,15 +383,27 @@ function chapitreCorriges(cid, titre){
 /* ---------- Chapitre en tableau (22/11/2026) : élèves en lignes, corrigés en colonnes ----------
    Une case = débloquer / reverrouiller le corrigé de cet élève (et son point de cours).
    Pastille : gris pas commencé, orange en cours, vert terminé. Titre de colonne = toute la classe. */
-const courtDe = d => { const t = d.titre || ""; let m;
-  if ((m = /activit[ée]\s*(\d+)/i.exec(t))) return "A" + m[1];
-  if ((m = /\btp\s*(\d+)/i.exec(t))) return "TP" + m[1];
-  if ((m = /exercice\s*(\d+)/i.exec(t))) return "Ex" + m[1];
-  return t.replace(/^corrig[ée]\s*/i, "").slice(0, 4); };
+const courtDe = d => { const t = d.titre || ""; let m, b;
+  if ((m = /activit[ée]\s*(\d+)/i.exec(t))) b = "A" + m[1];
+  else if ((m = /\btp\s*(\d+)/i.exec(t))) b = "TP" + m[1];
+  else if ((m = /exercice\s*(\d+)/i.exec(t))) b = "Ex" + m[1];
+  else if (/annale/i.test(t)) return "Annale";
+  else return t.replace(/^corrig[ée]\s*/i, "").slice(0, 6);
+  if (/r[ée]sultat/i.test(t)) return b + " rés.";
+  if (/pr[ée]paration/i.test(t)) return b + " prép.";
+  if (/compte\s*rendu/i.test(t)) return b + " CR";
+  return b; };
+/* Ordre des colonnes : activités et TP dans l'ordre du dossier, puis exercices (annale en dernier) ; pour un même TP : préparation, compte rendu, résultats */
+const rangDe = d => { const b = baseDe(d); return /^Ex/.test(b) ? 1 : b === "Annale" ? 2 : 0; };
+const baseDe = d => courtDe(d).split(" ")[0];
+const subDe = d => /pr[ée]paration/i.test(d.titre) ? 0 : /r[ée]sultat/i.test(d.titre) ? 2 : 1;
+const ordonner = ds => { const first = {}; ds.forEach((d, i) => { const b = baseDe(d); if (!(b in first)) first[b] = i; });
+  return ds.map((d, i) => [d, i]).sort((a, b) => rangDe(a[0]) - rangDe(b[0]) || first[baseDe(a[0])] - first[baseDe(b[0])] || subDe(a[0]) - subDe(b[0]) || a[1] - b[1]).map(x => x[0]); };
 function chapitreGrille(c, g){
   setBar(g.ch.titre, c.nom, true);
   const el = elevesDe(c), mesUid = new Set(el.map(e => e.uid));
-  const locks = g.docs.filter(d => d.chapitre), docs = g.docs.filter(d => !d.chapitre);
+  /* Cadenas du test d'entrée et du dossier en premières colonnes (24/11/2026) */
+  const locks = g.docs.filter(d => d.chapitre), docs = ordonner(g.docs.filter(d => !d.chapitre)), cols = locks.concat(docs);
   if (!el.length) { $("#app").innerHTML = `<p class="empty">Créez d'abord les comptes des élèves (onglet « Élèves et comptes »).</p>`; return; }
   let D = new Set(), P = {}, counts = {}, busy = new Set();
   const cles = {};
@@ -401,36 +416,37 @@ function chapitreGrille(c, g){
   let aPouce = false;
   const caseDe = (d, uid) => {
     if (!D.has(d.corrige.id + "_" + uid)) return "🔒";
+    if (d.chapitre) return `<span title="${d.test ? "Test ouvert" : "Dossier ouvert"}">🔓</span>`;
     if (!d.avecPdc) return `<span style="color:var(--ok);font-weight:700">✓</span>`;
     const v = P[uid + "__" + d.pdc];
     return v && v.termine ? `<span class="dot fini" title="Point de cours terminé"></span>` : v ? `<span class="dot cours" title="Point de cours en cours"></span>` : `<span class="dot non" title="Point de cours pas commencé"></span>`;
   };
   const render = () => {
-    let html = locks.length ? `<p class="sec">Accès au chapitre</p><div class="card">${locks.map(d => { const n = counts[d.corrige.id] || 0;
-      return `<button class="row" data-lock="${esc(d.corrige.id)}"><span class="main"><span class="t">${esc(d.titre)}</span><span class="m">${libDoc(d, n, el.length)}</span></span><span class="count${n === el.length ? " full" : ""}">${n}/${el.length}</span><span class="chev"></span></button>`; }).join("")}</div>` : "";
-    html += `<p class="sec">Corrigés</p><div class="card grille"><table><tr><th class="nom">Élève</th>${docs.map((d, j) => `<th class="col" data-j="${j}" title="${esc(d.titre)}">${esc(courtDe(d))}</th>`).join("")}</tr>`
-      + el.map(e => `<tr><td class="nom">${esc(e.nom)}</td>${docs.map((d, j) => `<td class="c${busy.has(d.corrige.id + "_" + e.uid) ? " busy" : ""}" data-j="${j}" data-uid="${esc(e.uid)}">${caseDe(d, e.uid)}</td>`).join("")}</tr>`).join("")
-      + `<tr class="tot"><td class="nom">Ouverts</td>${docs.map(d => `<td>${counts[d.corrige.id] || 0}/${el.length}</td>`).join("")}</tr></table></div>`
-      + `<p class="note">Touche une case pour débloquer le corrigé de l'élève (et son point de cours) ; touche-la à nouveau pour le reverrouiller. Touche le titre d'une colonne pour toute la classe.<br>🔒 verrouillé · <span class="dot non"></span> point de cours pas commencé · <span class="dot cours"></span> en cours · <span class="dot fini"></span> terminé · ✓ corrigé ouvert (sans point de cours)</p>`
+    const sep = j => j === locks.length - 1 && docs.length ? " sep" : "";
+    let html = `<div class="card grille"><table><tr><th class="nom">Élève</th>${cols.map((d, j) => `<th class="col${d.chapitre ? " lk" : ""}${sep(j)}" data-j="${j}" title="${esc(d.titre)}">${d.chapitre ? (d.test ? "Test" : "Dossier") : esc(courtDe(d))}</th>`).join("")}</tr>`
+      + el.map(e => `<tr><td class="nom">${esc(e.nom)}</td>${cols.map((d, j) => `<td class="c${d.chapitre ? " lk" : ""}${sep(j)}${busy.has(d.corrige.id + "_" + e.uid) ? " busy" : ""}" data-j="${j}" data-uid="${esc(e.uid)}">${caseDe(d, e.uid)}</td>`).join("")}</tr>`).join("")
+      + `<tr class="tot"><td class="nom">Ouverts</td>${cols.map((d, j) => `<td class="${sep(j)}">${counts[d.corrige.id] || 0}/${el.length}</td>`).join("")}</tr></table></div>`
+      + `<p class="note">Touche une case pour ouvrir à l'élève ; touche-la à nouveau pour refermer (une confirmation est demandée pour refermer le dossier ou le test). Touche le titre d'une colonne pour toute la classe.${locks.length ? " Les premières colonnes sont les cadenas du " + (locks.some(d => d.test) ? "test d'entrée et du " : "") + "dossier." : ""}<br>🔓 dossier ou test ouvert · 🔒 verrouillé · <span class="dot non"></span> point de cours pas commencé · <span class="dot cours"></span> en cours · <span class="dot fini"></span> terminé · ✓ corrigé ouvert (sans point de cours)</p>`
       + (aPouce ? `<p class="sec">Coups de pouce utilisés</p><div class="card grille cpg"><table><tr><th class="nom">Élève</th>${docs.map(d => `<th title="${esc(d.titre)}">${esc(courtDe(d))}</th>`).join("")}</tr>`
         + el.map(e => `<tr><td class="nom">${esc(e.nom)}</td>${docs.map(d => `<td>${pouceDe(d, e.uid)}</td>`).join("")}</tr>`).join("")
         + `</table></div><p class="note">Pour chaque élève, les questions où il a débloqué un coup de pouce supplémentaire : <span class="cp n2">B5 2</span> niveau 2 · <span class="cp n3">B5 3</span> niveau 3. <span class="cp vu">lu</span> fiche ouverte, niveau 1 seulement · – fiche jamais ouverte.</p>` : "");
     const sx = $(".grille") ? $(".grille").scrollLeft : 0;
     $("#app").innerHTML = html; if ($(".grille")) $(".grille").scrollLeft = sx;
-    $("#app").querySelectorAll("[data-lock]").forEach(b => b.onclick = () => go(docEleves, c.id, locks.find(x => x.corrige.id === b.dataset.lock)));
     $("#app").querySelectorAll("td.c").forEach(td => td.onclick = async () => {
-      const d = docs[+td.dataset.j], uid = td.dataset.uid, id = d.corrige.id + "_" + uid; if (busy.has(id)) return;
-      const val = !D.has(id); busy.add(id); render();
+      const d = cols[+td.dataset.j], uid = td.dataset.uid, id = d.corrige.id + "_" + uid; if (busy.has(id)) return;
+      const val = !D.has(id);
+      if (!val && d.chapitre && !confirm((d.test ? "Refermer le test d'entrée pour " : "Refermer le dossier pour ") + (el.find(e => e.uid === uid) || {}).nom + " ?")) return; busy.add(id); render();
       try { if (val) await setDoc(ref(d, uid), { uid, doc:d.corrige.id, classe:c.id, cle: await key(d), at: serverTimestamp() }); else await deleteDoc(ref(d, uid)); }
       catch(e){ toast(e.message === "cles" ? "Clés absentes : importez le fichier dans Réglages." : "Échec, vérifiez la connexion."); }
       busy.delete(id); render();
     });
     $("#app").querySelectorAll("th.col").forEach(th => th.onclick = async () => {
-      const d = docs[+th.dataset.j], tous = el.every(e => D.has(d.corrige.id + "_" + e.uid));
-      if (!confirm((tous ? "Reverrouiller « " : "Débloquer « ") + d.titre + " » pour toute la classe ?")) return;
+      const d = cols[+th.dataset.j], tous = el.every(e => D.has(d.corrige.id + "_" + e.uid));
+      const quoi = d.chapitre ? (d.test ? "le test d'entrée" : "le dossier « " + g.ch.titre + " »") : "« " + d.titre + " »";
+      if (!confirm((tous ? (d.chapitre ? "Refermer " : "Reverrouiller ") : (d.chapitre ? "Ouvrir " : "Débloquer ")) + quoi + " pour toute la classe ?")) return;
       try { const k = tous ? null : await key(d), batch = writeBatch(db);
         el.forEach(e => { if (tous) batch.delete(ref(d, e.uid)); else batch.set(ref(d, e.uid), { uid:e.uid, doc:d.corrige.id, classe:c.id, cle:k, at:serverTimestamp() }); });
-        await batch.commit(); toast(tous ? "Corrigé reverrouillé pour toute la classe." : "Corrigé débloqué pour toute la classe."); }
+        await batch.commit(); toast(d.chapitre ? (tous ? "Refermé pour toute la classe." : "Ouvert à toute la classe.") : tous ? "Corrigé reverrouillé pour toute la classe." : "Corrigé débloqué pour toute la classe."); }
       catch(e){ toast(e.message === "cles" ? "Clés absentes : importez le fichier dans Réglages." : "Échec, vérifiez la connexion."); }
     });
   };
