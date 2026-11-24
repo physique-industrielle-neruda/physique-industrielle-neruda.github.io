@@ -252,7 +252,7 @@ li.pdc-gris{opacity:.6}
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut, setPersistence, browserLocalPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore, doc, getDoc, getDocs, setDoc, collection, query, where, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { profil as calcProfil, profilHtml, synthese, PROFIL_CSS } from "./competences.js";
+import { profil as calcProfil, profilHtml, synthese, PROFIL_CSS, bilanAnnee, anneeHtml, ANNEE_CSS } from "./competences.js";
 
 const FB = {"apiKey":"AIzaSyDH32Ma0shVbsIHR0xNJbahb5MO0RKHRS0","authDomain":"physique-neruda.firebaseapp.com","projectId":"physique-neruda","storageBucket":"physique-neruda.firebasestorage.app","messagingSenderId":"62730174289","appId":"1:62730174289:web:588c846aadd4eec2109d70"};
 const DOMAINE = "@physique-neruda.firebaseapp.com";
@@ -451,6 +451,15 @@ function folderBox(cls, key, titre, count, forceOpen){
   s.addEventListener("toggle", () => { if (s.open) opened.add(key); else opened.delete(key); });
   return s;
 }
+/* Élève : onglet « Mes évaluations » (24/11/2026, auparavant dossier en haut de la classe) */
+const nbMesEvals = () => (EVAL.evaluations || []).filter(e => e.site === S.site && (e.copies || []).some(x => S.corr[x.corrige.id])).length;
+function renderMesEvals(view){
+  const c = visibleClasses().find(x => x.id === S.site); if (!c) return;
+  const head = document.createElement("div"); head.className = "classhead";
+  head.innerHTML = `<h2>Mes évaluations</h2><span class="status is-open">Visible par toi seul</span>`;
+  view.appendChild(head);
+  const s = mesEvals(c); s.open = true; s.querySelector("h3 span").textContent = "Mes copies corrigées"; view.appendChild(s);
+}
 /* Élève : dossier « Mes évaluations » (seulement ses propres copies, une fois publiées par le professeur) */
 function mesEvals(c){
   const evs = (EVAL.evaluations || []).filter(e => e.site === c.id)
@@ -507,6 +516,10 @@ function visibleClasses(){
 function renderNav(){
   const nav = $("#classes"); nav.innerHTML = "";
   const items = visibleClasses().map(c => ({id:c.id, n:c.court, mini:c.mini||c.court, s:c.sous}));
+  /* Onglet « Mes compétences » (24/11/2026), juste après la classe : suivi sur tous les dossiers de l'année */
+  if (S.user && !S.prof && !S.tous && S.site && chapsCompetencesEleve().length) items.push({id:"mes-competences", n:"Mes compétences", mini:"Compét.", s:"Mon suivi sur l'année"});
+  /* Onglet « Mes évaluations » de l'élève, juste après sa classe (24/11/2026) */
+  if (S.user && !S.prof && !S.tous && S.site) { const n = nbMesEvals(); items.push({id:"mes-evaluations", n:"Mes évaluations", mini:"Évals", s: n ? n + " copie" + (n > 1 ? "s" : "") + " corrigée" + (n > 1 ? "s" : "") : "Copies corrigées"}); }
   if (S.evals) items.push({id:"evaluations", n:"Évaluations", mini:"Évals", s:"Copies corrigées et bilans"});
   if (!S.user) items.push({id:"connexion", n:"Connexion", mini:"Connexion", s:"Accès aux cours de votre BTS"});
   if (S.user && testsOuverts().length) { const n = fichesAFaire(); items.push({id:"revisions", n:"Mes révisions", mini:"Révisions", s: n ? n + " fiche" + (n > 1 ? "s" : "") + " à travailler" : "Tests d'entrée et fiches"}); }
@@ -670,11 +683,13 @@ function remplirParNumero(c, docs, parent, k0, forceOpen){
 function render(){
   renderNav(); renderWho();
   if (VUE_REV) return;   // test en cours ou résultat affiché : ne pas effacer
-  $("#searchBox").hidden = !S.user || current === "revisions";
+  $("#searchBox").hidden = !S.user || current === "revisions" || current === "mes-evaluations" || current === "mes-competences";
   const view = $("#view"); view.innerHTML = "";
   if (current === "revisions") { renderRevisions(view); return; }
   if (current === "connexion") { view.appendChild(loginBox()); return; }
   if (current === "evaluations" && S.evals) { renderEvaluationsProf(view); return; }
+  if (current === "mes-evaluations") { renderMesEvals(view); return; }
+  if (current === "mes-competences") { renderMesCompetences(view); return; }
   const q = $("#q").value.trim().toLowerCase();
   let found = 0;
   if (S.user && (q || current === "outils")) found += renderOutils(view, q);
@@ -687,7 +702,6 @@ function render(){
     const head = document.createElement("div"); head.className = "classhead";
     head.innerHTML = `<h2>${esc(c.nom)}</h2><span class="status is-open">Documents ouverts</span>`;
     view.appendChild(head);
-    if (!q && !S.prof && !S.tous) view.appendChild(mesEvals(c));
     if (!c.chapitres.length) { const p = document.createElement("p"); p.className = "empty"; p.textContent = "Aucun document pour l'instant."; view.appendChild(p); }
     if (chaps.some(x => x.ch.annee)) {
       // Dossiers « 1re année » / « 2e année » : celui de la classe de l'élève s'ouvre automatiquement
@@ -1059,7 +1073,8 @@ const ANIMS = new Map();   // fenêtres d'animation ouvertes → { c, d }
   + ".cpf-ov .in{max-width:760px;margin:0 auto;padding:16px 14px 40px}.cpf-ov h2{color:#1F3864;margin:0 0 6px;font-size:1.3rem}"
   + ".cpf-ov .syn{background:#DEEAF6;border-radius:8px;padding:10px 14px;margin:12px 0}.cpf-ov .ex{font-size:14px;color:#5A6577;margin:12px 0}"
   + ".cpf-ov .demo{background:#E2EFDA;color:#3F7A3A;border-radius:8px;padding:8px 12px;font-size:14px;margin:0 0 12px}";
-  document.head.appendChild(st); })();
+  document.head.appendChild(st); const st2 = document.createElement("style"); st2.textContent = ANNEE_CSS
+  + ".mc-d{display:flex;align-items:center;gap:10px;padding:10px 14px;border-top:1px solid var(--grid)}.mc-d:first-child{border-top:0}.mc-d b{flex:1}"; document.head.appendChild(st2); })();
 const chapDe = (cid, d) => { const c = (CAT.classes || []).find(x => x.id === cid); return c ? c.chapitres.find(ch => ch.docs.includes(d)) : null; };
 const animId = ch => "anim:" + (ch.verrou ? ch.verrou.id : ch.titre);
 window.addEventListener("message", async e => {
@@ -1093,17 +1108,53 @@ function profilRow(c, d){
   li.querySelector("button").onclick = () => ouvrirProfil(d);
   return li;
 }
-function ouvrirProfil(d){
+async function ouvrirProfil(d){
   const eleve = eleveRev(), pr = eleve ? donneesProfil(d._ch) : EXEMPLE_PROFIL;
+  const ev = eleve ? await evalTaux(d._c, d._ch) : { ANA: 0.55, REA: 0.8, VAL: 0.6 };
   const ov = document.createElement("div"); ov.className = "fiche-ov";
   ov.innerHTML = `<div class="bar"><b>Mon profil de compétences – ${esc(d._ch.titre)}</b><button type="button">Fermer</button></div>
     <div class="cpf-ov"><div class="in">${eleve ? "" : `<div class="demo">Aperçu professeur : exemple fictif. Les vrais profils sont dans l'appli professeur, onglet « Compétences ».</div>`}
     <h2>Où j'en suis</h2>
     <p class="ex">Ce profil montre ton <b>autonomie</b> dans les compétences de la démarche scientifique du référentiel. Il est construit à partir des coups de pouce que tu as ouverts dans les activités, les TP et les exercices vérifiés par le professeur, et de tes réponses à l'animation. <b>Rien n'est noté</b> : c'est un repère pour préparer l'évaluation.</p>
-    ${profilHtml(pr)}<div class="syn">${esc(synthese(pr))}</div>
+    ${profilHtml(pr, { eval: ev || {} })}${ev ? '<p class="cpf-leg">◆ = ta réussite à l\'évaluation de fin de dossier, par compétence.</p>' : ""}<div class="syn">${esc(synthese(pr))}</div>
     <p class="ex">Avant l'évaluation, ton professeur ouvre « Mon parcours avant l'évaluation » : des exercices choisis d'après ce profil. L'évaluation sera la même pour toute la classe.</p></div></div>`;
   document.body.appendChild(ov); document.body.style.overflow = "hidden";
   ov.querySelector("button").onclick = () => { ov.remove(); document.body.style.overflow = ""; };
+}
+
+/* Résultats par compétence de l'évaluation de fin de dossier (24/11/2026) : champ « cp » de chaque copie dans
+   evaluations.json, chiffré avec la clé de la copie (l'élève ne le lit qu'une fois sa copie publiée). */
+const EVCP = {};
+async function evalTaux(c, ch){
+  const evs = (EVAL.evaluations || []).filter(e => e.site === c.id && e.dossier && sansAccent(e.dossier) === sansAccent(ch.titre));
+  const tous = {};
+  for (const e of evs) {
+    const cp = (e.copies || []).find(x => x.cp && S.corr[x.corrige.id]); if (!cp) continue;
+    if (!EVCP[cp.corrige.id]) { try { const w = b64(cp.cp), k = await importKey(b64(S.corr[cp.corrige.id]));
+      EVCP[cp.corrige.id] = JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({ name: "AES-GCM", iv: w.slice(0, 12) }, k, w.slice(12)))).taux || {}; } catch(_) { continue; } }
+    Object.entries(EVCP[cp.corrige.id]).forEach(([k, v]) => (tous[k] = tous[k] || []).push(v));
+  }
+  const out = {}; Object.entries(tous).forEach(([k, v]) => out[k] = v.reduce((a, b) => a + b, 0) / v.length);
+  return Object.keys(out).length ? out : null;
+}
+/* Onglet « Mes compétences » : tous les dossiers ouverts de la classe qui ont un profil, dans l'ordre du cours */
+function chapsCompetencesEleve(){ const c = (CAT.classes || []).find(x => x.id === S.site); return c ? c.chapitres.filter(ch => ch.competences && chapOK(ch)) : []; }
+let MC_JETON = 0;
+async function renderMesCompetences(view){
+  const c = (CAT.classes || []).find(x => x.id === S.site); if (!c) return;
+  const jeton = ++MC_JETON, chs = chapsCompetencesEleve();
+  const head = document.createElement("div"); head.className = "classhead";
+  head.innerHTML = `<h2>Mes compétences</h2><span class="status is-open">Visible par toi seul · rien n'est noté</span>`;
+  view.appendChild(head);
+  const z = document.createElement("div"); z.innerHTML = `<p class="empty">Chargement…</p>`; view.appendChild(z);
+  const dossiers = [];
+  for (const ch of chs) dossiers.push({ titre: ch.titre, ch, profil: donneesProfil(ch), eval: await evalTaux(c, ch) });
+  if (jeton !== MC_JETON) return;   // la page a été redessinée entre-temps
+  const bilan = bilanAnnee(dossiers);
+  z.innerHTML = `<div class="cpf-ov" style="background:transparent"><p class="ex">Les compétences de la démarche scientifique du référentiel, sur <b>tous tes dossiers</b> de l'année. La barre montre ton autonomie (coups de pouce, animation) ; le losange ◆ ta réussite aux évaluations de fin de dossier. La petite courbe montre ta progression, un point par dossier.</p>
+    ${anneeHtml(bilan)}<p class="sec" style="margin:18px 4px 6px;font-weight:700;color:var(--muted)">Profil de chaque dossier</p>
+    <div class="card" style="background:var(--surface);border:1px solid var(--grid);border-radius:12px">${dossiers.map((d, i) => `<div class="mc-d"><b>${esc(d.titre)}</b><button class="open" type="button" data-i="${i}">Voir</button></div>`).join("")}</div></div>`;
+  z.querySelectorAll("button[data-i]").forEach(b => b.onclick = () => { const d = dossiers[+b.dataset.i]; ouvrirProfil({ titre: "Mon profil de compétences", type: "Profil", _c: c, _ch: d.ch }); });
 }
 const parcoursId = d => "parcours:" + d.corrige.id;
 function parcoursRow(c, d){
@@ -1227,7 +1278,7 @@ function route(){
   VUE_REV = null;
   const ids = visibleClasses().map(c => c.id);
   if (!S.user) current = "connexion";
-  else current = (h === "evaluations" && S.evals) ? h : (h === "revisions" && testsVisibles().length) ? h : ids.includes(h) || (h === "outils" && (CAT.outils || []).length) ? h : (S.site || ids[0]);
+  else current = (h === "evaluations" && S.evals) ? h : (h === "mes-evaluations" && !S.prof && !S.tous && S.site) ? h : (h === "mes-competences" && !S.prof && !S.tous && S.site) ? h : (h === "revisions" && testsVisibles().length) ? h : ids.includes(h) || (h === "outils" && (CAT.outils || []).length) ? h : (S.site || ids[0]);
   render();
 }
 

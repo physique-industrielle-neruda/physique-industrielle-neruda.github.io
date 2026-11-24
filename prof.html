@@ -167,7 +167,7 @@ label.f{display:block;font-size:.9rem;color:var(--muted);margin-top:10px}
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore, doc, getDoc, getDocs, setDoc, deleteDoc, collection, query, where, onSnapshot, serverTimestamp, writeBatch, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { profil as calcProfil, profilHtml, synthese, PROFIL_CSS, COMPS, LIBS as CLIBS, NIVEAUX, niveauDe, pointsAnim } from "./competences.js";
+import { profil as calcProfil, profilHtml, synthese, PROFIL_CSS, COMPS, LIBS as CLIBS, NIVEAUX, niveauDe, pointsAnim, bilanAnnee, anneeHtml, ANNEE_CSS } from "./competences.js";
 
 const FB = {"apiKey":"AIzaSyDH32Ma0shVbsIHR0xNJbahb5MO0RKHRS0","authDomain":"physique-neruda.firebaseapp.com","projectId":"physique-neruda","storageBucket":"physique-neruda.firebasestorage.app","messagingSenderId":"62730174289","appId":"1:62730174289:web:588c846aadd4eec2109d70"};
 const DOMAINE = "@physique-neruda.firebaseapp.com";
@@ -511,7 +511,7 @@ function chapitreGrille(c, g){
   + ".cg td.k{font-size:.75rem;font-weight:700;min-width:62px}.cg td.k span{display:inline-block;border-radius:9px;padding:1px 6px}"
   + ".cg tr.el{cursor:pointer}.cg td.pc{font-size:.78rem;white-space:normal;min-width:90px}.al{color:#C0392B;font-weight:700}"
   + ".exl{display:flex;gap:8px;align-items:center;padding:8px 14px;border-top:1px solid var(--grid);font-size:.9rem}.exl:first-child{border-top:0}.exl b{flex:1}";
-  document.head.appendChild(st); })();
+  document.head.appendChild(st); const st2 = document.createElement("style"); st2.textContent = ANNEE_CSS; document.head.appendChild(st2); })();
 const chapsCompetences = c => { const k = CAT.classes.find(x => x.id === c.site); return k ? k.chapitres.filter(ch => ch.competences) : []; };
 const numDoc = t => { const n = (t || "").normalize("NFKD").replace(/[̀-ͯ]/g, "").toLowerCase().match(/\b(tp|exercice|activite)\s*(\d+)/);
   return n ? (n[1] === "activite" ? "Activité" : n[1] === "exercice" ? "Exercice" : "TP") + " " + n[2] : null; };
@@ -531,11 +531,52 @@ function etatParcours(v){
   const req = (v.plan || []).filter(p => !p.opt).length;
   return { txt: v.fini ? "✓ terminé" : (v.etape || 0) + " / " + req, rates, en: !v.fini };
 }
+
+/* Évaluation de fin de dossier : taux de réussite par compétence (champ « cp » des copies, evaluations.json) */
+const EVCP = {};
+async function evalTauxProf(c, ch, e){
+  const n = t => String(t || "").normalize("NFKD").replace(/[̀-ͯ]/g, "").toLowerCase().trim();
+  const evs = (EVAL.evaluations || []).filter(v => v.site === c.site && v.dossier && n(v.dossier) === n(ch.titre)), tous = {};
+  for (const v of evs) {
+    const cp = (v.copies || []).find(x => x.login === e.login && x.cp); if (!cp) continue;
+    if (!EVCP[cp.corrige.id]) { try { const k = await crypto.subtle.importKey("raw", b64(await unwrap(cp)), "AES-GCM", false, ["decrypt"]), w = b64(cp.cp);
+      EVCP[cp.corrige.id] = JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({ name: "AES-GCM", iv: w.slice(0, 12) }, k, w.slice(12)))).taux || {}; } catch(_) { continue; } }
+    Object.entries(EVCP[cp.corrige.id]).forEach(([k, x]) => (tous[k] = tous[k] || []).push(x));
+  }
+  const out = {}; Object.entries(tous).forEach(([k, x]) => out[k] = x.reduce((a, b) => a + b, 0) / x.length);
+  return Object.keys(out).length ? out : null;
+}
+/* Toute l'année : un tableau élèves × compétences (niveau sur l'année + réussite aux évaluations), puis le détail d'un élève */
+function anneeCompetences(c){
+  setBar("Toute l'année", c.nom + " · compétences", true);
+  const el = elevesDe(c), mesUid = new Set(el.map(e => e.uid)), chs = chapsCompetences(c);
+  if (!el.length) { $("#app").innerHTML = `<p class="empty">Créez d'abord les comptes des élèves (onglet « Élèves et comptes »).</p>`; return; }
+  let P = {}, D = new Set(), EV = {};
+  Promise.all(el.flatMap(e => chs.map(ch => evalTauxProf(c, ch, e).then(x => { EV[e.uid + "|" + ch.titre] = x; })))).then(() => render());
+  const bilanDe = e => bilanAnnee(chs.map(ch => ({ titre: ch.titre, profil: profilDe(ch, e.uid, P, D), eval: EV[e.uid + "|" + ch.titre] })));
+  const render = () => {
+    const bs = el.map(bilanDe);
+    const caseA = b => { if (!b) return "–"; const N = NIVEAUX[b.niveau];
+      return `<span style="background:${N.fond};color:${N.couleur}">${b.niveau === "vide" ? "…" : esc(N.lib)}</span>${b.eval != null ? `<br><small>◆ ${Math.round(b.eval * 100)} %</small>` : ""}`; };
+    $("#app").innerHTML = `<div class="card grille cg"><table><tr><th class="nom">Élève</th>${COMPS.map(k => `<th>${esc(CLIBS[k])}</th>`).join("")}</tr>`
+      + el.map((e, i) => `<tr class="el" data-i="${i}"><td class="nom">${esc(e.nom)}</td>${COMPS.map(k => `<td class="k">${caseA(bs[i][k])}</td>`).join("")}</tr>`).join("")
+      + `</table></div><p class="note">${chs.length} dossier${chs.length > 1 ? "s" : ""} avec profil : ${chs.map(ch => esc(ch.titre)).join(", ")}. Niveau = moyenne de l'autonomie sur les dossiers ; ◆ = réussite moyenne aux évaluations de fin de dossier. Touche un élève pour sa progression.</p>`;
+    $("#app").querySelectorAll("tr.el").forEach(tr => tr.onclick = () => { const e = el[+tr.dataset.i]; go(eleveAnnee, c, e, bs[+tr.dataset.i]); });
+  };
+  render();
+  const a = onSnapshot(collection(db, "deblocages"), snap => { D = new Set(); snap.forEach(x => { const v = x.data(); if (mesUid.has(v.uid)) D.add(v.doc + "_" + v.uid); }); render(); }, () => {});
+  const b = onSnapshot(collection(db, "pointsdecours"), snap => { P = {}; snap.forEach(x => { const v = x.data(); if (mesUid.has(v.uid)) P[v.uid + "__" + v.pdc] = v; }); render(); }, () => {});
+  unsub = () => { a(); b(); };
+}
+function eleveAnnee(c, e, bilan){
+  setBar(e.nom, "Toute l'année", true);
+  $("#app").innerHTML = `<div class="card" style="padding:14px">${anneeHtml(bilan)}</div><p class="note">Barre : autonomie moyenne sur les dossiers · ◆ réussite aux évaluations de fin de dossier · courbe : un point par dossier (◆ sur la courbe = évaluation du dossier).</p>`;
+}
 function paneCompetences(c){
   const chs = chapsCompetences(c);
-  $("#pane").innerHTML = `<div class="card">${chs.map((ch, i) => `<button class="row" data-i="${i}"><span class="main"><span class="t">${esc(ch.titre)}</span><span class="m">Profil de compétences · parcours avant l'évaluation</span></span><span class="chev"></span></button>`).join("")}</div>
+  $("#pane").innerHTML = `<div class="card"><button class="row" data-a="1"><span class="main"><span class="t">Toute l'année</span><span class="m">Suivi de chaque élève sur tous les dossiers · évaluations de fin de dossier</span></span><span class="chev"></span></button></div><div class="card">${chs.map((ch, i) => `<button class="row" data-i="${i}"><span class="main"><span class="t">${esc(ch.titre)}</span><span class="m">Profil de compétences · parcours avant l'évaluation</span></span><span class="chev"></span></button>`).join("")}</div>
     <p class="note">Profil calculé d'après les coups de pouce ouverts (seulement dans les activités, TP et exercices dont tu as débloqué le corrigé) et les réponses à l'animation. Rien n'est noté : chaque élève ne voit que son propre profil.</p>`;
-  $("#pane").querySelectorAll(".row").forEach(b => b.onclick = () => go(chapitreCompetences, c, chs[+b.dataset.i]));
+  $("#pane").querySelectorAll(".row").forEach(b => b.onclick = () => b.dataset.a ? go(anneeCompetences, c) : go(chapitreCompetences, c, chs[+b.dataset.i]));
 }
 function chapitreCompetences(c, ch){
   setBar(ch.titre, c.nom + " · compétences", true);
@@ -569,7 +610,8 @@ function chapitreCompetences(c, ch){
 function eleveCompetences(c, ch, e){
   setBar(e.nom, ch.titre, true);
   const mesUid = new Set([e.uid]), parc = ch.docs.find(d => d.format === "parcours");
-  let P = {}, D = new Set();
+  let P = {}, D = new Set(), EV = null;
+  evalTauxProf(c, ch, e).then(x => { EV = x; render(); });
   const render = () => {
     const pr = profilDe(ch, e.uid, P, D);
     const pouces = ch.docs.filter(d => d.format === "pouce").map(d => { const k = numDoc(d.titre), v = P[e.uid + "__" + d.pouce], tags = ch.competences.questions[k] || {};
@@ -581,7 +623,7 @@ function eleveCompetences(c, ch, e){
     const parcH = !parc ? "" : !v ? `<p class="note">Parcours pas encore commencé${D.has(parc.corrige.id + "_" + e.uid) ? "" : " (verrouillé : à ouvrir dans l'onglet Corrigés)"}.</p>`
       : `<div class="card">${(v.plan || []).map(p => { const r = (v.res || {})[p.id] || {}, q = Object.values(r), ok = q.filter(x => x.ok && x.t <= 2).length, ko = q.filter(x => x.t >= 2 && !x.ok).length;
           return `<div class="exl"><b>${esc(libEx(p.id))}${p.opt ? " (facultatif)" : ""}</b><span>${q.length ? ok + " juste" + (ok > 1 ? "s" : "") + (ko ? ` · <span class="al">${ko} ratée${ko > 1 ? "s" : ""} deux fois</span>` : "") : "–"}</span></div>`; }).join("")}</div>`;
-    $("#app").innerHTML = `<div class="card" style="padding:14px">${profilHtml(pr, { detail: true })}<p class="note">${esc(synthese(pr))}</p></div>
+    $("#app").innerHTML = `<div class="card" style="padding:14px">${profilHtml(pr, { detail: true, eval: EV || {} })}<p class="note">${esc(synthese(pr))}${EV ? " ◆ = réussite à l'évaluation de fin de dossier." : ""}</p></div>
       ${parc ? `<p class="sec">Parcours avant l'évaluation</p>${parcH}` : ""}
       <p class="sec">Coups de pouce ouverts</p><div class="card">${pouces}</div>
       <p class="sec">Animation</p><div class="card" style="padding:12px 14px">${anim}<p class="note">✓ juste au 1er essai · 2e juste au 2e essai · ✗ correction affichée · – pas répondu</p></div>`;
