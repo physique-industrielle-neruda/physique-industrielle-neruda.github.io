@@ -80,6 +80,10 @@ details.annee[open]>summary{margin-bottom:4px}
 .grille td.c.busy{opacity:.35}
 .grille tr.tot td{font-size:.75rem;color:var(--muted);font-weight:700}
 .dot{display:inline-block;width:15px;height:15px;border-radius:50%;vertical-align:middle}
+.cpg td{font-size:.78rem;white-space:normal;line-height:1.35;min-width:52px}
+.cp{display:inline-block;border-radius:9px;padding:0 6px;margin:1px;font-weight:700;font-size:.75rem}
+.cp.n1{background:#EFE7FA;color:#7A4FB5}.cp.n2{background:#D9C6F3;color:#4B2A80}.cp.n3{background:#7A4FB5;color:#fff}
+.cp.vu{background:none;color:var(--muted);font-weight:400}
 .dot.non{background:#B4B2A9}.dot.cours{background:#EF9F27}.dot.fini{background:#639922}
 .sec{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:22px 4px 0}
 .tabs{display:flex;gap:6px;margin:14px 0 4px;background:var(--surface);border:1px solid var(--grid);border-radius:10px;padding:4px}
@@ -388,6 +392,11 @@ function chapitreGrille(c, g){
   const cles = {};
   const key = async d => { if (!cles[d.corrige.id]) { if (!MAITRE) throw new Error("cles"); cles[d.corrige.id] = await unwrap(d); } return cles[d.corrige.id]; };
   const ref = (d, uid) => doc(db, "deblocages", d.corrige.id + "_" + uid);
+  /* Coups de pouce en cascade (24/11/2026) : niveaux atteints par question, Firestore « pointsdecours » (pdc = "pouce:<corrigé>") */
+  const pouceDe = (d, uid) => { const v = P[uid + "__pouce:" + d.corrige.id]; if (!v) return "–";
+    const q = Object.entries(v.niveaux || {}).filter(([, n]) => n > 1);
+    return q.length ? q.map(([k, n]) => `<span class="cp n${n}">${esc(k)} ${n}</span>`).join("") : `<span class="cp vu">lu</span>`; };
+  let aPouce = false;
   const caseDe = (d, uid) => {
     if (!D.has(d.corrige.id + "_" + uid)) return "🔒";
     if (!d.avecPdc) return `<span style="color:var(--ok);font-weight:700">✓</span>`;
@@ -400,7 +409,10 @@ function chapitreGrille(c, g){
     html += `<p class="sec">Corrigés</p><div class="card grille"><table><tr><th class="nom">Élève</th>${docs.map((d, j) => `<th class="col" data-j="${j}" title="${esc(d.titre)}">${esc(courtDe(d))}</th>`).join("")}</tr>`
       + el.map(e => `<tr><td class="nom">${esc(e.nom)}</td>${docs.map((d, j) => `<td class="c${busy.has(d.corrige.id + "_" + e.uid) ? " busy" : ""}" data-j="${j}" data-uid="${esc(e.uid)}">${caseDe(d, e.uid)}</td>`).join("")}</tr>`).join("")
       + `<tr class="tot"><td class="nom">Ouverts</td>${docs.map(d => `<td>${counts[d.corrige.id] || 0}/${el.length}</td>`).join("")}</tr></table></div>`
-      + `<p class="note">Touche une case pour débloquer le corrigé de l'élève (et son point de cours) ; touche-la à nouveau pour le reverrouiller. Touche le titre d'une colonne pour toute la classe.<br>🔒 verrouillé · <span class="dot non"></span> point de cours pas commencé · <span class="dot cours"></span> en cours · <span class="dot fini"></span> terminé · ✓ corrigé ouvert (sans point de cours)</p>`;
+      + `<p class="note">Touche une case pour débloquer le corrigé de l'élève (et son point de cours) ; touche-la à nouveau pour le reverrouiller. Touche le titre d'une colonne pour toute la classe.<br>🔒 verrouillé · <span class="dot non"></span> point de cours pas commencé · <span class="dot cours"></span> en cours · <span class="dot fini"></span> terminé · ✓ corrigé ouvert (sans point de cours)</p>`
+      + (aPouce ? `<p class="sec">Coups de pouce utilisés</p><div class="card grille cpg"><table><tr><th class="nom">Élève</th>${docs.map(d => `<th title="${esc(d.titre)}">${esc(courtDe(d))}</th>`).join("")}</tr>`
+        + el.map(e => `<tr><td class="nom">${esc(e.nom)}</td>${docs.map(d => `<td>${pouceDe(d, e.uid)}</td>`).join("")}</tr>`).join("")
+        + `</table></div><p class="note">Pour chaque élève, les questions où il a débloqué un coup de pouce supplémentaire : <span class="cp n2">B5 2</span> niveau 2 · <span class="cp n3">B5 3</span> niveau 3. <span class="cp vu">lu</span> fiche ouverte, niveau 1 seulement · – fiche jamais ouverte.</p>` : "");
     const sx = $(".grille") ? $(".grille").scrollLeft : 0;
     $("#app").innerHTML = html; if ($(".grille")) $(".grille").scrollLeft = sx;
     $("#app").querySelectorAll("[data-lock]").forEach(b => b.onclick = () => go(docEleves, c.id, locks.find(x => x.corrige.id === b.dataset.lock)));
@@ -426,7 +438,8 @@ function chapitreGrille(c, g){
     snap.forEach(x => { const v = x.data(); if (mesUid.has(v.uid)) { D.add(v.doc + "_" + v.uid); counts[v.doc] = (counts[v.doc] || 0) + 1; } }); render();
   }, e => toast("Lecture impossible : " + e.code));
   const b = onSnapshot(collection(db, "pointsdecours"), snap => {
-    P = {}; snap.forEach(x => { const v = x.data(); if (mesUid.has(v.uid)) P[v.uid + "__" + v.pdc] = v; }); render();
+    P = {}; aPouce = false;
+    snap.forEach(x => { const v = x.data(); if (mesUid.has(v.uid)) { P[v.uid + "__" + v.pdc] = v; if (v.type === "pouce" && docs.some(d => "pouce:" + d.corrige.id === v.pdc)) aPouce = true; } }); render();
   }, () => {});
   unsub = () => { a(); b(); };
 }
@@ -437,7 +450,7 @@ function docEleves(cid, d){
   setBar(d.titre, c.nom, true);
   const el = elevesDe(c);
   if (!el.length) { $("#app").innerHTML = `<p class="empty">Créez d'abord les comptes des élèves (onglet « Élèves et comptes »).</p>`; return; }
-  let on = new Set(), K = null, P = {};
+  let on = new Set(), K = null, P = {}, CP = {};
   $("#app").innerHTML = `<div class="progress" aria-hidden="true"><i id="pb"></i></div><p class="note" id="pn"></p>
     <div class="card" id="list">${el.map(e => `<label class="row" style="cursor:pointer"><span class="main"><span class="t">${esc(e.nom)}</span><span class="m" data-m="${esc(e.uid)}">Verrouillé</span></span>
       <span class="sw"><input type="checkbox" data-uid="${esc(e.uid)}" aria-label="Débloquer pour ${esc(e.nom)}"><span></span></span></label>`).join("")}</div>
@@ -445,7 +458,9 @@ function docEleves(cid, d){
   const boxes = [...$("#list").querySelectorAll("input")];
   const paint = () => {
     const etatPdc = uid => { const v = P[uid]; return v && v.termine ? "🟢 Point de cours terminé" : v ? "🟠 Point de cours en cours" : "⚪ Point de cours pas commencé"; };
-    boxes.forEach(b => { b.checked = on.has(b.dataset.uid); $(`[data-m="${b.dataset.uid}"]`).textContent = b.checked ? (d.test ? "Test ouvert" : d.chapitre ? "Chapitre ouvert" : d.avecPdc ? etatPdc(b.dataset.uid) : "Corrigé débloqué") : "🔒 Verrouillé"; });
+    const etatPouce = uid => { const v = CP[uid]; if (!v) return ""; const q = Object.entries(v.niveaux || {}).filter(([, n]) => n > 1);
+      return " · Coups de pouce : " + (q.length ? q.map(([k, n]) => k + " niv. " + n).join(", ") : "niveau 1 seulement"); };
+    boxes.forEach(b => { b.checked = on.has(b.dataset.uid); $(`[data-m="${b.dataset.uid}"]`).textContent = (b.checked ? (d.test ? "Test ouvert" : d.chapitre ? "Chapitre ouvert" : d.avecPdc ? etatPdc(b.dataset.uid) : "Corrigé débloqué") : "🔒 Verrouillé") + etatPouce(b.dataset.uid); });
     $("#pb").style.width = (100 * on.size / el.length) + "%";
     const nf = d.avecPdc ? el.filter(e => P[e.uid] && P[e.uid].termine).length : 0;
     $("#pn").textContent = `${on.size} / ${el.length} élèves ont accès ${d.test ? "au test d'entrée" : d.chapitre ? "au chapitre" : "au corrigé"}.` + (d.avecPdc ? ` Points de cours terminés : ${nf} / ${on.size}.` : "");
@@ -479,8 +494,12 @@ function docEleves(cid, d){
     on = new Set(); snap.forEach(x => { const u = x.data().uid; if (mesUid.has(u)) on.add(u); }); paint();
   }, e => toast("Lecture impossible : " + e.code));
   /* Point de cours lié (22/11/2026) : état affiché sous le nom de l'élève, plus d'onglet à part */
-  const b = d.avecPdc ? onSnapshot(collection(db, "pointsdecours"), snap => {
-    P = {}; snap.forEach(x => { const v = x.data(); if (mesUid.has(v.uid) && v.pdc === d.pdc) P[v.uid] = v; }); paint();
+  const b = (d.avecPdc || (d.corrige && !d.test && !d.chapitre)) ? onSnapshot(collection(db, "pointsdecours"), snap => {
+    P = {}; CP = {};
+    snap.forEach(x => { const v = x.data(); if (!mesUid.has(v.uid)) return;
+      if (d.avecPdc && v.pdc === d.pdc) P[v.uid] = v;
+      if (v.type === "pouce" && v.pdc === "pouce:" + d.corrige.id) CP[v.uid] = v; });   // coups de pouce en cascade (24/11/2026)
+    paint();
   }, () => {}) : () => {};
   unsub = () => { a(); b(); };
 }

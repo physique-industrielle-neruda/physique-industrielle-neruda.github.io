@@ -498,6 +498,7 @@ function renderWho(){
 
 function docRow(c, d){
   if (d.type === "Point de cours") return pdcRow(c, d);
+  if (d.format === "pouce") return pouceRow(c, d);
   const li = document.createElement("li");
   if (d.lien) {
     const href = /^https?:/.test(d.lien) ? d.lien : BASE + d.lien;
@@ -952,6 +953,52 @@ async function ouvrirPdc(c, d){
       await setDoc(doc(db, "pointsdecours", S.user.uid + "__" + d.pdc), v);
       if (termine) toast("Point de cours terminé, bravo ! Tu peux passer à la suite.");
     } catch(_) { toast("Ton avancement n'a pas pu être enregistré. Vérifie ta connexion."); }
+  };
+  window.addEventListener("message", onMsg);
+  ov.querySelector("button").onclick = () => { window.removeEventListener("message", onMsg); ov.remove(); document.body.style.overflow = ""; render(); };
+}
+
+/* ================= Coups de pouce en cascade (24/11/2026) =================
+   Page « … - coups de pouce » (format "pouce") : niveau 1 visible ; l'élève demande le 2 puis le 3, qui s'affichent
+   après un délai (compte à rebours dans la page). Niveaux atteints par question enregistrés dans Firestore
+   « pointsdecours/<uid>__pouce:<corrigé lié> » (type "pouce", champ niveaux) → vue d'ensemble dans l'appli professeur. */
+function pouceRow(c, d){
+  const li = document.createElement("li"); li.className = "pouce";
+  const st = MP[d.pouce], eleve = eleveRev();
+  const nv = st && st.niveaux ? Object.values(st.niveaux).filter(n => n > 1).length : 0;
+  const meta = !eleve ? "Coups de pouce en cascade · vue professeur : les 3 niveaux sont affichés"
+    : nv ? nv + " coup" + (nv > 1 ? "s" : "") + " de pouce supplémentaire" + (nv > 1 ? "s" : "") + " débloqué" + (nv > 1 ? "s" : "")
+    : "Niveau 1 visible ; les niveaux 2 et 3 se débloquent si tu bloques encore";
+  li.innerHTML = `<span class="type pouce">Coup de pouce</span><span class="title">${esc(d.titre)}<span class="meta">${esc(meta)}</span></span>
+    <span class="actions"><button class="open" type="button">Ouvrir</button></span>`;
+  li.querySelector("button").onclick = () => ouvrirPouce(c, d);
+  return li;
+}
+async function ouvrirPouce(c, d){
+  let html;
+  try {
+    const key = d.cv ? await chapKey(d.cv) : S.keys[c.id];
+    if (!key) throw new Error("chapitre");
+    html = await (await decryptBlob(BASE + "docs/" + c.id + "/" + d.fichier, key, "text/html;charset=utf-8")).text();
+  } catch(e) { toast(e.message === "chapitre" ? "Ce chapitre n'est pas encore ouvert." : "Impossible d'ouvrir les coups de pouce. Rechargez la page."); return; }
+  const eleve = eleveRev(), st = MP[d.pouce];
+  const init = "<script>window.POUCE_ID = " + JSON.stringify((S.user ? S.user.uid : "") + "|" + d.pouce) + "; window.POUCE_INIT = " + JSON.stringify(eleve && st && st.niveaux ? st.niveaux : {})
+    + (eleve ? "" : "; window.POUCE_PROF = true") + ";<\/script></head>";
+  html = html.replace("</head>", () => init);
+  const ov = document.createElement("div"); ov.className = "fiche-ov";
+  ov.innerHTML = `<div class="bar"><b>${esc(d.titre)}</b><button type="button">Fermer</button></div><iframe title="${esc(d.titre)}"></iframe>`;
+  const fr = ov.querySelector("iframe"); fr.srcdoc = html;
+  document.body.appendChild(ov); document.body.style.overflow = "hidden";
+  const onMsg = async e => {
+    if (e.source !== fr.contentWindow || !e.data || e.data.type !== "pouce-niveau" || !eleve) return;
+    const av = (MP[d.pouce] && MP[d.pouce].niveaux) || {}, niveaux = Object.assign({}, av);
+    Object.entries(e.data.niveaux || {}).forEach(([q, n]) => { n = Math.min(3, Math.max(1, +n || 1)); if (n > (niveaux[q] || 1)) niveaux[q] = n; });
+    if (MP[d.pouce] && JSON.stringify(niveaux) === JSON.stringify(av)) return;   // rien de nouveau
+    const v = { uid: S.user.uid, pdc: d.pouce, type: "pouce", corrige: d.lie || "", titre: d.titre, activite: "", site: c.id,
+      nom: S.nom, classe: S.groupe || "", niveaux, etape: Math.max(1, ...Object.values(niveaux)), total: +e.data.total || 0,
+      erreurs: 0, termine: false, date: serverTimestamp() };
+    MP[d.pouce] = v;
+    try { await setDoc(doc(db, "pointsdecours", S.user.uid + "__" + d.pouce), v); } catch(_) {}
   };
   window.addEventListener("message", onMsg);
   ov.querySelector("button").onclick = () => { window.removeEventListener("message", onMsg); ov.remove(); document.body.style.overflow = ""; render(); };
