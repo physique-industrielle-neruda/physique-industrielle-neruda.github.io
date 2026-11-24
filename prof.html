@@ -626,7 +626,17 @@ function eleveCompetences(c, ch, e){
     $("#app").innerHTML = `<div class="card" style="padding:14px">${profilHtml(pr, { detail: true, eval: EV || {} })}<p class="note">${esc(synthese(pr))}${EV ? " ◆ = réussite à l'évaluation de fin de dossier." : ""}</p></div>
       ${parc ? `<p class="sec">Parcours avant l'évaluation</p>${parcH}` : ""}
       <p class="sec">Coups de pouce ouverts</p><div class="card">${pouces}</div>
-      <p class="sec">Animation</p><div class="card" style="padding:12px 14px">${anim}<p class="note">✓ juste au 1er essai · 2e juste au 2e essai · ✗ correction affichée · – pas répondu</p></div>`;
+      <p class="sec">Animation</p><div class="card" style="padding:12px 14px">${anim}<p class="note">✓ juste au 1er essai · 2e juste au 2e essai · ✗ correction affichée · – pas répondu</p></div>
+      <p class="sec">Remettre à zéro</p><div class="card" style="padding:12px 14px;display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn" type="button" id="raz1">Animation et parcours</button><button class="btn" type="button" id="raz2" style="background:#B42318">Tout le dossier (coups de pouce compris)</button>
+        <p class="note" style="width:100%">Efface les données de compétences de cet élève pour ce dossier (par exemple après un essai avec son compte, ou un parcours débloqué trop tôt). Son parcours sera recalculé à sa prochaine ouverture. Les corrigés débloqués ne changent pas.</p></div>`;
+    const raz = async tout => {
+      const ids = [animIdP(ch)].concat(parc ? ["parcours:" + parc.corrige.id] : []).concat(tout ? ch.docs.filter(d => d.format === "pouce").map(d => d.pouce) : []);
+      if (!confirm("Effacer " + (tout ? "toutes les données de compétences (coups de pouce, animation, parcours)" : "les réponses à l'animation et le parcours") + " de " + e.nom + " pour « " + ch.titre + " » ? C'est définitif.")) return;
+      try { for (const id of ids) await deleteDoc(doc(db, "pointsdecours", e.uid + "__" + id)); toast("Remis à zéro pour " + e.nom + "."); }
+      catch(x){ toast("Échec (" + (x.code || x.message) + ") : vérifiez la connexion ou les règles Firestore."); }
+    };
+    $("#raz1").onclick = () => raz(false); $("#raz2").onclick = () => raz(true);
   };
   render();
   const a = onSnapshot(query(collection(db, "deblocages"), where("uid", "==", e.uid)), snap => { D = new Set(); snap.forEach(x => { const v = x.data(); D.add(v.doc + "_" + v.uid); }); render(); }, () => {});
