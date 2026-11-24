@@ -793,7 +793,7 @@ async function ouvrirTest(t, apercu){
   view.innerHTML = "";
   const box = document.createElement("div"); box.className = "tst";
   box.innerHTML = `<div class="classhead"><h2>${esc(T.titre)}</h2>${apercu ? '<span class="status">Aperçu professeur : rien n\'est envoyé</span>' : ""}</div>
-    <div class="cons">${esc(T.consigne || "")}</div>`
+    <div class="cons"><p style="margin:0 0 6px"><strong>Avant de commencer, munis-toi d'un brouillon et d'une calculatrice</strong> : certaines questions demandent un calcul.</p>${esc(T.consigne || "")}</div>`
     + T.questions.map((q, i) => `<div class="qq"><div><span class="n">${i + 1}.</span> ${q.enonce}</div>${q.figure || ""}
       <div class="ln"><input inputmode="decimal" aria-label="Réponse ${i + 1}" autocomplete="off"> <span>${esc(q.unite || "")}</span></div><div class="pv"></div></div>`).join("")
     + `<p class="err"></p><div class="act"><button class="btn" type="button" id="envoi">${apercu ? "Vérifier (aperçu)" : "Envoyer mes réponses"}</button><button class="btn ghost" type="button" id="annul">Revenir</button></div>`;
