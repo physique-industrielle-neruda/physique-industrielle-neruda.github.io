@@ -403,6 +403,15 @@
      "titre": "Statique des fluides",
      "docs": [
       {
+       "titre": "Comment ça marche – profil de compétences",
+       "type": "Document",
+       "fichier": "91443317ea49f29a9db7084b.bin",
+       "taille": 58915,
+       "pages": 1,
+       "cv": "et-chap-statique-des-fluides",
+       "rubrique": "Pour commencer"
+      },
+      {
        "titre": "Activité 1 – La pression dans le filtre à sable",
        "type": "Activité",
        "fichier": "6b4b6735e1eb8932bab8e0e0.bin",
@@ -415,8 +424,8 @@
        "titre": "Activité 1 – La pression dans le filtre à sable - coups de pouce",
        "type": "Activité",
        "format": "pouce",
-       "fichier": "6ddddc5fd6be3445df4a2554.bin",
-       "taille": 11799,
+       "fichier": "8803df68be83f0d992d950c6.bin",
+       "taille": 13091,
        "pouce": "pouce:et-statique-des-fluides-corrige-activite-1-la-pression-dans-le-filtre-a-sa",
        "lie": "et-statique-des-fluides-corrige-activite-1-la-pression-dans-le-filtre-a-sa",
        "cv": "et-chap-statique-des-fluides",
@@ -461,8 +470,8 @@
        "titre": "Activité 2 – La pression au robinet du hameau - coups de pouce",
        "type": "Activité",
        "format": "pouce",
-       "fichier": "74de18667ac6204d3bc82827.bin",
-       "taille": 11857,
+       "fichier": "72a98f201cd631029b0822a4.bin",
+       "taille": 13162,
        "pouce": "pouce:et-statique-des-fluides-corrige-activite-2-la-pression-au-robinet-du-hamea",
        "lie": "et-statique-des-fluides-corrige-activite-2-la-pression-au-robinet-du-hamea",
        "cv": "et-chap-statique-des-fluides",
@@ -507,8 +516,8 @@
        "titre": "Activité 3 – Le capteur de niveau de la bâche - coups de pouce",
        "type": "Activité",
        "format": "pouce",
-       "fichier": "b9843c369b7b7e4e40685beb.bin",
-       "taille": 11369,
+       "fichier": "361339fbdfc5b7e5f7c580a9.bin",
+       "taille": 12661,
        "pouce": "pouce:et-statique-des-fluides-corrige-activite-3-le-capteur-de-niveau-de-la-bach",
        "lie": "et-statique-des-fluides-corrige-activite-3-le-capteur-de-niveau-de-la-bach",
        "cv": "et-chap-statique-des-fluides",
@@ -561,7 +570,7 @@
       {
        "titre": "Animation – Statique des fluides",
        "type": "Animation",
-       "fichier": "708045c2e3f1ab77096dd506.bin",
+       "fichier": "6fbb23b057c9cceac74d1621.bin",
        "format": "html",
        "cv": "et-chap-statique-des-fluides",
        "rubrique": "Animation"
@@ -579,8 +588,8 @@
        "titre": "Exercice 1 - coups de pouce",
        "type": "Exercices",
        "format": "pouce",
-       "fichier": "5d6df1be98085f58b8cc64dc.bin",
-       "taille": 9771,
+       "fichier": "056bd16b2422542f70eb0387.bin",
+       "taille": 11024,
        "pouce": "pouce:et-statique-des-fluides-corrige-exercice-1",
        "lie": "et-statique-des-fluides-corrige-exercice-1",
        "cv": "et-chap-statique-des-fluides",
@@ -611,8 +620,8 @@
        "titre": "Exercice 2 - coups de pouce",
        "type": "Exercices",
        "format": "pouce",
-       "fichier": "463407a0f475d472b07c6242.bin",
-       "taille": 9900,
+       "fichier": "83a2b5ec42018e4f06255687.bin",
+       "taille": 11153,
        "pouce": "pouce:et-statique-des-fluides-corrige-exercice-2",
        "lie": "et-statique-des-fluides-corrige-exercice-2",
        "cv": "et-chap-statique-des-fluides",
@@ -643,8 +652,8 @@
        "titre": "Exercice 3 - coups de pouce",
        "type": "Exercices",
        "format": "pouce",
-       "fichier": "063b3ff4b12ab599597123c7.bin",
-       "taille": 9398,
+       "fichier": "a1aee7b44a3da37c1a4b2993.bin",
+       "taille": 10625,
        "pouce": "pouce:et-statique-des-fluides-corrige-exercice-3",
        "lie": "et-statique-des-fluides-corrige-exercice-3",
        "cv": "et-chap-statique-des-fluides",
@@ -675,8 +684,8 @@
        "titre": "Exercice 4 - coups de pouce",
        "type": "Exercices",
        "format": "pouce",
-       "fichier": "1ed098e21c21e305bddecca9.bin",
-       "taille": 9941,
+       "fichier": "21926a9f05d3c876f060b477.bin",
+       "taille": 11194,
        "pouce": "pouce:et-statique-des-fluides-corrige-exercice-4",
        "lie": "et-statique-des-fluides-corrige-exercice-4",
        "cv": "et-chap-statique-des-fluides",
@@ -693,6 +702,18 @@
         "wk": "l8xoSC/oSjXhcBhWkkRzN8r8TTBYuLWW553ks/ycNylfKdRJr9q7KqaESEsRFIWZqwOVOKw6oSR4LsBX"
        },
        "rubrique": "Exercices"
+      },
+      {
+       "titre": "Mon parcours avant l'évaluation",
+       "type": "Parcours",
+       "format": "parcours",
+       "fichier": "f2c9927d4a21a1fc7ceeece0.bin",
+       "taille": 38530,
+       "corrige": {
+        "id": "et-statique-des-fluides-parcours",
+        "wk": "2amzLmoHuUgl8bQpqw6yI2GrlS/KB2syamlrhMSzGhYYJ7p1z4FCbexXpjqfpfP20liTclK598DneaoM"
+       },
+       "rubrique": "Mon profil de compétences"
       },
       {
        "titre": "Bilan",
@@ -718,6 +739,81 @@
      "verrou": {
       "id": "et-chap-statique-des-fluides",
       "wk": "7UVqywl0RY7sDoC9RtJ56one0slFL5y/1Yqz58oy7rZERJQ1knmZsZO/ohpN4bQskDLtr8beblNR3/E+"
+     },
+     "competences": {
+      "referentiel": "BTS ET",
+      "questions": {
+       "Activité 1": {
+        "A1": "REA",
+        "A2": "REA",
+        "A3": "ANA",
+        "A4": "ANA",
+        "B2": "APP",
+        "B4": "VAL",
+        "B5": "COM"
+       },
+       "Activité 2": {
+        "A1": "ANA",
+        "A2": "REA",
+        "A3": "VAL",
+        "A4": "REA",
+        "B1": "APP",
+        "B2": "REA",
+        "B4": "ANA",
+        "B5": "COM"
+       },
+       "Activité 3": {
+        "A2": "REA",
+        "A3": "ANA",
+        "A4": "REA",
+        "B1": "REA",
+        "B2": "VAL",
+        "B4": "REA",
+        "B5": "COM"
+       },
+       "Exercice 1": {
+        "Q1": "REA",
+        "Q2": "ANA",
+        "Q3": "REA",
+        "Q4": "ANA"
+       },
+       "Exercice 2": {
+        "Q2": "APP",
+        "Q3": "REA",
+        "Q4": "VAL",
+        "Q5": "VAL"
+       },
+       "Exercice 3": {
+        "Q2": "REA",
+        "Q4": "ANA"
+       },
+       "Exercice 4": {
+        "Q1": "APP",
+        "Q3": "REA",
+        "Q4": "ANA",
+        "Q5": "VAL"
+       },
+       "Animation": {
+        "1.1": "REA",
+        "1.2": "REA",
+        "1.3": "REA",
+        "1.4": "ANA",
+        "1.5": "VAL",
+        "2.1": "REA",
+        "2.2": "ANA",
+        "2.3": "ANA",
+        "2.4": "REA",
+        "2.5": "ANA",
+        "3.1": "REA",
+        "3.2": "REA",
+        "3.3": "ANA",
+        "3.4": "ANA",
+        "4.1": "REA",
+        "4.2": "ANA",
+        "4.3": "REA",
+        "4.4": "VAL"
+       }
+      }
      }
     },
     {
@@ -2050,7 +2146,7 @@
       {
        "titre": "Animation – Sources, conversions et stockage de l'énergie",
        "type": "Animation",
-       "fichier": "2a85ae16a11e71585eee847f.bin",
+       "fichier": "63aeb7ead0d8df2a0112552f.bin",
        "format": "html",
        "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
        "rubrique": "Animation"
@@ -2588,7 +2684,7 @@
       {
        "titre": "Animation – Chaîne d'acquisition",
        "type": "Animation",
-       "fichier": "826093468ded85ce679c79b2.bin",
+       "fichier": "9401e5723a5b4586a8e7faad.bin",
        "format": "html",
        "cv": "cira-chap-chaine-d-acquisition",
        "rubrique": "Animation"
@@ -3004,7 +3100,7 @@
       {
        "titre": "Animation – Amplification",
        "type": "Animation",
-       "fichier": "b88127390f3d6c5eecf9ae73.bin",
+       "fichier": "cec09a9ce5a4fd9994821c42.bin",
        "format": "html",
        "cv": "cira-chap-amplification",
        "rubrique": "Animation"
@@ -3552,7 +3648,7 @@
       {
        "titre": "Animation – Systèmes non linéaires",
        "type": "Animation",
-       "fichier": "4ac1c78fd4bd8c2514362310.bin",
+       "fichier": "37ecf85ca8bbcbafaeea8625.bin",
        "format": "html",
        "cv": "cim-chap-systemes-non-lineaires",
        "rubrique": "Animation"
@@ -3746,9 +3842,9 @@
   }
  ],
  "outilsWk": {
-  "et": "vYz1Ug0a6osM0zZ6fdSCPVlEev0Cqq1TQWPeDkRezNqa8/siUdiZJf/RV7lL/I0ABxltvVPcejiJvX0t",
-  "cira": "XH9KcbafIqKYOSN5+LJDz5IcswxvRE75XhYZqqoX01QqCJMnwWfILyEpg4hDO7MWE2lJKUyi/6Ix7soD",
-  "cim": "sFmWgfNsFRdQvNWb2pn0xI/P9DYGXACe2wqZf3oOL0rXCCMsebex82lcrc3TdSZxXLJwPqh4JoHCjEqi"
+  "et": "O3Kcrgp139o44GbX0ZIFqXT1ZB6BtX+vJxpdHvBPfAu3bz3I8g6O0hZ1YnxZYYieXBEG7VT5IJcU7/Qz",
+  "cira": "UcY2IvnvG/LLsO+ekxBMqmipr00oZRAA40wFoPf7KuI8y8U2JrAZU4IAYKB0pqNP6HwmL9Ly7+43zbix",
+  "cim": "n4My7ZDyMmuQJ4uuQRoznoSFrjXivb+Hb9lnMBv13SUBZoE+eR8OIU02SGGKzxwqqWzrYASXqK+MXg5J"
  },
  "outils": [
   {
