@@ -2019,8 +2019,8 @@
        "titre": "Point de cours – Activité 1",
        "type": "Point de cours",
        "format": "pdc",
-       "fichier": "0e8f913a66b1262717d81888.bin",
-       "taille": 16128,
+       "fichier": "3f0e966fee8007aa89e98f79.bin",
+       "taille": 16130,
        "corrige": {
         "id": "et-les-chaines-de-mesure-2eta-corrige-activite-1-boucle-4-20-ma-du-pressuriseur-",
         "wk": "+oZTzvNCdegjL3wNOgzVXz+qqQyWY2EQkcMo9uMefRckSREFBeqWRqnVjy/COdKX+6tMk4W7LflevOLa"
@@ -2032,8 +2032,8 @@
       {
        "titre": "Activité 2 – Numérisation d'une mesure de température",
        "type": "Activité",
-       "fichier": "6a357f11d96465710302c310.bin",
-       "taille": 314983,
+       "fichier": "9bee7de73818a333ca63bd56.bin",
+       "taille": 322469,
        "pages": 5,
        "cv": "et-chap-les-chaines-de-mesure-2eta",
        "rubrique": "Activités et TP"
@@ -2078,8 +2078,8 @@
       {
        "titre": "Activité 3 – Temps de réponse et précision d'une sonde Pt100",
        "type": "Activité",
-       "fichier": "97d918e2271cd6bdc4659e36.bin",
-       "taille": 205725,
+       "fichier": "3f2d58c954c34a244b978005.bin",
+       "taille": 206645,
        "pages": 4,
        "cv": "et-chap-les-chaines-de-mesure-2eta",
        "rubrique": "Activités et TP"
@@ -2111,8 +2111,8 @@
        "titre": "Point de cours – Activité 3",
        "type": "Point de cours",
        "format": "pdc",
-       "fichier": "ea22f92e5fe120586fa0da83.bin",
-       "taille": 15430,
+       "fichier": "02fa407f0beca79b0f7a2df2.bin",
+       "taille": 15434,
        "corrige": {
         "id": "et-les-chaines-de-mesure-2eta-corrige-activite-3-temps-de-reponse-et-precision-d",
         "wk": "oY9Zam/0Ow64GkZTT5drtXzka9Gxbfns+ywLpqX0J4sXC5a1azreG0vfK347Gf1Lh6yURWMqHoKv4iz7"
@@ -2134,7 +2134,7 @@
        "titre": "Correction des exemples",
        "type": "Exemples",
        "format": "exemples",
-       "fichier": "f467b88d595d697260d1b9b9.bin",
+       "fichier": "a3b7e24570ed8c0f55b0c169.bin",
        "taille": 9449,
        "cv": "et-chap-les-chaines-de-mesure-2eta",
        "rubrique": "Cours"
@@ -2174,8 +2174,8 @@
       {
        "titre": "Exercice 2",
        "type": "Exercices",
-       "fichier": "7480427e99a259d75c82a57c.bin",
-       "taille": 106946,
+       "fichier": "0434d6111e2125af3d96eb69.bin",
+       "taille": 106949,
        "pages": 1,
        "cv": "et-chap-les-chaines-de-mesure-2eta",
        "rubrique": "Exercices"
@@ -5025,9 +5025,9 @@
   }
  ],
  "outilsWk": {
-  "et": "/Pz3MG8MmovQRCpF3lzWDbvjagK2+lo1NkhfrBsr7u6j6AdxekmaiV4ZLBj5J3e3obqH4n4UIpVbze9n",
-  "cira": "kdKuCDIA6MOvzq30I2w4N5sEFQs7MIqbGRMDMMSUYOuU9K9/pnCkhXNEcp45YQhgAihld4X/J29j4eDB",
-  "cim": "35oXRWwQPNKzKCIKGTfj8zXNg3V+QrLBylUw1Y0eWFB4rcx4plZBmU4vDZvxX8m2l8N3/+2rgzkei79A"
+  "et": "/EtT5zEeLt9bB8tpNpbd/4NAH9TwZRvX5FISBu1kQReal9zDw9AtvrDLZiyVv9GEmM4w3VxjTR6m7hT1",
+  "cira": "W2iEt185F4+66rk7w/2ymWmu8a7DpvpCVywM4SijlW2Q2g+2VRp2py2uKFbaca0ktCYBVUaPokJzRkEx",
+  "cim": "SEBBSzcLWk5scHsVIhjuZIpZNak8A39RUORSFD4thi0/KHtH5p9wbfd5Iirb15oawvslmoFOzICr1I7X"
  },
  "outils": [
   {
