@@ -80,6 +80,9 @@ nav.classes button[aria-pressed="true"] .n,nav.classes button[aria-pressed="true
 .btn{font:inherit;font-weight:700;border:0;border-radius:8px;padding:10px 16px;cursor:pointer;background:var(--ink);color:var(--surface)}
 .err{color:var(--accent);font-weight:700;margin:8px 0 0;min-height:1.2em}
 
+.methode{margin:0 0 16px;padding:10px 14px;background:var(--surface);border:1px solid var(--grid);border-left:5px solid var(--accent);border-radius:0;font-size:.92rem;line-height:1.5;color:var(--text)}
+.methode b{display:block;font-family:"Barlow Condensed","Arial Narrow",sans-serif;font-size:1.15rem;color:var(--ink);margin-bottom:4px}
+.methode p{margin:2px 0;padding-left:1.4em;text-indent:-1.4em}.methode p span{display:inline-block;width:1.4em;text-indent:0;color:var(--accent)}
 .rythme{margin:12px 14px 4px;padding:12px 14px;border:1px solid var(--grid);border-radius:10px;background:var(--bg)}
 .ry-head{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:10px}.ry-head b{color:var(--ink);font-size:1.05rem;flex:1}
 .ry-st{font-weight:700;font-size:.85rem;padding:3px 10px;border-radius:999px}.ry-apercu{font-size:.78rem;color:var(--muted);font-style:italic}
@@ -729,6 +732,7 @@ function render(){
     const head = document.createElement("div"); head.className = "classhead";
     head.innerHTML = `<h2>${esc(c.nom)}</h2><span class="status is-open">Documents ouverts</span>`;
     view.appendChild(head);
+    if (!q) { const m = bandeauMethode(chaps); if (m) view.appendChild(m); }
     if (!c.chapitres.length) { const p = document.createElement("p"); p.className = "empty"; p.textContent = "Aucun document pour l'instant."; view.appendChild(p); }
     if (chaps.some(x => x.ch.annee)) {
       // Dossiers « 1re année » / « 2e année » : celui de la classe de l'élève s'ouvre automatiquement
@@ -751,6 +755,20 @@ function render(){
     chaps.forEach(x => { found += x.docs.length; view.appendChild(chapBlock(c, x.ch, x.docs, !!q)); });
   }
   if (q && !found) { const p = document.createElement("p"); p.className = "empty"; p.textContent = "Aucun document ne correspond à « " + $("#q").value.trim() + " »."; view.appendChild(p); }
+}
+
+
+/* Bandeau « Comment on travaille » (25/11/2026) : commun à toutes les classes, affiché seulement quand
+   au moins un dossier de la nouvelle méthode (rythme, jauge, note d'investissement) est débloqué pour l'élève. */
+function bandeauMethode(chaps){
+  if (!chaps.some(x => rythmeDe(x.ch) && chapOK(x.ch))) return null;
+  const d = document.createElement("div"); d.className = "methode"; d.setAttribute("role", "note");
+  d.innerHTML = `<b>Comment on travaille cette année</b>
+    <p><span>💡</span>Les coups de pouce sont là pour t'aider : les ouvrir ne fait perdre aucun point, ils servent seulement à construire ton profil de compétences.</p>
+    <p><span>⭐</span>Dans les nouveaux dossiers, une note d'investissement tient compte de ton travail régulier sur le site et de ton attitude en classe. Tu la vois évoluer en direct.</p>
+    <p><span>📊</span>La jauge « Mon rythme dans le dossier » te montre où tu en es et tout le travail qu'il te reste à faire avant l'évaluation.</p>
+    <p><span>🎯</span>Seule l'évaluation de fin de dossier note tes résultats : prends le temps de comprendre plutôt que d'aller vite.</p>`;
+  return d;
 }
 
 
