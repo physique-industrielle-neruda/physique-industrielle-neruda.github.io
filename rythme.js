@@ -13,6 +13,9 @@
      arrêtée à la fin du jour de l'évaluation. Les coups de pouce ne comptent jamais. */
 export const toMs = x => x == null ? null : typeof x === "number" ? x : x.toMillis ? x.toMillis() : x instanceof Date ? x.getTime() : (typeof x === "string" ? Date.parse(x) : null);
 export const BAREME = { corriges: 8, cours: 2, anim: 3, regularite: 5, attitude: 2 };
+/* 25/11/2026 : dossier avec points de cours en ligne → corrigés 7, cours 3 (exemples + points de cours) */
+export const BAREME_PDC = { corriges: 7, cours: 3, anim: 3, regularite: 5, attitude: 2 };
+export const baremeDe = ch => ch && ch.rythme && ch.rythme.items.some(x => x.pdc) ? BAREME_PDC : BAREME;
 export const exemplesId = chapId => "exemples:" + chapId;
 export const rythmeDocId = (chapId, uid) => "rythme_" + chapId + "_" + uid;
 export const rythmeDoc = chapId => "rythme:" + chapId;
@@ -57,17 +60,18 @@ export function etat(ch, src){
   sv.forEach((s, k) => { cum += s.h; const tn = k + 1 < sv.length ? sv[k + 1].t : Math.min(now, limite);
     const rr = Math.min(cum, contenu) - faitA(tn); scores.push(rr <= 0 ? 1 : rr <= 1 ? 0.5 : 0); });
   const corr = items.filter(x => x.corrige), avant = x => x.t && x.t <= limite;
+  const B = baremeDe(ch);
   const anim = items.find(x => x.anim), exs = items.filter(x => x.exemple || x.pdc);   // critère « Cours » : exemples + points de cours en ligne
   const pts = {
-    corriges: corr.length ? BAREME.corriges * corr.filter(avant).length / corr.length : BAREME.corriges,
-    cours: exs.length ? BAREME.cours * exs.filter(avant).length / exs.length : BAREME.cours,
-    anim: anim ? BAREME.anim * anim.part : BAREME.anim,
-    regularite: scores.length ? BAREME.regularite * scores.reduce((a, b) => a + b, 0) / scores.length : BAREME.regularite,
-    attitude: Math.max(0, Math.min(BAREME.attitude, BAREME.attitude + 0.5 * (+r.attitude || 0)))
+    corriges: corr.length ? B.corriges * corr.filter(avant).length / corr.length : B.corriges,
+    cours: exs.length ? B.cours * exs.filter(avant).length / exs.length : B.cours,
+    anim: anim ? B.anim * anim.part : B.anim,
+    regularite: scores.length ? B.regularite * scores.reduce((a, b) => a + b, 0) / scores.length : B.regularite,
+    attitude: Math.max(0, Math.min(B.attitude, B.attitude + 0.5 * (+r.attitude || 0)))
   };
   const brut = Object.values(pts).reduce((a, b) => a + b, 0) + (+r.ajust || 0);
   const note = Math.max(0, Math.min(20, Math.round(brut * 2) / 2));
-  return { toutes, items, contenu, marge, total, ecoule, fait, retard, statut, avance, frein, reste, resteCours, seances, scores, pts, note, limite, evalDate: r.evalDate || "" };
+  return { bareme: B, toutes, items, contenu, marge, total, ecoule, fait, retard, statut, avance, frein, reste, resteCours, seances, scores, pts, note, limite, evalDate: r.evalDate || "" };
 }
 export const STATUTS = {
   avance: { lib: "En avance",      couleur: "#2E75B6", fond: "#DEEAF6" },

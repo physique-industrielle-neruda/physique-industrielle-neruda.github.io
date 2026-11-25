@@ -175,7 +175,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore, doc, getDoc, getDocs, setDoc, deleteDoc, collection, query, where, onSnapshot, serverTimestamp, writeBatch, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { profil as calcProfil, profilHtml, synthese, PROFIL_CSS, COMPS, LIBS as CLIBS, NIVEAUX, niveauDe, pointsAnim, bilanAnnee, anneeHtml, ANNEE_CSS } from "./competences.js";
-import { etat as etatRythme, STATUTS, heures, BAREME, rythmeDoc, rythmeDocId } from "./rythme.js";
+import { etat as etatRythme, STATUTS, heures, baremeDe, rythmeDoc, rythmeDocId } from "./rythme.js";
 
 const FB = {"apiKey":"AIzaSyDH32Ma0shVbsIHR0xNJbahb5MO0RKHRS0","authDomain":"physique-neruda.firebaseapp.com","projectId":"physique-neruda","storageBucket":"physique-neruda.firebasestorage.app","messagingSenderId":"62730174289","appId":"1:62730174289:web:588c846aadd4eec2109d70"};
 const DOMAINE = "@physique-neruda.firebaseapp.com";
@@ -516,7 +516,7 @@ function chapitreGrille(c, g){
 }
 
 function rythmePanel(c, g, el, getP, rerender){
-  const ch = g.ch, R = ch.rythme;
+  const ch = g.ch, R = ch.rythme, BAREME_C = baremeDe(ch);
   if (!R) return { html: () => "", bind: () => {}, stop: () => {} };
   const chapId = ch.verrou ? ch.verrou.id : ch.titre, docId = rythmeDoc(chapId);
   /* 25/11/2026 (ET « Sources… ») : un élève inscrit dans deux classes (2ET/2ETA) suit les séances de la classe où il a cours (R.classeCours) */
@@ -572,7 +572,7 @@ function rythmePanel(c, g, el, getP, rerender){
       <label class="note ry-date">Date de l'évaluation (la note est arrêtée ce jour-là) : <input type="date" id="ryEval" value="${esc(k.evalDate)}"></label></div>`;
     const lignes = el.map(e => ({ e, ...valeurs(e), v: DOCS[e.uid] || {} }));
     h += `${fg ? `<p class="note ry-fige">🔒 Notes figées le ${esc(jour(fg.date))} : elles ne bougent plus. <button class="linkbtn" id="ryDefige">Défiger</button></p>` : ""}
-      <div class="card grille ryg"><table><tr><th class="nom">Élève</th><th>Rythme</th><th>Corrigés<small class="tsc">/${BAREME.corriges}</small></th><th>Cours<small class="tsc">/${BAREME.cours}</small></th><th>Anim.<small class="tsc">/${BAREME.anim}</small></th><th>Régul.<small class="tsc">/${BAREME.regularite}</small></th><th>Attitude<small class="tsc">/${BAREME.attitude}</small></th><th>Ajust.</th><th>Note<small class="tsc">/20</small></th></tr>`
+      <div class="card grille ryg"><table><tr><th class="nom">Élève</th><th>Rythme</th><th>Corrigés<small class="tsc">/${BAREME_C.corriges}</small></th><th>Cours<small class="tsc">/${BAREME_C.cours}</small></th><th>Anim.<small class="tsc">/${BAREME_C.anim}</small></th><th>Régul.<small class="tsc">/${BAREME_C.regularite}</small></th><th>Attitude<small class="tsc">/${BAREME_C.attitude}</small></th><th>Ajust.</th><th>Note<small class="tsc">/20</small></th></tr>`
       + lignes.map(({ e, s, pts, note, fige, v }) => { const st = STATUTS[s.statut];
         const pill = s.statut === "avance" ? "+" + heures(s.avance) : heures(s.fait) + " / " + heures(Math.min(s.ecoule, s.contenu));
         const ctl = (attr, val, lib) => fige ? "" : `<button ${attr}="${val}" data-uid="${esc(e.uid)}" aria-label="${lib}">${val > 0 ? "+" : "−"}</button>`;
@@ -603,7 +603,7 @@ function rythmePanel(c, g, el, getP, rerender){
       td{border:1px solid #D8E0EA;padding:6px;text-align:center}td.n{text-align:left}td.b{font-weight:bold}@page{margin:1.27cm}</style></head><body>
       <h1>Note d'investissement – ${esc(ch.titre)}</h1>
       <p><b>${esc(c.nom)}</b> · ${fg ? "notes figées le " + esc(jour(fg.date)) : "aperçu du " + esc(jour(Date.now())) + " (non figé)"}${k.evalDate ? " · évaluation le " + esc(new Date(k.evalDate + "T12:00:00").toLocaleDateString("fr-FR")) : ""}</p>
-      <table><tr><th>Élève</th>${L.map(l => `<th>${T[l]} /${BAREME[l]}</th>`).join("")}<th>Ajust.</th><th>Note /20</th></tr>${rows}</table>
+      <table><tr><th>Élève</th>${L.map(l => `<th>${T[l]} /${BAREME_C[l]}</th>`).join("")}<th>Ajust.</th><th>Note /20</th></tr>${rows}</table>
       <p style="margin-top:10px">Corrigés : corrigés débloqués (activités, TP, exercices) · Cours : corrections des exemples ouvertes${R.items.some(x => x.pdc) ? " et points de cours terminés" : ""} · Animation : questions traitées · Régularité : élève à jour à chaque séance (hors TP) · Attitude : 2 points, ½ point retiré par remarque. Note arrondie au demi-point.</p>
       <script>window.onload = () => setTimeout(() => window.print(), 300);<\/script></body></html>`);
     w.document.close();
