@@ -1942,6 +1942,15 @@
      "titre": "Sources, conversions et stockage de l'énergie",
      "docs": [
       {
+       "titre": "Comment ça marche – profil de compétences",
+       "type": "Document",
+       "fichier": "1991008fad10b36ef9aa6b6c.bin",
+       "taille": 59073,
+       "pages": 1,
+       "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
+       "rubrique": "Pour commencer"
+      },
+      {
        "titre": "Activité 1 – Le facteur de charge d'un réacteur",
        "type": "Activité",
        "fichier": "11daa36ba9b8d0f9e74112d1.bin",
@@ -1954,8 +1963,8 @@
        "titre": "Activité 1 – Le facteur de charge d'un réacteur - coups de pouce",
        "type": "Activité",
        "format": "pouce",
-       "fichier": "36a4ebd21cd19d39a15373db.bin",
-       "taille": 12491,
+       "fichier": "909e4ebdd199690c404a032a.bin",
+       "taille": 13809,
        "pouce": "pouce:et-sources-conversions-et-stockage-de-l-ene-corrige-activite-1-le-facteur-de-charge-d-un-react",
        "lie": "et-sources-conversions-et-stockage-de-l-ene-corrige-activite-1-le-facteur-de-charge-d-un-react",
        "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
@@ -2000,8 +2009,8 @@
        "titre": "Activité 2 – Le rendement du diesel d'ultime secours - coups de pouce",
        "type": "Activité",
        "format": "pouce",
-       "fichier": "2a1dfa8f9bbeb47dece7dc7a.bin",
-       "taille": 11235,
+       "fichier": "a9da8d60e4249a579a89838d.bin",
+       "taille": 12540,
        "pouce": "pouce:et-sources-conversions-et-stockage-de-l-ene-corrige-activite-2-le-rendement-du-diesel-d-ultime",
        "lie": "et-sources-conversions-et-stockage-de-l-ene-corrige-activite-2-le-rendement-du-diesel-d-ultime",
        "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
@@ -2046,8 +2055,8 @@
        "titre": "Activité 3 – L'autonomie de la batterie 125 V - coups de pouce",
        "type": "Activité",
        "format": "pouce",
-       "fichier": "865252032eddbdd3a00577c1.bin",
-       "taille": 11709,
+       "fichier": "e4cc76c2314c7d29fc97ae99.bin",
+       "taille": 13027,
        "pouce": "pouce:et-sources-conversions-et-stockage-de-l-ene-corrige-activite-3-l-autonomie-de-la-batterie-125-",
        "lie": "et-sources-conversions-et-stockage-de-l-ene-corrige-activite-3-l-autonomie-de-la-batterie-125-",
        "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
@@ -2092,8 +2101,8 @@
        "titre": "Activité 4 – Un projet d'ombrière solaire - coups de pouce",
        "type": "Activité",
        "format": "pouce",
-       "fichier": "93cf4b7f83108fb1c2dfa7c4.bin",
-       "taille": 12693,
+       "fichier": "407f9b4d5d9ed74075920e6e.bin",
+       "taille": 14011,
        "pouce": "pouce:et-sources-conversions-et-stockage-de-l-ene-corrige-activite-4-un-projet-d-ombriere-solaire",
        "lie": "et-sources-conversions-et-stockage-de-l-ene-corrige-activite-4-un-projet-d-ombriere-solaire",
        "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
@@ -2146,7 +2155,7 @@
       {
        "titre": "Animation – Sources, conversions et stockage de l'énergie",
        "type": "Animation",
-       "fichier": "63aeb7ead0d8df2a0112552f.bin",
+       "fichier": "b1888627106228d47d55854a.bin",
        "format": "html",
        "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
        "rubrique": "Animation"
@@ -2164,8 +2173,8 @@
        "titre": "Exercice 1 - coups de pouce",
        "type": "Exercices",
        "format": "pouce",
-       "fichier": "e104ef22d56ea69027d09486.bin",
-       "taille": 9821,
+       "fichier": "a1f6572699104d86cfb226f2.bin",
+       "taille": 11074,
        "pouce": "pouce:et-sources-conversions-et-stockage-de-l-ene-corrige-exercice-1",
        "lie": "et-sources-conversions-et-stockage-de-l-ene-corrige-exercice-1",
        "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
@@ -2196,8 +2205,8 @@
        "titre": "Exercice 2 - coups de pouce",
        "type": "Exercices",
        "format": "pouce",
-       "fichier": "4370e867f82b7d0836939961.bin",
-       "taille": 9776,
+       "fichier": "1d184bd2e0e87b99a4a862c9.bin",
+       "taille": 11029,
        "pouce": "pouce:et-sources-conversions-et-stockage-de-l-ene-corrige-exercice-2",
        "lie": "et-sources-conversions-et-stockage-de-l-ene-corrige-exercice-2",
        "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
@@ -2228,8 +2237,8 @@
        "titre": "Exercice 3 - coups de pouce",
        "type": "Exercices",
        "format": "pouce",
-       "fichier": "3436e5bab6202e820d6a3a50.bin",
-       "taille": 9835,
+       "fichier": "1015f751806520a7a3abd531.bin",
+       "taille": 11088,
        "pouce": "pouce:et-sources-conversions-et-stockage-de-l-ene-corrige-exercice-3",
        "lie": "et-sources-conversions-et-stockage-de-l-ene-corrige-exercice-3",
        "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
@@ -2260,8 +2269,8 @@
        "titre": "Exercice 4 - coups de pouce",
        "type": "Exercices",
        "format": "pouce",
-       "fichier": "e95d4e389783013c17cec475.bin",
-       "taille": 10270,
+       "fichier": "c591e292afa601d84999e275.bin",
+       "taille": 11536,
        "pouce": "pouce:et-sources-conversions-et-stockage-de-l-ene-corrige-exercice-4",
        "lie": "et-sources-conversions-et-stockage-de-l-ene-corrige-exercice-4",
        "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
@@ -2278,6 +2287,18 @@
         "wk": "fcMaEzsnw/jtYjrzMt/9gz/HhZZRBOyiXnTWj/Bsj+LeLxrT/FKEVMAILn2VPFI67/M7eGIY8lQ2Gn+u"
        },
        "rubrique": "Exercices"
+      },
+      {
+       "titre": "Mon parcours avant l'évaluation",
+       "type": "Parcours",
+       "format": "parcours",
+       "fichier": "8cd63ceb5bf7b4fac86ad5e3.bin",
+       "taille": 40782,
+       "corrige": {
+        "id": "et-sources-conversions-et-stockage-de-l-ene-parcours",
+        "wk": "bHqUxpsMBAYOb3yywjb7uyFWqI9Jm0l+6cYsg5FfhNCkCj1/vuyfaY8ICRuKDMgvR1rQmq/ujTQBQY7K"
+       },
+       "rubrique": "Mon profil de compétences"
       },
       {
        "titre": "Bilan",
@@ -2303,6 +2324,102 @@
      "verrou": {
       "id": "et-chap-sources-conversions-et-stockage-de-l-energie",
       "wk": "W70W31iGhUl8nC3IPUGnkioHrO7GOQJOxLR4qN8Pc0u/k9Aw6/y9LZ4+yuXun8Yd3P09auCp3TA1/qse"
+     },
+     "competences": {
+      "referentiel": "BTS ET",
+      "questions": {
+       "Activité 1": {
+        "A1": "APP",
+        "A2": "APP",
+        "A4": "REA",
+        "A5": "REA",
+        "B1": "ANA",
+        "B3": "REA",
+        "B5": "ANA",
+        "B6": "VAL",
+        "B7": "COM"
+       },
+       "Activité 2": {
+        "A1": "ANA",
+        "A2": "APP",
+        "A4": "REA",
+        "A5": "REA",
+        "A6": "REA",
+        "B1": "APP",
+        "B2": "ANA",
+        "B5": "COM"
+       },
+       "Activité 3": {
+        "A2": "APP",
+        "A3": "REA",
+        "A4": "REA",
+        "A5": "REA",
+        "A6": "VAL",
+        "B1": "REA",
+        "B2": "ANA",
+        "B3": "REA",
+        "B5": "COM"
+       },
+       "Activité 4": {
+        "A1": "APP",
+        "A2": "APP",
+        "A3": "REA",
+        "A5": "ANA",
+        "B2": "REA",
+        "B4": "VAL",
+        "B5": "VAL",
+        "B6": "REA",
+        "B7": "COM"
+       },
+       "Exercice 1": {
+        "Q1": "REA",
+        "Q2": "REA",
+        "Q3": "ANA",
+        "Q4": "ANA"
+       },
+       "Exercice 2": {
+        "Q2": "ANA",
+        "Q3": "ANA",
+        "Q4": "REA",
+        "Q5": "REA"
+       },
+       "Exercice 3": {
+        "Q1": "REA",
+        "Q2": "APP",
+        "Q3": "REA",
+        "Q4": "REA"
+       },
+       "Exercice 4": {
+        "Q1": "ANA",
+        "Q2": "REA",
+        "Q3": "REA",
+        "Q4": "VAL",
+        "Q5": "VAL"
+       },
+       "Animation": {
+        "1.1": "REA",
+        "1.2": "REA",
+        "1.3": "ANA",
+        "1.4": "ANA",
+        "2.1": "ANA",
+        "2.2": "REA",
+        "2.3": "REA",
+        "2.4": "REA",
+        "3.1": "REA",
+        "3.2": "ANA",
+        "3.3": "ANA",
+        "3.4": "REA",
+        "4.1": "REA",
+        "4.2": "REA",
+        "4.3": "REA",
+        "4.4": "REA",
+        "4.5": "REA",
+        "5.1": "REA",
+        "5.2": "REA",
+        "5.3": "APP",
+        "5.4": "REA"
+       }
+      }
      }
     }
    ]
@@ -3842,9 +3959,9 @@
   }
  ],
  "outilsWk": {
-  "et": "O3Kcrgp139o44GbX0ZIFqXT1ZB6BtX+vJxpdHvBPfAu3bz3I8g6O0hZ1YnxZYYieXBEG7VT5IJcU7/Qz",
-  "cira": "UcY2IvnvG/LLsO+ekxBMqmipr00oZRAA40wFoPf7KuI8y8U2JrAZU4IAYKB0pqNP6HwmL9Ly7+43zbix",
-  "cim": "n4My7ZDyMmuQJ4uuQRoznoSFrjXivb+Hb9lnMBv13SUBZoE+eR8OIU02SGGKzxwqqWzrYASXqK+MXg5J"
+  "et": "c10p6eInQCGqzBmNZbIkyhhG3cDeQWaf9OHrMa7kpsLUgC6iQhLPCr5DaCDVO7PPZhrbXfLKYLn7/Rz3",
+  "cira": "19kOpmijX3JgfzfWY1vXcyyQhCjD+TpR4yI96Nlp7LCCH/uTinTIwfX0OLFWdXQtiXfkD8HSQz8zHi5i",
+  "cim": "0WxFViFQ6EOBtYtZm5QRpSbul/Mre7JgHxBCrW5vmqLsgmepFQN6thSiPiiah2DEVhSWL0tnqfNClT7h"
  },
  "outils": [
   {
