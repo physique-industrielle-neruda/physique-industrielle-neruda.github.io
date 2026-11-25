@@ -2815,6 +2815,15 @@
      "titre": "Amplification",
      "docs": [
       {
+       "titre": "Comment ça marche – profil de compétences",
+       "type": "Document",
+       "fichier": "06c325492437aa71210a7d07.bin",
+       "taille": 59059,
+       "pages": 1,
+       "cv": "cira-chap-amplification",
+       "rubrique": "Pour commencer"
+      },
+      {
        "titre": "Activité 1 – L'ADI et le montage suiveur",
        "type": "Activité",
        "fichier": "8908064218adf1f2902c4590.bin",
@@ -2995,7 +3004,7 @@
       {
        "titre": "Animation – Amplification",
        "type": "Animation",
-       "fichier": "324092d65602063cb52387f0.bin",
+       "fichier": "b88127390f3d6c5eecf9ae73.bin",
        "format": "html",
        "cv": "cira-chap-amplification",
        "rubrique": "Animation"
@@ -3737,9 +3746,9 @@
   }
  ],
  "outilsWk": {
-  "et": "nrIuOo2qidAQZ5438SXSM8uIriKA5TJpvVj0tR7f2ihnC5OxSm8S8JpYGnrolUKBUN+qaKvjvHBOcbpn",
-  "cira": "7f2CLb7g4okPjYGCX7Kxms7vVMY4z1g7VJ78qptoEA2Hfbxr/aRW9821Nmx1+5wHXIV9BgUCOF+cU5qj",
-  "cim": "Qd7IOdtJDQkkcMM/uPyf3zj5kE5tEnEOKq1fTuhAHtvgvZUT9bJ/PiqvZNuXzWBtAaKez+/X0eMC45dL"
+  "et": "vYz1Ug0a6osM0zZ6fdSCPVlEev0Cqq1TQWPeDkRezNqa8/siUdiZJf/RV7lL/I0ABxltvVPcejiJvX0t",
+  "cira": "XH9KcbafIqKYOSN5+LJDz5IcswxvRE75XhYZqqoX01QqCJMnwWfILyEpg4hDO7MWE2lJKUyi/6Ix7soD",
+  "cim": "sFmWgfNsFRdQvNWb2pn0xI/P9DYGXACe2wqZf3oOL0rXCCMsebex82lcrc3TdSZxXLJwPqh4JoHCjEqi"
  },
  "outils": [
   {

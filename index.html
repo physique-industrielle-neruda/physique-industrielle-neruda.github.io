@@ -383,7 +383,10 @@ async function openDoc(cls, d, download){
   try {
     const key = cls === "outils" ? await outilsKey() : d.corrige ? await corrKey(d) : d.cv ? await chapKey(d.cv) : S.keys[cls];
     if (!key) throw new Error(d.cv && !d.corrige ? "chapitre" : "verrou");
-    const blob = await decryptBlob(BASE + "docs/" + cls + "/" + d.fichier, key, d.format === "html" ? "text/html;charset=utf-8" : d.format === "cartes" ? "application/json" : null);
+    let blob = await decryptBlob(BASE + "docs/" + cls + "/" + d.fichier, key, d.format === "html" ? "text/html;charset=utf-8" : d.format === "cartes" ? "application/json" : null);
+    /* Animation d'un dossier avec profil de compétences : reprise là où l'élève s'était arrêté (24/11/2026) */
+    if (d.type === "Animation" && d.format === "html" && eleveRev()) { const ch = chapDe(cls, d), st = ch && ch.competences ? MP[animId(ch)] : null;
+      if (st && st.reponses) { const t = await blob.text(); blob = new Blob([t.replace("</head>", () => "<script>window.ANIM_INIT = " + JSON.stringify(st.reponses) + ";<\/script></head>")], { type: "text/html;charset=utf-8" }); } }
     if (d.format === "cartes") {
       // Cartes d'un chapitre verrouillé : déchiffrées ici, puis confiées à cartes.html (même site, stockage local)
       try { localStorage.setItem("cartes-verrou." + cls + "." + d.ch, await blob.text()); } catch(_){}
