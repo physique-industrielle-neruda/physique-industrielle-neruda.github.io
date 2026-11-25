@@ -1,1 +1,2417 @@
-<!doctype html><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=../"><a href="../">Le site a déménagé : cliquez ici.</a>
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Physique industrielle — BTS</title>
+<meta name="description" content="Cours, TD et TP de physique industrielle pour les BTS Électrotechnique, CIRA et CIM.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Barlow+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F4F6F9; --surface:#FFFFFF; --ink:#1F3864; --text:#18212F; --muted:#5A6577;
+  --grid:#D8E0EA; --accent:#C55A11; --accent-soft:#FBEDE3; --ok:#3F7A3A; --ok-soft:#E6F1E3; --pouce:#7A4FB5; --pouce-soft:#EFE7FA; --pouce-row:#F8F4FD;
+  --focus:#C55A11; --shadow:0 1px 0 rgba(31,56,100,.08);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#101826; --surface:#172234; --ink:#AFC4EA; --text:#E4EAF3; --muted:#9AA7BC;
+    --grid:#2A3850; --accent:#F08A4B; --accent-soft:#3A2618; --ok:#8CC784; --ok-soft:#1F3320; --pouce:#C3A6F0; --pouce-soft:#2E2442; --pouce-row:#1D1A2C;
+    --focus:#F08A4B; --shadow:none;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#101826; --surface:#172234; --ink:#AFC4EA; --text:#E4EAF3; --muted:#9AA7BC;
+  --grid:#2A3850; --accent:#F08A4B; --accent-soft:#3A2618; --ok:#8CC784; --ok-soft:#1F3320; --pouce:#C3A6F0; --pouce-soft:#2E2442; --pouce-row:#1D1A2C;
+  --focus:#F08A4B; --shadow:none;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text);
+  font:17px/1.55 "Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",sans-serif}
+a{color:var(--ink)}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px;border-radius:4px}
+.wrap{max-width:860px;margin:0 auto;padding:0 16px}
+h1,h2,h3{font-family:"Barlow Condensed","Arial Narrow",sans-serif;color:var(--ink);line-height:1.1;margin:0}
+
+/* En-tête */
+header{background:var(--surface);border-bottom:1px solid var(--grid)}
+.head{display:grid;grid-template-columns:1fr;gap:4px;padding:28px 16px 0;max-width:860px;margin:0 auto}
+h1{font-size:clamp(2.4rem,7vw,3.6rem);font-weight:700;letter-spacing:-.01em}
+.who{color:var(--muted);margin:0}
+.trace{display:block;width:100%;height:92px;margin-top:14px}
+.trace .axis{stroke:var(--grid);stroke-width:1}
+.trace .h{fill:none;stroke:var(--ink);stroke-opacity:.18;stroke-width:1.2}
+.trace .sum{fill:none;stroke:var(--accent);stroke-width:2.6;stroke-linejoin:round;
+  stroke-dasharray:var(--len);stroke-dashoffset:var(--len);animation:draw 2.2s ease-out .2s forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+@media (prefers-reduced-motion: reduce){.trace .sum{animation:none;stroke-dashoffset:0}}
+
+/* Choix de la classe */
+nav.classes{display:flex;gap:0;border:1px solid var(--grid);border-radius:10px;overflow:hidden;
+  background:var(--surface);margin:24px 0 8px}
+nav.classes button{flex:1 1 0;min-width:0;border:0;background:none;color:var(--text);cursor:pointer;
+  padding:12px 10px;font:inherit;text-align:left;border-right:1px solid var(--grid)}
+nav.classes button:last-child{border-right:0}
+nav.classes .n{display:block;font-family:"Barlow Condensed",sans-serif;font-weight:600;font-size:1.3rem;color:var(--ink);line-height:1.15}
+nav.classes .s{display:block;font-size:.82rem;color:var(--muted)}
+nav.classes button[aria-pressed="true"]{background:var(--ink);}
+nav.classes .mini{display:none}
+nav.classes button[aria-pressed="true"] .n,nav.classes button[aria-pressed="true"] .s{color:var(--surface)}
+@media (max-width:520px){nav.classes .s,nav.classes .n:not(.mini){display:none}nav.classes .mini{display:block}nav.classes button{text-align:center}}
+
+.search{display:flex;align-items:center;gap:8px;margin:16px 0 4px}
+.search input{flex:1;font:inherit;padding:10px 12px;border:1px solid var(--grid);border-radius:8px;background:var(--surface);color:var(--text)}
+
+/* Classe */
+.classhead{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px;margin:28px 0 6px}
+.classhead h2{font-size:2rem}
+.status{font-size:.9rem;color:var(--muted)}
+.status.is-open{color:var(--ok)}
+.linkbtn{background:none;border:0;padding:0;font:inherit;font-size:.9rem;color:var(--ink);text-decoration:underline;cursor:pointer}
+
+.lock{background:var(--surface);border:1px solid var(--grid);border-left:4px solid var(--accent);
+  border-radius:8px;padding:16px;margin:12px 0 8px}
+.lock p{margin:0 0 10px}
+.lock form{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.lock input[type=password]{flex:1 1 220px;font:inherit;padding:10px 12px;border:1px solid var(--grid);border-radius:8px;background:var(--bg);color:var(--text)}
+.lock label.rem{display:flex;gap:6px;align-items:center;font-size:.9rem;color:var(--muted);width:100%}
+.btn{font:inherit;font-weight:700;border:0;border-radius:8px;padding:10px 16px;cursor:pointer;background:var(--ink);color:var(--surface)}
+.err{color:var(--accent);font-weight:700;margin:8px 0 0;min-height:1.2em}
+
+.ry-oral{margin:6px 0;padding:6px 10px;background:#FFF2CC;border-left:4px solid #C55A11;font-size:.9rem}
+.methode-fiche{display:inline-block;margin-top:6px;font-weight:bold;color:var(--ink)}
+.donnees-ov{position:fixed;inset:0;z-index:60;background:rgba(15,25,40,.55);display:flex;align-items:center;justify-content:center;padding:14px}
+.donnees-box{background:var(--surface,#fff);color:var(--text);max-width:640px;width:100%;max-height:92vh;overflow:auto;border-radius:10px;padding:16px 18px;font-size:.95rem;line-height:1.45}
+.donnees-box h2{margin:0 0 8px;background:#1F3864;color:#fff;padding:6px 10px;font-size:1.1rem}.donnees-box p{margin:6px 0}
+.donnees-fiche{background:#FFF2CC;padding:6px 10px}.donnees-ok{display:block;margin:12px 0 8px;font-weight:bold}
+.donnees-box button{background:#1F3864;color:#fff;border:0;border-radius:6px;padding:10px 18px;font-size:1rem;cursor:pointer}.donnees-box button:disabled{opacity:.45;cursor:default}
+.methode{margin:0 0 16px;padding:10px 14px;background:var(--surface);border:1px solid var(--grid);border-left:5px solid var(--accent);border-radius:0;font-size:.92rem;line-height:1.5;color:var(--text)}
+.methode b{display:block;font-family:"Barlow Condensed","Arial Narrow",sans-serif;font-size:1.15rem;color:var(--ink);margin-bottom:4px}
+.methode p{margin:2px 0;padding-left:1.4em;text-indent:-1.4em}.methode p span{display:inline-block;width:1.4em;text-indent:0;color:var(--accent)}
+.rythme{margin:12px 14px 4px;padding:12px 14px;border:1px solid var(--grid);border-radius:10px;background:var(--bg)}
+.ry-head{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:10px}.ry-head b{color:var(--ink);font-size:1.05rem;flex:1}
+.ry-st{font-weight:700;font-size:.85rem;padding:3px 10px;border-radius:999px}.ry-apercu{font-size:.78rem;color:var(--muted);font-style:italic}
+.ry-bar{position:relative;height:16px;border-radius:8px;background:var(--grid);overflow:visible}
+.ry-fill{position:absolute;left:0;top:0;bottom:0;border-radius:8px}
+.ry-marge{position:absolute;top:0;bottom:0;right:0;background:repeating-linear-gradient(45deg,transparent 0 4px,rgba(90,101,119,.35) 4px 6px);border-radius:0 8px 8px 0}
+.ry-now{position:absolute;top:-5px;bottom:-5px;width:3px;margin-left:-1.5px;background:var(--ink);border-radius:2px}
+.ry-leg{display:flex;flex-wrap:wrap;gap:4px 16px;margin-top:8px;font-size:.82rem;color:var(--muted)}
+.ry-k{display:inline-block;width:12px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}.ry-k.now{width:3px;background:var(--ink)}
+.ry-k.marge{background:repeating-linear-gradient(45deg,transparent 0 3px,rgba(90,101,119,.5) 3px 5px);border:1px solid var(--grid)}
+.ry-msg{margin:10px 0 6px;font-size:.95rem}.ry-eval{display:block;margin-top:8px;padding:8px 10px;border-radius:8px;background:#FBE5D6;color:#18212F}.ry-liste summary{cursor:pointer;color:var(--ink);font-weight:600;font-size:.9rem}
+.ry-liste ol{margin:6px 0 0 20px;padding:0;font-size:.9rem}.ry-liste li span{color:var(--muted)}.ry-liste li.ok{color:var(--ok)}.ry-liste li.part{color:var(--accent)}
+.ry-note{font-size:.8rem;color:var(--muted);margin:6px 0 0}.ry-cours{margin-top:8px}
+li.freine{opacity:.7}
+.chap{margin:14px 0 0;background:var(--surface);border:1px solid var(--grid);border-radius:10px;box-shadow:var(--shadow)}
+.chap>summary{list-style:none;cursor:pointer;display:flex;gap:14px;align-items:center;padding:14px 16px;border-radius:10px}
+.chap>summary::-webkit-details-marker{display:none}
+.chap>summary:hover{background:var(--bg)}
+.chap .folder{flex:none;width:34px;height:28px;color:var(--accent)}
+.chap h3{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;font-size:1.45rem;font-weight:600}
+.chap h3 .num{font-weight:700;color:var(--accent)}
+.chap h3 .count{font-family:"Atkinson Hyperlegible",system-ui,sans-serif;font-size:.85rem;font-weight:400;color:var(--muted)}
+.chap .chev{flex:none;width:12px;height:12px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(-45deg);transition:transform .15s;margin-right:6px}
+.chap[open] .chev{transform:rotate(45deg)}
+.chap.ferme>summary{cursor:default}
+.chap.ferme>summary:hover{background:transparent}
+.chap.ferme .folder{color:var(--muted)}
+.chap.ferme h3 .count{display:flex;align-items:center;gap:6px}
+.chap .lockico{width:12px;height:13px;flex:none}
+.badge-verrou{display:inline-flex;align-items:center;gap:5px;font-family:"Atkinson Hyperlegible",system-ui,sans-serif;font-size:.78rem;font-weight:600;color:#9a3412;background:#fff1e6;border:1px solid #fed7aa;border-radius:999px;padding:2px 9px;white-space:nowrap}
+.chap[open]>summary{border-bottom:1px solid var(--grid);border-radius:10px 10px 0 0}
+.annee{margin:18px 0 0}
+.annee>summary{list-style:none;cursor:pointer;display:flex;gap:12px;align-items:center;padding:12px 16px;border-radius:10px;
+  background:#1F3864;color:#fff}
+.annee>summary::-webkit-details-marker{display:none}
+.annee>summary:hover{filter:brightness(1.12)}
+.annee>summary .folder{flex:none;width:30px;height:25px;color:#fff}
+.annee>summary h3,.annee>summary h3 span{color:#fff}
+.annee>summary h3{flex:1;min-width:0;margin:0;display:flex;flex-direction:column;gap:2px;font-size:1.5rem;font-weight:700}
+.annee>summary .count{font-family:"Atkinson Hyperlegible",system-ui,sans-serif;font-size:.85rem;font-weight:400;opacity:.85}
+.annee>summary .moi{font-family:"Atkinson Hyperlegible",system-ui,sans-serif;font-size:.78rem;font-weight:700;
+  background:var(--accent);color:#fff;border-radius:20px;padding:2px 10px;white-space:nowrap}
+.annee>summary .chev{flex:none;width:12px;height:12px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;
+  transform:rotate(-45deg);transition:transform .15s;margin-right:6px}
+.annee[open]>summary .chev{transform:rotate(45deg)}
+.annee>.inner{padding:0 0 0 14px;border-left:3px solid #1F3864;margin-left:14px}
+@media (max-width:560px){.annee>.inner{padding-left:8px;margin-left:6px}}
+@media (prefers-reduced-motion: reduce){.annee>summary .chev{transition:none}}
+.chap ul.docs{padding:0 16px 4px}
+.chap ul.docs li:last-child{border-bottom:0}
+@media (prefers-reduced-motion: reduce){.chap .chev{transition:none}}
+ul.docs{list-style:none;margin:0;padding:0}
+ul.docs li{display:grid;grid-template-columns:7.2em 1fr auto;gap:12px;align-items:center;
+  padding:11px 0;border-bottom:1px solid var(--grid)}
+.type{font-size:.8rem;font-weight:700;color:var(--ink);background:var(--bg);border:1px solid var(--grid);
+  border-radius:20px;padding:2px 10px;justify-self:start;white-space:nowrap}
+.type.pouce{color:var(--pouce);border-color:currentColor;background:var(--pouce-soft)}
+li.pouce{background:var(--pouce-row);box-shadow:inset 4px 0 0 var(--pouce)}
+.type.tp{color:var(--accent);border-color:currentColor;background:var(--accent-soft)}
+.title{min-width:0}
+.title .meta{display:block;font-size:.82rem;color:var(--muted)}
+.actions{display:flex;gap:6px}
+.open{font:inherit;font-weight:700;font-size:.92rem;border:1px solid var(--ink);color:var(--ink);background:var(--surface);
+  border-radius:8px;padding:6px 12px;cursor:pointer;white-space:nowrap}
+a.open{text-decoration:none;display:inline-block}
+.open[disabled]{opacity:.45;cursor:not-allowed}
+.open.dl{border-color:var(--grid);color:var(--muted)}
+@media (max-width:560px){
+  ul.docs li{grid-template-columns:1fr auto;}
+  ul.docs li .type{grid-column:1/-1}
+  .open.dl{display:none}
+}
+.empty{color:var(--muted);margin:18px 0}
+.intro-outils{color:var(--muted);margin:4px 0 4px}
+.groupe{font-size:1.25rem;font-weight:600;margin:24px 0 0;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.status.libre{color:var(--ok)}
+.chap .folder.outil{color:var(--ok)}
+.sous{margin:10px 16px;border:1px solid var(--grid);border-radius:8px;background:var(--surface)}
+.sous>summary{list-style:none;cursor:pointer;display:flex;gap:10px;align-items:center;padding:9px 12px;border-radius:8px;font-weight:700}
+.sous>summary::-webkit-details-marker{display:none}
+.sous>summary:hover{background:var(--bg)}
+.sous .folder{width:24px;height:20px}
+.sous .nb{font-weight:400;font-size:.85rem;color:var(--muted);flex:1}
+.sous .chev{width:9px;height:9px}
+.sous[open]>summary{border-bottom:1px solid var(--grid);border-radius:8px 8px 0 0}
+.sous[open]>summary .chev{transform:rotate(45deg)}
+.chap .sous ul.docs{padding:0 12px 2px}
+.sous .sous{margin:8px 12px;background:var(--bg)}
+.sous .sous>summary{font-weight:600;padding:7px 10px}
+.sous .sous .folder{width:20px;height:17px}
+.chap>.sous:last-child{margin-bottom:14px}
+
+footer{color:var(--muted);font-size:.86rem;margin:48px 0 32px;padding-top:16px;border-top:1px solid var(--grid)}
+footer p{margin:0 0 8px;max-width:68ch}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:var(--surface);
+  padding:10px 16px;border-radius:8px;font-size:.95rem;display:none;max-width:calc(100% - 32px)}
+noscript p{background:var(--accent-soft);padding:12px;border-radius:8px}
+.lock input[type=text]{flex:1 1 180px;font:inherit;padding:10px 12px;border:1px solid var(--grid);border-radius:8px;background:var(--bg);color:var(--text)}
+.lock input[type=password]{flex:1 1 180px}
+.lock h2{font-size:1.6rem;margin:0 0 6px}
+.who-line{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:baseline;justify-content:space-between;margin:20px 0 0;color:var(--muted);font-size:.95rem}
+.who-line strong{color:var(--text)}
+.type.corr{color:var(--ok);border-color:currentColor;background:var(--ok-soft)}
+.type.corr.locked{color:var(--muted);border-color:var(--grid);background:var(--bg)}
+.open.locked{border-style:dashed;color:var(--muted);border-color:var(--grid);cursor:default;opacity:1}
+.lockico{display:inline-block;width:12px;height:13px;vertical-align:-1px;margin-right:6px}
+li.fresh{animation:fresh 2.4s ease-out}
+@keyframes fresh{0%{background:var(--ok-soft)}100%{background:transparent}}
+@media (prefers-reduced-motion: reduce){li.fresh{animation:none}}
+[hidden]{display:none!important}
+
+/* == Mes révisions (tests d'entrée + fiches de révision) == */
+.rv-intro{color:var(--muted);margin:4px 0 10px}
+.rv{background:var(--surface);border:1px solid var(--grid);border-radius:10px;margin:14px 0;box-shadow:var(--shadow);overflow:hidden}
+.rv>.hd{display:flex;gap:12px;align-items:center;padding:14px 16px;border-bottom:1px solid var(--grid);cursor:pointer;user-select:none}
+.rv>.hd:hover{background:var(--accent-soft)}
+.rv>.hd:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.rv>.hd .chev{flex:none;width:18px;height:18px;color:var(--muted);transition:transform .2s}
+.rv.open>.hd .chev{transform:rotate(90deg)}
+.rv:not(.open)>.hd{border-bottom:0}
+.rv:not(.open)>.bd{display:none}
+.rv>.hd .folder{flex:none;width:34px;height:28px;color:var(--accent)}
+.rv>.hd h3{flex:1;font-size:1.45rem;font-weight:600}
+.rv>.hd .tag{font-size:.8rem;font-weight:700;border-radius:20px;padding:3px 10px;white-space:nowrap;background:var(--accent-soft);color:var(--accent)}
+.rv>.hd .tag.ok{background:var(--ok-soft);color:var(--ok)}
+.rv .bd{padding:12px 16px}
+.rv .bd p{margin:0 0 10px}
+.rv ul.fl{list-style:none;margin:0;padding:0}
+.rv ul.fl li{display:flex;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--grid)}
+.rv ul.fl li:first-child{border-top:0}
+.rv ul.fl .t{flex:1;font-weight:700}
+.rv ul.fl .t small{display:block;font-weight:400;color:var(--muted)}
+.rv ul.fl .t small.ok{color:var(--ok);font-weight:700}
+.rv .msg{border-radius:8px;padding:10px 12px;margin:10px 0 0;font-weight:700;background:var(--ok-soft);color:var(--ok)}
+.btn.ghost{background:none;color:var(--ink);border:1px solid var(--ink)}
+.tst{background:var(--surface);border:1px solid var(--grid);border-radius:10px;padding:6px 16px 16px;margin:14px 0}
+.tst .cons{background:#FFF2CC;color:#18212F;border-radius:8px;padding:10px 12px;margin:12px 0}
+.tst .qq{border-top:1px solid var(--grid);padding:14px 0}
+.tst .qq .n{color:var(--accent);font-weight:700}
+.tst .qq svg.fig{display:block;max-width:100%;height:auto;margin:8px auto;background:#fff;border-radius:6px}
+.tst .qq .ln{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px}
+.tst .qq input{font:inherit;width:150px;padding:8px 10px;border:1px solid var(--grid);border-radius:8px;background:var(--bg);color:var(--text)}
+.tst .qq .pv{font-weight:700;margin-top:6px}.tst .qq .pv.ok{color:var(--ok)}.tst .qq .pv.ko{color:var(--accent)}
+.tst .act{display:flex;flex-wrap:wrap;gap:10px;margin-top:6px}
+.fiche-ov{position:fixed;inset:0;z-index:50;background:var(--bg);display:flex;flex-direction:column}
+.fiche-ov .bar{display:flex;align-items:center;gap:10px;padding:10px 14px;background:#1F3864;color:#fff}
+.fiche-ov .bar b{flex:1;font-size:1.05rem}
+.fiche-ov .bar button{font:inherit;font-weight:700;border:0;border-radius:8px;padding:8px 14px;background:#fff;color:#1F3864;cursor:pointer}
+.fiche-ov iframe{flex:1;border:0;width:100%;background:#F4F6F9}
+/* Points de cours en ligne (22/11/2026) */
+.type.pdc{background:#E2EFDA;color:#3F7A3A;border-color:#3F7A3A}
+li.pdc-fait .meta{color:#1f7a3f;font-weight:600}
+li.pdc-cours .meta{color:#b45309;font-weight:600}
+li.pdc-gris{opacity:.6}
+/* ===== Nouvelle présentation (26/11/2026) : en-tête sobre, cartes de dossiers, bouton « Reprendre », parcours à pastilles ===== */
+body.nv header{background:#1F3864;border-bottom:0}
+body.nv .head{padding:18px 16px 16px}
+body.nv h1{color:#fff;font-size:clamp(1.7rem,5vw,2.3rem)}
+body.nv .who{color:rgba(255,255,255,.82)}
+body.nv .trace{display:none}
+body.nv nav.classes{border:0;border-bottom:1px solid var(--grid);border-radius:0;background:transparent;overflow-x:auto;scrollbar-width:none;margin:10px 0 4px;gap:22px}
+body.nv nav.classes::-webkit-scrollbar{display:none}
+body.nv nav.classes button{flex:0 0 auto;border:0;border-bottom:3px solid transparent;border-radius:0;padding:12px 0 9px;text-align:left;background:none}
+body.nv nav.classes .s,body.nv nav.classes .mini{display:none!important}
+body.nv nav.classes .n:not(.mini){display:block!important;font-family:inherit;font-size:1rem;font-weight:700;color:var(--muted)}
+body.nv nav.classes button[aria-pressed="true"]{background:none;border-bottom-color:#C55A11}
+body.nv nav.classes button[aria-pressed="true"] .n{color:var(--ink)}
+body:not(.nv) .nv-only{display:none}
+.nv-theme{margin-left:12px}
+.nv{--bleu:#2E75B6}
+.nv h3{font-family:inherit}
+.nv-tuile{flex:none;display:flex;align-items:center;justify-content:center;border-radius:12px;
+  color:color-mix(in srgb,var(--c) 78%,var(--text));background:color-mix(in srgb,var(--c) 15%,var(--surface))}
+.nv-chip{display:inline-block;font-size:.74rem;font-weight:700;letter-spacing:.03em;text-transform:uppercase;padding:3px 9px;border-radius:999px;white-space:nowrap;
+  background:var(--bg);color:var(--muted);border:1px solid var(--grid)}
+.nv-chip.encours{background:color-mix(in srgb,#2E75B6 14%,var(--surface));color:var(--ink);border-color:transparent}
+.nv-chip.fait{background:var(--ok-soft);color:var(--ok);border-color:transparent}
+.nv-chip.test{background:var(--accent-soft);color:var(--accent);border-color:transparent}
+/* Accueil de la classe */
+.nv-hero{background:var(--surface);border:1px solid var(--grid);border-radius:14px;padding:16px;margin:16px 0 18px;display:flex;flex-direction:column;gap:14px;box-shadow:var(--shadow)}
+.nv-hero-top{display:flex;gap:16px;align-items:center}
+.nv-ring{position:relative;flex:none;line-height:0}
+.nv-ring>span{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--ink);line-height:1}
+.nv-sur{display:block;font-size:.74rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:color-mix(in srgb,#2E75B6 75%,var(--text))}
+.nv-hero h3{font-size:1.55rem;margin:2px 0}
+.nv-next{display:block;font-size:.92rem;color:var(--muted)}
+.nv-ry{display:flex;flex-direction:column;gap:6px;font-size:.95rem;padding:10px 12px;border-radius:10px;background:var(--bg)}
+.nv-ry .nv-chip{align-self:flex-start}
+.nv-reprendre{display:flex;align-items:center;justify-content:center;gap:8px;min-height:50px;border-radius:10px;background:#C55A11;color:#fff;font-weight:700;font-size:1.05rem;text-decoration:none}
+.nv-reprendre:hover{filter:brightness(1.08)}
+.nv-reprendre.second{background:var(--surface);color:var(--ink);border:1px solid var(--ink)}
+.nv-h{font-size:1.35rem;margin:22px 0 10px}
+.nv-grille{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:12px}
+@media (min-width:700px){.nv-grille{grid-template-columns:repeat(auto-fill,minmax(190px,1fr))}}
+.nv-carte-d{background:var(--surface);border:1px solid var(--grid);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:10px;text-decoration:none;color:var(--text);box-shadow:var(--shadow)}
+a.nv-carte-d:hover{border-color:var(--ink)}
+.nv-carte-d.actuel{border:2px solid #2E75B6;padding:13px}
+.nv-carte-d.ferme{background:var(--bg);border-style:dashed;color:var(--muted);box-shadow:none}
+.nv-carte-d .hd{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.nv-carte-d b{font-size:1.05rem;line-height:1.25;flex:1}
+.nv-carte-d .pied{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:.8rem;color:var(--muted);margin-top:auto}
+/* Page d'un dossier */
+.nv-retour{display:inline-flex;align-items:center;gap:4px;min-height:44px;margin-top:8px;font-weight:700;text-decoration:none;color:var(--ink)}
+.nv-dos-head{display:flex;gap:14px;align-items:center;margin:2px 0 12px}
+.nv-dos-head h2{font-size:clamp(1.6rem,5vw,2.1rem)}
+.nv-dos-head .st{display:block;color:var(--muted);font-size:.92rem;margin-top:3px}
+.nv-prog{display:flex;flex-direction:column;gap:6px;margin:0 0 10px}
+.nv-prog .barre{height:10px;background:var(--grid);border-radius:5px;overflow:hidden}
+.nv-prog .barre i{display:block;height:100%;background:#2E75B6;border-radius:5px}
+.nv-prog .leg{display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px 12px;font-size:.88rem;color:var(--muted)}
+.nv-prog .leg b{color:var(--text)}
+body.nv .nv .rythme{margin:10px 0 6px;background:var(--surface)}
+.nv-parcours{list-style:none;margin:18px 0 0;padding:0}
+.nv-et{display:flex;gap:12px}
+.nv-rail{width:32px;flex:none;display:flex;flex-direction:column;align-items:center}
+.nv-pas{width:32px;height:32px;flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;
+  background:var(--surface);border:2px solid var(--grid);color:var(--muted)}
+.nv-et.fait .nv-pas{background:#3F7A3A;border-color:#3F7A3A;color:#fff}
+.nv-et.encours .nv-pas{border-color:#2E75B6;color:var(--ink)}
+.nv-et.actuelle .nv-pas{background:#2E75B6;border-color:#2E75B6;color:#fff;box-shadow:0 0 0 5px color-mix(in srgb,#2E75B6 22%,transparent)}
+.nv-et.libre .nv-pas{border-style:dashed}
+.nv-et.eval .nv-pas{border-color:#C55A11;color:#C55A11;background:var(--accent-soft)}
+.nv-fil{width:2px;flex:1;min-height:10px;background:var(--grid);margin:3px 0}
+.nv-et.fait .nv-fil{background:#3F7A3A}
+.nv-et:last-child .nv-fil{display:none}
+.nv-carte{flex:1;min-width:0;margin-bottom:10px;background:var(--surface);border:1px solid var(--grid);border-radius:12px;box-shadow:var(--shadow)}
+.nv-et.actuelle .nv-carte{border:2px solid #2E75B6}
+.nv-carte>summary{list-style:none;cursor:pointer;display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:12px;min-height:44px}
+.nv-carte>summary::-webkit-details-marker{display:none}
+.nv-carte>summary:hover{background:var(--bg)}
+.nv-carte[open]>summary{border-bottom:1px solid var(--grid);border-radius:12px 12px 0 0}
+.nv-carte .txt{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+.nv-carte .lab{font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:color-mix(in srgb,var(--c) 78%,var(--text))}
+.nv-carte .tt{font-weight:700;line-height:1.25}
+.nv-etat{font-size:.72rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap;color:var(--muted)}
+.nv-etat.fait{color:var(--ok)}
+.nv-etat.encours{color:color-mix(in srgb,#2E75B6 75%,var(--text))}
+.nv-chev{flex:none;width:10px;height:10px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(-45deg);transition:transform .15s;margin:0 4px}
+.nv-carte[open] .nv-chev{transform:rotate(45deg)}
+@media (prefers-reduced-motion: reduce){.nv-chev{transition:none}}
+.nv-carte ul.docs{padding:0 12px 2px}
+.nv-carte ul.docs li:last-child{border-bottom:0}
+.nv-carte h4{margin:12px 12px 0;font-size:.95rem;color:var(--ink)}
+.nv-carte .nv-info{margin:10px 12px;font-size:.9rem;color:var(--muted)}
+.nv-vide{color:var(--muted);margin:12px 0}
+@media (min-width:1000px){
+  body.nv .wrap,body.nv .head{max-width:1120px}
+  .nv-dos-corps{display:grid;grid-template-columns:minmax(0,360px) minmax(0,1fr);gap:28px;align-items:start}
+  .nv-dos-corps>.nv-parcours:only-child{grid-column:1/-1}
+  .nv-cote{position:sticky;top:14px}
+  .nv-dos-corps .nv-parcours{margin-top:0}
+  .nv-hero{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);align-items:center;column-gap:24px}
+  .nv-hero .nv-reprendre{grid-column:2}
+  .nv-hero .nv-ry{grid-column:2;grid-row:1}
+  .nv-hero .nv-hero-top{grid-row:1 / span 2}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="head">
+    <h1>Physique industrielle</h1>
+    <p class="who" id="who"></p>
+  </div>
+  <svg class="trace" viewBox="0 0 860 92" preserveAspectRatio="none" aria-hidden="true" id="trace"></svg>
+</header>
+
+<main class="wrap">
+  <noscript><p>Ce site a besoin de JavaScript pour ouvrir les documents.</p></noscript>
+  <div class="who-line" id="whoLine" hidden></div>
+  <nav class="classes" id="classes" aria-label="Choisir une rubrique"></nav>
+  <div class="search" id="searchBox" hidden>
+    <input type="search" id="q" placeholder="Rechercher un document (ex. Fourier, TP 1…)" aria-label="Rechercher un document">
+  </div>
+  <section id="view" aria-live="polite"></section>
+  <footer>
+    <p>Connectez-vous avec l'identifiant et le mot de passe personnels donnés par votre professeur. Les documents sont déchiffrés directement sur votre appareil.</p>
+    <p>Les corrigés s'ouvrent quand le professeur a vérifié votre travail.</p>
+    <p>Sur un ordinateur du lycée, ne cochez pas « Rester connecté sur cet appareil ».</p>
+    <p>La rubrique Outils (fiches méthodes et simulations des appareils de TP) est accessible une fois connecté.</p>
+  </footer>
+</main>
+<div class="toast" id="toast" role="status"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut, setPersistence, browserLocalPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, doc, getDoc, getDocs, setDoc as fbSetDoc, collection, query, where, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { profil as calcProfil, profilHtml, synthese, PROFIL_CSS, bilanAnnee, anneeHtml, ANNEE_CSS } from "../competences.js";
+import { etat as etatRythme, STATUTS, heures, exemplesId, itemDuDoc, rythmeDoc, oralCible, comDe, prevision } from "../rythme.js";
+
+const FB = {"apiKey":"AIzaSyDH32Ma0shVbsIHR0xNJbahb5MO0RKHRS0","authDomain":"physique-neruda.firebaseapp.com","projectId":"physique-neruda","storageBucket":"physique-neruda.firebasestorage.app","messagingSenderId":"62730174289","appId":"1:62730174289:web:588c846aadd4eec2109d70"};
+const DOMAINE = "@physique-neruda.firebaseapp.com";
+const PROF = "prof" + DOMAINE;
+const app = initializeApp(FB), auth = getAuth(app), db = getFirestore(app);
+/* Compte de démonstration : aucune écriture vers Firebase (voir « Compte de démonstration » plus bas) */
+const setDoc = (r, v, o) => S.demo ? demoEcrire(r, v) : fbSetDoc(r, v, o);
+
+const BASE = /\/essai\/(index\.html)?$/.test(location.pathname) ? "../" : "";
+const $ = s => document.querySelector(s);
+const b64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+const enc = new TextEncoder();
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const size = n => n > 1e6 ? (n/1e6).toFixed(1).replace(".", ",") + " Mo" : Math.max(1, Math.round(n/1e3)) + " ko";
+
+let CAT = null, current = null, booted = false;
+let EVAL = { evaluations: [] }, NOMS = {};
+/* Session : rôle, classe, clés */
+let S = { user:null, prof:false, evals:false, premium:false, tous:false, nom:"", site:null, groupe:null, keys:{}, maitre:null, corr:{}, corrAt:{}, rythme:{} };
+let unsubCorr = null, fresh = new Set();
+/* Mes révisions : tests d'entrée et fiches de révision (revisions.json, Firestore « tests » et « revisions ») */
+let REV = { tests: [], fiches: {} }, MT = {}, MF = {}, unsubRev = [], VUE_REV = null;
+/* Points de cours en ligne (Firestore « pointsdecours/<uid>__<id> ») */
+let MP = {};
+const opened = new Set();
+const fermes = new Set(); // dossiers d'année refermés par l'élève (sinon le sien s'ouvre tout seul)
+
+function toast(msg){ const t = $("#toast"); t.textContent = msg; t.style.display = "block"; clearTimeout(toast.t); toast.t = setTimeout(() => t.style.display = "none", 4500); }
+
+/* Tracé d'en-tête : carré reconstruit à partir de ses harmoniques impairs */
+(function drawTrace(){
+  const svg = $("#trace"), W = 860, H = 92, mid = H/2, A = 30, periods = 3.2;
+  const pt = (f) => { let d = ""; for (let x = 0; x <= W; x += 2) {
+      const t = x / W * periods * 2 * Math.PI; d += (x ? "L" : "M") + x + " " + (mid - A * f(t)).toFixed(2); } return d; };
+  const ns = "http://www.w3.org/2000/svg";
+  const add = (cls, d) => { const p = document.createElementNS(ns, "path"); p.setAttribute("class", cls); p.setAttribute("d", d); svg.appendChild(p); return p; };
+  const ax = document.createElementNS(ns, "line");
+  ax.setAttribute("x1",0);ax.setAttribute("x2",W);ax.setAttribute("y1",mid);ax.setAttribute("y2",mid);ax.setAttribute("class","axis");svg.appendChild(ax);
+  [1,3,5].forEach(n => add("h", pt(t => 4/Math.PI * Math.sin(n*t)/n)));
+  const s = add("sum", pt(t => { let v = 0; for (let n = 1; n <= 13; n += 2) v += Math.sin(n*t)/n; return 4/Math.PI * v; }));
+  s.style.setProperty("--len", Math.ceil(s.getTotalLength ? s.getTotalLength() : 3000));
+})();
+
+const importKey = raw => crypto.subtle.importKey("raw", raw, "AES-GCM", false, ["decrypt"]);
+
+async function decryptBlob(url, key, type){
+  const r = await fetch(url, {cache:"no-cache"});
+  if (!r.ok) throw new Error("introuvable");
+  const buf = new Uint8Array(await r.arrayBuffer());
+  const plain = await crypto.subtle.decrypt({name:"AES-GCM", iv:buf.slice(0,12)}, key, buf.slice(12));
+  return new Blob([plain], {type: type || "application/pdf"});
+}
+
+/* Clé d'un corrigé : transmise par le professeur (élève) ou extraite de l'enveloppe (professeur) */
+async function corrKey(d){
+  const id = d.corrige.id;
+  if (S.corr[id]) return importKey(b64(S.corr[id]));
+  if ((S.prof || S.premium) && S.maitre) {
+    const w = b64(d.corrige.wk);
+    const raw = await crypto.subtle.decrypt({name:"AES-GCM", iv:w.slice(0,12), additionalData:enc.encode(id)}, S.maitre, w.slice(12));
+    return importKey(raw);
+  }
+  return null;
+}
+
+/* Rubrique Outils (comptes connectés) : clé « outils » enveloppée par la clé de chaque classe */
+let KO = null;
+async function outilsKey(){
+  if (KO) return KO;
+  for (const id in S.keys) {
+    const wk = CAT.outilsWk && CAT.outilsWk[id]; if (!wk) continue;
+    try { const w = b64(wk); KO = await importKey(await crypto.subtle.decrypt({name:"AES-GCM", iv:w.slice(0,12), additionalData:enc.encode("outils")}, S.keys[id], w.slice(12))); return KO; } catch(_){}
+  }
+  return null;
+}
+
+/* Chapitre verrouillé : clé transmise par le professeur (élève) ou extraite de l'enveloppe (professeur, invité premium) */
+function chapInfo(id){ for (const c of CAT.classes) for (const ch of c.chapitres) if (ch.verrou && ch.verrou.id === id) return ch.verrou; return null; }
+/* Élève d'une classe de 1re année : pas d'accès aux chapitres de 2e année */
+function anneeOK(ch){
+  if (S.prof || S.tous || !ch.annee) return true;
+  const g = (CAT.groupes || []).find(x => x.id === S.groupe);
+  return !(g && g.annee === 1 && ch.annee > 1);
+}
+const chapOK = ch => !ch.verrou || S.prof || S.premium || !!S.corr[ch.verrou.id];
+/* Ordre des dossiers (24/11/2026) : le plus récemment débloqué tout en haut, puis les plus anciens ;
+   les chapitres encore verrouillés restent en bas et remontent en tête quand ils sont ouverts.
+   Date = déblocage de l'élève (son propre accès) ; pour le professeur, 1er déblocage dans une classe. */
+let OUV = null;   // professeur / invité premium : id du verrou -> date du 1er déblocage
+function ordreChaps(c, xs){
+  const idx = new Map(c.chapitres.map((ch, i) => [ch, i]));
+  const date = ch => S.corrAt[ch.verrou.id] || (OUV && OUV[ch.verrou.id]) || 0;
+  const etat = ch => {
+    if (!ch.verrou) return 1;                                     // ancien chapitre, jamais sous cadenas
+    if (S.prof || S.premium) return OUV && OUV[ch.verrou.id] ? 0 : 2;
+    return S.corr[ch.verrou.id] ? 0 : 2;
+  };
+  return xs.slice().sort((a, b) => {
+    const A = a.ch, B = b.ch, ea = etat(A), eb = etat(B);
+    if (ea !== eb) return ea - eb;
+    if (ea === 0 && date(B) !== date(A)) return date(B) - date(A);
+    if (ea === 2) return idx.get(A) - idx.get(B);
+    const na = parseFloat(A.num), nb = parseFloat(B.num);
+    if (!isNaN(na) && !isNaN(nb) && na !== nb) return nb - na;
+    return idx.get(B) - idx.get(A);
+  });
+}
+/* Ouvert = débloqué pour au moins un vrai élève (les comptes invités ne comptent pas).
+   Si la liste des déblocages n'est pas lisible (invité premium « professeur »), on prend le résumé
+   que l'appli professeur enregistre dans prive/cles (champ « ouvertures »). */
+async function chargerOuvertures(resume){
+  OUV = {};
+  try { const snap = await getDocs(collection(db, "deblocages")); const o = {};
+    snap.forEach(x => { const v = x.data(); if (!v.doc || !chapInfo(v.doc) || v.classe === "invites") return; const t = v.at && v.at.toMillis ? v.at.toMillis() : Date.now(); if (!o[v.doc] || t < o[v.doc]) o[v.doc] = t; });
+    OUV = o; } catch(_){ OUV = resume || {}; }
+}
+async function chapKey(id){
+  if (S.corr[id]) return importKey(b64(S.corr[id]));
+  const v = chapInfo(id);
+  if (v && (S.prof || S.premium) && S.maitre) {
+    const w = b64(v.wk);
+    return importKey(await crypto.subtle.decrypt({name:"AES-GCM", iv:w.slice(0,12), additionalData:enc.encode(id)}, S.maitre, w.slice(12)));
+  }
+  return null;
+}
+
+async function openDoc(cls, d, download){
+  let w = null;
+  if (!download) { w = window.open("", "_blank"); if (w) { try { w.document.title = d.titre; w.document.body.innerHTML = "<p style='font:16px sans-serif;padding:20px'>Ouverture de « " + esc(d.titre) + " »…</p>"; } catch(e){} } }
+  try {
+    const key = cls === "outils" ? await outilsKey() : d.corrige ? await corrKey(d) : d.cv ? await chapKey(d.cv) : S.keys[cls];
+    if (!key) throw new Error(d.cv && !d.corrige ? "chapitre" : "verrou");
+    let blob = await decryptBlob(BASE + "docs/" + cls + "/" + d.fichier, key, d.format === "html" ? "text/html;charset=utf-8" : d.format === "cartes" ? "application/json" : null);
+    /* Animation d'un dossier avec profil de compétences : reprise là où l'élève s'était arrêté (24/11/2026) */
+    if (d.type === "Animation" && d.format === "html" && eleveRev()) { const ch = chapDe(cls, d), st = compDe(ch) ? MP[animId(ch)] : null;
+      if (st && st.reponses) { const t = await blob.text(); blob = new Blob([t.replace("</head>", () => "<script>window.ANIM_INIT = " + JSON.stringify(st.reponses) + ";<\/script></head>")], { type: "text/html;charset=utf-8" }); } }
+    if (d.format === "cartes") {
+      // Cartes d'un chapitre verrouillé : déchiffrées ici, puis confiées à cartes.html (même site, stockage local)
+      try { localStorage.setItem("cartes-verrou." + cls + "." + d.ch, await blob.text()); } catch(_){}
+      const href = BASE + "cartes.html?c=" + encodeURIComponent(cls) + "&ch=" + encodeURIComponent(d.ch) + "&v=1";
+      if (w) w.location.href = href; else location.href = href;
+      return;
+    }
+    const url = URL.createObjectURL(blob);
+    if (w && !download && d.type === "Animation") ANIMS.set(w, { c: cls, d });
+    if (w && !download) { w.location.href = url; }
+    else { const a = document.createElement("a"); a.href = url; a.download = d.titre + ".pdf"; document.body.appendChild(a); a.click(); a.remove(); }
+    setTimeout(() => URL.revokeObjectURL(url), 120000);
+  } catch(e) {
+    if (w) w.close();
+    toast(e.message === "verrou" ? "Ce corrigé n'est pas encore débloqué." : e.message === "chapitre" ? "Ce chapitre n'est pas encore ouvert." : "Impossible d'ouvrir ce document. Rechargez la page et réessayez.");
+  }
+}
+
+/* == Évaluations == */
+/* Noms des élèves (chiffrés dans evaluations.json, lisibles avec la clé maître) */
+async function nomsEvals(){
+  try {
+    if (!EVAL.noms || !S.maitre) return;
+    const w = b64(EVAL.noms);
+    const raw = await crypto.subtle.decrypt({name:"AES-GCM", iv:w.slice(0,12), additionalData:enc.encode("noms")}, S.maitre, w.slice(12));
+    const n = JSON.parse(new TextDecoder().decode(raw));
+    for (const id in n) NOMS[id] = { nom: n[id].nom, eleves: { ...(NOMS[id] || {}).eleves, ...n[id].eleves } };
+  } catch(_){}
+}
+const fmtDate = d => d ? d.split("-").reverse().join("/") : "";
+async function evalKey(item){
+  const id = item.corrige.id;
+  if (S.corr[id]) return importKey(b64(S.corr[id]));
+  if (S.evals && S.maitre) {
+    const w = b64(item.corrige.wk);
+    return importKey(await crypto.subtle.decrypt({name:"AES-GCM", iv:w.slice(0,12), additionalData:enc.encode(id)}, S.maitre, w.slice(12)));
+  }
+  return null;
+}
+async function openEval(item, titre, download){
+  let w = null;
+  if (!download) { w = window.open("", "_blank"); if (w) { try { w.document.title = titre; w.document.body.innerHTML = "<p style='font:16px sans-serif;padding:20px'>Ouverture…</p>"; } catch(e){} } }
+  try {
+    const key = await evalKey(item); if (!key) throw new Error("verrou");
+    const url = URL.createObjectURL(await decryptBlob(BASE + "docs/evaluations/" + item.fichier, key));
+    if (w && !download) w.location.href = url;
+    else { const a = document.createElement("a"); a.href = url; a.download = titre + ".pdf"; document.body.appendChild(a); a.click(); a.remove(); }
+    setTimeout(() => URL.revokeObjectURL(url), 120000);
+  } catch(e) { if (w) w.close(); toast(e.message === "verrou" ? "Cette copie n'est pas encore disponible." : "Impossible d'ouvrir ce document. Rechargez la page et réessayez."); }
+}
+function evalRow(label, titre, meta, item){
+  const li = document.createElement("li");
+  if (fresh.has(item.corrige.id)) li.className = "fresh";
+  li.innerHTML = `<span class="type corr">${esc(label)}</span><span class="title">${esc(titre)}<span class="meta">${esc(meta)}</span></span>
+    <span class="actions"><button class="open" type="button">Ouvrir</button><button class="open dl" type="button" aria-label="Télécharger ${esc(titre)}">Télécharger</button></span>`;
+  const [o, dl] = li.querySelectorAll("button");
+  o.onclick = () => openEval(item, titre, false); dl.onclick = () => openEval(item, titre, true);
+  return li;
+}
+const pdfMeta = it => `PDF, ${it.pages ? it.pages + " p., " : ""}${size(it.taille)}`;
+function folderBox(cls, key, titre, count, forceOpen){
+  const s = document.createElement("details"); s.className = cls;
+  if (forceOpen || opened.has(key)) s.open = true;
+  s.innerHTML = `<summary>${FOLDER}<h3><span>${esc(titre)}</span><span class="count">${esc(count)}</span></h3><span class="chev" aria-hidden="true"></span></summary>`;
+  s.addEventListener("toggle", () => { if (s.open) opened.add(key); else opened.delete(key); });
+  return s;
+}
+/* Élève : onglet « Mes évaluations » (24/11/2026, auparavant dossier en haut de la classe) */
+const nbMesEvals = () => S.demo ? (S.demoEvals || []).length : (EVAL.evaluations || []).filter(e => e.site === S.site && (e.copies || []).some(x => S.corr[x.corrige.id])).length;
+function renderMesEvals(view){
+  const c = visibleClasses().find(x => x.id === S.site); if (!c) return;
+  const head = document.createElement("div"); head.className = "classhead";
+  head.innerHTML = `<h2>Mes évaluations</h2><span class="status is-open">Visible par toi seul</span>`;
+  view.appendChild(head);
+  const s = mesEvals(c); s.open = true; s.querySelector("h3 span").textContent = "Mes copies corrigées"; view.appendChild(s);
+}
+/* Élève : dossier « Mes évaluations » (seulement ses propres copies, une fois publiées par le professeur) */
+function mesEvals(c){
+  if (S.demo) {   // compte de démonstration : copies fictives, les vraies copies ne sont jamais montrées
+    const de = (S.demoEvals || []).slice().sort((a, b) => b.date.localeCompare(a.date)), n = de.length;
+    const s = folderBox("chap evals", c.id + "/mes-evaluations", "Mes évaluations", n ? n + " copie" + (n > 1 ? "s" : "") + " corrigée" + (n > 1 ? "s" : "") : "Aucune copie corrigée pour l'instant");
+    const ul = document.createElement("ul"); ul.className = "docs";
+    if (!n) { const li = document.createElement("li"); li.innerHTML = `<span class="title"><span class="meta">Tes copies corrigées apparaîtront ici après chaque évaluation.</span></span>`; ul.appendChild(li); }
+    de.forEach(e => ul.appendChild(demoEvalRow(e))); s.appendChild(ul); return s;
+  }
+  const evs = (EVAL.evaluations || []).filter(e => e.site === c.id)
+    .map(e => ({ e, cp: (e.copies || []).find(x => S.corr[x.corrige.id]) })).filter(x => x.cp)
+    .sort((a, b) => (b.e.date || "").localeCompare(a.e.date || ""));
+  const n = evs.length;
+  const s = folderBox("chap evals", c.id + "/mes-evaluations", "Mes évaluations", n ? n + " copie" + (n > 1 ? "s" : "") + " corrigée" + (n > 1 ? "s" : "") : "Aucune copie corrigée pour l'instant", evs.some(x => fresh.has(x.cp.corrige.id)));
+  const ul = document.createElement("ul"); ul.className = "docs";
+  if (!n) { const li = document.createElement("li"); li.innerHTML = `<span class="title"><span class="meta">Tes copies corrigées apparaîtront ici après chaque évaluation.</span></span>`; ul.appendChild(li); }
+  evs.forEach(x => ul.appendChild(evalRow("Ma copie", x.e.titre, (x.e.date ? fmtDate(x.e.date) + " · " : "") + pdfMeta(x.cp), x.cp)));
+  s.appendChild(ul); return s;
+}
+/* Professeur : dossier « Évaluations » → classe → évaluation (copies) + « Bilans de correction » */
+function renderEvaluationsProf(view){
+  const head = document.createElement("div"); head.className = "classhead";
+  head.innerHTML = `<h2>Évaluations</h2><span class="status is-open">Visible par vous seul</span>`;
+  view.appendChild(head);
+  const evs = EVAL.evaluations || [];
+  if (!evs.length) { const p = document.createElement("p"); p.className = "empty"; p.textContent = "Aucune évaluation corrigée pour l'instant."; view.appendChild(p); return; }
+  const ids = [...new Set(evs.map(e => e.classe))];
+  ids.forEach(cid => {
+    const info = NOMS[cid] || { nom: cid, eleves: {} };
+    const mine = evs.filter(e => e.classe === cid).sort((a, b) => (b.date || "").localeCompare(a.date || ""));
+    const k = "evals/" + cid;
+    const box = document.createElement("details"); box.className = "annee";
+    if (opened.has(k) || ids.length === 1) box.open = true;
+    box.innerHTML = `<summary>${FOLDER}<h3><span>${esc(info.nom)}</span><span class="count">${mine.length} évaluation${mine.length > 1 ? "s" : ""}</span></h3><span class="chev" aria-hidden="true"></span></summary>`;
+    box.addEventListener("toggle", () => { if (box.open) opened.add(k); else opened.delete(k); });
+    const inner = document.createElement("div"); inner.className = "inner";
+    mine.forEach(e => {
+      const cps = (e.copies || []).map(cp => ({ cp, nom: info.eleves[cp.login] || cp.login })).sort((a, b) => a.nom.localeCompare(b.nom, "fr"));
+      const s = folderBox("chap", k + "/" + e.id, (e.date ? fmtDate(e.date) + " – " : "") + e.titre, cps.length + " copie" + (cps.length > 1 ? "s" : ""));
+      const ul = document.createElement("ul"); ul.className = "docs";
+      cps.forEach(x => ul.appendChild(evalRow("Copie", x.nom, pdfMeta(x.cp), x.cp)));
+      s.appendChild(ul); inner.appendChild(s);
+    });
+    const bil = mine.filter(e => e.bilan);
+    const sb = folderBox("chap", k + "/bilans", "Bilans de correction", bil.length + " bilan" + (bil.length > 1 ? "s" : ""));
+    const ub = document.createElement("ul"); ub.className = "docs";
+    bil.forEach(e => ub.appendChild(evalRow("Bilan", (e.date ? fmtDate(e.date) + " – " : "") + e.titre, pdfMeta(e.bilan), e.bilan)));
+    sb.appendChild(ub); inner.appendChild(sb);
+    box.appendChild(inner); view.appendChild(box);
+  });
+}
+
+const LOCK = '<svg class="lockico" viewBox="0 0 12 13" aria-hidden="true"><rect x="1" y="5.5" width="10" height="7" rx="1.5" fill="currentColor"/><path d="M3.5 5.5V4a2.5 2.5 0 0 1 5 0v1.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>';
+
+function visibleClasses(){
+  if (!S.user) return [];
+  if (S.prof || S.tous) return CAT.classes;
+  return CAT.classes.filter(c => c.id === S.site);
+}
+
+function renderNav(){
+  const nav = $("#classes"); nav.innerHTML = "";
+  const items = visibleClasses().map(c => ({id:c.id, n:c.court, mini:c.mini||c.court, s:c.sous}));
+  /* Onglet « Mes compétences » (24/11/2026), juste après la classe : suivi sur tous les dossiers de l'année */
+  if (S.user && !S.prof && !S.tous && S.site && chapsCompetencesEleve().length) items.push({id:"mes-competences", n:"Mes compétences", mini:"Compét.", s:"Mon suivi sur l'année"});
+  /* Onglet « Mes évaluations » de l'élève, juste après sa classe (24/11/2026) */
+  if (S.user && !S.prof && !S.tous && S.site) { const n = nbMesEvals(); items.push({id:"mes-evaluations", n:"Mes évaluations", mini:"Évals", s: n ? n + " copie" + (n > 1 ? "s" : "") + " corrigée" + (n > 1 ? "s" : "") : "Copies corrigées"}); }
+  if (S.evals) items.push({id:"evaluations", n:"Évaluations", mini:"Évals", s:"Copies corrigées et bilans"});
+  if (S.evals && S.maitre) items.push({id:"calendrier", n:"Calendrier", mini:"Calendrier", s:"Séances et heures par classe"});
+  if (!S.user) items.push({id:"connexion", n:"Connexion", mini:"Connexion", s:"Accès aux cours de votre BTS"});
+  if (S.user && testsOuverts().length) { const n = fichesAFaire(); items.push({id:"revisions", n:"Mes révisions", mini:"Révisions", s: n ? n + " fiche" + (n > 1 ? "s" : "") + " à travailler" : "Tests d'entrée et fiches"}); }
+  if (S.user && (CAT.outils || []).length) items.push({id:"outils", n:"Outils", mini:"Outils", s:"Fiches méthodes et simulations"});
+  if (S.demo) items.push({id:"demo", n:"Démonstration", mini:"Démo", s:"Changer d'élève"});
+  for (const it of items) {
+    const b = document.createElement("button");
+    b.type = "button"; b.setAttribute("aria-pressed", String(it.id === current));
+    b.innerHTML = `<span class="n">${esc(it.n)}</span><span class="n mini">${esc(it.mini)}</span><span class="s">${esc(it.s)}</span>`;
+    b.onclick = () => { location.hash = it.id; };
+    nav.appendChild(b);
+  }
+}
+
+function renderWho(){
+  const w = $("#whoLine");
+  if (!S.user) { w.hidden = true; return; }
+  w.hidden = false;
+  const grp = (CAT.groupes || []).find(g => g.id === S.groupe);
+  w.innerHTML = `<span>Connecté : <strong>${esc(S.prof ? "Professeur" : S.nom)}</strong>${grp && !S.prof && !S.premium ? " · " + esc(grp.nom) : ""}</span><span><button class="linkbtn" type="button" data-act="sortie">Se déconnecter</button><button class="linkbtn nv-only nv-theme" type="button" data-act="theme">${nvTheme() ? "Mode clair" : "Mode sombre"}</button></span>`;
+  w.querySelector('[data-act="theme"]').onclick = nvBasculeTheme;
+  w.querySelector('[data-act="sortie"]').onclick = async () => { await signOut(auth); location.hash = ""; };
+}
+
+function docRow(c, d){
+  if (d.type === "Profil") return profilRow(c, d);
+  if (d.format === "parcours") return parcoursRow(c, d);
+  if (d.type === "Point de cours") return pdcRow(c, d);
+  if (d.format === "pouce") return pouceRow(c, d);
+  if (d.format === "exemples") return exemplesRow(c, d);
+  const li = document.createElement("li");
+  if (freine(c, d)) {
+    li.className = "freine";
+    li.innerHTML = `<span class="type locked">${LOCK}${esc(d.type)}</span>
+      <span class="title">${esc(d.titre)}<span class="meta">Tu as plus d'1 h d'avance sur le dossier : cette partie s'ouvrira après la prochaine séance. En attendant, fais les « Côté terrain ★ » ou les cartes de révision.</span></span>
+      <span class="actions"><span class="open locked">${LOCK}Bientôt</span></span>`;
+    return li;
+  }
+  if (d.lien) {
+    const href = /^https?:/.test(d.lien) ? d.lien : BASE + d.lien;
+    li.innerHTML = `<span class="type">${esc(d.type)}</span>
+      <span class="title">${esc(d.titre)}<span class="meta">${d.type === "Cartes" ? (d.nombre ? d.nombre + " cartes, " : "") + "accès libre" : d.taille ? "PDF, " + (d.pages ? d.pages + " p., " : "") + size(d.taille) + ", accès libre" : (d.type === "Simulation" ? "Simulation interactive" : "Animation interactive") + ", accès libre"}</span></span>
+      <span class="actions"><a class="open" href="${esc(href)}" target="_blank" rel="noopener">Ouvrir</a>${d.taille ? `<a class="open dl" href="${esc(href)}" download="${esc(d.titre)}.pdf">Télécharger</a>` : ""}</span>`;
+    return li;
+  }
+  const meta = d.format === "html" ? (d.type === "Simulation" ? "Simulation interactive" : "Animation interactive") : d.format === "cartes" ? (d.nombre ? d.nombre + " cartes" : "Cartes de révision") : `PDF, ${d.pages ? d.pages + " p., " : ""}${size(d.taille)}`;
+  if (d.format) {
+    li.innerHTML = `<span class="type">${esc(d.type)}</span><span class="title">${esc(d.titre)}<span class="meta">${meta}</span></span>
+      <span class="actions"><button class="open" type="button">Ouvrir</button></span>`;
+    li.querySelector("button").onclick = () => openDoc(c.id, d, false);
+    return li;
+  }
+  if (d.corrige) {
+    const ok = S.prof || S.premium || !!S.corr[d.corrige.id];
+    if (fresh.has(d.corrige.id)) li.className = "fresh";
+    if (!ok) {
+      li.innerHTML = `<span class="type corr locked">${LOCK}Corrigé</span>
+        <span class="title">${esc(d.titre)}<span class="meta">Verrouillé : le professeur le débloque quand il a vérifié ton travail</span></span>
+        <span class="actions"><span class="open locked">${LOCK}Verrouillé</span></span>`;
+      return li;
+    }
+    li.innerHTML = `<span class="type corr">Corrigé</span>
+      <span class="title">${esc(d.titre)}<span class="meta">${meta}${S.prof || S.premium ? "" : " · débloqué"}</span></span>
+      <span class="actions"><button class="open" type="button">Ouvrir</button><button class="open dl" type="button" aria-label="Télécharger ${esc(d.titre)}">Télécharger</button></span>`;
+  } else {
+    const pouce = /coups?\s+de\s+pouce/i.test(d.titre);
+    if (pouce) li.className = "pouce";
+    li.innerHTML = `<span class="type${pouce ? " pouce" : /^TP/i.test(d.type) ? " tp" : ""}">${pouce ? "Coup de pouce" : esc(d.type)}</span>
+      <span class="title">${esc(d.titre)}<span class="meta">${meta}</span></span>
+      <span class="actions"><button class="open" type="button">Ouvrir</button><button class="open dl" type="button" aria-label="Télécharger ${esc(d.titre)}">Télécharger</button></span>`;
+  }
+  const [o, dl] = li.querySelectorAll("button");
+  o.onclick = () => openDoc(c.id, d, false);
+  dl.onclick = () => openDoc(c.id, d, true);
+  return li;
+}
+
+const FOLDER = '<svg class="folder" viewBox="0 0 34 28" aria-hidden="true"><path d="M2 5a3 3 0 0 1 3-3h8l3 4h13a3 3 0 0 1 3 3v14a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3z" fill="currentColor" fill-opacity=".15" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>';
+function chapBlock(c, ch, docs, forceOpen, outil){
+  const key = c.id + "/" + ch.titre;
+  const tEntree = !outil && !forceOpen ? testDuChapitre(c, ch) : null;
+  if (!outil && ch.verrou && !chapOK(ch) && tEntree) {
+    const s = document.createElement("details"); s.className = "chap";
+    if (opened.has(key)) s.open = true;
+    s.innerHTML = `<summary>${FOLDER}<h3><span>${esc(ch.titre)}</span><span class="count">${LOCK}Chapitre verrouillé · test d'entrée à faire avant le chapitre</span></h3><span class="chev" aria-hidden="true"></span></summary>`;
+    s.addEventListener("toggle", () => { if (s.open) opened.add(key); else opened.delete(key); });
+    s.appendChild(sousTest(c, tEntree, key, true));
+    return s;
+  }
+  if (!outil && ch.verrou && !chapOK(ch)) {
+    const f = document.createElement("div"); f.className = "chap ferme";
+    f.innerHTML = `<summary>${FOLDER}<h3><span>${esc(ch.titre)}</span><span class="count">${LOCK}Chapitre verrouillé : le professeur l'ouvrira bientôt</span></h3></summary>`;
+    return f;
+  }
+  const s = document.createElement("details"); s.className = "chap";
+  if (forceOpen || opened.has(key)) s.open = true;
+  const n = docs.length;
+  const badge = !outil && ch.verrou && (S.prof || S.premium) ? `<span class="badge-verrou">${LOCK}Chapitre sous cadenas</span>` : "";
+  s.innerHTML = `<summary>${outil ? FOLDER.replace('class="folder"', 'class="folder outil"') : FOLDER}<h3><span>${esc(ch.titre)}</span><span class="count">${n} document${n > 1 ? "s" : ""}</span></h3>${badge}<span class="chev" aria-hidden="true"></span></summary>`;
+  s.addEventListener("toggle", () => { if (s.open) opened.add(key); else opened.delete(key); });
+  if (!outil && rythmeDe(ch)) { const j = jaugeBox(c, ch); if (j) s.appendChild(j); }
+  if (outil || !docs.some(d => d.rubrique)) {
+    const ul = document.createElement("ul"); ul.className = "docs";
+    docs.forEach(d => ul.appendChild(docRow(c, d)));
+    s.appendChild(ul); return s;
+  }
+  // Sous-dossiers du chapitre (Pour commencer, Cours, Activités, Animation, TP, Exercices, Réviser…)
+  const groupes = [];
+  docs.forEach(d => { const r = d.rubrique || "Autres documents"; let g = groupes.find(x => x.r === r); if (!g) groupes.push(g = {r, docs: []}); g.docs.push(d); });
+  if (tEntree) { let g = groupes.find(x => x.r === "Pour commencer"); if (!g) groupes.unshift(g = {r: "Pour commencer", docs: []}); g.test = tEntree; }
+  // Dossier « Points de cours » (22/11/2026) : tous les points de cours du chapitre, pour réviser (après le cours)
+  const pdcs = docs.filter(d => d.type === "Point de cours");
+  if (pdcs.length) {
+    const apres = ["Cours", "Activités et TP", "Activités", "Pour commencer"].map(r => groupes.findIndex(x => x.r === r)).find(i => i >= 0);
+    groupes.splice(apres === undefined ? groupes.length : apres + 1, 0, {r: "Points de cours", docs: pdcs.map(d => ({...d, revision: true}))});
+  }
+  if (compDe(ch) && !outil) {
+    let g = groupes.find(x => x.r === "Mon profil de compétences");
+    if (!g) { const i = groupes.findIndex(x => x.r === "Exercices"); groupes.splice(i >= 0 ? i + 1 : groupes.length, 0, g = { r: "Mon profil de compétences", docs: [] }); }
+    g.docs = [{ titre: "Mon profil de compétences", type: "Profil" }].concat(g.docs).map(d => ({ ...d, _c: c, _ch: ch }));
+  }
+  groupes.forEach(g => {
+    const k = key + "/" + g.r;
+    if (g.test && !g.docs.length) { s.appendChild(sousTest(c, g.test, k, !fermes.has(k))); return; }
+    const sd = document.createElement("details"); sd.className = "sous";
+    if (forceOpen || opened.has(k)) sd.open = true;
+    const m = g.docs.length;
+    sd.innerHTML = `<summary>${FOLDER}<span>${esc(g.r)}</span><span class="nb">${m} document${m > 1 ? "s" : ""}</span><span class="chev" aria-hidden="true"></span></summary>`;
+    sd.addEventListener("toggle", () => { if (sd.open) opened.add(k); else opened.delete(k); });
+    if (g.test) { const ul = document.createElement("ul"); ul.className = "docs"; ul.appendChild(ligneTest(c, g.test)); sd.appendChild(ul); }
+    // Activités, TP, Exercices : un sous-dossier par activité / TP / exercice (énoncé, coups de pouce, corrigés, résultats)
+    if (["Activités", "TP", "Activités et TP", "Exercices"].includes(g.r)) remplirParNumero(c, g.docs, sd, k, forceOpen);
+    else {
+      const ul = document.createElement("ul"); ul.className = "docs";
+      g.docs.forEach(d => ul.appendChild(docRow(c, d)));
+      sd.appendChild(ul);
+    }
+    s.appendChild(sd);
+  });
+  return s;
+}
+
+function numeroDoc(d){
+  const n = d.titre.normalize("NFKD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  const m = n.match(/\b(tp|exercice|activite|td)\s*(\d+)/);
+  return m ? (m[1] === "activite" ? "Activité" : m[1] === "exercice" ? "Exercice" : m[1].toUpperCase()) + " " + m[2] : null;
+}
+function remplirParNumero(c, docs, parent, k0, forceOpen){
+  const seuls = [], paquets = [];
+  docs.forEach(d => {
+    const num = numeroDoc(d);
+    if (!num) { seuls.push(d); return; }
+    let p = paquets.find(x => x.num === num); if (!p) paquets.push(p = {num, docs: []}); p.docs.push(d);
+  });
+  if (seuls.length) { const ul = document.createElement("ul"); ul.className = "docs"; seuls.forEach(d => ul.appendChild(docRow(c, d))); parent.appendChild(ul); }
+  paquets.forEach(p => {
+    // Nom du sous-dossier : titre de l'énoncé (ni corrigé, ni coup de pouce, ni résultats)
+    const enonce = p.docs.find(d => !d.corrige && d.type !== "Corrigé" && !/coups?\s+de\s+pouce|r[ée]sultats|corrig/i.test(d.titre));
+    const nom = enonce ? enonce.titre : p.num;
+    const k = k0 + "/" + p.num;
+    const b = document.createElement("details"); b.className = "sous";
+    if (forceOpen || opened.has(k)) b.open = true;
+    const m = p.docs.length;
+    b.innerHTML = `<summary>${FOLDER}<span>${esc(nom)}</span><span class="nb">${m} document${m > 1 ? "s" : ""}</span><span class="chev" aria-hidden="true"></span></summary>`;
+    b.addEventListener("toggle", () => { if (b.open) opened.add(k); else opened.delete(k); });
+    const ul = document.createElement("ul"); ul.className = "docs";
+    p.docs.forEach(d => ul.appendChild(docRow(c, d)));
+    b.appendChild(ul); parent.appendChild(b);
+  });
+}
+
+/* ================= Nouvelle présentation (26/11/2026) =================
+   Accueil de la classe : encadré « Dossier en cours » (anneau d'avancement, rythme, bouton « Reprendre ») et cartes de dossiers.
+   Page d'un dossier (#<classe>/<titre du dossier>) : jauge du rythme puis parcours à pastilles, une étape par activité, TP,
+   cours, animation, série d'exercices… Les lignes de documents (docRow) et toute la logique (corrigés, coups de pouce,
+   points de cours, tests) sont inchangées. Classes concernées : NOUVELLE_UI (essai sur le BTS CIRA). */
+const NOUVELLE_UI = new Set(["cira"]);
+let DOSSIER_VU = null, ALLER_ETAPE = false;
+const nvLien = (c, ch) => "#" + c.id + "/" + encodeURIComponent(ch.titre);
+const nvSvg = (p, t, sw) => `<svg viewBox="0 0 24 24" width="${t}" height="${t}" fill="none" stroke="currentColor" stroke-width="${sw || 1.7}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
+const NV_COCHE = '<path d="M5 12l5 5 9-10"/>';
+const NV_ICO = {
+  amplif: '<path d="M5 4v16l14-8z"/><path d="M2 9h3M2 15h3M19 12h3"/>',
+  chaine: '<rect x="2" y="8" width="6" height="8" rx="1"/><rect x="16" y="8" width="6" height="8" rx="1"/><path d="M8 12h8M13 9l3 3-3 3"/>',
+  signal: '<path d="M2 12c2-6 4-6 5 0s3 6 5 0 3-6 5 0 3 6 5 0"/>',
+  dipole: '<path d="M2 12h4l2-4 3 8 3-8 3 8 2-4h3"/>',
+  moteur: '<circle cx="12" cy="12" r="8"/><path d="M8.5 15.5v-7l3.5 4.5 3.5-4.5v7"/>',
+  fluide: '<path d="M12 3c4 5 6 8 6 11a6 6 0 0 1-12 0c0-3 2-6 6-11z"/>',
+  lumiere: '<path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0 0 12 3z"/>',
+  energie: '<rect x="3" y="7" width="16" height="10" rx="2"/><path d="M21 10v4M12 9l-2 3h4l-2 3"/>',
+  transitoire: '<path d="M3 20h18M3 20V4"/><path d="M4 18c3-10 7-12 16-12"/>',
+  hacheur: '<path d="M3 16h3V8h4v8h3V8h4v8h4"/>',
+  thermique: '<path d="M14 14.8V5a2 2 0 0 0-4 0v9.8a4 4 0 1 0 4 0z"/><path d="M12 9v7"/>',
+  nonlin: '<path d="M3 20h18M3 20V4"/><path d="M5 17h4l2-7h4l2-4h3"/>',
+  meca: '<circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/>',
+  dossier: '<path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4M9 12h7M9 16h7"/>'
+};
+const NV_TEINTES = ["#2E75B6", "#3F7A3A", "#C55A11", "#1F3864", "#7A4FB5", "#5A6577"];
+function nvIcoDossier(t){
+  const s = sansAccent(t);
+  const k = /amplif/.test(s) ? "amplif" : /acquisition|mesure|capteur/.test(s) ? "chaine" : /signal|fourier|spectr/.test(s) ? "signal"
+    : /dipole|circuit|resist/.test(s) ? "dipole" : /moteur|machine|convertisseur|asynchrone/.test(s) ? "moteur" : /fluide|hydraul|pression/.test(s) ? "fluide"
+    : /lumiere|photometr|optique/.test(s) ? "lumiere" : /source|energie|stockage|batter/.test(s) ? "energie" : /transitoire/.test(s) ? "transitoire"
+    : /hacheur|redress|onduleur/.test(s) ? "hacheur" : /thermi|chaleur/.test(s) ? "thermique" : /non lineaire/.test(s) ? "nonlin"
+    : /mecanique|solide|rotation/.test(s) ? "meca" : "dossier";
+  return NV_ICO[k];
+}
+const NV_TYPES = {
+  "Activité":       { ico: '<circle cx="11" cy="11" r="6"/><path d="M16 16l5 5"/>', c: "#1F3864", lab: "Activité" },
+  "TP":             { ico: '<path d="M14.5 5.5a4 4 0 0 0 4.9 4.9L11 18.8a2 2 0 0 1-2.8-2.8l8.4-8.4"/>', c: "#2E75B6", lab: "TP" },
+  "Cours":          { ico: '<path d="M3 5h6a3 3 0 0 1 3 3v12a2 2 0 0 0-2-2H3zM21 5h-6a3 3 0 0 0-3 3v12a2 2 0 0 1 2-2h7z"/>', c: "#C55A11", lab: "Cours" },
+  "Animation":      { ico: '<rect x="3" y="4" width="18" height="13" rx="2"/><path d="M10 8.5v5l4-2.5z"/><path d="M8 21h8"/>', c: "#3F7A3A", lab: "Animation" },
+  "Exercices":      { ico: '<path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 7l3 3"/>', c: "#5A6577", lab: "Exercices" },
+  "Pour commencer": { ico: '<path d="M5 21V4h11l-2 4 2 4H5"/>', c: "#5A6577", lab: "Pour commencer" },
+  "Réviser":        { ico: '<rect x="3" y="7" width="13" height="13" rx="2"/><path d="M8 3h11a2 2 0 0 1 2 2v11"/>', c: "#7A4FB5", lab: "Réviser" },
+  "Profil":         { ico: '<path d="M4 20V11M10 20V5M16 20v-6M2 20h20"/>', c: "#2E75B6", lab: "Profil de compétences" },
+  "Points de cours":{ ico: '<path d="M10 6h10M10 12h10M10 18h10"/><path d="M4 6l1.2 1.2L7.5 5M4 12l1.2 1.2 2.3-2.2M4 18l1.2 1.2 2.3-2.2"/>', c: "#3F7A3A", lab: "Points de cours" },
+  "Autres":         { ico: '<path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4"/>', c: "#5A6577", lab: "Documents" }
+};
+const nvTuile = (ico, c, t, r) => `<span class="nv-tuile" style="--c:${c};width:${t}px;height:${t}px;border-radius:${r || 12}px">${nvSvg(ico, Math.round(t * 0.56))}</span>`;
+function nvAnneau(pc, t, ep, txt){
+  const r = (t - ep) / 2, L = 2 * Math.PI * r, f = Math.max(0, Math.min(1, pc));
+  const coul = f >= 1 ? "#3F7A3A" : "#2E75B6";
+  return `<span class="nv-ring" role="img" aria-label="Avancement ${Math.round(100 * f)} %"><svg width="${t}" height="${t}" viewBox="0 0 ${t} ${t}" aria-hidden="true">
+    <circle cx="${t / 2}" cy="${t / 2}" r="${r}" fill="none" stroke="var(--grid)" stroke-width="${ep}"/>
+    ${f > 0 ? `<circle cx="${t / 2}" cy="${t / 2}" r="${r}" fill="none" stroke="${coul}" stroke-width="${ep}" stroke-linecap="round" stroke-dasharray="${(L * f).toFixed(1)} ${L.toFixed(1)}" transform="rotate(-90 ${t / 2} ${t / 2})"/>` : ""}
+    ${f >= 1 && !txt ? `<path d="M${t * .32} ${t * .5}l${t * .12} ${t * .12} ${t * .24}-${t * .26}" fill="none" stroke="#3F7A3A" stroke-width="${Math.max(2, ep * .7)}" stroke-linecap="round" stroke-linejoin="round"/>` : ""}
+    </svg>${txt ? `<span style="font-size:${Math.round(t / 4.4)}px">${txt}</span>` : ""}</span>`;
+}
+const nvDuree = h => h ? heures(h) : "";
+const nvSansNum = t => String(t).replace(/^(activit[ée]|tp|td|exercice)\s*\d+\s*[–—-]\s*/i, "");
+
+/* Étapes du dossier, dans l'ordre du dossier élève. Chaque étape : { cle, type, lab, titre, docs, sous, test, etat }
+   etat (élève seulement) : "fait", "encours", "afaire", ou null (documents à consulter, sans suivi) */
+function nvEtapes(c, ch, docs){
+  const key = c.id + "/" + ch.titre, eleve = eleveRev();
+  const tEntree = testDuChapitre(c, ch);
+  const its = eleve && rythmeDe(ch) ? etatRythme(ch, { corrAt: S.corrAt, mp: MP, r: {} }).items : null;
+  const itsDe = f => its ? its.filter(f) : [];
+  const etatDe = (xs, docsE) => {
+    if (!eleve) return null;
+    if (xs && xs.length) { const f = xs.filter(x => x.fait).length; return f === xs.length ? "fait" : f || xs.some(x => x.part > 0) ? "encours" : "afaire"; }
+    const cs = (docsE || []).filter(d => d.corrige && d.type !== "Point de cours" && d.format !== "parcours" && d.type !== "Profil");
+    if (!cs.length) return null;
+    const f = cs.filter(d => S.corr[d.corrige.id]).length;
+    return f === cs.length ? "fait" : f ? "encours" : "afaire";
+  };
+  const dureeDe = xs => xs.reduce((s, x) => s + (x.duree || 0), 0);
+  const groupes = [];
+  docs.forEach(d => { const r = d.rubrique || "Autres documents"; let g = groupes.find(x => x.r === r); if (!g) groupes.push(g = { r, docs: [] }); g.docs.push(d); });
+  if (tEntree) { let g = groupes.find(x => x.r === "Pour commencer"); if (!g) groupes.unshift(g = { r: "Pour commencer", docs: [] }); g.test = tEntree; }
+  const pdcs = docs.filter(d => d.type === "Point de cours");
+  if (pdcs.length) {
+    const apres = ["Cours", "Activités et TP", "Activités", "Pour commencer"].map(r => groupes.findIndex(x => x.r === r)).find(i => i >= 0);
+    groupes.splice(apres === undefined ? groupes.length : apres + 1, 0, { r: "Points de cours", docs: pdcs.map(d => ({ ...d, revision: true })) });
+  }
+  if (compDe(ch)) {
+    let g = groupes.find(x => x.r === "Mon profil de compétences");
+    if (!g) { const i = groupes.findIndex(x => x.r === "Exercices"); groupes.splice(i >= 0 ? i + 1 : groupes.length, 0, g = { r: "Mon profil de compétences", docs: [] }); }
+    g.docs = [{ titre: "Mon profil de compétences", type: "Profil" }].concat(g.docs).map(d => ({ ...d, _c: c, _ch: ch }));
+  }
+  const paquetsDe = liste => {
+    const seuls = [], paquets = [];
+    liste.forEach(d => { const num = numeroDoc(d); if (!num) { seuls.push(d); return; } let p = paquets.find(x => x.num === num); if (!p) paquets.push(p = { num, docs: [] }); p.docs.push(d); });
+    paquets.forEach(p => { const en = p.docs.find(d => !d.corrige && d.type !== "Corrigé" && !/coups?\s+de\s+pouce|r[ée]sultats|corrig/i.test(d.titre)); p.titre = en ? en.titre : p.num; });
+    return { seuls, paquets };
+  };
+  const E = [];
+  groupes.forEach(g => {
+    const k = key + "/" + g.r;
+    if (["Activités", "TP", "Activités et TP"].includes(g.r)) {
+      const { seuls, paquets } = paquetsDe(g.docs);
+      paquets.forEach(p => {
+        const type = /^TP/.test(p.num) ? "TP" : "Activité", it = its ? its.find(x => x.num === p.num) : null;
+        const ri = ch.rythme ? ch.rythme.items.find(x => x.num === p.num) : null;
+        E.push({ cle: k + "/" + p.num, type, lab: p.num + (ri && ri.duree ? " · " + nvDuree(ri.duree) : "") + (type === "TP" && ri && ri.tp ? " · en classe" : ""),
+          titre: nvSansNum(p.titre) || p.num, docs: p.docs, etat: etatDe(it ? [it] : null, p.docs) });
+      });
+      if (seuls.length) E.push({ cle: k + "/autres", type: "Autres", lab: g.r, titre: "Autres documents", docs: seuls, etat: null });
+      return;
+    }
+    if (g.r === "Exercices") {
+      const { seuls, paquets } = paquetsDe(g.docs), xs = itsDe(x => /^Exercice/.test(x.num));
+      const ri = ch.rythme ? ch.rythme.items.filter(x => /^Exercice/.test(x.num)) : [];
+      const n = paquets.length;
+      E.push({ cle: k, type: "Exercices", lab: "Exercices" + (ri.length ? " · " + nvDuree(dureeDe(ri)) : ""), titre: n ? (n > 1 ? "Exercices 1 à " + n : "Exercice 1") : "Exercices",
+        docs: seuls, sous: paquets, etat: etatDe(xs.length ? xs : null, g.docs) });
+      return;
+    }
+    if (g.r === "Cours") {
+      const xs = itsDe(x => x.exemple), cours = g.docs.find(d => d.type === "Cours");
+      const t = cours ? cours.titre.replace(/^Essentiel du chapitre$/i, "L'essentiel du dossier") : "Cours";
+      E.push({ cle: k, type: "Cours", lab: "Cours" + (xs.length ? " · " + xs.length + " exemple" + (xs.length > 1 ? "s" : "") : ""), titre: t, docs: g.docs, etat: xs.length ? etatDe(xs) : null });
+      return;
+    }
+    if (g.r === "Animation") {
+      const xs = itsDe(x => x.anim), ri = ch.rythme ? ch.rythme.items.find(x => x.anim) : null;
+      E.push({ cle: k, type: "Animation", lab: "Animation" + (ri ? " · " + nvDuree(ri.duree) + " max" : ""), titre: "Reprise des notions", docs: g.docs, etat: xs.length ? etatDe(xs) : null });
+      return;
+    }
+    if (g.r === "Mon profil de compétences") {
+      const xs = itsDe(x => x.parcours);
+      E.push({ cle: k, type: "Profil", lab: "Avant l'évaluation", titre: "Mon profil de compétences", docs: g.docs, etat: xs.length ? etatDe(xs) : null });
+      return;
+    }
+    if (g.r === "Pour commencer") {
+      E.push({ cle: k, type: "Pour commencer", lab: "Pour commencer", titre: g.test ? "Test d'entrée" : "Pour commencer", docs: g.docs, test: g.test,
+        etat: eleve && g.test ? (MT[g.test.id] ? "fait" : "afaire") : null });
+      return;
+    }
+    const type = g.r === "Réviser" ? "Réviser" : g.r === "Points de cours" ? "Points de cours" : "Autres";
+    E.push({ cle: k, type, lab: NV_TYPES[type].lab, titre: g.r === "Réviser" ? "Cartes et fiches de révision" : g.r === "Points de cours" ? "Tous les points de cours" : g.r, docs: g.docs, etat: null });
+  });
+  return E;
+}
+function nvAvancement(E){
+  const suivies = E.filter(e => e.etat), faites = suivies.filter(e => e.etat === "fait").length;
+  const actuelle = suivies.find(e => e.etat !== "fait") || null;
+  return { total: suivies.length, faites, pc: suivies.length ? faites / suivies.length : 0, actuelle };
+}
+
+function renderClasseNv(view, c, chaps){
+  if (DOSSIER_VU) { const x = chaps.find(y => y.ch.titre === DOSSIER_VU); if (x) { renderDossierNv(view, c, x.ch, x.docs); return; } }
+  const box = document.createElement("div"); box.className = "nv"; view.appendChild(box);
+  const head = document.createElement("div"); head.className = "classhead";
+  head.innerHTML = `<h2>${esc(c.nom)}</h2>`;
+  box.appendChild(head);
+  if (!chaps.length) { const p = document.createElement("p"); p.className = "empty"; p.textContent = "Aucun document pour l'instant."; box.appendChild(p); return; }
+  const eleve = eleveRev();
+  const infos = chaps.map((x, i) => ({ ...x, i, E: chapOK(x.ch) ? nvEtapes(c, x.ch, x.docs) : [] })).map(x => ({ ...x, av: nvAvancement(x.E) }));
+  const cur = infos.find(x => chapOK(x.ch) && x.ch.verrou) || infos.find(x => chapOK(x.ch));
+  if (cur) box.appendChild(nvHero(c, cur));
+  const h = document.createElement("h3"); h.className = "nv-h"; h.textContent = "Mes dossiers"; box.appendChild(h);
+  const grille = document.createElement("div"); grille.className = "nv-grille";
+  infos.forEach(x => grille.appendChild(nvCarteDossier(c, x, x === cur)));
+  box.appendChild(grille);
+  const m = bandeauMethode(chaps); if (m) { m.style.marginTop = "22px"; box.appendChild(m); }
+}
+function nvHero(c, x){
+  const eleve = eleveRev(), ch = x.ch, av = x.av;
+  const s = document.createElement("section"); s.className = "nv-hero"; s.setAttribute("aria-label", "Dossier en cours");
+  const coul = NV_TEINTES[Math.max(0, c.chapitres.indexOf(x.ch)) % NV_TEINTES.length];
+  const gauche = eleve && av.total ? nvAnneau(av.pc, 84, 9, Math.round(100 * av.pc) + " %") : nvTuile(nvIcoDossier(ch.titre), coul, 64, 16);
+  const a = av.actuelle, nomEt = !a ? "" : a.type === "Activité" || a.type === "TP" ? a.lab.split(" · ")[0] + " – " + a.titre : a.type === "Cours" ? "le cours (" + a.titre + ")" : a.type === "Animation" ? "l'animation" : a.titre;
+  const prochaine = !eleve ? "Vue professeur : tous les documents sont ouverts" : a ? "Prochaine étape : " + nomEt : av.total ? "Toutes les étapes sont faites" : "";
+  let ry = "";
+  const e = eleve && rythmeDe(ch) ? etatEleve(ch) : null;
+  if (e) {
+    const st = STATUTS[e.statut], pv = previsionEleve(ch, e);
+    ry = `<div class="nv-ry"><span class="nv-chip" style="background:${st.fond};color:${st.couleur};border-color:transparent">${esc(st.lib)}${e.frein ? " · suite après la prochaine séance" : ""}</span>
+      <span>Il te reste environ <b>${esc(heures(e.reste))}</b> de travail dans ce dossier.</span>
+      ${pv ? `<span>Évaluation ${pv.fixe ? "le" : "prévue vers le"} <b>${esc(new Date(pv.ev).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" }))}</b> : encore <b>${pv.n} séance${pv.n > 1 ? "s" : ""}</b> de cours d'ici là.</span>` : ""}</div>`;
+  }
+  const lib = !eleve ? "Ouvrir le dossier" : !av.total || av.faites === 0 && !(av.actuelle && av.actuelle.etat === "encours") ? "Commencer" : av.actuelle ? "Reprendre" : "Revoir le dossier";
+  s.innerHTML = `<div class="nv-hero-top">${gauche}<div><span class="nv-sur">Dossier en cours</span><h3>${esc(ch.titre)}</h3><span class="nv-next">${esc(prochaine)}</span></div></div>
+    ${ry}<a class="nv-reprendre" href="${nvLien(c, ch)}">${nvSvg('<path d="M7 4v16l13-8z" fill="currentColor"/>', 18)}${lib}</a>`;
+  s.querySelector("a").addEventListener("click", () => { ALLER_ETAPE = true; });
+  return s;
+}
+function nvCarteDossier(c, x, actuel){
+  const ch = x.ch, eleve = eleveRev(), av = x.av, coul = NV_TEINTES[Math.max(0, c.chapitres.indexOf(x.ch)) % NV_TEINTES.length];
+  const ok = chapOK(ch), tEntree = !ok ? testDuChapitre(c, ch) : null;
+  let chip, droite = "";
+  if (!ok) chip = tEntree ? `<span class="nv-chip test">Test d'entrée à faire</span>` : `<span class="nv-chip">${LOCK}Verrouillé</span>`;
+  else if (!eleve) chip = ch.verrou && !(OUV && OUV[ch.verrou.id]) ? `<span class="nv-chip test">${LOCK}Sous cadenas</span>` : `<span class="nv-chip">${x.docs.length} documents</span>`;
+  else if (!av.total) chip = `<span class="nv-chip">${x.docs.length} document${x.docs.length > 1 ? "s" : ""}</span>`;
+  else {
+    chip = av.faites === av.total ? `<span class="nv-chip fait">Terminé</span>` : av.faites || (av.actuelle && av.actuelle.etat === "encours") ? `<span class="nv-chip encours">En cours</span>` : `<span class="nv-chip">À commencer</span>`;
+    chip += `<span>${av.faites} / ${av.total} étapes</span>`;
+    droite = nvAnneau(av.pc, 36, 4);
+  }
+  const ico = ok || tEntree ? nvTuile(nvIcoDossier(ch.titre), coul, 48) : nvTuile(nvIcoDossier(ch.titre), "#5A6577", 48);
+  const html = `<span class="hd">${ico}${droite}</span><b>${esc(ch.titre)}</b><span class="pied">${chip}</span>`;
+  if (!ok && !tEntree) { const d = document.createElement("div"); d.className = "nv-carte-d ferme"; d.innerHTML = html; d.title = "Le professeur ouvrira ce dossier bientôt"; return d; }
+  const a = document.createElement("a"); a.className = "nv-carte-d" + (actuel && ok ? " actuel" : ""); a.href = nvLien(c, ch); a.innerHTML = html;
+  return a;
+}
+
+function renderDossierNv(view, c, ch, docs){
+  const key = c.id + "/" + ch.titre, eleve = eleveRev();
+  const box = document.createElement("div"); box.className = "nv"; view.appendChild(box);
+  const idx = c.chapitres.indexOf(ch), coul = NV_TEINTES[Math.max(0, idx) % NV_TEINTES.length];
+  const ok = chapOK(ch), E = ok ? nvEtapes(c, ch, docs) : [], av = nvAvancement(E);
+  const retour = document.createElement("a"); retour.className = "nv-retour"; retour.href = "#" + c.id;
+  retour.innerHTML = nvSvg('<path d="M15 6l-6 6 6 6"/>', 18, 2) + "Mes dossiers";
+  box.appendChild(retour);
+  const st = !ok ? "Dossier verrouillé" : eleve && av.total ? E.length + " étapes · " + av.faites + " sur " + av.total + " terminée" + (av.faites > 1 ? "s" : "") : E.length + " étapes" + (eleve ? "" : " · vue professeur");
+  const hd = document.createElement("div"); hd.className = "nv-dos-head";
+  hd.innerHTML = `${nvTuile(nvIcoDossier(ch.titre), coul, 56, 14)}<div><h2>${esc(ch.titre)}</h2><span class="st">${esc(st)}</span></div>`;
+  box.appendChild(hd);
+  if (!ok) {
+    const t = testDuChapitre(c, ch);
+    const p = document.createElement("p"); p.className = "nv-vide";
+    p.textContent = t ? "Fais d'abord le test d'entrée : le professeur ouvrira ensuite le dossier." : "Le professeur ouvrira ce dossier bientôt.";
+    box.appendChild(p);
+    if (t) { const ol = document.createElement("ol"); ol.className = "nv-parcours"; ol.appendChild(nvEtape(c, { cle: key + "/Pour commencer", type: "Pour commencer", lab: "Pour commencer", titre: "Test d'entrée", docs: [], test: t, etat: eleve ? (MT[t.id] ? "fait" : "afaire") : null }, 1, true, true)); box.appendChild(ol); }
+    return;
+  }
+  const corpsD = document.createElement("div"); corpsD.className = "nv-dos-corps";
+  const cote = document.createElement("div"); cote.className = "nv-cote";
+  corpsD.appendChild(cote); box.appendChild(corpsD);
+  if (eleve && av.total) {
+    const pr = document.createElement("div"); pr.className = "nv-prog";
+    pr.innerHTML = `<div class="barre" role="img" aria-label="${av.faites} étapes terminées sur ${av.total}"><i style="width:${(100 * av.pc).toFixed(1)}%"></i></div>
+      <div class="leg"><span><b>${Math.round(100 * av.pc)} %</b> du dossier</span><span>${av.faites} / ${av.total} étapes</span></div>`;
+    cote.appendChild(pr);
+  }
+  if (rythmeDe(ch)) { const j = jaugeBox(c, ch); if (j) cote.appendChild(j); }
+  if (!cote.children.length) cote.remove();
+  const ol = document.createElement("ol"); ol.className = "nv-parcours"; ol.setAttribute("aria-label", "Déroulé du dossier");
+  let cible = null;
+  E.forEach((e, i) => { const li = nvEtape(c, e, i + 1, e === av.actuelle, false); if (e === av.actuelle) cible = li; ol.appendChild(li); });
+  corpsD.appendChild(ol);
+  if (ALLER_ETAPE) { ALLER_ETAPE = false; if (cible) requestAnimationFrame(() => cible.scrollIntoView({ block: "start", behavior: "smooth" })); }
+}
+function nvEtape(c, e, n, actuelle, ouvrir){
+  const T = NV_TYPES[e.type] || NV_TYPES.Autres;
+  const li = document.createElement("li");
+  li.className = "nv-et " + (e.etat || "libre") + (actuelle ? " actuelle" : "");
+  const pas = e.etat === "fait" ? nvSvg(NV_COCHE, 16, 3) : String(n);
+  const etat = e.etat === "fait" ? (e.type === "Pour commencer" ? "Fait" : e.docs.some(d => d.corrige) || (e.sous || []).length ? "Corrigé" : "Fait") : e.etat === "encours" ? "En cours" : e.etat === "afaire" ? (actuelle ? "À faire" : "") : "";
+  li.innerHTML = `<div class="nv-rail"><span class="nv-pas" aria-hidden="true">${pas}</span><span class="nv-fil"></span></div>`;
+  const d = document.createElement("details"); d.className = "nv-carte";
+  if (ouvrir || opened.has(e.cle) || (actuelle && !fermes.has(e.cle))) d.open = true;
+  d.innerHTML = `<summary>${nvTuile(T.ico, T.c, 38, 10)}<span class="txt"><span class="lab" style="--c:${T.c}">${esc(e.lab)}</span><span class="tt">${esc(e.titre)}</span></span>${etat ? `<span class="nv-etat ${e.etat}">${esc(etat)}</span>` : ""}<span class="nv-chev" aria-hidden="true"></span></summary>`;
+  d.addEventListener("toggle", () => { if (d.open) { opened.add(e.cle); fermes.delete(e.cle); } else { opened.delete(e.cle); fermes.add(e.cle); } });
+  const corps = document.createElement("div");
+  if (e.test) { const ul = document.createElement("ul"); ul.className = "docs"; ul.appendChild(ligneTest(c, e.test)); corps.appendChild(ul); }
+  if (e.docs.length) { const ul = document.createElement("ul"); ul.className = "docs"; e.docs.forEach(x => ul.appendChild(docRow(c, x))); corps.appendChild(ul); }
+  (e.sous || []).forEach(p => {
+    const h = document.createElement("h4"); h.textContent = p.titre; corps.appendChild(h);
+    const ul = document.createElement("ul"); ul.className = "docs"; p.docs.forEach(x => ul.appendChild(docRow(c, x))); corps.appendChild(ul);
+  });
+  d.appendChild(corps);
+  li.appendChild(d);
+  return li;
+}
+function nvTheme(){
+  let t = null; try { t = localStorage.getItem("theme"); } catch(_) {}
+  const sombre = t ? t === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  return sombre;
+}
+function nvBasculeTheme(){
+  const sombre = !nvTheme(), t = sombre ? "dark" : "light";
+  document.documentElement.setAttribute("data-theme", t);
+  try { localStorage.setItem("theme", t); } catch(_) {}
+  renderWho();
+}
+try { const t = localStorage.getItem("theme"); if (t) document.documentElement.setAttribute("data-theme", t); } catch(_) {}
+
+
+function render(){
+  renderNav(); renderWho(); controleDonnees();
+  document.body.classList.toggle("nv", !!S.user && (S.prof || S.premium || S.tous ? NOUVELLE_UI.has(current) : NOUVELLE_UI.has(S.site)));
+  if (VUE_REV) return;   // test en cours ou résultat affiché : ne pas effacer
+  $("#searchBox").hidden = !S.user || current === "revisions" || current === "mes-evaluations" || current === "mes-competences" || current === "calendrier";
+  const view = $("#view"); view.innerHTML = "";
+  if (current === "demo") { $("#searchBox").hidden = true; renderDemo(view); return; }
+  if (S.demo) { const b = demoBandeau(); if (b) view.appendChild(b); }
+  if (current === "revisions") { renderRevisions(view); return; }
+  if (current === "connexion") { view.appendChild(loginBox()); return; }
+  if (current === "evaluations" && S.evals) { renderEvaluationsProf(view); return; }
+  if (current === "calendrier" && S.evals) { renderCalendrier(view); return; }
+  if (current === "mes-evaluations") { renderMesEvals(view); return; }
+  if (current === "mes-competences") { renderMesCompetences(view); return; }
+  const q = $("#q").value.trim().toLowerCase();
+  let found = 0;
+  if (S.user && (q || current === "outils")) found += renderOutils(view, q);
+  const classes = q ? visibleClasses() : visibleClasses().filter(c => c.id === current);
+  for (const c of classes) {
+    let chaps = c.chapitres.filter(anneeOK).map(ch => ({ch, docs: ch.docs.filter(d => docCompOK(ch, d)).filter(d => !q || (chapOK(ch) && (d.titre + " " + d.type + " " + ch.titre).toLowerCase().includes(q)))}))
+      .filter(x => x.docs.length);
+    chaps = ordreChaps(c, chaps);
+    if (q && !chaps.length) continue;
+    if (!q && NOUVELLE_UI.has(c.id)) { renderClasseNv(view, c, chaps); continue; }
+    const head = document.createElement("div"); head.className = "classhead";
+    head.innerHTML = `<h2>${esc(c.nom)}</h2><span class="status is-open">Documents ouverts</span>`;
+    view.appendChild(head);
+    if (!q) { const m = bandeauMethode(chaps); if (m) view.appendChild(m); }
+    if (!c.chapitres.length) { const p = document.createElement("p"); p.className = "empty"; p.textContent = "Aucun document pour l'instant."; view.appendChild(p); }
+    if (chaps.some(x => x.ch.annee)) {
+      // Dossiers « 1re année » / « 2e année » : celui de la classe de l'élève s'ouvre automatiquement
+      const grp = (CAT.groupes || []).find(g => g.id === S.groupe);
+      const mon = !S.prof && !S.tous && grp ? grp.annee : null;
+      const ans = [...new Set(chaps.map(x => x.ch.annee || 0))].sort();
+      ans.forEach(a => {
+        const xs = chaps.filter(x => (x.ch.annee || 0) === a);
+        const k = c.id + "/annee/" + a;
+        const box = document.createElement("details"); box.className = "annee";
+        if (q || opened.has(k) || (!fermes.has(k) && a === mon)) box.open = true;
+        const nom = a === 1 ? "1re année" : a ? a + "e année" : "Autres chapitres";
+        box.innerHTML = `<summary>${FOLDER}<h3><span>${esc(nom)}</span><span class="count">${xs.length} chapitre${xs.length > 1 ? "s" : ""}</span></h3>${a && a === mon ? '<span class="moi">Ma classe</span>' : ""}<span class="chev" aria-hidden="true"></span></summary>`;
+        box.addEventListener("toggle", () => { if (box.open) { opened.add(k); fermes.delete(k); } else { opened.delete(k); fermes.add(k); } });
+        const inner = document.createElement("div"); inner.className = "inner";
+        xs.forEach(x => { found += x.docs.length; inner.appendChild(chapBlock(c, x.ch, x.docs, !!q)); });
+        box.appendChild(inner); view.appendChild(box);
+      });
+    } else
+    chaps.forEach(x => { found += x.docs.length; view.appendChild(chapBlock(c, x.ch, x.docs, !!q)); });
+  }
+  if (q && !found) { const p = document.createElement("p"); p.className = "empty"; p.textContent = "Aucun document ne correspond à « " + $("#q").value.trim() + " »."; view.appendChild(p); }
+}
+
+
+/* Bandeau « Comment on travaille » (25/11/2026) : commun à toutes les classes, affiché seulement quand
+   au moins un dossier de la nouvelle méthode (rythme, jauge, note d'investissement) est débloqué pour l'élève. */
+function bandeauMethode(chaps){
+  if (!chaps.some(x => rythmeDe(x.ch) && chapOK(x.ch))) return null;
+  const d = document.createElement("div"); d.className = "methode"; d.setAttribute("role", "note");
+  d.innerHTML = `<b>Comment on travaille cette année</b>
+    <p><span>💡</span>Les coups de pouce sont là pour t'aider : les ouvrir ne fait perdre aucun point, ils servent seulement à construire ton profil de compétences.</p>
+    <p><span>⭐</span>Dans les nouveaux dossiers, une note d'investissement tient compte de ton travail régulier : activités, cours, animation et régularité. Tu la vois évoluer en direct.</p>
+    <p><span>📊</span>La jauge « Mon rythme dans le dossier » te montre où tu en es et tout le travail qu'il te reste à faire avant l'évaluation.</p>
+    <p><span>🎯</span>Seule l'évaluation de fin de dossier note tes résultats : prends le temps de comprendre plutôt que d'aller vite.</p>
+    <a class="methode-fiche" href="${BASE}docs/fiche-etudiants.pdf" target="_blank" rel="noopener">📄 Lire la fiche « Comment on travaille en physique industrielle » (2 pages)</a>`;
+  return d;
+}
+
+/* ================= Information sur les données (25/11/2026, version définitive des dossiers) =================
+   À la première connexion après l'ouverture d'un nouveau dossier (débloqué après DONNEES_DEPUIS), l'élève lit
+   l'information sur ses données et la fiche « Comment on travaille », puis valide. Trace : pointsdecours/<uid>__donnees. */
+var DONNEES_DEPUIS = Date.parse("2026-11-25T15:45:00+01:00");
+var donneesOuvert = false;
+function controleDonnees(){
+  if (donneesOuvert || !eleveRev() || S.demo || !S.mpCharge || !CAT) return;
+  if (MP.donnees && MP.donnees.lu) return;
+  const verrous = new Set(CAT.classes.flatMap(k => k.chapitres || []).filter(ch => ch.verrou).map(ch => ch.verrou.id));
+  if (!Object.entries(S.corrAt || {}).some(([id, t]) => verrous.has(id) && t > DONNEES_DEPUIS)) return;
+  donneesOuvert = true;
+  const ov = document.createElement("div"); ov.className = "donnees-ov";
+  ov.innerHTML = `<div class="donnees-box"><h2>Tes données sur le site</h2>
+    <p><b>Pourquoi ?</b> Le site sert à ton professeur de physique industrielle pour suivre ton travail et t'aider au bon moment. Il ne sert à rien d'autre.</p>
+    <p><b>Ce qui est enregistré :</b> ton nom, ta classe et ton identifiant ; ton travail dans chaque dossier (corrigés débloqués, coups de pouce ouverts, réponses justes ou fausses) ; tes résultats (profil de compétences, note d'investissement, copies corrigées). Pas d'adresse, pas de courriel, pas de téléphone, et le temps que tu passes en ligne n'est pas mesuré.</p>
+    <p><b>Qui les voit :</b> toi et ton professeur seulement. Les autres étudiants ne voient ni tes notes, ni tes copies, ni ton suivi.</p>
+    <p><b>Les copies :</b> quand une IA aide ton professeur à corriger, ton nom est masqué avant : elle ne sait pas à qui est la copie, et c'est ton professeur qui décide de ta note.</p>
+    <p><b>Combien de temps :</b> tout est supprimé au plus tard le 31 août qui suit la fin de ton BTS.</p>
+    <p><b>Tes droits :</b> tu peux demander à voir tes données, à les corriger ou à les faire effacer, auprès de ton professeur ou de la direction du lycée.</p>
+    <p class="donnees-fiche"><a href="${BASE}docs/fiche-etudiants.pdf" target="_blank" rel="noopener">📄 Lis aussi la fiche « Comment on travaille en physique industrielle » (2 pages)</a><br><span style="font-size:.9em">Ces deux documents restent ensuite dans la rubrique « Outils ».</span></p>
+    <label class="donnees-ok"><input type="checkbox"> J'ai lu ces informations et la fiche « Comment on travaille ».</label>
+    <button type="button" disabled>Valider</button></div>`;
+  const cb = ov.querySelector("input"), bt = ov.querySelector("button");
+  cb.onchange = () => { bt.disabled = !cb.checked; };
+  bt.onclick = async () => {
+    bt.disabled = true;
+    const v = { uid: S.user.uid, pdc: "donnees", type: "donnees", site: S.site || "", chap: "", titre: "Information sur les données", activite: "",
+      nom: S.nom, classe: S.groupe || "", etape: 1, total: 1, erreurs: 0, lu: true, termine: true, date: serverTimestamp() };
+    try { await setDoc(doc(db, "pointsdecours", S.user.uid + "__donnees"), v); MP.donnees = { ...v, date: Date.now() }; ov.remove(); document.body.style.overflow = ""; toast("Merci, c'est enregistré."); }
+    catch(_) { bt.disabled = false; toast("Enregistrement impossible, vérifie ta connexion."); }
+  };
+  document.body.appendChild(ov); document.body.style.overflow = "hidden";
+}
+
+
+/* ================= Rythme du dossier : jauge et frein (25/11/2026, prototype CIRA « Amplification ») =================
+   Calcul : rythme.js (partagé avec l'appli professeur). Le suivi démarre quand le professeur l'active dans son appli. */
+const chapIdDe = ch => ch.verrou ? ch.verrou.id : ch.titre;
+function etatEleve(ch){
+  const r = S.rythme[chapIdDe(ch)]; if (!r) return null;
+  return etatRythme(ch, { corrAt: S.corrAt, mp: MP, r });
+}
+function apercuRythme(ch){
+  /* Professeur et invités : exemple fictif pour voir à quoi ressemble la jauge */
+  const corrAt = {}, t0 = Date.now() - 7 * 864e5;
+  ch.rythme.items.slice(0, 3).forEach((it, i) => { if (it.corrige) corrAt[it.corrige] = t0 + i * 864e5; });
+  const r = { seances: [{ t: t0, h: 1 }, { t: t0 + 2 * 864e5, h: 2, tp: true }, { t: t0 + 4 * 864e5, h: 1 }], evalDate: "" };
+  return etatRythme(ch, { corrAt, mp: {}, r });
+}
+function freine(c, d){
+  if (!eleveRev() || d.corrige || d.lien || /coups?\s+de\s+pouce/i.test(d.titre)) return false;
+  const ch = chapDe(c.id, d); if (!ch || !rythmeDe(ch) || !chapOK(ch)) return false;
+  const it = itemDuDoc(ch, numeroDoc(d), d); if (!it || it.tp || it.exemple) return false;
+  const e = etatEleve(ch); if (!e || !e.frein) return false;
+  const x = e.items.find(y => y.num === it.num);
+  return x && !x.fait && x.part === 0;
+}
+/* Mini-oral (25/11/2026) : l'élève sait à quelle activité il expliquera son travail au professeur */
+function oralBox(ch, apercu){
+  const r = apercu ? { oralIdx: 1 } : (S.rythme || {})[chapIdDe(ch)];
+  const ci = oralCible(ch, r, apercu ? {} : S.corrAt);
+  if (!ci) return "";
+  if (ci.fait) return `<p class="ry-oral">🎤 Mini-oral fait${ci.act ? " (" + esc(ci.act) + ")" : ""}. Merci !</p>`;
+  return `<p class="ry-oral">🎤 <b>Ton mini-oral${ci.libre ? "" : " : à la fin de l'" + esc(ci.num)}.</b> Quand tu appelles le professeur pour le corrigé, tu lui expliques en une minute ce que tu as fait et ce que tu en conclus.${ci.libre ? " Préviens-le dès ta prochaine activité terminée." : ""}</p>`;
+}
+function jaugeBox(c, ch){
+  if (!chapOK(ch)) return null;
+  const apercu = !eleveRev();
+  const e = apercu ? (S.prof || S.premium ? apercuRythme(ch) : null) : etatEleve(ch);
+  if (!e) return null;
+  const st = STATUTS[e.statut], pc = x => Math.max(0, Math.min(100, 100 * x / e.total)).toFixed(1);
+  const box = document.createElement("div"); box.className = "rythme";
+  const dateEval = e.evalDate ? new Date(e.evalDate + "T12:00:00").toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" }) : "";
+  /* 25/11/2026 : date d'évaluation prévue d'après le calendrier de la classe (séances de cours seulement), ou fixée par le professeur */
+  const pvE = apercu ? null : previsionEleve(ch, e);
+  const evTxt = pvE ? ` <span class="ry-eval">📅 Évaluation ${pvE.fixe ? "le" : "prévue vers le"} <b>${esc(new Date(pvE.ev).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" }))}</b> : encore ${pvE.n} séance${pvE.n > 1 ? "s" : ""} de cours d'ici là${pvE.fixe ? "" : " (date prévisionnelle, ton professeur la confirmera)"}.</span>` : "";
+  const conseil = e.frein ? "Tu as plus d'1 h d'avance : la suite s'ouvrira après la prochaine séance. Profites-en pour les « Côté terrain ★ » ou les cartes de révision, ou propose au professeur d'aider un camarade en retard (tutorat)."
+    : e.statut === "avance" ? "Tu es en avance, continue comme ça." : e.statut === "vert" ? "Tu es à jour, continue comme ça."
+    : e.statut === "orange" ? "Prévois un peu de travail à la maison pour rattraper avant la prochaine séance."
+    : "Tu as pris du retard : organise-toi dès maintenant (maison, coups de pouce, appel au professeur).";
+  /* 25/11/2026 : chemin essentiel ouvert par le professeur, ou proposé aux deux tiers du dossier */
+  const horsEss = e.items.some(x => x.horsEss);
+  const conseilEss = e.ess ? " Tu es sur le chemin essentiel : fais d'abord les pièces indispensables. Les pièces marquées « facultatif » peuvent attendre."
+    : horsEss && e.deuxTiers && (e.statut === "orange" || e.statut === "rouge") ? " Parle à ton professeur : il peut t'ouvrir le chemin essentiel, plus court, pour être prêt le jour de l'évaluation." : "";
+  box.innerHTML = `<div class="ry-head"><b>Mon rythme dans le dossier</b>${apercu ? '<span class="ry-apercu">Aperçu professeur (exemple fictif)</span>' : ""}<span class="ry-st" style="color:${st.couleur};background:${st.fond}">${st.lib}${e.statut === "avance" ? " · +" + heures(e.avance) : ""}${e.frein ? " 🔒" : ""}</span></div>
+    <div class="ry-bar" role="img" aria-label="Travail fait ${heures(e.fait)} sur ${heures(e.contenu)}, temps de cours écoulé ${heures(e.ecoule)} sur ${heures(e.total)}">
+      <span class="ry-fill" style="width:${pc(e.fait)}%;background:${st.couleur}"></span>
+      <span class="ry-marge" style="left:${pc(e.contenu)}%"></span>
+      <span class="ry-now" style="left:${pc(e.ecoule)}%"></span>
+    </div>
+    <div class="ry-leg"><span><i class="ry-k fill" style="background:${st.couleur}"></i>Travail fait : ${heures(e.fait)} sur ${heures(e.contenu)}</span><span><i class="ry-k now"></i>Cours écoulés : ${heures(e.ecoule)} sur ${heures(e.total)}</span><span><i class="ry-k marge"></i>1 h de marge</span></div>
+    <p class="ry-msg">Il te reste <b>${heures(e.reste)}</b> de travail. Il reste <b>${heures(e.resteCours)}</b> de cours avant la fin du dossier${dateEval && !pvE ? ` (évaluation le ${esc(dateEval)})` : ""}. ${conseil}${conseilEss}${evTxt}</p>
+    ${oralBox(ch, apercu)}
+    <details class="ry-liste"><summary>Ce qu'il me reste à faire</summary><ol>${e.items.map(x => `<li class="${x.fait ? "ok" : x.part ? "part" : ""}">${x.fait ? "✓ " : ""}${esc(x.titre)} <span>(${e.ess && x.horsEss ? "facultatif, " : ""}${x.tp ? "en classe avec tout le monde, hors jauge" : heures(x.duree)}${x.part && !x.fait ? ", " + Math.round(100 * x.part) + " % fait" : ""})</span></li>`).join("")}</ol>
+      <p class="ry-note">${e.items.some(x => x.tp) ? "Les TP se font en classe tous ensemble : ils ne comptent pas dans la jauge. Une activité, un TP ou un exercice" : "Une activité ou un exercice"} compte comme fait quand le professeur a débloqué son corrigé. Un exemple du cours compte comme fait quand tu as ouvert sa correction (sous-dossier « Cours », « Correction des exemples »).${e.items.some(x => x.pdc) ? " Un point de cours compte comme fait quand tu l'as terminé en ligne." : ""} Les coups de pouce ne comptent jamais contre toi.</p></details>`;
+  return box;
+}
+
+/* ================= Correction des exemples du cours (25/11/2026, CIRA « Amplification ») =================
+   Page chiffrée comme un document du chapitre. L'élève ouvre la correction d'un exemple quand il l'a fait :
+   Firestore « pointsdecours/<uid>__exemples:<dossier> » (vus : numéro → date). Compte dans la jauge du dossier. */
+function exemplesRow(c, d){
+  const li = document.createElement("li");
+  const ch = chapDe(c.id, d), st = ch ? MP[exemplesId(chapIdDe(ch))] : null, n = st && st.vus ? Object.keys(st.vus).length : 0;
+  const meta = !eleveRev() ? "Vue professeur : toutes les corrections sont affichées" : n ? n + " correction" + (n > 1 ? "s" : "") + " ouverte" + (n > 1 ? "s" : "") + (st.total ? " sur " + st.total : "") : "Ouvre la correction de chaque exemple une fois que tu l'as fait";
+  li.innerHTML = `<span class="type corr">Exemples</span><span class="title">${esc(d.titre)}<span class="meta">${esc(meta)}</span></span>
+    <span class="actions"><button class="open" type="button">Ouvrir</button></span>`;
+  li.querySelector("button").onclick = () => ouvrirExemples(c, d);
+  return li;
+}
+async function ouvrirExemples(c, d){
+  let html;
+  try {
+    const key = d.cv ? await chapKey(d.cv) : S.keys[c.id];
+    if (!key) throw new Error("chapitre");
+    html = await (await decryptBlob(BASE + "docs/" + c.id + "/" + d.fichier, key, "text/html;charset=utf-8")).text();
+  } catch(e) { toast(e.message === "chapitre" ? "Ce chapitre n'est pas encore ouvert." : "Impossible d'ouvrir la correction des exemples. Rechargez la page."); return; }
+  const ch = chapDe(c.id, d), id = exemplesId(ch ? chapIdDe(ch) : c.id), eleve = eleveRev(), st = MP[id];
+  html = html.replace("</head>", () => "<script>window.EXEMPLES_INIT = " + JSON.stringify(eleve && st && st.vus ? st.vus : {}) + (eleve ? "" : "; window.EXEMPLES_PROF = true") + ";<\/script></head>");
+  const ov = document.createElement("div"); ov.className = "fiche-ov";
+  ov.innerHTML = `<div class="bar"><b>${esc(d.titre)}</b><button type="button">Fermer</button></div><iframe title="${esc(d.titre)}"></iframe>`;
+  const fr = ov.querySelector("iframe"); fr.srcdoc = html;
+  document.body.appendChild(ov); document.body.style.overflow = "hidden";
+  const onMsg = async e => {
+    if (e.source !== fr.contentWindow || !e.data || e.data.type !== "exemples" || !eleve) return;
+    const vus = Object.assign({}, MP[id] && MP[id].vus);
+    Object.entries(e.data.vus || {}).forEach(([k, t]) => { if (!vus[k]) vus[k] = +t || Date.now(); });
+    const total = +e.data.total || 0, n = Object.keys(vus).length;
+    const v = { uid: S.user.uid, pdc: id, type: "exemples", site: c.id, chap: ch && ch.verrou ? ch.verrou.id : "", titre: d.titre, activite: "",
+      nom: S.nom, classe: S.groupe || "", vus, etape: n, total, erreurs: 0, termine: total > 0 && n >= total, date: serverTimestamp() };
+    MP[id] = { ...v, date: Date.now() };
+    try { await setDoc(doc(db, "pointsdecours", S.user.uid + "__" + id), v); } catch(_) { toast("Enregistrement impossible, vérifie ta connexion."); }
+  };
+  window.addEventListener("message", onMsg);
+  ov.querySelector("button").onclick = () => { window.removeEventListener("message", onMsg); ov.remove(); document.body.style.overflow = ""; render(); };
+}
+
+/* ================= Mes révisions ================= */
+function testsVisibles(){
+  if (!S.user) return [];
+  return (REV.tests || []).filter(t => S.prof || S.tous || t.site === S.site);
+}
+const eleveRev = () => S.user && !S.prof && !S.premium;
+/* Test d'entrée sous son propre cadenas (19/11/2026) : ouvert par le prof (clé du test), ou chapitre ouvert (clé du chapitre) */
+const testOK = t => !t.verrou || S.prof || S.premium || !!S.corr[t.verrou.id] || !!S.corr[t.verrou.chap];
+const testsOuverts = () => testsVisibles().filter(t => testOK(t) || MT[t.id]);
+async function testKey(t){
+  if (!t.verrou) return outilsKey();
+  const v = t.verrou;
+  const un = async (k, w) => { w = b64(w); return importKey(await crypto.subtle.decrypt({name:"AES-GCM", iv:w.slice(0,12), additionalData:enc.encode(v.id)}, k, w.slice(12))); };
+  if (S.corr[v.id]) return importKey(b64(S.corr[v.id]));
+  if (S.corr[v.chap]) return un(await importKey(b64(S.corr[v.chap])), v.wkc);
+  if ((S.prof || S.premium) && S.maitre) return un(S.maitre, v.wk);
+  throw new Error("cle");
+}
+const cleF = (t, f) => t + "__" + f;
+function fichesAFaire(){
+  let n = 0;
+  for (const t of testsVisibles()) { const r = MT[t.id]; if (r) n += (r.aRevoir || []).filter(f => !MF[cleF(t.id, f)]).length; }
+  return n;
+}
+function suivreRevisions(uid){
+  if (!testsVisibles().length) return;
+  unsubRev.push(onSnapshot(query(collection(db, "tests"), where("uid", "==", uid)), snap => {
+    MT = {}; snap.forEach(x => { const v = x.data(); MT[v.test] = v; }); render();
+  }, () => {}));
+  unsubRev.push(onSnapshot(query(collection(db, "revisions"), where("uid", "==", uid)), snap => {
+    MF = {}; snap.forEach(x => { const v = x.data(); MF[cleF(v.test, v.fiche)] = v; }); render();
+  }, () => {}));
+}
+async function lireRev(fichier){
+  const key = await outilsKey(); if (!key) throw new Error("cle");
+  return (await decryptBlob(BASE + "docs/revisions/" + fichier, key, "text/plain")).text();
+}
+let katexP = null;
+function katex(el){
+  if (!katexP) katexP = new Promise(ok => {
+    const u = "https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/";
+    const l = document.createElement("link"); l.rel = "stylesheet"; l.href = u + "katex.min.css"; document.head.appendChild(l);
+    const a = document.createElement("script"); a.src = u + "katex.min.js";
+    a.onload = () => { const b = document.createElement("script"); b.src = u + "contrib/auto-render.min.js"; b.onload = ok; document.head.appendChild(b); };
+    document.head.appendChild(a);
+  });
+  katexP.then(() => window.renderMathInElement && renderMathInElement(el, { delimiters: [{left:"$$", right:"$$", display:true}, {left:"$", right:"$", display:false}] }));
+}
+const nombre = s => { s = String(s ?? "").trim().replace(/\s/g, "").replace(",", "."); return s === "" || isNaN(+s) ? null : +s; };
+const juste = (q, v) => v !== null && Math.abs(v - q.reponse) <= Math.max(Math.abs(q.reponse) * (q.tolerance ?? 0.02), 1e-9);
+const dateFr = ts => { try { return (ts && ts.toDate ? ts.toDate() : new Date()).toLocaleDateString("fr-FR"); } catch(_) { return ""; } };
+
+function renderRevisions(view){
+  const head = document.createElement("div"); head.className = "classhead";
+  head.innerHTML = `<h2>Mes révisions</h2>`;
+  view.appendChild(head);
+  const intro = document.createElement("p"); intro.className = "rv-intro";
+  intro.textContent = S.prof || S.premium
+    ? "Aperçu professeur : le test (sans envoi) et toutes ses fiches. Les élèves ne voient que les fiches de leurs compétences à retravailler."
+    : "Avant un nouveau chapitre, fais le test d'entrée. Selon tes réponses, des fiches de révision s'ouvrent ici. Termine-les avant le début du chapitre.";
+  view.appendChild(intro);
+  const ts = testsOuverts();
+  if (!ts.length) { const p = document.createElement("p"); p.className = "empty"; p.textContent = "Aucun test d'entrée ouvert pour l'instant."; view.appendChild(p); }
+  for (const t of ts) view.appendChild(carteTest(t));
+}
+
+const RV_OUVERTS = new Set();
+function carteTest(t){
+  const box = document.createElement("div"); box.className = "rv";
+  const r = eleveRev() ? MT[t.id] : null;
+  const ids = r ? (r.aRevoir || []) : [];
+  const faites = ids.filter(f => MF[cleF(t.id, f)]).length;
+  const tag = !eleveRev() ? "" : !r ? `<span class="tag">Test à faire</span>` : faites === ids.length ? `<span class="tag ok">Prêt pour le chapitre</span>` : `<span class="tag">${ids.length - faites} fiche${ids.length - faites > 1 ? "s" : ""} à travailler</span>`;
+  box.innerHTML = `<div class="hd" role="button" tabindex="0"><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>${FOLDER}<h3>${esc(t.chapitre)}</h3>${tag}</div><div class="bd"></div>`;
+  /* Menu déroulant (23/11/2026) : chapitre replié par défaut, l'état est gardé entre deux affichages */
+  const hd = box.querySelector(".hd");
+  const maj = () => { const o = RV_OUVERTS.has(t.id); box.classList.toggle("open", o); hd.setAttribute("aria-expanded", o); };
+  const bascule = () => { RV_OUVERTS.has(t.id) ? RV_OUVERTS.delete(t.id) : RV_OUVERTS.add(t.id); maj(); };
+  hd.onclick = bascule;
+  hd.onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); bascule(); } };
+  maj();
+  const bd = box.querySelector(".bd");
+  if (!eleveRev()) {
+    bd.innerHTML = `<p>${esc(t.titre)} · ${t.nb} questions · ${esc(t.duree)}</p><div class="act"><button class="btn" type="button">Voir le test (aperçu)</button></div>`;
+    bd.querySelector("button").onclick = () => ouvrirTest(t, true);
+    bd.appendChild(listeFiches(t, null));
+    return box;
+  }
+  if (!r) {
+    bd.innerHTML = `<p>Fais d'abord le <strong>test d'entrée</strong> : il est dans le dossier du chapitre « ${esc(t.chapitre)} », rubrique « Pour commencer ». Tes fiches de révision apparaîtront ensuite ici.</p><button class="btn" type="button">Aller au chapitre</button>`;
+    bd.querySelector("button").onclick = () => { opened.add(t.site + "/" + t.chapitre); opened.add(t.site + "/" + t.chapitre + "/Pour commencer");
+      const chT = NOUVELLE_UI.has(t.site) ? ((CAT.classes.find(k => k.id === t.site) || { chapitres: [] }).chapitres.find(x => sansAccent(x.titre) === sansAccent(t.chapitre))) : null;
+      location.hash = chT ? t.site + "/" + encodeURIComponent(chT.titre) : t.site; };
+    return box;
+  }
+  bd.innerHTML = `<p>Test fait le ${esc(dateFr(r.date))}.</p>`;
+  if (!ids.length) { bd.innerHTML += `<div class="msg">Aucune fiche à revoir : tu es prêt pour le chapitre.</div>`; return box; }
+  bd.innerHTML += `<p>Tes fiches de révision : lis le rappel et l'exemple, puis réussis les trois questions de « Je m'entraîne ».</p>`;
+  bd.appendChild(listeFiches(t, ids));
+  if (faites === ids.length) bd.insertAdjacentHTML("beforeend", `<div class="msg">Toutes tes fiches sont terminées. Ton professeur est prévenu : tu es prêt pour le chapitre.</div>`);
+  return box;
+}
+
+function listeFiches(t, ids){
+  const ul = document.createElement("ul"); ul.className = "fl";
+  (ids || t.fiches || []).forEach(f => {
+    const fi = REV.fiches[f]; if (!fi) return;
+    const fait = ids && MF[cleF(t.id, f)];
+    const li = document.createElement("li");
+    li.innerHTML = `<span class="t">${esc(fi.titre)}<small${fait ? ' class="ok"' : ""}>${!ids ? "Fiche de révision" : fait ? "✓ Terminée le " + esc(dateFr(fait.date)) : "À travailler"}</small></span><button class="btn${fait ? " ghost" : ""}" type="button">${fait ? "Revoir" : "Ouvrir"}</button>`;
+    li.querySelector("button").onclick = () => ouvrirFiche(t, f);
+    ul.appendChild(li);
+  });
+  return ul;
+}
+
+async function ouvrirTest(t, apercu){
+  const view = $("#view");
+  let T;
+  try { T = JSON.parse(await (await decryptBlob(BASE + "docs/revisions/" + t.fichier, await testKey(t), "text/plain")).text()); } catch(e) { toast("Impossible d'ouvrir le test. Rechargez la page."); return; }
+  VUE_REV = "test"; window.scrollTo(0, 0);
+  view.innerHTML = "";
+  const box = document.createElement("div"); box.className = "tst";
+  box.innerHTML = `<div class="classhead"><h2>${esc(T.titre)}</h2>${apercu ? '<span class="status">Aperçu professeur : rien n\'est envoyé</span>' : ""}</div>
+    <div class="cons"><p style="margin:0 0 6px"><strong>Avant de commencer, munis-toi d'un brouillon et d'une calculatrice</strong> : certaines questions demandent un calcul.</p>${esc(T.consigne || "")}</div>`
+    + T.questions.map((q, i) => `<div class="qq"><div><span class="n">${i + 1}.</span> ${q.enonce}</div>${q.figure || ""}
+      <div class="ln"><input inputmode="decimal" aria-label="Réponse ${i + 1}" autocomplete="off"> <span>${esc(q.unite || "")}</span></div><div class="pv"></div></div>`).join("")
+    + `<p class="err"></p><div class="act"><button class="btn" type="button" id="envoi">${apercu ? "Vérifier (aperçu)" : "Envoyer mes réponses"}</button><button class="btn ghost" type="button" id="annul">Revenir</button></div>`;
+  view.appendChild(box); katex(box);
+  box.querySelector("#annul").onclick = () => { if (apercu || confirm("Quitter le test ? Tes réponses ne seront pas gardées.")) { VUE_REV = null; render(); } };
+  box.querySelector("#envoi").onclick = async () => {
+    const champs = [...box.querySelectorAll(".qq input")];
+    const rep = champs.map(x => x.value.trim());
+    const ok = T.questions.map((q, i) => juste(q, nombre(rep[i])));
+    if (apercu) {
+      box.querySelectorAll(".qq .pv").forEach((d, i) => { const q = T.questions[i];
+        d.className = "pv " + (ok[i] ? "ok" : "ko");
+        d.textContent = (ok[i] ? "✓ Juste" : "✗ Attendu : " + String(q.reponse).replace(".", ",") + " " + (q.unite || "")) + " · fiche « " + (REV.fiches[q.fiche] || {}).titre + " »"; });
+      return;
+    }
+    const vides = rep.filter(x => x === "").length, err = box.querySelector(".err");
+    const pasNombre = rep.some(x => x !== "" && nombre(x) === null);
+    if (pasNombre) { err.textContent = "Une réponse n'est pas un nombre : écris seulement le nombre (la virgule est acceptée)."; return; }
+    if (!confirm((vides ? "Tu n'as pas répondu à " + vides + " question" + (vides > 1 ? "s" : "") + ". " : "") + "Envoyer tes réponses ? Tu ne pourras plus les modifier.")) return;
+    const aRevoir = [...new Set(T.questions.filter((q, i) => !ok[i]).map(q => q.fiche))];
+    const btn = box.querySelector("#envoi"); btn.disabled = true; btn.textContent = "Envoi…";
+    try {
+      await setDoc(doc(db, "tests", S.user.uid + "__" + t.id), { uid: S.user.uid, test: t.id, nom: S.nom, classe: S.groupe || "",
+        reponses: rep, justes: ok, score: ok.filter(Boolean).length, sur: ok.length, aRevoir, date: serverTimestamp() });
+    } catch(e) { btn.disabled = false; btn.textContent = "Envoyer mes réponses"; err.textContent = "Envoi impossible. Vérifie ta connexion et réessaie."; return; }
+    window.scrollTo(0, 0);
+    box.innerHTML = `<div class="classhead"><h2>Test envoyé</h2></div>`
+      + (aRevoir.length ? `<p>Merci ! ${aRevoir.length} fiche${aRevoir.length > 1 ? "s" : ""} de révision ${aRevoir.length > 1 ? "se sont ouvertes" : "s'est ouverte"} pour toi :</p><ul>${aRevoir.map(f => "<li>" + esc((REV.fiches[f] || {}).titre || f) + "</li>").join("")}</ul><p>Travaille-les avant le début du chapitre.</p>`
+        : `<p>Merci ! Aucune fiche à revoir : tu es prêt pour le chapitre.</p>`)
+      + `<button class="btn" type="button">${aRevoir.length ? "Voir mes fiches" : "Terminer"}</button>`;
+    box.querySelector("button").onclick = () => { VUE_REV = null; if (aRevoir.length && location.hash !== "#revisions") location.hash = "revisions"; else render(); };
+  };
+}
+
+async function ouvrirFiche(t, f){
+  const fi = REV.fiches[f]; if (!fi) return;
+  let html;
+  try { html = await lireRev(fi.fichier); } catch(e) { toast("Impossible d'ouvrir la fiche. Rechargez la page."); return; }
+  const ov = document.createElement("div"); ov.className = "fiche-ov";
+  ov.innerHTML = `<div class="bar"><b>${esc(fi.titre)}</b><button type="button">Fermer</button></div><iframe title="${esc(fi.titre)}"></iframe>`;
+  const fr = ov.querySelector("iframe"); fr.srcdoc = html;
+  document.body.appendChild(ov); document.body.style.overflow = "hidden";
+  const onMsg = async e => {
+    if (e.source !== fr.contentWindow || !e.data || e.data.type !== "fiche-terminee") return;
+    if (!eleveRev() || MF[cleF(t.id, f)]) return;
+    try {
+      await setDoc(doc(db, "revisions", S.user.uid + "__" + t.id + "__" + f), { uid: S.user.uid, test: t.id, fiche: f, nom: S.nom, classe: S.groupe || "",
+        erreurs: +e.data.erreurs || 0, date: serverTimestamp() });
+      toast("Fiche terminée, bravo !");
+    } catch(_) { toast("La fiche n'a pas pu être enregistrée. Vérifie ta connexion, puis refais la dernière question."); }
+  };
+  window.addEventListener("message", onMsg);
+  ov.querySelector("button").onclick = () => { window.removeEventListener("message", onMsg); ov.remove(); document.body.style.overflow = ""; render(); };
+}
+
+
+/* ================= Points de cours en ligne (22/11/2026) =================
+   Page « Point de cours – Activité n » : chiffrée avec la clé du corrigé de l'activité (débloquée en même temps).
+   L'élève répond étape par étape ; la page envoie point-de-cours-etape / -erreur / -termine ;
+   l'avancement est enregistré dans Firestore « pointsdecours » (lu en direct par l'appli professeur). */
+function suivrePdc(uid){
+  unsubRev.push(onSnapshot(query(collection(db, "pointsdecours"), where("uid", "==", uid)), snap => {
+    MP = {}; snap.forEach(x => { const v = x.data(); MP[v.pdc] = v; }); S.mpCharge = true; render();
+  }, () => {}));
+}
+const aPdc = id => CAT.classes.some(c => c.chapitres.some(ch => ch.docs.some(d => d.type === "Point de cours" && d.corrige.id === id)));
+const pdcOuvert = d => S.prof || S.premium || !!S.corr[d.corrige.id];
+function pdcRow(c, d){
+  const li = document.createElement("li");
+  const ok = pdcOuvert(d), st = MP[d.pdc], fait = st && st.termine;
+  if (!ok) {
+    li.className = "pdc-gris";
+    li.innerHTML = `<span class="type pdc locked">${LOCK}Point de cours</span>
+      <span class="title">${esc(d.titre)}<span class="meta">${d.revision ? "À construire après " + esc(/^TP/.test(d.activite || "") ? "le " + d.activite : "l'" + (d.activite || "activité").replace(/^A/, "a")) : "Verrouillé : il se débloque avec le corrigé, quand le professeur a vérifié ton travail"}</span></span>
+      <span class="actions"><span class="open locked">${LOCK}Verrouillé</span></span>`;
+    return li;
+  }
+  if (fresh.has(d.corrige.id) && !st) li.classList.add("fresh");
+  const eleve = eleveRev();
+  const meta = !eleve ? "Construction guidée, bouton « Vérifier »" : fait ? "✓ Terminé · à relire pour réviser" : st ? "En cours : " + (st.etape || 0) + "/" + (st.total || "?") + " étapes" : "À construire : réponds et clique sur « Vérifier »";
+  if (eleve) li.classList.add(fait ? "pdc-fait" : st ? "pdc-cours" : "pdc-afaire");
+  li.innerHTML = `<span class="type pdc">Point de cours</span><span class="title">${esc(d.titre)}<span class="meta">${meta}</span></span>
+    <span class="actions"><button class="open" type="button">${!eleve || fait ? "Ouvrir" : st ? "Continuer" : "Construire"}</button></span>`;
+  li.querySelector("button").onclick = () => ouvrirPdc(c, d);
+  return li;
+}
+/* Vue professeur d'un point de cours (23/11/2026) : déroulé complet proposé à l'élève (questions, propositions, bonne
+   réponse, indice, phrase ajoutée), injecté dans la page du point de cours pour le compte prof et les invités premium.
+   La fonction est exécutée DANS l'iframe : elle n'utilise que les variables de la page (A, E, etat, cur, erreurs…). */
+function pdcDeroule(){
+  const go = () => {
+    if (typeof A === "undefined" || !A.etapes) return;
+    const st = document.createElement("style");
+    st.textContent = `.prof-dr{margin-top:22px}.prof-dr .h{background:#C55A11;color:#fff;font-weight:bold;font-size:14px;letter-spacing:.4px;padding:8px 14px;border-radius:8px 8px 0 0}
+      .prof-dr .box{background:#fff;border:2px solid #C55A11;border-top:0;border-radius:0 0 8px 8px;padding:6px 14px 10px}
+      .prof-dr .et{padding:10px 0;border-bottom:1px dashed #e0c3ad}.prof-dr .et:last-child{border-bottom:0}
+      .prof-dr .n{color:#C55A11;font-weight:bold}.prof-dr .ty{font-size:12px;color:#5A6577;margin-left:6px}
+      .prof-dr ul{margin:6px 0 0;padding-left:22px}.prof-dr li.bon{color:#1f7a3f;font-weight:bold}.prof-dr li.bon::after{content:"  ✓ bonne réponse";font-size:12px}
+      .prof-dr .rep{color:#1f7a3f;font-weight:bold;background:#e3f4ea;border-radius:4px;padding:0 4px}
+      .prof-dr .props{font-size:13px;color:#5A6577;margin-top:4px}
+      .prof-dr .ind{margin-top:6px;background:#FFF2CC;border-radius:6px;padding:6px 10px;font-size:14px}.prof-dr .ind b{color:#C55A11}
+      .prof-dr .ph{margin-top:6px;background:#E2EFDA;border-radius:6px;padding:6px 10px;font-size:14px}.prof-dr .ph b{color:#3F7A3A}
+      .prof-dr .tester{margin-top:12px}`;
+    document.head.appendChild(st);
+    const h = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));
+    const fr = v => String(v).replace(".", ",");
+    const lib = {choix: "choix multiple", menus: "menus déroulants", nombres: "valeurs à saisir"};
+    const bloc = (e, i) => {
+      let c = "";
+      if (e.type === "choix") c = `<ul>${e.options.map((o, k) => `<li${k === e.bon ? ' class="bon"' : ""}>${o}</li>`).join("")}</ul>`;
+      else if (e.type === "menus") {
+        let t = e.texte; e.menus.forEach((m, k) => { t = t.replace("{" + k + "}", `<span class="rep">${h(m[e.bons[k]])}</span>`); });
+        c = `<div>${t}</div>` + e.menus.map((m, k) => `<div class="props">Menu ${k + 1} : ${m.map(h).join(" / ")}</div>`).join("");
+      } else c = (e.champs || []).map(f => `<div>${f.av} <span class="rep">${fr(f.r)}</span> ${f.ap}${f.tol ? ` <span class="props">(accepté à ± ${fr(f.tol)})</span>` : ""}</div>`).join("");
+      return `<div class="et"><div><span class="n">Étape ${i + 1}.</span> ${e.q}<span class="ty">(${lib[e.type] || e.type})</span></div>${c}
+        ${e.indice ? `<div class="ind"><b>Indice (après la 1re erreur) :</b> ${e.indice}</div>` : ""}
+        <div class="ph"><b>Phrase ajoutée au point de cours :</b> ${e.phrase}</div></div>`;
+    };
+    const sec = document.createElement("section"); sec.className = "prof-dr";
+    sec.innerHTML = `<div class="h">VUE PROFESSEUR – DÉROULÉ PROPOSÉ À L'ÉLÈVE (${A.etapes.length} étapes)</div><div class="box">
+      <p class="props">L'élève voit une étape à la fois. Après une erreur, l'indice s'affiche ; après deux erreurs, la bonne réponse est donnée et la phrase est marquée « corrigé ».</p>
+      ${A.etapes.map(bloc).join("")}
+      <div class="tester"><button type="button" class="btn">Tester comme un élève</button> <span class="props">(rien n'est enregistré)</span></div></div>`;
+    document.querySelector("main").appendChild(sec);
+    const z = document.getElementById("zone"); if (z) z.innerHTML = "";
+    if (window.renderMathInElement) renderMathInElement(sec, {delimiters:[{left:"$$",right:"$$",display:true},{left:"$",right:"$",display:false}], throwOnError:false});
+    sec.querySelector("button").onclick = () => {
+      try { etat.length = 0; cur = 0; erreurs = 0; document.getElementById("consigne").hidden = false; document.getElementById("prog").hidden = false;
+        dessinerPdc(-1); etape(); window.scrollTo(0, 0); } catch(_) {}
+    };
+  };
+  if (document.readyState === "complete") go(); else window.addEventListener("load", go);
+}
+async function ouvrirPdc(c, d){
+  let html;
+  try {
+    const key = await corrKey(d); if (!key) throw new Error("verrou");
+    html = await (await decryptBlob(BASE + "docs/" + c.id + "/" + d.fichier, key, "text/html;charset=utf-8")).text();
+  } catch(e) { toast(e.message === "verrou" ? "Ce point de cours n'est pas encore débloqué." : "Impossible d'ouvrir le point de cours. Rechargez la page."); return; }
+  const eleve = eleveRev(), deja = MP[d.pdc] && MP[d.pdc].termine;
+  if (deja || !eleve) html = html.replace("</head>", "<script>window.PDC_FAIT = true;<\/script></head>");   // affichage complet, pour réviser
+  if (!eleve) html = html.replace("</body>", () => "<script>(" + pdcDeroule.toString() + ")();<\/script></body>");   // vue professeur : déroulé complet (questions + réponses)
+  const ov = document.createElement("div"); ov.className = "fiche-ov";
+  ov.innerHTML = `<div class="bar"><b>${esc(d.titre)}</b><button type="button">Fermer</button></div><iframe title="${esc(d.titre)}"></iframe>`;
+  const fr = ov.querySelector("iframe"); fr.srcdoc = html;
+  document.body.appendChild(ov); document.body.style.overflow = "hidden";
+  const onMsg = async e => {
+    if (e.source !== fr.contentWindow || !e.data || !/^point-de-cours-(etape|erreur|termine)$/.test(e.data.type)) return;
+    if (!eleve || (MP[d.pdc] && MP[d.pdc].termine)) return;
+    const av = MP[d.pdc] || {}, termine = e.data.type === "point-de-cours-termine";
+    const v = { uid: S.user.uid, pdc: d.pdc, corrige: d.corrige.id, titre: d.titre, activite: d.activite || "", site: c.id,
+      nom: S.nom, classe: S.groupe || "", etape: Math.max(+e.data.etape || 0, termine ? +e.data.total || 0 : 0, av.etape || 0),
+      total: +e.data.total || 0, erreurs: Math.max(+e.data.erreurs || 0, av.erreurs || 0), termine, date: serverTimestamp() };
+    MP[d.pdc] = v;
+    try {
+      await setDoc(doc(db, "pointsdecours", S.user.uid + "__" + d.pdc), v);
+      if (termine) toast("Point de cours terminé, bravo ! Tu peux passer à la suite.");
+    } catch(_) { toast("Ton avancement n'a pas pu être enregistré. Vérifie ta connexion."); }
+  };
+  window.addEventListener("message", onMsg);
+  ov.querySelector("button").onclick = () => { window.removeEventListener("message", onMsg); ov.remove(); document.body.style.overflow = ""; render(); };
+}
+
+/* ================= Coups de pouce en cascade (24/11/2026) =================
+   Page « … - coups de pouce » (format "pouce") : niveau 1 visible ; l'élève demande le 2 puis le 3, qui s'affichent
+   après un délai (compte à rebours dans la page). Niveaux atteints par question enregistrés dans Firestore
+   « pointsdecours/<uid>__pouce:<corrigé lié> » (type "pouce", champ niveaux) → vue d'ensemble dans l'appli professeur. */
+function pouceRow(c, d){
+  const li = document.createElement("li"); li.className = "pouce";
+  const st = MP[d.pouce], eleve = eleveRev();
+  const nv = st && st.niveaux ? Object.values(st.niveaux).filter(n => n > 1).length : 0;
+  const meta = !eleve ? "Coups de pouce en cascade · vue professeur : les 3 niveaux sont affichés"
+    : nv ? nv + " coup" + (nv > 1 ? "s" : "") + " de pouce supplémentaire" + (nv > 1 ? "s" : "") + " débloqué" + (nv > 1 ? "s" : "")
+    : "Niveau 1 visible ; les niveaux 2 et 3 se débloquent si tu bloques encore";
+  li.innerHTML = `<span class="type pouce">Coup de pouce</span><span class="title">${esc(d.titre)}<span class="meta">${esc(meta)}</span></span>
+    <span class="actions"><button class="open" type="button">Ouvrir</button></span>`;
+  li.querySelector("button").onclick = () => ouvrirPouce(c, d);
+  return li;
+}
+async function ouvrirPouce(c, d){
+  let html;
+  try {
+    const key = d.cv ? await chapKey(d.cv) : S.keys[c.id];
+    if (!key) throw new Error("chapitre");
+    html = await (await decryptBlob(BASE + "docs/" + c.id + "/" + d.fichier, key, "text/html;charset=utf-8")).text();
+  } catch(e) { toast(e.message === "chapitre" ? "Ce chapitre n'est pas encore ouvert." : "Impossible d'ouvrir les coups de pouce. Rechargez la page."); return; }
+  const eleve = eleveRev(), st = MP[d.pouce];
+  const init = "<script>window.POUCE_ID = " + JSON.stringify((S.user ? S.user.uid : "") + "|" + d.pouce) + "; window.POUCE_INIT = " + JSON.stringify(eleve && st && st.niveaux ? st.niveaux : {})
+    + (eleve ? "" : "; window.POUCE_PROF = true") + (compDe(chapDe(c.id, d)) || !(chapDe(c.id, d) || {}).competences ? "" : "; window.POUCE_SANS_COMP = true") + ";<\/script></head>";
+  html = html.replace("</head>", () => init);
+  const ov = document.createElement("div"); ov.className = "fiche-ov";
+  ov.innerHTML = `<div class="bar"><b>${esc(d.titre)}</b><button type="button">Fermer</button></div><iframe title="${esc(d.titre)}"></iframe>`;
+  const fr = ov.querySelector("iframe"); fr.srcdoc = html;
+  document.body.appendChild(ov); document.body.style.overflow = "hidden";
+  const onMsg = async e => {
+    if (e.source !== fr.contentWindow || !e.data || e.data.type !== "pouce-niveau" || !eleve) return;
+    const av = (MP[d.pouce] && MP[d.pouce].niveaux) || {}, niveaux = Object.assign({}, av);
+    Object.entries(e.data.niveaux || {}).forEach(([q, n]) => { n = Math.min(3, Math.max(1, +n || 1)); if (n > (niveaux[q] || 0)) niveaux[q] = n; });
+    if (MP[d.pouce] && JSON.stringify(niveaux) === JSON.stringify(av)) return;   // rien de nouveau
+    const v = { uid: S.user.uid, pdc: d.pouce, type: "pouce", corrige: d.lie || "", titre: d.titre, activite: "", site: c.id,
+      nom: S.nom, classe: S.groupe || "", niveaux, etape: Math.max(1, ...Object.values(niveaux)), total: +e.data.total || 0,
+      erreurs: 0, termine: false, date: serverTimestamp() };
+    MP[d.pouce] = v;
+    try { await setDoc(doc(db, "pointsdecours", S.user.uid + "__" + d.pouce), v); } catch(_) {}
+  };
+  window.addEventListener("message", onMsg);
+  ov.querySelector("button").onclick = () => { window.removeEventListener("message", onMsg); ov.remove(); document.body.style.overflow = ""; render(); };
+}
+
+
+/* ================= Profil de compétences (24/11/2026, prototype BTS CIRA « Amplification ») =================
+   Compétences de la démarche scientifique (S'approprier, Analyser, Réaliser, Valider, Communiquer), d'après :
+   - les coups de pouce ouverts (questions étiquetées dans « competences.json » du chapitre → catalogue « competences ») ;
+   - les réponses de l'animation (1er essai, 2e essai ou correction), Firestore « pointsdecours/<uid>__anim:<chapitre> ».
+   Calcul : competences.js (partagé avec l'appli professeur). Rien n'est noté.
+   « Mon parcours avant l'évaluation » : page chiffrée comme un corrigé (le professeur l'ouvre dans l'appli) ; elle reçoit
+   le profil et renvoie l'avancement → Firestore « pointsdecours/<uid>__parcours:<id> ». */
+const ANIMS = new Map();   // fenêtres d'animation ouvertes → { c, d }
+(() => { const st = document.createElement("style"); st.textContent = PROFIL_CSS
+  + ".type.cpt{color:#1F3864;border-color:currentColor;background:#DEEAF6}.cpf-ov{flex:1;overflow:auto;background:#F4F6F9;color:#18212F}"
+  + ".cpf-ov .in{max-width:760px;margin:0 auto;padding:16px 14px 40px}.cpf-ov h2{color:#1F3864;margin:0 0 6px;font-size:1.3rem}"
+  + ".cpf-ov .syn{background:#DEEAF6;border-radius:8px;padding:10px 14px;margin:12px 0}.cpf-ov .ex{font-size:14px;color:#5A6577;margin:12px 0}"
+  + ".cpf-ov .demo{background:#E2EFDA;color:#3F7A3A;border-radius:8px;padding:8px 12px;font-size:14px;margin:0 0 12px}";
+  document.head.appendChild(st); const st2 = document.createElement("style"); st2.textContent = ANNEE_CSS
+  + ".mc-d{display:flex;align-items:center;gap:10px;padding:10px 14px;border-top:1px solid var(--grid)}.mc-d:first-child{border-top:0}.mc-d b{flex:1}"; document.head.appendChild(st2); })();
+const chapDe = (cid, d) => { const c = (CAT.classes || []).find(x => x.id === cid); return c ? c.chapitres.find(ch => ch.docs.includes(d)) : null; };
+const animId = ch => "anim:" + (ch.verrou ? ch.verrou.id : ch.titre);
+/* Profil réservé à certaines classes (25/11/2026, « Les chaînes de mesure » : 2ETA seulement, les 2ET avaient fini le dossier).
+   competences.groupes = classes concernées ; competences.aussi = identifiants des élèves inscrits dans deux classes.
+   Hors de ces classes : ni profil, ni fiche « Comment ça marche », ni parcours, ni étiquettes dans les coups de pouce. */
+function compDe(ch){
+  const k = ch && ch.competences; if (!k) return null;
+  if (!k.groupes || !S.user || S.prof || S.premium || S.tous) return k;
+  if (k.groupes.includes(S.groupe)) return k;
+  const login = String(S.user.email || "").split("@")[0];
+  return (k.aussi || []).includes(login) ? k : null;
+}
+/* Rythme réservé à certaines classes (25/11/2026, « Les chaînes de mesure » : 2ETA seulement ; rythme.groupes / rythme.aussi).
+   Hors de ces classes : ni jauge, ni frein, ni page « Correction des exemples » pour ce dossier. */
+function rythmeDe(ch){
+  const r = ch && ch.rythme; if (!r) return null;
+  if (!r.groupes || !S.user || S.prof || S.premium || S.tous) return r;
+  if (r.groupes.includes(S.groupe)) return r;
+  const login = String(S.user.email || "").split("@")[0];
+  return (r.aussi || []).includes(login) ? r : null;
+}
+const docCompOK = (ch, d) => (d.format !== "exemples" || !ch.rythme || !!rythmeDe(ch))
+  && (!ch.competences || !!compDe(ch) || !(d.format === "parcours" || /^Comment ça marche – profil/i.test(d.titre)));
+window.addEventListener("message", async e => {
+  if (!e.data || e.data.type !== "anim-reponse") return;
+  const info = ANIMS.get(e.source); if (!info || !eleveRev()) return;
+  const ch = chapDe(info.c, info.d); if (!compDe(ch)) return;
+  const id = animId(ch), rep = Object.assign({}, MP[id] && MP[id].reponses), n = String(e.data.n), old = rep[n];
+  if (old && (old.ok || old.t >= 2)) return;          // seuls les deux premiers essais comptent
+  rep[n] = { t: Math.min(2, +e.data.essai || 1), ok: !!e.data.ok };
+  const v = { uid: S.user.uid, pdc: id, type: "anim", site: info.c, chap: ch.verrou ? ch.verrou.id : "", titre: info.d.titre, activite: "",
+    nom: S.nom, classe: S.groupe || "", reponses: rep, etape: Object.keys(rep).length, total: 0, erreurs: 0, termine: false, date: serverTimestamp() };
+  MP[id] = v;
+  try { await setDoc(doc(db, "pointsdecours", S.user.uid + "__" + id), v); } catch(_) {}
+});
+function donneesProfil(ch){
+  const pouces = {};
+  ch.docs.filter(d => d.format === "pouce").forEach(d => { const k = numeroDoc(d); if (!k) return;
+    const st = MP[d.pouce]; pouces[k] = { niveaux: (st && st.niveaux) || {}, valide: !!S.corr[d.lie] }; });
+  const an = MP[animId(ch)];
+  return calcProfil(ch.competences.questions, pouces, an ? an.reponses : {}, comDe(S.rythme && S.rythme[ch.verrou ? ch.verrou.id : ch.titre]));
+}
+const EXEMPLE_PROFIL = { APP: { score: 2.6, nP: 3, nA: 0, niveau: "solide" }, ANA: { score: 1.0, nP: 8, nA: 4, niveau: "fragile" },
+  REA: { score: 2.5, nP: 10, nA: 7, niveau: "solide", alerte: null }, VAL: { score: 1.7, nP: 6, nA: 2, niveau: "moyen" }, COM: { score: 2.0, nP: 3, nA: 0, niveau: "moyen" } };
+function profilRow(c, d){
+  const li = document.createElement("li"), eleve = eleveRev();
+  let meta = "Graphique de tes compétences, mis à jour au fil du dossier · rien n'est noté";
+  if (!eleve) meta = "Aperçu professeur : chaque élève voit son propre profil (détail par élève dans l'appli, onglet « Compétences »)";
+  else { const pr = donneesProfil(d._ch), nb = Object.values(pr).filter(x => x.score != null).length; if (!nb) meta = "Se construit au fil du dossier (activités vérifiées, animation) · rien n'est noté"; }
+  li.innerHTML = `<span class="type cpt">Profil</span><span class="title">${esc(d.titre)}<span class="meta">${esc(meta)}</span></span>
+    <span class="actions"><button class="open" type="button">Voir</button></span>`;
+  li.querySelector("button").onclick = () => ouvrirProfil(d);
+  return li;
+}
+async function ouvrirProfil(d){
+  const eleve = eleveRev(), pr = eleve ? donneesProfil(d._ch) : EXEMPLE_PROFIL;
+  const ev = eleve ? await evalTaux(d._c, d._ch) : { ANA: 0.55, REA: 0.8, VAL: 0.6 };
+  const ov = document.createElement("div"); ov.className = "fiche-ov";
+  ov.innerHTML = `<div class="bar"><b>Mon profil de compétences – ${esc(d._ch.titre)}</b><button type="button">Fermer</button></div>
+    <div class="cpf-ov"><div class="in">${eleve ? "" : `<div class="demo">Aperçu professeur : exemple fictif. Les vrais profils sont dans l'appli professeur, onglet « Compétences ».</div>`}
+    <h2>Où j'en suis</h2>
+    <p class="ex">Ce profil montre ton <b>autonomie</b> dans les compétences de la démarche scientifique du référentiel. Il est construit à partir des coups de pouce que tu as ouverts dans les activités, les TP et les exercices vérifiés par le professeur, et de tes réponses à l'animation. <b>Rien n'est noté</b> : c'est un repère pour préparer l'évaluation.</p>
+    ${profilHtml(pr, { eval: ev || {} })}${ev ? '<p class="cpf-leg">◆ = ta réussite à l\'évaluation de fin de dossier, par compétence.</p>' : ""}<div class="syn">${esc(synthese(pr))}</div>
+    <p class="ex">Avant l'évaluation, ton professeur ouvre « Mon parcours avant l'évaluation » : des exercices choisis d'après ce profil. L'évaluation sera la même pour toute la classe.</p></div></div>`;
+  document.body.appendChild(ov); document.body.style.overflow = "hidden";
+  ov.querySelector("button").onclick = () => { ov.remove(); document.body.style.overflow = ""; };
+}
+
+/* Résultats par compétence de l'évaluation de fin de dossier (24/11/2026) : champ « cp » de chaque copie dans
+   evaluations.json, chiffré avec la clé de la copie (l'élève ne le lit qu'une fois sa copie publiée). */
+const EVCP = {};
+async function evalTaux(c, ch){
+  if (S.demo) return (S.demoTaux || {})[ch.titre] || null;
+  const evs = (EVAL.evaluations || []).filter(e => e.site === c.id && e.dossier && sansAccent(e.dossier) === sansAccent(ch.titre));
+  const tous = {};
+  for (const e of evs) {
+    const cp = (e.copies || []).find(x => x.cp && S.corr[x.corrige.id]); if (!cp) continue;
+    if (!EVCP[cp.corrige.id]) { try { const w = b64(cp.cp), k = await importKey(b64(S.corr[cp.corrige.id]));
+      EVCP[cp.corrige.id] = JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({ name: "AES-GCM", iv: w.slice(0, 12) }, k, w.slice(12)))).taux || {}; } catch(_) { continue; } }
+    Object.entries(EVCP[cp.corrige.id]).forEach(([k, v]) => (tous[k] = tous[k] || []).push(v));
+  }
+  const out = {}; Object.entries(tous).forEach(([k, v]) => out[k] = v.reduce((a, b) => a + b, 0) / v.length);
+  return Object.keys(out).length ? out : null;
+}
+/* Onglet « Mes compétences » : tous les dossiers ouverts de la classe qui ont un profil, dans l'ordre du cours */
+function chapsCompetencesEleve(){ const c = (CAT.classes || []).find(x => x.id === S.site); return c ? c.chapitres.filter(ch => compDe(ch) && chapOK(ch)) : []; }
+let MC_JETON = 0;
+async function renderMesCompetences(view){
+  const c = (CAT.classes || []).find(x => x.id === S.site); if (!c) return;
+  const jeton = ++MC_JETON, chs = chapsCompetencesEleve();
+  const head = document.createElement("div"); head.className = "classhead";
+  head.innerHTML = `<h2>Mes compétences</h2><span class="status is-open">Visible par toi seul · rien n'est noté</span>`;
+  view.appendChild(head);
+  const z = document.createElement("div"); z.innerHTML = `<p class="empty">Chargement…</p>`; view.appendChild(z);
+  const dossiers = [];
+  for (const ch of chs) dossiers.push({ titre: ch.titre, ch, profil: donneesProfil(ch), eval: await evalTaux(c, ch) });
+  if (jeton !== MC_JETON) return;   // la page a été redessinée entre-temps
+  const bilan = bilanAnnee(dossiers);
+  z.innerHTML = `<div class="cpf-ov" style="background:transparent"><p class="ex">Les compétences de la démarche scientifique du référentiel, sur <b>tous tes dossiers</b> de l'année. La barre montre ton autonomie (coups de pouce, animation) ; le losange ◆ ta réussite aux évaluations de fin de dossier. La petite courbe montre ta progression, un point par dossier.</p>
+    ${anneeHtml(bilan)}<p class="sec" style="margin:18px 4px 6px;font-weight:700;color:var(--muted)">Profil de chaque dossier</p>
+    <div class="card" style="background:var(--surface);border:1px solid var(--grid);border-radius:12px">${dossiers.map((d, i) => `<div class="mc-d"><b>${esc(d.titre)}</b><button class="open" type="button" data-i="${i}">Voir</button></div>`).join("")}</div></div>`;
+  z.querySelectorAll("button[data-i]").forEach(b => b.onclick = () => { const d = dossiers[+b.dataset.i]; ouvrirProfil({ titre: "Mon profil de compétences", type: "Profil", _c: c, _ch: d.ch }); });
+}
+const parcoursId = d => "parcours:" + d.corrige.id;
+function parcoursRow(c, d){
+  const li = document.createElement("li"), eleve = eleveRev(), ok = S.prof || S.premium || !!S.corr[d.corrige.id];
+  if (!ok) {
+    li.innerHTML = `<span class="type cpt locked">${LOCK}Parcours</span><span class="title">${esc(d.titre)}<span class="meta">Le professeur l'ouvre à la fin du dossier, avant l'évaluation</span></span>
+      <span class="actions"><span class="open locked">${LOCK}Verrouillé</span></span>`;
+    return li;
+  }
+  const st = MP[parcoursId(d)];
+  const meta = !eleve ? "Aperçu professeur : tester un parcours et voir toute la banque avec les corrections"
+    : st && st.fini ? "Parcours terminé ✓" : st ? (st.etape || 0) + " exercice" + ((st.etape || 0) > 1 ? "s" : "") + " terminé" + ((st.etape || 0) > 1 ? "s" : "") + " · continue dans l'ordre"
+    : "Exercices choisis pour toi d'après ton profil · brouillon et calculatrice";
+  li.innerHTML = `<span class="type cpt">Parcours</span><span class="title">${esc(d.titre)}<span class="meta">${esc(meta)}</span></span>
+    <span class="actions"><button class="open" type="button">${st ? "Continuer" : "Ouvrir"}</button></span>`;
+  li.querySelector("button").onclick = () => ouvrirParcours(c, d);
+  return li;
+}
+async function ouvrirParcours(c, d){
+  let html;
+  try { const key = await corrKey(d); if (!key) throw new Error("verrou");
+    html = await (await decryptBlob(BASE + "docs/" + c.id + "/" + d.fichier, key, "text/html;charset=utf-8")).text();
+  } catch(e) { toast(e.message === "verrou" ? "Ce parcours n'est pas encore ouvert." : "Impossible d'ouvrir le parcours. Rechargez la page."); return; }
+  const eleve = eleveRev(), id = parcoursId(d), st = MP[id], pr = eleve ? donneesProfil(d._ch) : {};
+  const init = "<script>window.PARCOURS_PROFIL = " + JSON.stringify(pr) + "; window.PARCOURS_SYNTHESE = " + JSON.stringify(eleve ? synthese(pr) : "")
+    + "; window.PARCOURS_ETAT = " + JSON.stringify(eleve && st ? { plan: st.plan, res: st.res } : {}) + (eleve ? "" : "; window.PARCOURS_PROF = true") + ";<\/script></head>";
+  html = html.replace("</head>", () => init);
+  const ov = document.createElement("div"); ov.className = "fiche-ov";
+  ov.innerHTML = `<div class="bar"><b>${esc(d.titre)}</b><button type="button">Fermer</button></div><iframe title="${esc(d.titre)}"></iframe>`;
+  const fr = ov.querySelector("iframe"); fr.srcdoc = html;
+  document.body.appendChild(ov); document.body.style.overflow = "hidden";
+  const onMsg = async e => {
+    if (e.source !== fr.contentWindow || !e.data || e.data.type !== "parcours" || !eleve) return;
+    const plan = e.data.plan || [], res = e.data.res || {};
+    const finis = plan.filter(p => { const r = res[p.id] || {}; return Object.keys(r).length && Object.values(r).every(x => x.ok || x.t >= 2); }).length;
+    const v = { uid: S.user.uid, pdc: id, type: "parcours", site: c.id, titre: d.titre, activite: "", nom: S.nom, classe: S.groupe || "",
+      plan, res, fini: !!e.data.fini, etape: finis, total: plan.length, erreurs: 0, termine: false, date: serverTimestamp() };
+    MP[id] = v;
+    try { await setDoc(doc(db, "pointsdecours", S.user.uid + "__" + id), v); } catch(_) {}
+  };
+  window.addEventListener("message", onMsg);
+  ov.querySelector("button").onclick = () => { window.removeEventListener("message", onMsg); ov.remove(); document.body.style.overflow = ""; render(); };
+}
+
+/* Test d'entrée rangé dans le dossier de son chapitre (rubrique « Pour commencer ») */
+const sansAccent = x => String(x || "").normalize("NFKD").replace(/[̀-ͯ]/g, "").toLowerCase().trim();
+function testDuChapitre(c, ch){
+  if (!S.user || !c || !c.id) return null;
+  return testsVisibles().find(t => t.site === c.id && sansAccent(t.chapitre) === sansAccent(ch.titre) && (testOK(t) || MT[t.id])) || null;
+}
+function ligneTest(c, t){
+  const li = document.createElement("li");
+  const r = eleveRev() ? MT[t.id] : null;
+  let meta, bouton;
+  if (!eleveRev()) { meta = t.nb + " questions · " + t.duree + " · aperçu professeur (rien n'est envoyé)"; bouton = "Aperçu"; }
+  else if (!r) { meta = t.nb + " questions · environ " + t.duree + " · à faire une seule fois, seul, avec ta calculatrice"; bouton = "Commencer"; }
+  else {
+    const ids = r.aRevoir || [], reste = ids.filter(f => !MF[cleF(t.id, f)]).length;
+    meta = "Fait le " + dateFr(r.date) + " · " + (!ids.length ? "aucune fiche à revoir" : reste ? reste + " fiche" + (reste > 1 ? "s" : "") + " à travailler dans « Mes révisions »" : "fiches terminées");
+    bouton = ids.length ? "Mes fiches" : null;
+  }
+  li.innerHTML = `<span class="type tp">Test</span><span class="title">${esc(t.titre)}<span class="meta">${esc(meta)}</span></span><span class="actions">${bouton ? `<button class="open" type="button">${bouton}</button>` : ""}</span>`;
+  const b = li.querySelector("button");
+  if (b) b.onclick = () => { if (eleveRev() && r) location.hash = "revisions"; else ouvrirTest(t, !eleveRev()); };
+  return li;
+}
+function sousTest(c, t, k0, ouvert){
+  const k = k0.endsWith("/Pour commencer") ? k0 : k0 + "/Pour commencer";
+  const sd = document.createElement("details"); sd.className = "sous";
+  if (ouvert || opened.has(k)) sd.open = true;
+  sd.innerHTML = `<summary>${FOLDER}<span>Pour commencer</span><span class="nb">1 document</span><span class="chev" aria-hidden="true"></span></summary>`;
+  sd.addEventListener("toggle", () => { if (sd.open) { opened.add(k); fermes.delete(k); } else { opened.delete(k); fermes.add(k); } });
+  const ul = document.createElement("ul"); ul.className = "docs"; ul.appendChild(ligneTest(c, t)); sd.appendChild(ul);
+  return sd;
+}
+
+function renderOutils(view, q){
+  const O = { id: "outils" };
+  const outils = (CAT.outils || []).map(o => ({ ch: o, docs: o.docs.filter(d => !q || (d.titre + " " + d.type + " " + o.titre + " " + o.groupe).toLowerCase().includes(q)) }))
+    .filter(x => x.docs.length);
+  if (q && !outils.length) return 0;
+  const head = document.createElement("div"); head.className = "classhead";
+  head.innerHTML = `<h2>Outils</h2><span class="status is-open">Documents ouverts</span>`;
+  view.appendChild(head);
+  if (!q) { const p = document.createElement("p"); p.className = "intro-outils"; p.textContent = "Fiches méthodes des appareils et logiciels utilisés en TP, avec une simulation pour s'entraîner avant la séance."; view.appendChild(p); }
+  let grp = null, n = 0;
+  /* 25/11/2026 : fiche « Comment on travaille » et information sur les données, en accès direct pour tous les comptes */
+  const fiches = [["Comment on travaille en physique industrielle", "Fiche étudiants (2 pages) : dossiers, coups de pouce, jauge, mini-oral, notes", "docs/fiche-etudiants.pdf"],
+                  ["Tes données sur le site", "Ce qui est enregistré, qui le voit, les copies anonymes, tes droits (1 page)", "docs/donnees-etudiants.pdf"]]
+    .filter(f => !q || (f[0] + " " + f[1] + " fonctionnement données").toLowerCase().includes(q));
+  if (fiches.length) {
+    const h = document.createElement("h3"); h.className = "groupe"; h.textContent = "Fonctionnement et données"; view.appendChild(h);
+    const ul = document.createElement("ul"); ul.className = "docs";
+    fiches.forEach(([t, m, f]) => { const li = document.createElement("li");
+      li.innerHTML = `<span class="type corr">Fiche</span><span class="title">${esc(t)}<span class="meta">${esc(m)}</span></span><span class="actions"><a class="open" href="${BASE}${f}" target="_blank" rel="noopener">Ouvrir</a></span>`;
+      ul.appendChild(li); });
+    view.appendChild(ul); n += fiches.length;
+  }
+  outils.forEach(x => {
+    if (x.ch.groupe !== grp) { grp = x.ch.groupe; const h = document.createElement("h3"); h.className = "groupe"; h.textContent = grp; view.appendChild(h); }
+    n += x.docs.length; view.appendChild(chapBlock(O, x.ch, x.docs, !!q, true));
+  });
+  return n;
+}
+
+function loginBox(){
+  const box = document.createElement("div"); box.className = "lock";
+  box.innerHTML = `<h2>Connexion</h2><p>Entrez l'identifiant et le mot de passe donnés par votre professeur.</p>
+    <form><input type="text" autocomplete="username" autocapitalize="none" spellcheck="false" aria-label="Identifiant" placeholder="Identifiant (ex. hugo.b)" required>
+    <input type="password" autocomplete="current-password" aria-label="Mot de passe" placeholder="Mot de passe" required>
+    <button class="btn" type="submit">Se connecter</button>
+    <label class="rem"><input type="checkbox" checked> Rester connecté sur cet appareil</label></form><p class="err" aria-live="assertive"></p>`;
+  box.querySelector("form").onsubmit = async (e) => {
+    e.preventDefault();
+    const err = box.querySelector(".err"); err.textContent = "";
+    const btn = box.querySelector(".btn"); btn.disabled = true; btn.textContent = "Connexion…";
+    let id = box.querySelector("input[type=text]").value.trim().toLowerCase();
+    if (!id.includes("@")) id += DOMAINE;
+    try {
+      await setPersistence(auth, box.querySelector("input[type=checkbox]").checked ? browserLocalPersistence : browserSessionPersistence);
+      await signInWithEmailAndPassword(auth, id, box.querySelector("input[type=password]").value);
+    } catch(x) {
+      err.textContent = /invalid|wrong|not-found|user/.test(x.code || "") ? "Identifiant ou mot de passe incorrect." : (x.code === "auth/too-many-requests" ? "Trop d'essais. Patientez quelques minutes." : "Connexion impossible. Vérifiez votre accès à Internet.");
+      btn.disabled = false; btn.textContent = "Se connecter";
+    }
+  };
+  setTimeout(() => box.querySelector("input[type=text]")?.focus(), 50);
+  return box;
+}
+
+/* ================= Onglet « Calendrier » (25/11/2026) : compte professeur seulement =================
+   Planning lu sur Pronote (calendrier.json → docs/prive/planning.bin, chiffré par la clé maître des corrigés,
+   mis à jour avec _outils/publier_planning.py). Heures faites / restantes par classe, prochaines séances,
+   calendrier semaine par semaine (cours et TP séparés), dossiers ouverts avec leur prévisionnel :
+   séances de cours nécessaires depuis le déblocage et date d'évaluation prévue (rythme.js, prevision). */
+const CAL_NOMS = { cira1: "BTS CIRA 1re année", cim2: "BTS CIM 2e année", et1a: "BTS ET 1re année (alternants)", et2: "BTS ET 2e année", et2a: "BTS ET 2e année (alternants)" };
+const CAL_ORDRE = ["et2", "et2a", "et1a", "cira1", "cim2"];
+const CAL_FIN = { et2: "2027-05-14", et2a: "2027-05-14", cim2: "2027-05-14" };   // examens : plus de séances comptées ensuite
+const CAL_SITE = { cira1: "cira", cim2: "cim", et1a: "et", et2: "et", et2a: "et" }, CAL_AN = { cira1: 1, cim2: 2, et1a: 1, et2: 2, et2a: 2 };
+let CAL = null, CAL_SEL = "tout", CAL_RY = null, CAL_UNL = {};
+(() => { const st = document.createElement("style");
+  st.textContent = ".cal-sel{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 14px}.cal-sel button{font:inherit;font-size:.9rem;font-weight:600;border:1px solid #D8E0EA;background:#fff;color:#1F3864;border-radius:999px;padding:6px 12px;cursor:pointer}"
+  + ".cal-sel button[aria-pressed=true]{background:#1F3864;color:#fff;border-color:#1F3864}"
+  + ".cal-kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:0 0 14px}.cal-kpi div{background:#fff;border:1px solid #D8E0EA;border-radius:10px;padding:10px 12px}"
+  + ".cal-kpi b{display:block;font-size:1.5rem;color:#1F3864;line-height:1.2}.cal-kpi span{font-size:.82rem;color:#5A6577}"
+  + ".cal-tab{width:100%;border-collapse:collapse;background:#fff;border:1px solid #D8E0EA;border-radius:10px;overflow:hidden;font-size:.92rem;margin-bottom:14px}"
+  + ".cal-tab th{background:#1F3864;color:#fff;text-align:left;padding:8px 10px;font-weight:700}.cal-tab td{padding:8px 10px;border-top:1px solid #D8E0EA;vertical-align:top}.cal-tab tr.cl{cursor:pointer}.cal-tab tr.cl:hover td{background:#F4F6F9}"
+  + ".cal-box{background:#fff;border:1px solid #D8E0EA;border-radius:10px;padding:12px 14px;margin:0 0 14px}.cal-box h3{margin:0 0 6px;font-size:1.05rem;color:#1F3864}.cal-box p{margin:4px 0}"
+  + ".cal-mois{margin:16px 0 6px;font-weight:700;color:#C55A11;text-transform:capitalize}.cal-sem{display:flex;gap:8px;align-items:flex-start;padding:6px 0;border-top:1px dashed #D8E0EA}"
+  + ".cal-sem .w{flex:none;width:92px;font-size:.8rem;color:#5A6577;padding-top:4px}.cal-sem .col{display:flex;flex-direction:column;gap:4px}.cal-sem .s{display:flex;flex-wrap:wrap;gap:6px;align-items:center}.cal-sem.vac .s{color:#5A6577;font-style:italic;font-size:.88rem;padding-top:3px}"
+  + ".cal-p{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#5A6577;width:42px}"
+  + ".cal-c{font-size:.8rem;border-radius:7px;padding:3px 8px;background:#DEEAF6;color:#1F3864;white-space:nowrap}.cal-c.tp{background:#E2EFDA;color:#3F7A3A}"
+  + ".cal-c.passe{opacity:.55}.cal-c.annule{background:#F2F2F2;color:#8A95A6;text-decoration:line-through}.cal-c.deplace{box-shadow:inset 0 0 0 1.5px #C55A11}.cal-c.auj{box-shadow:inset 0 0 0 2px #1F3864;font-weight:700}"
+  + ".cal-c.dos{border-left:4px solid #C55A11}.cal-c.eval{background:#C55A11;color:#fff;font-weight:700}"
+  + ".cal-leg{font-size:.82rem;color:#5A6577;margin:8px 0}.cal-leg .cal-c{margin-right:4px}";
+  document.head.appendChild(st); })();
+async function chargerCalendrier(){
+  if (CAL) return CAL;
+  const m = await fetch(BASE + "calendrier.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null).catch(() => null);
+  if (!m || !m.planning) throw new Error("absent");
+  const key = await corrKey(m.planning); if (!key) throw new Error("cle");
+  const blob = await decryptBlob(BASE + "docs/" + m.planning.fichier, key, "application/json");
+  const P = JSON.parse(await blob.text());
+  const mn = t => +t.slice(0, 2) * 60 + +t.slice(3, 5);
+  const seances = P.seances.map(s => { const d = new Date(s.date + "T" + s.debut + ":00"), f = new Date(s.date + "T" + s.fin + ":00");
+    return { ...s, d, f, h: Math.max(1, Math.round((mn(s.fin) - mn(s.debut)) / 55)), tenue: s.statut !== "annulé" }; })
+    .filter(s => !CAL_FIN[s.classe] || s.date <= CAL_FIN[s.classe]).sort((a, b) => a.d - b.d);
+  CAL = { maj: m.maj, du: P.du, au: P.au, seances };
+  return CAL;
+}
+/* Compte prof : séances cochées et date d'évaluation (documents « rythme »), date de déblocage de chaque dossier par classe */
+async function chargerRythmesCal(){
+  if (CAL_RY) return CAL_RY;
+  CAL_RY = {}; CAL_UNL = {};
+  try { const snap = await getDocs(collection(db, "deblocages"));
+    snap.forEach(x => { const v = x.data(); if (!v.doc || !v.classe || v.classe === "invites") return;
+      if (!String(v.doc).startsWith("rythme:")) { const t = v.at && v.at.toMillis ? v.at.toMillis() : null, k = v.classe + "|" + v.doc;
+        if (t && (!CAL_UNL[k] || t < CAL_UNL[k])) CAL_UNL[k] = t; return; }
+      const chap = v.doc.slice(7), k = v.classe + "|" + chap, n = (v.seances || []).length;
+      if (!CAL_RY[k] || n > (CAL_RY[k].seances || []).length || (v.evalDate && !CAL_RY[k].evalDate)) CAL_RY[k] = { classe: v.classe, chap, seances: v.seances || [], evalDate: v.evalDate || "" }; }); }
+  catch(_) { CAL_RY.illisible = true; }
+  return CAL_RY;
+}
+const calH = n => (Math.round(n * 2) / 2).toLocaleString("fr-FR") + " h";
+const calJour = d => d.toLocaleDateString("fr-FR", { weekday: "short", day: "numeric", month: "short" });
+const calLong = t => new Date(t).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" });
+const calHeure = s => s.debut.replace(":", "h");
+function calStats(cid, now){
+  const S2 = CAL.seances.filter(s => s.classe === cid), ten = S2.filter(s => s.tenue);
+  const fait = ten.filter(s => s.f <= now), reste = ten.filter(s => s.d > now);
+  const som = (l, ty) => l.filter(s => !ty || s.type === ty).reduce((a, s) => a + s.h, 0);
+  return { all: S2, fait, reste, hFait: som(fait), hReste: som(reste), hResteCours: som(reste, "cours"), hResteTp: som(reste, "tp"),
+    annules: S2.filter(s => !s.tenue && s.d > now).length, prochaine: reste[0], aTp: ten.some(s => s.type === "tp"), fin: CAL_FIN[cid] || CAL.au };
+}
+/* Dossiers de la nouvelle méthode ouverts pour la classe, avec leur prévisionnel (seules les séances de COURS comptent, jamais les TP) */
+function dossiersCal(cid){
+  const k = CAT.classes.find(c => c.id === CAL_SITE[cid]); if (!k) return [];
+  const sc = CAL.seances.filter(s => s.classe === cid && s.tenue).map(s => ({ t: s.d.getTime(), h: s.h, type: s.type }));
+  return k.chapitres.filter(ch => ch.rythme && ch.verrou && (!ch.rythme.groupes || ch.rythme.groupes.includes(cid)) && (!ch.annee || ch.annee === CAL_AN[cid]))
+    .map(ch => { const id = ch.verrou.id, debut = CAL_UNL[cid + "|" + id] || (CAL_RY.illisible && OUV ? OUV[id] : null); if (!debut) return null;
+      const r = CAL_RY[cid + "|" + id] || null, pv = prevision(ch, sc, debut);
+      const fixe = r && r.evalDate ? new Date(r.evalDate + "T12:00").getTime() : null;
+      return { ch, id, debut, r, pv, evalT: fixe || (pv && pv.eval) || null, fixe: !!fixe }; })
+    .filter(Boolean).sort((a, b) => b.debut - a.debut);
+}
+async function renderCalendrier(view){
+  const head = document.createElement("div"); head.className = "classhead";
+  head.innerHTML = `<h2>Calendrier</h2><span class="status is-open">Visible par vous seul</span>`;
+  view.appendChild(head);
+  const zone = document.createElement("div"); zone.innerHTML = `<p class="empty">Chargement du planning…</p>`; view.appendChild(zone);
+  try { await chargerCalendrier(); } catch(e) { zone.innerHTML = `<p class="empty">${e.message === "cle" ? "Le planning ne s'ouvre qu'avec le compte professeur." : "Planning indisponible pour l'instant."}</p>`; return; }
+  await chargerRythmesCal();
+  if (current !== "calendrier") return;
+  const now = new Date(), cls = CAL_ORDRE.filter(id => CAL.seances.some(s => s.classe === id));
+  const du = new Date(CAL.du + "T12:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long" }), maj = new Date(CAL.maj + "T12:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long" });
+  let h = `<div class="cal-sel">${[["tout", "Vue d'ensemble"]].concat(cls.map(id => [id, CAL_NOMS[id] || id])).map(([id, n]) => `<button type="button" data-cal="${id}" aria-pressed="${CAL_SEL === id}">${esc(n)}</button>`).join("")}</div>`;
+  if (CAL_SEL === "tout" || !cls.includes(CAL_SEL)) {
+    h += `<table class="cal-tab"><tr><th>Classe</th><th>Faites</th><th>Restantes</th><th>Prochaine séance</th><th>Prochaine évaluation</th><th>Fin</th></tr>`
+      + cls.map(id => { const s = calStats(id, now), ev = dossiersCal(id).filter(x => x.evalT && x.evalT >= now.getTime() - 864e5).sort((a, b) => a.evalT - b.evalT)[0];
+        return `<tr class="cl" data-cal="${id}"><td><b>${esc(CAL_NOMS[id] || id)}</b></td><td>${calH(s.hFait)}</td><td><b>${calH(s.hReste)}</b>${s.aTp ? `<br><small>cours ${calH(s.hResteCours)} · TP ${calH(s.hResteTp)}</small>` : ""}</td>`
+          + `<td>${s.prochaine ? esc(calJour(s.prochaine.d)) + " · " + esc(calHeure(s.prochaine)) + " (" + s.prochaine.h + " h" + (s.prochaine.type === "tp" ? ", TP" : "") + ")" : "–"}</td>`
+          + `<td>${ev ? esc(calJour(new Date(ev.evalT))) + `<br><small>${esc(ev.ch.titre)}${ev.fixe ? "" : " (prévue)"}</small>` : "–"}</td>`
+          + `<td>${esc(new Date(s.fin + "T12:00").toLocaleDateString("fr-FR", { day: "numeric", month: "short" }))}${CAL_FIN[id] ? "<br><small>examens</small>" : ""}</td></tr>`; }).join("") + `</table>`
+      + `<p class="cal-leg">Heures comptées à partir du ${esc(du)}, d'après Pronote (lu le ${esc(maj)}). Un cours annulé ou une classe absente ne compte pas ; un cours déplacé compte à sa nouvelle place. 2e année : plus de séances après le 14 mai (examens). « Prévue » : date calculée depuis le déblocage du dossier, tant que vous n'avez pas saisi la vraie date dans l'appli. Touchez une classe pour son calendrier.</p>`;
+  } else {
+    const id = CAL_SEL, s = calStats(id, now), dos = dossiersCal(id);
+    h += `<div class="cal-kpi"><div><b>${calH(s.hFait)}</b><span>faites depuis le ${esc(du)}</span></div>`
+      + `<div><b>${calH(s.hReste)}</b><span>restantes jusqu'au ${esc(new Date(s.fin + "T12:00").toLocaleDateString("fr-FR", { day: "numeric", month: "short" }))}${s.aTp ? ` (cours ${calH(s.hResteCours)}, TP ${calH(s.hResteTp)})` : ""}</span></div>`
+      + `<div><b>${s.reste.length}</b><span>séances restantes${s.annules ? ` · ${s.annules} annulée${s.annules > 1 ? "s" : ""} à venir` : ""}</span></div>`
+      + `<div><b>${s.prochaine ? esc(calJour(s.prochaine.d)) : "–"}</b><span>${s.prochaine ? "prochaine séance, " + esc(calHeure(s.prochaine)) + " (" + s.prochaine.h + " h" + (s.prochaine.type === "tp" ? ", TP" : "") + ")" : "plus de séance prévue"}</span></div></div>`;
+    if (!dos.length) h += `<div class="cal-box"><p>Aucun dossier de la nouvelle méthode ouvert pour cette classe : le prévisionnel apparaîtra dès que vous débloquerez le prochain.</p></div>`;
+    if (CAL_RY.illisible) h += `<div class="cal-box"><p>Les séances cochées « J'ai cours » et la date d'évaluation saisie s'affichent avec le compte « prof » de l'appli. Ici, les dates sont seulement prévisionnelles.</p></div>`;
+    dos.forEach((x, i) => {
+      const r = x.r || { seances: [] }, auto = r.seances.filter(y => !y.tp), coche = auto.reduce((a, y) => a + (+y.h || 0), 0);
+      const prevues = s.fait.filter(y => y.type === "cours" && y.d.getTime() > x.debut).reduce((a, y) => a + y.h, 0);
+      const avant = x.evalT ? s.reste.filter(y => y.type === "cours" && y.d.getTime() < x.evalT - 6 * 3600e3) : [];
+      const fini = x.evalT && x.evalT < now.getTime() - 864e5;
+      h += `<div class="cal-box"><h3>📁 ${esc(x.ch.titre)}${fini ? " <small style='color:#5A6577;font-weight:400'>(évaluation passée)</small>" : ""}</h3>`
+        + `<p>Ouvert le ${esc(calLong(x.debut))}. Durée prévue : <b>${calH(x.pv ? x.pv.total : 0)}</b> de cours en autonomie, marge comprise${id === "et2" ? " (les TP ne comptent pas)" : ""}.</p>`
+        + (x.pv && x.pv.eval ? `<p>Prévisionnel : <b>${x.pv.n} séance${x.pv.n > 1 ? "s" : ""} de cours</b> jusqu'au ${esc(calLong(x.pv.fin))}, évaluation prévue le <b>${esc(calLong(x.pv.eval))}</b>.</p>`
+          : `<p>Prévisionnel : pas assez de séances de cours dans le planning pour finir le dossier.</p>`)
+        + (x.fixe ? `<p>Date d'évaluation saisie dans l'appli : <b>${esc(calLong(x.evalT))}</b>${x.pv && x.pv.eval && Math.abs(x.pv.eval - x.evalT) > 864e5 ? ` <span style="color:#C55A11">(${x.evalT < x.pv.eval ? "avant" : "après"} le prévisionnel)</span>` : ""}.</p>` : "")
+        + (!fini && x.evalT ? `<p>D'ici l'évaluation : encore <b>${avant.length} séance${avant.length > 1 ? "s" : ""} de cours (${calH(avant.reduce((a, y) => a + y.h, 0))})</b>.</p>` : "")
+        + (x.r ? `<p>Séances cochées « J'ai cours » : <b>${auto.length}</b> (${calH(coche)}) · d'après Pronote depuis l'ouverture : ${calH(prevues)} de cours${Math.abs(prevues - coche) >= 1 ? ` <b style="color:#C55A11">(écart de ${calH(Math.abs(prevues - coche))} : séance oubliée ou en trop ?)</b>` : ""}</p>`
+          : CAL_RY.illisible ? "" : `<p>Suivi du rythme pas encore démarré dans l'appli.</p>`) + `</div>`;
+    });
+    /* Repères du dossier le plus récent dans le calendrier : ses séances (trait orange) et l'évaluation */
+    const cur = dos.find(x => x.evalT && x.evalT >= now.getTime() - 864e5) || dos[0];
+    const tDos = new Set(cur && cur.pv ? cur.pv.seances.map(y => y.t) : []), tEvals = new Set(dos.map(x => x.evalT).filter(Boolean));
+    const estEval = x => [...tEvals].some(t => Math.abs(t - x.d.getTime()) < 6 * 3600e3) && x.type !== "tp" && x.tenue;
+    /* Calendrier semaine par semaine, cours et TP sur deux lignes séparées */
+    const lundi = d => { const x = new Date(d); x.setHours(0, 0, 0, 0); x.setDate(x.getDate() - ((x.getDay() + 6) % 7)); return x; };
+    const sem = new Map(); s.all.forEach(x => { const k = lundi(x.d).getTime(); if (!sem.has(k)) sem.set(k, []); sem.get(k).push(x); });
+    const ks = [...sem.keys()].sort((a, b) => a - b); let mois = "", prec = null; const W = 7 * 864e5, auj = now.toDateString();
+    const chip = x => { const ev = estEval(x);
+      const c = ["cal-c", x.type === "tp" ? "tp" : "", !x.tenue ? "annule" : "", x.statut === "déplacé" ? "deplace" : "", x.f < now ? "passe" : "", tDos.has(x.d.getTime()) ? "dos" : "", ev ? "eval" : "", x.d.toDateString() === auj ? "auj" : ""].filter(Boolean).join(" ");
+      return `<span class="${c}" title="${esc(x.statut || (x.type === "tp" ? "TP" : "cours"))}">${ev ? "★ Éval. · " : ""}${esc(calJour(x.d))} · ${esc(calHeure(x))} · ${x.h} h</span>`; };
+    h += `<div class="cal-leg"><span class="cal-c">cours</span>${s.aTp ? `<span class="cal-c tp">TP</span>` : ""}${cur ? `<span class="cal-c dos">séance du dossier</span><span class="cal-c eval">★ évaluation</span>` : ""}<span class="cal-c deplace">déplacé</span><span class="cal-c annule">annulé</span><span class="cal-c passe">passé</span><span class="cal-c auj">aujourd'hui</span></div>`;
+    ks.forEach(k => {
+      if (prec !== null && k - prec > W * 1.5) { const nb = Math.round((k - prec) / W) - 1;
+        h += `<div class="cal-sem vac"><span class="w">${nb} semaine${nb > 1 ? "s" : ""}</span><span class="s">Vacances, stage ou pas de cours</span></div>`; }
+      const m = new Date(k).toLocaleDateString("fr-FR", { month: "long", year: "numeric" });
+      if (m !== mois) { mois = m; h += `<div class="cal-mois">${esc(m)}</div>`; }
+      const l = sem.get(k), co = l.filter(x => x.type !== "tp"), tp = l.filter(x => x.type === "tp");
+      h += `<div class="cal-sem"><span class="w">sem. du ${esc(new Date(k).toLocaleDateString("fr-FR", { day: "numeric", month: "short" }))}</span><span class="col">`
+        + (s.aTp ? (co.length ? `<span class="s"><span class="cal-p">Cours</span>${co.map(chip).join("")}</span>` : "") + (tp.length ? `<span class="s"><span class="cal-p">TP</span>${tp.map(chip).join("")}</span>` : "")
+          : `<span class="s">${l.map(chip).join("")}</span>`) + `</span></div>`;
+      prec = k; });
+    h += `<p class="cal-leg">D'après Pronote, lu le ${esc(maj)}. Le prévisionnel ne compte que les séances de cours${s.aTp ? " : les TP sont sur une ligne à part et ne font jamais avancer un dossier" : ""}. Pour tenir compte d'un changement d'emploi du temps, demandez à Claude de relire votre Pronote.</p>`;
+  }
+  zone.innerHTML = h;
+  zone.querySelectorAll("[data-cal]").forEach(b => b.onclick = () => { CAL_SEL = b.dataset.cal; render(); window.scrollTo(0, 0); });
+}
+
+/* ================= Prévisionnel de l'évaluation pour l'élève (25/11/2026) =================
+   Planning de sa classe (docs/prive/cal-<classe>.bin, chiffré avec la clé de son BTS) : séances tenues, cours / TP. */
+let CALE = null, CALE_EN_COURS = false;
+async function chargerCalEleves(){
+  const m = await fetch(BASE + "calendrier.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null).catch(() => null);
+  const out = {};
+  for (const [cid, v] of Object.entries((m && m.classes) || {})) { const k = S.keys[v.site]; if (!k) continue;
+    try { const l = JSON.parse(await (await decryptBlob(BASE + "docs/" + v.fichier, k, "application/json")).text());
+      out[cid] = l.map(x => ({ t: new Date(x.date + "T" + x.debut + ":00").getTime(), h: x.h, type: x.type })).sort((a, b) => a.t - b.t); } catch(_){} }
+  CALE = out;
+}
+function calEleve(cid){
+  if (!CALE) { if (!CALE_EN_COURS) { CALE_EN_COURS = true; chargerCalEleves().then(() => { if (eleveRev()) render(); }).catch(() => { CALE = {}; }); } return null; }
+  return CALE[cid] || null;
+}
+/* Classe dont l'élève suit les cours pour ce dossier (élève inscrit dans deux classes : rythme.classeCours) */
+function classeCoursDe(ch){
+  const r = ch.rythme || {}, login = String((S.user && S.user.email) || "").split("@")[0];
+  return r.classeCours && (r.aussi || []).includes(login) ? r.classeCours : S.groupe;
+}
+function previsionEleve(ch, e){
+  const sc = calEleve(classeCoursDe(ch)); if (!sc) return null;
+  const pv = prevision(ch, sc, S.corrAt[ch.verrou ? ch.verrou.id : ""]);
+  const fixe = e.evalDate ? new Date(e.evalDate + "T12:00:00").getTime() : null, ev = fixe || (pv && pv.eval);
+  if (!ev) return null;
+  const now = Date.now(), n = sc.filter(x => x.type !== "tp" && x.t > now && x.t < ev - 6 * 3600e3).length;
+  return { ev, fixe: !!fixe, n };
+}
+
+function route(){
+  const brut = location.hash.slice(1), cut = brut.indexOf("/");
+  const h = cut >= 0 ? brut.slice(0, cut) : brut;
+  let dv = null; if (cut >= 0) { try { dv = decodeURIComponent(brut.slice(cut + 1)); } catch(_) { dv = brut.slice(cut + 1); } }
+  const changeDossier = dv !== DOSSIER_VU; DOSSIER_VU = dv;
+  VUE_REV = null;
+  const ids = visibleClasses().map(c => c.id);
+  if (!S.user) current = "connexion";
+  else current = ((h === "evaluations" || h === "calendrier") && S.evals) ? h : (h === "mes-evaluations" && !S.prof && !S.tous && S.site) ? h : (h === "mes-competences" && !S.prof && !S.tous && S.site) ? h : (h === "revisions" && testsVisibles().length) ? h : ids.includes(h) || (h === "outils" && (CAT.outils || []).length) ? h : (S.site || ids[0]);
+  if (S.user && S.demo && (!S.demoCfg || h === "demo")) current = "demo";
+  render();
+  if (changeDossier && !ALLER_ETAPE) window.scrollTo(0, 0);
+}
+
+async function startSession(user){
+  if (unsubCorr) { unsubCorr(); unsubCorr = null; }
+  unsubRev.forEach(f => f()); unsubRev = []; MT = {}; MF = {}; MP = {}; VUE_REV = null; S.mpCharge = false; donneesOuvert = false;
+  S = { user:null, prof:false, evals:false, premium:false, tous:false, nom:"", site:null, groupe:null, keys:{}, maitre:null, corr:{}, corrAt:{}, rythme:{} };
+  KO = null;
+  if (!user) return;
+  try {
+    if (user.email === PROF) {
+      const p = await getDoc(doc(db, "prive", "cles"));
+      if (!p.exists()) { toast("Clés absentes : importez le fichier dans l'appli professeur."); }
+      else {
+        const k = p.data();
+        for (const c of CAT.classes) if (k.sites && k.sites[c.id]) S.keys[c.id] = await importKey(b64(k.sites[c.id]));
+        if (k.corriges) S.maitre = await crypto.subtle.importKey("raw", b64(k.corriges), "AES-GCM", false, ["decrypt"]);
+      }
+      Object.assign(S, { user, prof:true, evals:true, nom:"Professeur" });
+      await chargerOuvertures(p.exists() ? p.data().ouvertures : null);
+      await nomsEvals();
+      try { const cs = await getDocs(collection(db, "classes")); cs.forEach(x => { const v = x.data(); NOMS[x.id] = { nom: v.nom || x.id, eleves: Object.fromEntries((v.eleves || []).map(e => [e.login, e.nom])) }; }); } catch(_){}
+      return;
+    }
+    if (user.email === DEMO) {
+      /* Compte de démonstration (25/11/2026) : clés d'invité premium, puis élève fictif choisi sur l'écran de réglage */
+      const p = await getDoc(doc(db, "prive", "cles"));
+      if (p.exists()) { const k = p.data();
+        for (const c of CAT.classes) if (k.sites && k.sites[c.id]) S.keys[c.id] = await importKey(b64(k.sites[c.id]));
+        if (k.corriges) S.demoMaitre = await crypto.subtle.importKey("raw", b64(k.corriges), "AES-GCM", false, ["decrypt"]); }
+      else toast("Clés absentes : le compte de démonstration doit être un invité premium.");
+      Object.assign(S, { user, nom: "Élève de démonstration", demo: true });
+      let cfg = null; try { cfg = JSON.parse(localStorage.getItem("demo-cfg") || "null"); } catch(_) {}
+      if (cfg) await appliquerDemo(cfg);
+      return;
+    }
+    const e = await getDoc(doc(db, "eleves", user.uid));
+    if (!e.exists()) { toast("Ce compte n'est rattaché à aucune classe."); await signOut(auth); return; }
+    const { nom, site, classe, premium } = e.data();
+    if (premium) {
+      /* Invité premium : tous les BTS et tous les corrigés ouverts (sans l'appli professeur) */
+      const p = await getDoc(doc(db, "prive", "cles"));
+      if (p.exists()) {
+        const k = p.data();
+        for (const c of CAT.classes) if (k.sites && k.sites[c.id]) S.keys[c.id] = await importKey(b64(k.sites[c.id]));
+        if (k.corriges) S.maitre = await crypto.subtle.importKey("raw", b64(k.corriges), "AES-GCM", false, ["decrypt"]);
+      }
+      Object.assign(S, { user, nom, site:null, tous:true, premium:true, groupe:classe, evals: user.email === "professeur" + DOMAINE });
+      if (S.evals) await nomsEvals();
+      await chargerOuvertures(p.exists() ? p.data().ouvertures : null);
+      return;
+    }
+    if (site === "tous") {
+      /* Invité : tous les BTS, version élève */
+      for (const c of CAT.classes) { try { const k = await getDoc(doc(db, "clesSite", c.id)); if (k.exists()) S.keys[c.id] = await importKey(b64(k.data().cle)); } catch(_){} }
+      Object.assign(S, { user, nom, site:null, tous:true, groupe:classe });
+    } else {
+      const k = await getDoc(doc(db, "clesSite", site));
+      if (k.exists()) S.keys[site] = await importKey(b64(k.data().cle));
+      Object.assign(S, { user, nom, site, groupe:classe });
+    }
+    let first = true;
+    unsubCorr = onSnapshot(query(collection(db, "deblocages"), where("uid", "==", user.uid)), snap => {
+      const before = new Set(Object.keys(S.corr)); const now = {}, at = {};
+      const ry = {}; snap.forEach(x => { const v = x.data(); if (v.doc && String(v.doc).startsWith("rythme:")) { ry[v.doc.slice(7)] = v; return; } if (v.doc && v.cle) { now[v.doc] = v.cle; at[v.doc] = v.at && v.at.toMillis ? v.at.toMillis() : Date.now(); } });
+      if (!first) for (const id in now) if (!before.has(id)) { fresh.add(id); toast(id.startsWith("eval-") ? "Ta copie corrigée est disponible dans « Mes évaluations »." : id.startsWith("test-") ? "Un test d'entrée vient d'être ouvert : il est dans le dossier du chapitre." : chapInfo(id) ? "Un nouveau chapitre vient d'être ouvert !" : aPdc(id) ? "Ton corrigé et ton point de cours sont débloqués !" : "Un corrigé vient d'être débloqué !"); }
+      first = false; S.corr = now; S.corrAt = at; S.rythme = ry; render();
+    }, () => {});
+    suivreRevisions(user.uid);
+    suivrePdc(user.uid);
+  } catch(x) {
+    toast("Problème de connexion au serveur. Rechargez la page.");
+  }
+}
+
+
+/* ================= Compte de démonstration « julien.m » (25/11/2026) =================
+   Pour présenter le site (proviseur, inspecteur) en se mettant dans la peau d'un étudiant.
+   Écran de réglage : classe, dossier en cours, niveau de l'élève, étape du dossier.
+   Tout est simulé dans ce navigateur : aucune donnée d'élève n'est lue, rien n'est écrit dans Firebase
+   (les écritures passent par setDoc, qui ne fait que mettre à jour l'affichage en mode démo).
+   Le compte est un invité premium (classe Invités) : il lit les clés pour ouvrir les documents « débloqués ». */
+const DEMO = "julien.m" + DOMAINE;
+const DEMO_NIVEAUX = [
+  { id: "fragile", lib: "Fragile", aide: "Ouvre souvent les coups de pouce jusqu'au niveau 3, plusieurs fiches de révision après le test d'entrée, en retard sur la jauge." },
+  { id: "moyen", lib: "Moyen", aide: "Quelques coups de pouce (niveaux 1 et 2), une ou deux fiches de révision, dans les temps." },
+  { id: "aise", lib: "À l'aise", aide: "Presque aucun coup de pouce, aucune fiche de révision, en avance : la suite du dossier est freinée jusqu'à la séance suivante." }
+];
+const DEMO_ETAPES = [
+  { id: "test", lib: "Test d'entrée à faire", aide: "Le dossier est encore sous cadenas : seul le test d'entrée est ouvert. Il peut être passé pour de vrai (rien n'est envoyé) et ouvre les fiches de révision." },
+  { id: "debut", lib: "Test fait, le dossier démarre", aide: "Test d'entrée fait, fiches de révision en cours, dossier ouvert : rien n'est encore commencé." },
+  { id: "activites", lib: "Activités en cours", aide: "La moitié des activités est faite : corrigés et points de cours débloqués au fur et à mesure." },
+  { id: "cours", lib: "Cours et animation", aide: "Toutes les activités sont faites, le cours est lu (exemples corrigés), l'animation est commencée." },
+  { id: "exercices", lib: "Exercices", aide: "Animation terminée, la moitié des exercices est faite." },
+  { id: "avant", lib: "Juste avant l'évaluation", aide: "Tout le dossier est fait : le parcours avant l'évaluation est ouvert." },
+  { id: "fini", lib: "Dossier terminé, évaluation corrigée", aide: "L'évaluation de fin de dossier est passée : le profil de compétences affiche aussi les résultats de l'évaluation." }
+];
+const demoTs = ms => ({ toDate: () => new Date(ms), toMillis: () => ms });
+function demoAlea(graine){ let s = 7; for (const c of graine) s = (s * 31 + c.charCodeAt(0)) >>> 0;
+  return () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; }; }
+const demoTire = (rnd, probas) => { let x = rnd(), i = 0; for (; i < probas.length - 1; i++) { if (x < probas[i]) return i; x -= probas[i]; } return i; };
+const isoJour = ms => { const d = new Date(ms); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); };
+/* Clé d'un document « débloqué » pour l'élève fictif : extraite de l'enveloppe avec la clé maître */
+async function demoCle(id, wk){
+  if (!id || !wk || S.corr[id] || !S.demoMaitre) return;
+  try { const w = b64(wk);
+    const raw = new Uint8Array(await crypto.subtle.decrypt({ name: "AES-GCM", iv: w.slice(0, 12), additionalData: enc.encode(id) }, S.demoMaitre, w.slice(12)));
+    S.corr[id] = btoa(String.fromCharCode(...raw)); } catch(_) {}
+}
+/* Écritures en mode démo : rien ne part vers Firebase, l'affichage est mis à jour sur place */
+function demoEcrire(ref, v){
+  const col = String(ref && ref.path || "").split("/")[0], w = { ...v, date: demoTs(Date.now()) };
+  if (col === "tests") MT[v.test] = w;
+  else if (col === "revisions") MF[cleF(v.test, v.fiche)] = w;
+  else if (col === "pointsdecours") MP[v.pdc] = w;
+  setTimeout(render, 0);
+  return Promise.resolve();
+}
+const demoGroupes = () => (CAT.groupes || []).filter(g => g.site !== "tous" && CAT.classes.some(c => c.id === g.site));
+function demoDossiers(gid){
+  const g = (CAT.groupes || []).find(x => x.id === gid), c = g && CAT.classes.find(x => x.id === g.site); if (!c) return [];
+  return c.chapitres.filter(ch => ch.verrou && (!ch.annee || !g.annee || ch.annee <= g.annee));
+}
+function demoDossierDefaut(gid){
+  const xs = demoDossiers(gid), ok = ch => ch.rythme && (!ch.rythme.groupes || ch.rythme.groupes.includes(gid));
+  const r = xs.filter(ok); return (r.length ? r[r.length - 1] : xs[xs.length - 1]) || null;
+}
+const demoTest = (site, ch) => (REV.tests || []).find(t => t.site === site && sansAccent(t.chapitre) === sansAccent(ch.titre)) || null;
+function demoItems(ch){
+  if (ch.rythme) return ch.rythme.items.map(x => ({ ...x }));
+  return ch.docs.filter(d => d.corrige && d.type === "Corrigé").map(d => { const num = numeroDoc(d) || d.titre;
+    return { num, titre: d.titre, duree: 0.75, corrige: d.corrige.id, tp: /^TP/.test(num) }; });
+}
+/* Simule un dossier : corrigés débloqués, séances, exemples, points de cours, animation, coups de pouce, test d'entrée.
+   E = indice de l'étape (DEMO_ETAPES), fin = instant de référence (maintenant, ou date de l'évaluation d'un ancien dossier). */
+async function demoDossier(c, ch, E, niveau, fin, rnd, debutMin){
+  const chapId = chapIdDe(ch), items = demoItems(ch), comp = ch.competences ? ch.competences.questions : null;
+  const g = (CAT.groupes || []).find(x => x.id === S.groupe) || {};
+  const wkDe = {}; ch.docs.forEach(d => { if (d.corrige) wkDe[d.corrige.id] = d.corrige.wk; });
+  const test = demoTest(c.id, ch);
+  /* Test d'entrée */
+  if (E === 0) { if (test && test.verrou) await demoCle(test.verrou.id, test.verrou.wk); return; }
+  const dur = x => x.tp ? 0 : x.duree;
+  const iA = items.findIndex(x => x.anim), iEx = items.findIndex(x => /^Exercice/.test(x.num));
+  const finPre = iA >= 0 ? iA : iEx >= 0 ? iEx : items.length;
+  const somme = xs => xs.reduce((s, x) => s + dur(x), 0);
+  const hPre = somme(items.slice(0, finPre)), anim = iA >= 0 ? items[iA] : null, hAnim = anim ? anim.duree : 0;
+  const hEx = somme(items.filter((x, i) => i >= finPre && !x.parcours && !x.anim)), hTout = somme(items.filter(x => !x.parcours));
+  const T = [0, 0, hPre * 0.5, hPre + hAnim * 0.5, hPre + hAnim + hEx * 0.5, hTout, Infinity][E];
+  const delta = niveau === "fragile" ? ([0, 0, -0.75, -1.5, -1.5, -1.5, 0][E]) : niveau === "aise" ? ([0, 0, 1.1, 1.1, 1.1, 0, 0][E]) : 0;
+  /* Parcours de l'élève dans le dossier jusqu'à T heures de travail (l'animation peut être faite en partie) */
+  const parcourir = (lim, exclure) => { const part = new Map(); let cum = 0, plein = 0;
+    for (const x of items) {
+      if (x.tp) { if (part.size && [...part.values()].every(v => v >= 1) && cum < lim) part.set(x, 1); continue; }
+      if (x.parcours && E < 6) break;
+      if (exclure && exclure(x)) continue;
+      if (cum + x.duree <= lim + 0.01) { part.set(x, 1); cum += x.duree; plein += x.duree; continue; }
+      if (x.anim && lim > cum) { const p = Math.max(0, Math.min(0.95, (lim - cum) / x.duree)); if (p > 0.05) { part.set(x, p); cum += p * x.duree; } }
+      break;
+    }
+    return { part, cum, plein }; };
+  const base = parcourir(T), fragileFin = niveau === "fragile" && E === 6 ? (x => x.horsEss && x.corrige) : null;
+  const eleve = parcourir(T + delta, fragileFin);
+  items.filter(x => x.tp).forEach(x => { if (base.part.has(x)) eleve.part.set(x, 1); else eleve.part.delete(x); });   // TP : toute la classe en même temps
+  const contenu = somme(items), total = contenu + (ch.rythme && ch.rythme.marge != null ? ch.rythme.marge : 1);
+  const ecoule = E === 6 ? total : base.plein, fait = eleve.cum;   // une animation commencée ne compte dans la jauge qu'une fois finie
+  /* Séances « J'ai cours » (hors TP) puis séances de TP */
+  const motif = (ch.rythme && ch.rythme.seances && (Array.isArray(ch.rythme.seances) ? ch.rythme.seances : ch.rythme.seances[S.groupe])) || [g.site === "et" && g.annee === 2 ? 2 : 1];
+  const hs = [];
+  for (let h = ecoule, k = 0; h > 1e-6; k++) { const x = Math.min(motif[k % motif.length], h); hs.push(x); h -= x; }
+  const dernier = fin - (E === 6 ? 864e5 : 20 * 36e5);
+  const pas = Math.min(7 * 864e5 / motif.length, debutMin ? Math.max(864e5, (dernier - debutMin) / Math.max(1, hs.length)) : Infinity);   // anciens dossiers : séances resserrées sur la période
+  const seances = hs.map((h, k) => ({ t: dernier - (hs.length - 1 - k) * pas, h }));
+  const tps = items.filter(x => x.tp && eleve.part.has(x));
+  let cumS = 0; const cumuls = seances.map(s => cumS += s.h);
+  const tSeance = p => { const j = cumuls.findIndex(v => v >= p - 1e-6); return j >= 0 ? seances[j].t : (seances.length ? seances[seances.length - 1].t : fin - 36e5); };
+  const debut = (seances.length ? seances[0].t : fin - 2 * 36e5) - 864e5;
+  /* Dates de fin de chaque pièce : étalées sur les séances (en avance ou en retard selon le niveau) */
+  const echelle = fait > 0 && ecoule > 0 ? ecoule / fait : 1, tPiece = new Map(); let cum = 0, iTp = 0;
+  for (const x of items) {
+    const p = eleve.part.get(x); if (!p) continue;
+    if (x.tp) { const t0 = tSeance(cum + 1e-3); const t = Math.min(t0 + (iTp + 0.5) * 36e5, fin - 6e4); seances.push({ t: t0 + 36e5, h: 2, tp: true }); iTp++; tPiece.set(x, Math.min(t + 2 * 864e5, fin - 6e4)); continue; }
+    cum += p * x.duree;
+    tPiece.set(x, Math.min(tSeance(cum * echelle) + 50 * 6e4 + Math.floor(rnd() * 20) * 6e4, fin - 6e4));
+  }
+  /* Dossier ouvert, suivi du rythme démarré */
+  S.corr[ch.verrou.id] || await demoCle(ch.verrou.id, ch.verrou.wk); S.corrAt[ch.verrou.id] = debut;
+  S.demoDebut = debut;
+  if (ch.rythme) S.rythme[chapId] = { seances: seances.sort((a, b) => a.t - b.t), evalDate: E === 6 ? isoJour(fin) : isoJour(fin + Math.max(2, Math.ceil(Math.max(0, total - ecoule) / motif.reduce((a, b) => a + b, 0) * 7)) * 864e5), ajust: 0 };
+  const vus = {}; let nbEx = 0;
+  for (const x of items) {
+    if (x.exemple) nbEx++;
+    const p = eleve.part.get(x), t = tPiece.get(x); if (!p) continue;
+    if (x.corrige && p >= 1) { await demoCle(x.corrige, wkDe[x.corrige]); S.corrAt[x.corrige] = t; }
+    if (x.exemple) vus[x.exemple] = t;
+    if (x.pdc) MP[x.pdc] = { pdc: x.pdc, termine: true, etape: 6, total: 6, erreurs: niveau === "fragile" ? 3 : niveau === "moyen" ? 1 : 0, date: demoTs(t) };
+    if (x.parcours) MP["parcours:" + x.parcours] = { pdc: "parcours:" + x.parcours, type: "parcours", plan: [], res: {}, fini: true, etape: 6, total: 6, date: demoTs(t) };
+    if (x.anim) {
+      const qs = comp && comp.Animation ? Object.keys(comp.Animation) : Array.from({ length: x.questions || 10 }, (_, i) => String(i + 1));
+      const n = p >= 1 ? qs.length : Math.round(p * qs.length), probas = niveau === "fragile" ? [0.4, 0.25, 0.35] : niveau === "moyen" ? [0.65, 0.2, 0.15] : [0.88, 0.08, 0.04];
+      const rep = {}; qs.slice(0, n).forEach(q => { const k = demoTire(rnd, probas); rep[q] = k === 0 ? { t: 1, ok: true } : k === 1 ? { t: 2, ok: true } : { t: 2, ok: false }; });
+      MP[animId(ch)] = { pdc: animId(ch), type: "anim", reponses: rep, etape: n, total: 0, date: demoTs(t || fin - 36e5) };
+    }
+  }
+  if (nbEx) MP[exemplesId(chapId)] = { pdc: exemplesId(chapId), type: "exemples", vus, etape: Object.keys(vus).length, total: nbEx, termine: Object.keys(vus).length >= nbEx, date: demoTs(fin - 36e5) };
+  if (E >= 5) { const pc = items.find(x => x.parcours); if (pc) await demoCle(pc.parcours, wkDe[pc.parcours]); }
+  /* Coups de pouce : niveaux ouverts question par question (pièces faites + pièce en cours) */
+  const probasP = niveau === "fragile" ? [0.15, 0.2, 0.25, 0.4] : niveau === "moyen" ? [0.4, 0.3, 0.2, 0.1] : [0.75, 0.2, 0.05, 0];
+  const enCours = items.find(x => x.corrige && !x.tp && !eleve.part.has(x));
+  ch.docs.filter(d => d.format === "pouce").forEach(d => {
+    const it = items.find(x => x.corrige === d.lie); if (!it || (!eleve.part.has(it) && it !== enCours)) return;
+    const qs = comp && comp[it.num] ? Object.keys(comp[it.num]) : ["Q1", "Q2", "Q3", "Q4"];
+    const niveaux = {}; qs.forEach((q, i) => { if (it === enCours && i >= Math.ceil(qs.length / 2)) return; const n = demoTire(rnd, probasP); if (n) niveaux[q] = n; });
+    MP[d.pouce] = { pdc: d.pouce, type: "pouce", corrige: d.lie, niveaux, etape: Math.max(1, ...Object.values(niveaux), 1), total: qs.length, date: demoTs(tPiece.get(it) || fin - 36e5) };
+  });
+  /* Test d'entrée fait, fiches de révision */
+  if (test) {
+    const nb = niveau === "fragile" ? 4 : niveau === "moyen" ? 2 : 0, fiches = (test.fiches || []).slice();
+    const aRevoir = []; while (aRevoir.length < Math.min(nb, fiches.length)) aRevoir.push(fiches.splice(Math.floor(rnd() * fiches.length), 1)[0]);
+    const tt = debut - 864e5;
+    MT[test.id] = { test: test.id, aRevoir, score: (test.nb || 10) - aRevoir.length - (niveau === "fragile" ? 1 : 0), sur: test.nb || 10, date: demoTs(tt) };
+    aRevoir.forEach((f, i) => { if (E >= 2 || i < Math.floor(aRevoir.length / 2)) MF[cleF(test.id, f)] = { test: test.id, fiche: f, erreurs: niveau === "fragile" ? 2 : 0, date: demoTs(tt + (i + 1) * 36e5) }; });
+  }
+  /* Évaluation de fin de dossier corrigée */
+  if (E === 6) {
+    S.demoEvals.push({ titre: "Évaluation " + ch.titre, date: isoJour(fin) });
+    if (comp) { const [a, b] = niveau === "fragile" ? [0.35, 0.2] : niveau === "moyen" ? [0.58, 0.18] : [0.82, 0.13], taux = {};
+      new Set(Object.values(comp).flatMap(o => Object.values(o))).forEach(k => taux[k] = Math.round((a + rnd() * b) * 100) / 100);
+      S.demoTaux[ch.titre] = taux; }
+  }
+}
+async function appliquerDemo(cfg){
+  const g = (CAT.groupes || []).find(x => x.id === cfg.groupe), c = g && CAT.classes.find(x => x.id === g.site);
+  if (!c) return false;
+  Object.assign(S, { site: c.id, groupe: g.id, tous: false, premium: false, prof: false, evals: false, corr: {}, corrAt: {}, rythme: {}, demoCfg: cfg, demoEvals: [], demoTaux: {}, demoDebut: null });
+  MT = {}; MF = {}; MP = {}; fresh.clear(); Object.keys(EVCP).forEach(k => delete EVCP[k]);
+  const xs = demoDossiers(g.id), cur = xs.find(ch => ch.titre === cfg.dossier) || demoDossierDefaut(g.id);
+  const E = Math.max(0, DEMO_ETAPES.findIndex(e => e.id === cfg.etape)), rnd = demoAlea(g.id + cfg.niveau + (cur ? cur.titre : ""));
+  if (cur) {
+    const avant = xs.slice(0, xs.indexOf(cur)), now = Date.now();
+    await demoDossier(c, cur, E, cfg.niveau, now, rnd);
+    /* Dossiers précédents : terminés, répartis depuis la rentrée (ceux d'une année antérieure : l'an dernier) */
+    const d0 = new Date(now), rentree = new Date(d0.getMonth() >= 8 ? d0.getFullYear() : d0.getFullYear() - 1, 8, 4).getTime();
+    const cetteAnnee = avant.filter(ch => !ch.annee || !g.annee || ch.annee === g.annee), avantAn = avant.filter(ch => !cetteAnnee.includes(ch));
+    let fin = (S.demoDebut || now) - 3 * 864e5;
+    const pasA = Math.max(10 * 864e5, (fin - rentree) / Math.max(1, cetteAnnee.length));
+    for (let k = cetteAnnee.length - 1; k >= 0; k--) { await demoDossier(c, cetteAnnee[k], 6, cfg.niveau, fin, rnd, fin - pasA + 4 * 864e5); fin -= pasA; }
+    fin = rentree - 75 * 864e5;
+    for (let k = avantAn.length - 1; k >= 0; k--) { await demoDossier(c, avantAn[k], 6, cfg.niveau, fin, rnd, fin - 25 * 864e5); fin -= 30 * 864e5; }
+  }
+  try { localStorage.setItem("demo-cfg", JSON.stringify(cfg)); } catch(_) {}
+  return true;
+}
+const DEMO_CSS = `.demo-band{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;background:#FFF2CC;border:1px solid #E7C96B;color:#5A4500;border-radius:10px;padding:9px 14px;margin:0 0 14px;font-size:.9rem}
+  .demo-band b{color:#1F3864}.demo-band button{margin-left:auto}
+  .demo-box{background:var(--surface,#fff);border:1px solid var(--grid,#dde3ec);border-radius:12px;padding:16px 18px;max-width:640px}
+  .demo-box label{display:block;font-weight:700;color:#1F3864;margin:14px 0 4px}.demo-box select{width:100%;font:inherit;padding:8px 10px;border-radius:8px;border:1px solid #b9c3d3;background:#fff}
+  .demo-box .aide{font-size:.88rem;color:var(--muted,#5A6577);margin:5px 2px 0}.demo-box .btn{margin-top:18px}`;
+(() => { const st = document.createElement("style"); st.textContent = DEMO_CSS; document.head.appendChild(st); })();
+function demoBandeau(){
+  const cfg = S.demoCfg; if (!cfg) return null;
+  const g = (CAT.groupes || []).find(x => x.id === cfg.groupe) || {}, n = DEMO_NIVEAUX.find(x => x.id === cfg.niveau) || {}, e = DEMO_ETAPES.find(x => x.id === cfg.etape) || {};
+  const cur = demoDossiers(cfg.groupe).find(ch => ch.titre === cfg.dossier) || demoDossierDefaut(cfg.groupe);
+  const d = document.createElement("div"); d.className = "demo-band"; d.setAttribute("role", "note");
+  d.innerHTML = `<span>🎭 <b>Démonstration</b> · élève ${esc((n.lib || "").toLowerCase())} · ${esc(g.nom || "")}${cur ? " · « " + esc(cur.titre) + " »" : ""} · ${esc(e.lib || "")} · rien n'est enregistré</span><button class="linkbtn" type="button">Changer de profil</button>`;
+  d.querySelector("button").onclick = () => { location.hash = "demo"; };
+  return d;
+}
+function renderDemo(view){
+  const cfg = S.demoCfg || {};
+  const head = document.createElement("div"); head.className = "classhead";
+  head.innerHTML = `<h2>Mode démonstration</h2><span class="status is-open">Rien n'est enregistré</span>`;
+  view.appendChild(head);
+  const box = document.createElement("div"); box.className = "demo-box";
+  const gs = demoGroupes(), g0 = gs.find(x => x.id === cfg.groupe) ? cfg.groupe : (gs[0] || {}).id;
+  box.innerHTML = `<p style="margin-top:0">Ce compte montre le site <b>tel qu'un étudiant le voit</b>. Choisis un profil : l'avancement est simulé dans ce navigateur. Aucune donnée d'élève n'est lue ni modifiée, et tout ce qui est fait pendant la démonstration (test d'entrée, fiches, points de cours, animation) est oublié à la déconnexion.</p>
+    <label for="dg">Classe</label><select id="dg">${gs.map(x => `<option value="${esc(x.id)}"${x.id === g0 ? " selected" : ""}>${esc(x.nom)}</option>`).join("")}</select>
+    <label for="dd">Dossier en cours</label><select id="dd"></select><p class="aide">Les dossiers précédents sont affichés comme terminés, les suivants restent sous cadenas.</p>
+    <label for="dn">Niveau de l'élève</label><select id="dn">${DEMO_NIVEAUX.map(x => `<option value="${x.id}"${x.id === (cfg.niveau || "moyen") ? " selected" : ""}>${esc(x.lib)}</option>`).join("")}</select><p class="aide" id="dna"></p>
+    <label for="de">Étape du dossier</label><select id="de"></select><p class="aide" id="dea"></p>
+    <button class="btn" type="button">Voir le site comme cet élève</button><p class="err"></p>`;
+  view.appendChild(box);
+  const $b = s => box.querySelector(s);
+  const majDossiers = () => { const gid = $b("#dg").value, xs = demoDossiers(gid), def = demoDossierDefaut(gid);
+    const choix = gid === cfg.groupe && xs.some(ch => ch.titre === cfg.dossier) ? cfg.dossier : def ? def.titre : "";
+    $b("#dd").innerHTML = xs.map(ch => `<option value="${esc(ch.titre)}"${ch.titre === choix ? " selected" : ""}>${esc(ch.titre)}${ch.annee ? " (" + (ch.annee === 1 ? "1re" : ch.annee + "e") + " année)" : ""}</option>`).join(""); majEtapes(); };
+  const majEtapes = () => { const g = (CAT.groupes || []).find(x => x.id === $b("#dg").value), ch = demoDossiers($b("#dg").value).find(x => x.titre === $b("#dd").value);
+    const t = g && ch ? demoTest(g.site, ch) : null, cour = $b("#de").value || cfg.etape || "activites";
+    const es = DEMO_ETAPES.filter(e => e.id !== "test" || t).map(e => e.id === "debut" && !t ? { ...e, lib: "Le dossier démarre", aide: "Dossier ouvert : rien n'est encore commencé." } : e);
+    $b("#de").innerHTML = es.map(e => `<option value="${e.id}"${e.id === cour ? " selected" : ""}>${esc(e.lib)}</option>`).join("");
+    const e = es.find(x => x.id === $b("#de").value); $b("#dea").textContent = e ? e.aide : ""; };
+  const majNiveau = () => { const n = DEMO_NIVEAUX.find(x => x.id === $b("#dn").value); $b("#dna").textContent = n ? n.aide : ""; };
+  $b("#dg").onchange = majDossiers; $b("#dd").onchange = majEtapes; $b("#de").onchange = majEtapes; $b("#dn").onchange = majNiveau;
+  majDossiers(); majNiveau();
+  $b(".btn").onclick = async () => {
+    const btn = $b(".btn"); btn.disabled = true; btn.textContent = "Préparation…";
+    const ok = await appliquerDemo({ groupe: $b("#dg").value, dossier: $b("#dd").value, niveau: $b("#dn").value, etape: $b("#de").value });
+    btn.disabled = false; btn.textContent = "Voir le site comme cet élève";
+    if (!ok) { $b(".err").textContent = "Profil impossible à préparer. Rechargez la page."; return; }
+    opened.clear(); fermes.clear();
+    const cur = demoDossiers(S.groupe).find(ch => ch.titre === S.demoCfg.dossier) || demoDossierDefaut(S.groupe);
+    if (cur) opened.add(S.site + "/" + cur.titre);
+    if (location.hash === "#" + S.site) route(); else location.hash = S.site;
+  };
+}
+function demoEvalRow(e){
+  const li = document.createElement("li");
+  li.innerHTML = `<span class="type corr">Ma copie</span><span class="title">${esc(e.titre)}<span class="meta">${esc(fmtDate(e.date))} · copie corrigée (exemple de démonstration)</span></span>
+    <span class="actions"><button class="open" type="button">Ouvrir</button></span>`;
+  li.querySelector("button").onclick = () => toast("Démonstration : ici s'ouvre la copie corrigée de l'étudiant (PDF à son nom). Les vraies copies ne sont pas montrées.");
+  return li;
+}
+
+(async function init(){
+  try {
+    CAT = await fetch(BASE + "catalogue-v2.json", {cache:"no-cache"}).then(r => r.json());
+    REV = await fetch(BASE + "revisions.json", {cache:"no-cache"}).then(r => r.ok ? r.json() : REV).catch(() => REV);
+    EVAL = await fetch(BASE + "evaluations.json", {cache:"no-cache"}).then(r => r.ok ? r.json() : { evaluations: [] }).catch(() => ({ evaluations: [] }));
+    $("#who").textContent = CAT.auteur || "";
+    if (CAT.titre) document.querySelector("h1").textContent = CAT.titre;
+    $("#q").addEventListener("input", render);
+    window.addEventListener("hashchange", route);
+    onAuthStateChanged(auth, async user => {
+      await startSession(user);
+      if (user && S.user && (location.hash === "" || location.hash === "#connexion")) location.hash = S.site || CAT.classes[0].id;
+      route(); booted = true;
+    });
+  } catch(e) {
+    $("#view").innerHTML = "<p class='empty'>Le site n'a pas pu se charger. Rechargez la page.</p>";
+  }
+})();
+</script>
+</body>
+</html>
