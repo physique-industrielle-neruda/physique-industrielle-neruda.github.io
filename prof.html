@@ -554,7 +554,9 @@ function rythmePanel(c, g, el, getP, rerender){
   /* Exemples du cours : une pastille par exemple, verte quand l'élève a ouvert sa correction (date au survol) */
   const nEx = R.items.filter(x => x.exemple).map(x => x.exemple);
   const exDe = e => { const v = mpDe(e.uid)["exemples:" + chapId], vus = (v && v.vus) || {};
-    return `<span class="ry-ex">${nEx.map(n => vus[n] ? `<i class="on" title="Exemple ${n} : correction ouverte le ${esc(jour(vus[n]))}">${n}</i>` : `<i title="Exemple ${n} : pas encore ouvert">${n}</i>`).join("")}</span>`; };
+    const pd = R.items.filter(x => x.pdc).map((x, i) => { const v = mpDe(e.uid)[x.pdc], ok = v && v.termine;
+      return ok ? `<i class="on" title="${esc(x.titre)} : terminé${v.date ? " le " + esc(jour(v.date.toMillis ? v.date.toMillis() : v.date)) : ""}">P${i + 1}</i>` : `<i title="${esc(x.titre)} : pas encore terminé">P${i + 1}</i>`; });
+    return `<span class="ry-ex">${nEx.map(n => vus[n] ? `<i class="on" title="Exemple ${n} : correction ouverte le ${esc(jour(vus[n]))}">${n}</i>` : `<i title="Exemple ${n} : pas encore ouvert">${n}</i>`).join("")}${pd.join("")}</span>`; };
   const html = () => {
     const actif = Object.keys(DOCS).length > 0, k = commun(), fg = figee();
     const contenu = R.items.reduce((s, x) => s + (x.tp ? 0 : x.duree), 0), marge = R.marge ?? 1;
@@ -584,7 +586,7 @@ function rythmePanel(c, g, el, getP, rerender){
       <div class="btns">${fg ? "" : `<button class="btn" id="ryFige">Figer les notes et enregistrer le PDF</button>`}<button class="btn ghost" id="ryPdf">${fg ? "Enregistrer le PDF des notes figées" : "Aperçu PDF (sans figer)"}</button></div>
       <button class="btn ghost" id="ryCopy">Copier les notes pour Pronote</button>
       <p class="note">Rythme (travail en autonomie, hors TP) : <span class="ry-pill" style="color:${STATUTS.avance.couleur};background:${STATUTS.avance.fond}">+1 h</span> en avance · <span class="ry-pill" style="color:${STATUTS.vert.couleur};background:${STATUTS.vert.fond}">à jour</span> · <span class="ry-pill" style="color:${STATUTS.orange.couleur};background:${STATUTS.orange.fond}">jusqu'à 1 h de retard</span> · <span class="ry-pill" style="color:${STATUTS.rouge.couleur};background:${STATUTS.rouge.fond}">plus d'1 h</span> · 🔒 frein : plus d'1 h d'avance, la suite attend la prochaine séance.<br>
-      Corrigés : activités, TP et exercices dont tu as débloqué le corrigé avant la fin du jour de l'évaluation. Cours : corrections des exemples ouvertes par l'élève lui-même, sans demande (une par partie du cours) ; pastille verte = correction ouverte, date au survol ou en appui long. Animation : part des questions traitées.
+      Corrigés : activités, TP et exercices dont tu as débloqué le corrigé avant la fin du jour de l'évaluation. Cours : corrections des exemples ouvertes par l'élève lui-même, sans demande${R.items.some(x => x.pdc) ? ", et points de cours en ligne terminés (pastilles P1, P2…)" : ""} ; pastille verte = fait, date au survol ou en appui long. Animation : part des questions traitées.
       Régularité : à chaque séance cochée (hors TP), l'élève est-il à jour avant la séance suivante (à jour ou en avance 1, orange ½, rouge 0) ? Attitude : 2 points par défaut, − retire ½ point (à utiliser par exception), + rend ½ point. Ajust. : ta correction manuelle de la note. Les coups de pouce ne comptent jamais.
       « Figer » enregistre les notes du jour : elles ne changent plus, même si un élève continue l'animation.</p>`;
     return h;
@@ -602,7 +604,7 @@ function rythmePanel(c, g, el, getP, rerender){
       <h1>Note d'investissement – ${esc(ch.titre)}</h1>
       <p><b>${esc(c.nom)}</b> · ${fg ? "notes figées le " + esc(jour(fg.date)) : "aperçu du " + esc(jour(Date.now())) + " (non figé)"}${k.evalDate ? " · évaluation le " + esc(new Date(k.evalDate + "T12:00:00").toLocaleDateString("fr-FR")) : ""}</p>
       <table><tr><th>Élève</th>${L.map(l => `<th>${T[l]} /${BAREME[l]}</th>`).join("")}<th>Ajust.</th><th>Note /20</th></tr>${rows}</table>
-      <p style="margin-top:10px">Corrigés : corrigés débloqués (activités, TP, exercices) · Cours : corrections des exemples ouvertes · Animation : questions traitées · Régularité : élève à jour à chaque séance (hors TP) · Attitude : 2 points, ½ point retiré par remarque. Note arrondie au demi-point.</p>
+      <p style="margin-top:10px">Corrigés : corrigés débloqués (activités, TP, exercices) · Cours : corrections des exemples ouvertes${R.items.some(x => x.pdc) ? " et points de cours terminés" : ""} · Animation : questions traitées · Régularité : élève à jour à chaque séance (hors TP) · Attitude : 2 points, ½ point retiré par remarque. Note arrondie au demi-point.</p>
       <script>window.onload = () => setTimeout(() => window.print(), 300);<\/script></body></html>`);
     w.document.close();
   };

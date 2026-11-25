@@ -837,6 +837,12 @@
         "corrige": "et-statique-des-fluides-corrige-activite-1-la-pression-dans-le-filtre-a-sa"
        },
        {
+        "num": "Point de cours – Activité 1",
+        "titre": "Point de cours – Activité 1",
+        "duree": 0.1667,
+        "pdc": "et-statique-des-fluides-pdc-activite-1"
+       },
+       {
         "num": "Exemple 1",
         "titre": "Cours partie 1 et EXEMPLE 1",
         "duree": 0.1167,
@@ -861,6 +867,12 @@
         "corrige": "et-statique-des-fluides-corrige-activite-2-la-pression-au-robinet-du-hamea"
        },
        {
+        "num": "Point de cours – Activité 2",
+        "titre": "Point de cours – Activité 2",
+        "duree": 0.1667,
+        "pdc": "et-statique-des-fluides-pdc-activite-2"
+       },
+       {
         "num": "Exemple 4",
         "titre": "Cours partie 2 et EXEMPLE 4",
         "duree": 0.1167,
@@ -883,6 +895,12 @@
         "titre": "Activité 3 – Le capteur de niveau de la bâche",
         "duree": 0.75,
         "corrige": "et-statique-des-fluides-corrige-activite-3-le-capteur-de-niveau-de-la-bach"
+       },
+       {
+        "num": "Point de cours – Activité 3",
+        "titre": "Point de cours – Activité 3",
+        "duree": 0.1667,
+        "pdc": "et-statique-des-fluides-pdc-activite-3"
        },
        {
         "num": "Exemple 7",
@@ -2680,6 +2698,12 @@
         "corrige": "et-sources-conversions-et-stockage-de-l-ene-corrige-activite-1-le-facteur-de-charge-d-un-react"
        },
        {
+        "num": "Point de cours – Activité 1",
+        "titre": "Point de cours – Activité 1",
+        "duree": 0.1667,
+        "pdc": "et-sources-conversions-et-stockage-de-l-ene-pdc-activite-1"
+       },
+       {
         "num": "Exemple 1",
         "titre": "Cours partie 1 et EXEMPLE 1",
         "duree": 0.1333,
@@ -2704,6 +2728,12 @@
         "corrige": "et-sources-conversions-et-stockage-de-l-ene-corrige-activite-2-le-rendement-du-diesel-d-ultime"
        },
        {
+        "num": "Point de cours – Activité 2",
+        "titre": "Point de cours – Activité 2",
+        "duree": 0.1667,
+        "pdc": "et-sources-conversions-et-stockage-de-l-ene-pdc-activite-2"
+       },
+       {
         "num": "Exemple 4",
         "titre": "Cours partie 2 et EXEMPLE 4",
         "duree": 0.1667,
@@ -2722,6 +2752,12 @@
         "corrige": "et-sources-conversions-et-stockage-de-l-ene-corrige-activite-3-l-autonomie-de-la-batterie-125-"
        },
        {
+        "num": "Point de cours – Activité 3",
+        "titre": "Point de cours – Activité 3",
+        "duree": 0.1667,
+        "pdc": "et-sources-conversions-et-stockage-de-l-ene-pdc-activite-3"
+       },
+       {
         "num": "Exemple 6",
         "titre": "Cours partie 3 et EXEMPLE 6",
         "duree": 0.1333,
@@ -2738,6 +2774,12 @@
         "titre": "Activité 4 – Un projet d'ombrière solaire",
         "duree": 0.75,
         "corrige": "et-sources-conversions-et-stockage-de-l-ene-corrige-activite-4-un-projet-d-ombriere-solaire"
+       },
+       {
+        "num": "Point de cours – Activité 4",
+        "titre": "Point de cours – Activité 4",
+        "duree": 0.1667,
+        "pdc": "et-sources-conversions-et-stockage-de-l-ene-pdc-activite-4"
        },
        {
         "num": "Exemple 8",
@@ -4440,9 +4482,9 @@
   }
  ],
  "outilsWk": {
-  "et": "e3mU6PeczCXC1MZiDWsuQxFF3hoDQNCN1LXdW/fg6GOOB7lTJD19QyaW02y+5PELAVihp3TDMJ2oykFS",
-  "cira": "fVGwNMPibl/62RX7qlpb0i0srRESii6MJbh0H3cu+JCoeBfc5IWl7+6wf48FKLb4CCDOhtfmU1LYwFkS",
-  "cim": "Z0DX77BWTYv9UI2sQvJDiBuKS7cYnsJg/wCsiAFbMyxlOxQrk6O0nyBUcXUwMlm79lezC1uoUux68teJ"
+  "et": "XlNce8LBrF6XU0tdoSL4Su9JUQgjwUKjZ1Tcc7rUrQ9i06QDwzl3yMx31v8vcTMSYRcL5KM8GPXy4NWi",
+  "cira": "1AMtxiQ7hVwmasLidze7VCUpsAaZ1mb7sOg9jTdF1BRqo9JQsKBECpU3Ii0M0dHl+hTtAJ05lBKnXxgZ",
+  "cim": "jomzV7wxdVHVE03R2ByHonPAN2tFHmIZqwMqLD+oEnDmA4E2onHi1x6wXLMyidWuKtPdbxLQGsN712Gu"
  },
  "outils": [
   {

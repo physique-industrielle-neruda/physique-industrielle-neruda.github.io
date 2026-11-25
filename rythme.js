@@ -5,7 +5,7 @@
      deblocages/rythme_<dossier>_<uid> (un document par élève : seances, evalDate, attitude, ajust).
    - Travail fait : corrigé débloqué (activités, TP, exercices), correction de l'exemple ouverte (une partie du cours
      par exemple, « Correction des exemples » → pointsdecours « exemples:<dossier> »), animation terminée,
-     parcours avant l'évaluation terminé.
+     point de cours en ligne terminé (25/11/2026 : compte aussi dans le critère « Cours »), parcours avant l'évaluation terminé.
    - TP (25/11/2026) : faits par toute la classe en même temps, hors jauge : une séance « J'ai TP » (tp: true) ne compte pas
      dans le temps écoulé et le TP ne compte pas dans le travail fait ; son corrigé rapporte toujours ses points « Corrigés ».
    - Frein : plus d'1 h d'avance sur le temps écoulé -> la suite (hors TP et cours) attend la prochaine séance.
@@ -35,6 +35,7 @@ export function etat(ch, src){
       const n = Object.values(rep).filter(x => x.ok || x.t >= 2).length, tot = it.questions || 1;
       part = Math.min(1, n / tot); if (part >= 1) t = toMs(v.date) || now;
     }
+    else if (it.pdc) { const v = mp[it.pdc]; if (v && v.termine) { t = toMs(v.date) || now; part = 1; } }   // point de cours en ligne terminé (25/11/2026)
     else if (it.parcours) { const v = mp["parcours:" + it.parcours]; if (v && v.fini) { t = toMs(v.date) || now; part = 1; } }
     return { ...it, t, part, fait: !!t };
   });
@@ -56,7 +57,7 @@ export function etat(ch, src){
   sv.forEach((s, k) => { cum += s.h; const tn = k + 1 < sv.length ? sv[k + 1].t : Math.min(now, limite);
     const rr = Math.min(cum, contenu) - faitA(tn); scores.push(rr <= 0 ? 1 : rr <= 1 ? 0.5 : 0); });
   const corr = items.filter(x => x.corrige), avant = x => x.t && x.t <= limite;
-  const anim = items.find(x => x.anim), exs = items.filter(x => x.exemple);
+  const anim = items.find(x => x.anim), exs = items.filter(x => x.exemple || x.pdc);   // critère « Cours » : exemples + points de cours en ligne
   const pts = {
     corriges: corr.length ? BAREME.corriges * corr.filter(avant).length / corr.length : BAREME.corriges,
     cours: exs.length ? BAREME.cours * exs.filter(avant).length / exs.length : BAREME.cours,
