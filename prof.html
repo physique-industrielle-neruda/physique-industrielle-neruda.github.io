@@ -565,15 +565,19 @@ function rythmePanel(c, g, el, getP, rerender){
     return `<span class="ry-ex">${nEx.map(n => vus[n] ? `<i class="on" title="Exemple ${n} : correction ouverte le ${esc(jour(vus[n]))}">${n}</i>` : `<i title="Exemple ${n} : pas encore ouvert">${n}</i>`).join("")}${pd.join("")}</span>`; };
   const html = () => {
     const actif = Object.keys(DOCS).length > 0, k = commun(), fg = figee();
+    /* 25/11/2026 : garde-fou — tant que le dossier est verrouillé pour toute la classe, pas de démarrage ni de séance cochée */
+    const dosOuvert = !ch.verrou || el.some(e => (AT[e.uid] || {})[ch.verrou.id]);
+    const bloque = dosOuvert ? "" : ' disabled title="Ouvre d\'abord le dossier"';
+    const msgBloque = dosOuvert ? "" : `<p class="note" style="color:#C55A11"><b>🔒 Ouvre d'abord le dossier</b> (onglet Corrigés, colonne « Accès au chapitre ») : tant qu'il est verrouillé, les séances ne sont pas comptées.</p>`;
     const contenu = R.items.reduce((s, x) => s + (x.tp ? 0 : x.duree), 0), marge = R.marge ?? 1;
     let h = `<p class="sec">Rythme du dossier et note d'investissement</p><div class="card ry">`;
     if (!actif) return h + `<p class="note">Travail en autonomie prévu : ${heures(contenu)} + ${heures(marge)} de marge = <b>${heures(contenu + marge)}</b>${aTP ? " (les TP, faits en classe tous ensemble, sont hors jauge)" : ""}. Le suivi n'est pas encore démarré : les élèves ne voient pas encore la jauge.</p>
-      <button class="btn" id="ryStart">Démarrer le suivi du rythme pour la classe</button></div>`;
+      ${msgBloque}<button class="btn" id="ryStart"${bloque}>Démarrer le suivi du rythme pour la classe</button></div>`;
     const auto = k.seances.filter(x => !x.tp), tps = k.seances.filter(x => x.tp);
     const ecoule = auto.reduce((s, x) => s + (+x.h || 0), 0), der = k.seances[k.seances.length - 1];
     const sc = Array.isArray(R.seances) ? R.seances : ((R.seances || {})[c.id] || [1, 2]);
     h += `<p class="note">Travail en autonomie prévu : ${heures(contenu)} + ${heures(marge)} de marge = <b>${heures(contenu + marge)}</b> · Cours écoulés : <b>${heures(ecoule)}</b> (${auto.length} séance${auto.length > 1 ? "s" : ""})${tps.length ? ` · TP faits : ${tps.length}` : ""}</p>
-      <div class="btns">${sc.map(x => `<button class="btn ok" data-h="${x}">J'ai cours : ${x} h</button>`).join("")}${aTP ? `<button class="btn ok" data-h="${tpH}" data-tp="1">J'ai TP : ${tpH} h</button>` : ""}</div>
+      <div class="btns">${sc.map(x => `<button class="btn ok" data-h="${x}"${bloque}>J'ai cours : ${x} h</button>`).join("")}${aTP ? `<button class="btn ok" data-h="${tpH}" data-tp="1"${bloque}>J'ai TP : ${tpH} h</button>` : ""}</div>${msgBloque}
       <p class="note">Coche la séance <b>en fin de cours</b>.${aTP ? " Une séance de TP ne fait pas avancer la jauge." : ""}${ailleurs.length ? ` ${ailleurs.map(e => esc(e.nom)).join(", ")} : suivi${ailleurs.length > 1 ? "s" : ""} avec la classe ${esc(kc.nom)} (séances cochées là-bas).` : ""} ${der ? `Dernière : ${jour(der.t)} (${der.tp ? "TP, " : ""}${der.h} h) · <button class="linkbtn" id="ryUndo">annuler la dernière séance</button>` : ""}</p>
       <label class="note ry-date">Date de l'évaluation (la note est arrêtée ce jour-là) : <input type="date" id="ryEval" value="${esc(k.evalDate)}"></label></div>`;
     const lignes = el.map(e => ({ e, ...valeurs(e), v: DOCS[e.uid] || {} }));
