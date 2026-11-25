@@ -3324,6 +3324,15 @@
        "rubrique": "Cours"
       },
       {
+       "titre": "Correction des exemples",
+       "type": "Exemples",
+       "format": "exemples",
+       "fichier": "5878dfcbe7e74c7b3ea163a5.bin",
+       "taille": 7429,
+       "cv": "cira-chap-amplification",
+       "rubrique": "Cours"
+      },
+      {
        "titre": "Fiche animation",
        "type": "Fiche",
        "fichier": "e6cc3863721bd399304e20bb.bin",
@@ -3594,7 +3603,7 @@
       }
      },
      "rythme": {
-      "marge": 1,
+      "marge": 1.0,
       "seances": [
        1,
        2
@@ -3607,11 +3616,23 @@
         "corrige": "cira-amplification-corrige-activite-1-l-adi-et-le-montage-suiveur"
        },
        {
+        "num": "Exemple 1",
+        "titre": "Cours partie 1 et EXEMPLE 1",
+        "duree": 0.25,
+        "exemple": 1
+       },
+       {
         "num": "TP 1",
         "titre": "TP 1 – Amplificateurs non inverseur et inverseur",
-        "duree": 2,
+        "duree": 2.0,
         "corrige": "cira-amplification-corrige-tp-1-amplificateurs-non-inverseur-et-inver",
         "tp": true
+       },
+       {
+        "num": "Exemple 2",
+        "titre": "Cours partie 2 et EXEMPLE 2",
+        "duree": 0.25,
+        "exemple": 2
        },
        {
         "num": "Activité 2",
@@ -3620,11 +3641,23 @@
         "corrige": "cira-amplification-corrige-activite-2-le-soustracteur-et-le-decalage-"
        },
        {
+        "num": "Exemple 3",
+        "titre": "Cours partie 3 et EXEMPLE 3",
+        "duree": 0.1667,
+        "exemple": 3
+       },
+       {
         "num": "TP 2",
         "titre": "TP 2 – Conditionneur à deux ADI pour la sonde Pt100",
-        "duree": 2,
+        "duree": 2.0,
         "corrige": "cira-amplification-corrige-tp-2-conditionneur-a-deux-adi-pour-la-sond",
         "tp": true
+       },
+       {
+        "num": "Exemple 4",
+        "titre": "Cours partie 4 et EXEMPLE 4",
+        "duree": 0.1667,
+        "exemple": 4
        },
        {
         "num": "Activité 3",
@@ -3633,46 +3666,46 @@
         "corrige": "cira-amplification-corrige-activite-3-l-amplificateur-d-instrumentati"
        },
        {
-        "num": "Cours",
-        "titre": "Cours : lecture et exemples",
-        "duree": 0.75,
-        "clic": true
+        "num": "Exemple 5",
+        "titre": "Cours partie 5 et EXEMPLE 5",
+        "duree": 0.25,
+        "exemple": 5
        },
        {
         "num": "Animation",
         "titre": "Animation – Amplification",
-        "duree": 1,
+        "duree": 1.0,
         "anim": true,
         "questions": 16
        },
        {
         "num": "Exercice 1",
-        "titre": "Exercice 1",
-        "duree": 0.25,
+        "titre": "Exercice 1 – Le débit d'une station d'épuration",
+        "duree": 0.1667,
         "corrige": "cira-amplification-corrige-exercice-1"
        },
        {
         "num": "Exercice 2",
-        "titre": "Exercice 2",
+        "titre": "Exercice 2 – La vitesse d'un agitateur de fromagerie",
         "duree": 0.25,
         "corrige": "cira-amplification-corrige-exercice-2"
        },
        {
         "num": "Exercice 3",
-        "titre": "Exercice 3",
+        "titre": "Exercice 3 – Le bac de rinçage d'une ligne de traitement de surface",
         "duree": 0.25,
         "corrige": "cira-amplification-corrige-exercice-3"
        },
        {
         "num": "Exercice 4",
-        "titre": "Exercice 4",
+        "titre": "Exercice 4 – Le pesage au crochet d'un pont roulant",
         "duree": 0.25,
         "corrige": "cira-amplification-corrige-exercice-4"
        },
        {
         "num": "Parcours",
         "titre": "Mon parcours avant l'évaluation",
-        "duree": 1,
+        "duree": 1.0,
         "parcours": "cira-amplification-parcours"
        }
       ]
@@ -4161,9 +4194,9 @@
   }
  ],
  "outilsWk": {
-  "et": "UDGVhWk8HMEbeBOgIqj9X7Q0vhEvtOxCbW9WxElVA6Hs63LKgTm/6ECaYFx76ilbUgblt7niYc9FQ7T2",
-  "cira": "gCuhKWC5aywxD/Kj9SduljVvcovr3dVhB3yCDPDdpx3UwNCl6dAmrfH5JYwzQKEcQJP89v23ChsIA66d",
-  "cim": "E5vg2DjOTk5Jh1sIPEK0578iSfntirbcATt4GMXi1QpR9CtBQANiBg8lvZJH4dcNa+wyNyHdbwnM1R8x"
+  "et": "Y98eVhsdlX4tGli9Row8d+7gFZn54u1p1e0N3z/BWmQVRAEpfGlVJAgPboFwvqN6q3hmswspkqcJYTTC",
+  "cira": "4w+dg9g4Fz8XuQukta4cQBmQC2k6JKnqXiKO2w9VmOodKzEgDLBytb6CdVmiqP88GnHRJo50p4qhEYkf",
+  "cim": "QfYy99cTjYeCco66RbLZHoro/QUng1UkyU64bTmoS7dQIp/F4Zq2m5GxG2ETif4FpbcPB0RLsWhOR+Lp"
  },
  "outils": [
   {

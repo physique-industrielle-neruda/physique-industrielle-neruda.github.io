@@ -267,7 +267,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut, setPersistence, browserLocalPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore, doc, getDoc, getDocs, setDoc, collection, query, where, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { profil as calcProfil, profilHtml, synthese, PROFIL_CSS, bilanAnnee, anneeHtml, ANNEE_CSS } from "./competences.js";
-import { etat as etatRythme, STATUTS, heures, coursId, itemDuDoc, rythmeDoc } from "./rythme.js";
+import { etat as etatRythme, STATUTS, heures, exemplesId, itemDuDoc, rythmeDoc } from "./rythme.js";
 
 const FB = {"apiKey":"AIzaSyDH32Ma0shVbsIHR0xNJbahb5MO0RKHRS0","authDomain":"physique-neruda.firebaseapp.com","projectId":"physique-neruda","storageBucket":"physique-neruda.firebasestorage.app","messagingSenderId":"62730174289","appId":"1:62730174289:web:588c846aadd4eec2109d70"};
 const DOMAINE = "@physique-neruda.firebaseapp.com";
@@ -565,6 +565,7 @@ function docRow(c, d){
   if (d.format === "parcours") return parcoursRow(c, d);
   if (d.type === "Point de cours") return pdcRow(c, d);
   if (d.format === "pouce") return pouceRow(c, d);
+  if (d.format === "exemples") return exemplesRow(c, d);
   const li = document.createElement("li");
   if (freine(c, d)) {
     li.className = "freine";
@@ -770,7 +771,7 @@ function apercuRythme(ch){
 function freine(c, d){
   if (!eleveRev() || d.corrige || d.lien || /coups?\s+de\s+pouce/i.test(d.titre)) return false;
   const ch = chapDe(c.id, d); if (!ch || !ch.rythme || !chapOK(ch)) return false;
-  const it = itemDuDoc(ch, numeroDoc(d), d); if (!it || it.tp || it.clic) return false;
+  const it = itemDuDoc(ch, numeroDoc(d), d); if (!it || it.tp || it.exemple) return false;
   const e = etatEleve(ch); if (!e || !e.frein) return false;
   const x = e.items.find(y => y.num === it.num);
   return x && !x.fait && x.part === 0;
@@ -786,7 +787,6 @@ function jaugeBox(c, ch){
   const conseil = e.statut === "vert" ? (e.frein ? "Tu es en avance : la suite s'ouvrira après la prochaine séance. Profites-en pour les « Côté terrain ★ » ou les cartes de révision." : "Continue comme ça.")
     : e.statut === "orange" ? "Prévois un peu de travail à la maison pour rattraper avant la prochaine séance."
     : "Tu as pris du retard : organise-toi dès maintenant (maison, coups de pouce, appel au professeur).";
-  const cours = ch.rythme.items.find(x => x.clic), coursFait = e.items.find(x => x.clic && x.fait);
   box.innerHTML = `<div class="ry-head"><b>Mon rythme dans le dossier</b>${apercu ? '<span class="ry-apercu">Aperçu professeur (exemple fictif)</span>' : ""}<span class="ry-st" style="color:${st.couleur};background:${st.fond}">${st.lib}</span></div>
     <div class="ry-bar" role="img" aria-label="Travail fait ${heures(e.fait)} sur ${heures(e.contenu)}, temps de cours écoulé ${heures(e.ecoule)} sur ${heures(e.total)}">
       <span class="ry-fill" style="width:${pc(e.fait)}%;background:${st.couleur}"></span>
@@ -796,18 +796,47 @@ function jaugeBox(c, ch){
     <div class="ry-leg"><span><i class="ry-k fill" style="background:${st.couleur}"></i>Travail fait : ${heures(e.fait)} sur ${heures(e.contenu)}</span><span><i class="ry-k now"></i>Cours écoulés : ${heures(e.ecoule)} sur ${heures(e.total)}</span><span><i class="ry-k marge"></i>1 h de marge</span></div>
     <p class="ry-msg">Il te reste <b>${heures(e.reste)}</b> de travail. Il reste <b>${heures(e.resteCours)}</b> de cours avant la fin du dossier${dateEval ? ` (évaluation le ${esc(dateEval)})` : ""}. ${conseil}</p>
     <details class="ry-liste"><summary>Ce qu'il me reste à faire</summary><ol>${e.items.map(x => `<li class="${x.fait ? "ok" : x.part ? "part" : ""}">${x.fait ? "✓ " : ""}${esc(x.titre)} <span>(${heures(x.duree)}${x.tp ? ", en classe" : ""}${x.part && !x.fait ? ", " + Math.round(100 * x.part) + " % fait" : ""})</span></li>`).join("")}</ol>
-      <p class="ry-note">Une activité, un TP ou un exercice compte comme fait quand le professeur a débloqué son corrigé. Les coups de pouce ne comptent jamais contre toi.</p></details>
-    ${cours && !apercu ? `<div class="ry-cours">${coursFait ? "✓ Cours lu et exemples faits." : `<button type="button" class="open">J'ai lu le cours et fait les exemples</button>`}</div>` : ""}`;
-  const b = box.querySelector(".ry-cours button");
-  if (b) b.onclick = async () => {
-    if (!confirm("Tu confirmes avoir lu tout le cours et fait tous les exemples ?")) return;
-    const id = coursId(chapIdDe(ch));
-    const v = { uid: S.user.uid, pdc: id, type: "rythme", site: c.id, chap: chapIdDe(ch), titre: "Cours : lecture et exemples", activite: "",
-      nom: S.nom, classe: S.groupe || "", etape: 1, total: 1, erreurs: 0, termine: true, date: serverTimestamp() };
-    MP[id] = { ...v, date: Date.now() }; render();
+      <p class="ry-note">Une activité, un TP ou un exercice compte comme fait quand le professeur a débloqué son corrigé. Une partie du cours compte comme faite quand tu as ouvert la correction de son exemple (sous-dossier « Cours », « Correction des exemples »). Les coups de pouce ne comptent jamais contre toi.</p></details>`;
+  return box;
+}
+
+/* ================= Correction des exemples du cours (25/11/2026, CIRA « Amplification ») =================
+   Page chiffrée comme un document du chapitre. L'élève ouvre la correction d'un exemple quand il l'a fait :
+   Firestore « pointsdecours/<uid>__exemples:<dossier> » (vus : numéro → date). Compte dans la jauge du dossier. */
+function exemplesRow(c, d){
+  const li = document.createElement("li");
+  const ch = chapDe(c.id, d), st = ch ? MP[exemplesId(chapIdDe(ch))] : null, n = st && st.vus ? Object.keys(st.vus).length : 0;
+  const meta = !eleveRev() ? "Vue professeur : toutes les corrections sont affichées" : n ? n + " correction" + (n > 1 ? "s" : "") + " ouverte" + (n > 1 ? "s" : "") + (st.total ? " sur " + st.total : "") : "Ouvre la correction de chaque exemple une fois que tu l'as fait";
+  li.innerHTML = `<span class="type corr">Exemples</span><span class="title">${esc(d.titre)}<span class="meta">${esc(meta)}</span></span>
+    <span class="actions"><button class="open" type="button">Ouvrir</button></span>`;
+  li.querySelector("button").onclick = () => ouvrirExemples(c, d);
+  return li;
+}
+async function ouvrirExemples(c, d){
+  let html;
+  try {
+    const key = d.cv ? await chapKey(d.cv) : S.keys[c.id];
+    if (!key) throw new Error("chapitre");
+    html = await (await decryptBlob(BASE + "docs/" + c.id + "/" + d.fichier, key, "text/html;charset=utf-8")).text();
+  } catch(e) { toast(e.message === "chapitre" ? "Ce chapitre n'est pas encore ouvert." : "Impossible d'ouvrir la correction des exemples. Rechargez la page."); return; }
+  const ch = chapDe(c.id, d), id = exemplesId(ch ? chapIdDe(ch) : c.id), eleve = eleveRev(), st = MP[id];
+  html = html.replace("</head>", () => "<script>window.EXEMPLES_INIT = " + JSON.stringify(eleve && st && st.vus ? st.vus : {}) + (eleve ? "" : "; window.EXEMPLES_PROF = true") + ";<\/script></head>");
+  const ov = document.createElement("div"); ov.className = "fiche-ov";
+  ov.innerHTML = `<div class="bar"><b>${esc(d.titre)}</b><button type="button">Fermer</button></div><iframe title="${esc(d.titre)}"></iframe>`;
+  const fr = ov.querySelector("iframe"); fr.srcdoc = html;
+  document.body.appendChild(ov); document.body.style.overflow = "hidden";
+  const onMsg = async e => {
+    if (e.source !== fr.contentWindow || !e.data || e.data.type !== "exemples" || !eleve) return;
+    const vus = Object.assign({}, MP[id] && MP[id].vus);
+    Object.entries(e.data.vus || {}).forEach(([k, t]) => { if (!vus[k]) vus[k] = +t || Date.now(); });
+    const total = +e.data.total || 0, n = Object.keys(vus).length;
+    const v = { uid: S.user.uid, pdc: id, type: "exemples", site: c.id, chap: ch && ch.verrou ? ch.verrou.id : "", titre: d.titre, activite: "",
+      nom: S.nom, classe: S.groupe || "", vus, etape: n, total, erreurs: 0, termine: total > 0 && n >= total, date: serverTimestamp() };
+    MP[id] = { ...v, date: Date.now() };
     try { await setDoc(doc(db, "pointsdecours", S.user.uid + "__" + id), v); } catch(_) { toast("Enregistrement impossible, vérifie ta connexion."); }
   };
-  return box;
+  window.addEventListener("message", onMsg);
+  ov.querySelector("button").onclick = () => { window.removeEventListener("message", onMsg); ov.remove(); document.body.style.overflow = ""; render(); };
 }
 
 /* ================= Mes révisions ================= */

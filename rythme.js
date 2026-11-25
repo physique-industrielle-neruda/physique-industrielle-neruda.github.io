@@ -3,14 +3,15 @@
    - Durée du dossier = somme des durées indicatives (catalogue : chapitre.rythme.items) + marge (1 h).
    - Temps écoulé = séances cochées par le professeur (« J'ai cours », 1 h ou 2 h), enregistrées dans
      deblocages/rythme_<dossier>_<uid> (un document par élève : seances, evalDate, attitude, ajust).
-   - Travail fait : corrigé débloqué (activités, TP, exercices), clic « J'ai lu le cours et fait les exemples »,
-     animation terminée, parcours avant l'évaluation terminé.
+   - Travail fait : corrigé débloqué (activités, TP, exercices), correction de l'exemple ouverte (une partie du cours
+     par exemple, « Correction des exemples » → pointsdecours « exemples:<dossier> »), animation terminée,
+     parcours avant l'évaluation terminé.
    - Frein : plus d'1 h d'avance sur le temps écoulé -> la suite (hors TP et cours) attend la prochaine séance.
    - Note /20 : corrigés 8, cours 2, animation 3, régularité 5, attitude 2 (+ ajustement du professeur),
      arrêtée à la fin du jour de l'évaluation. Les coups de pouce ne comptent jamais. */
 export const toMs = x => x == null ? null : typeof x === "number" ? x : x.toMillis ? x.toMillis() : x instanceof Date ? x.getTime() : (typeof x === "string" ? Date.parse(x) : null);
 export const BAREME = { corriges: 8, cours: 2, anim: 3, regularite: 5, attitude: 2 };
-export const coursId = chapId => "rythme-cours:" + chapId;
+export const exemplesId = chapId => "exemples:" + chapId;
 export const rythmeDocId = (chapId, uid) => "rythme_" + chapId + "_" + uid;
 export const rythmeDoc = chapId => "rythme:" + chapId;
 export function heures(h){
@@ -26,7 +27,7 @@ export function etat(ch, src){
   const items = R.items.map(it => {
     let t = null, part = 0;
     if (it.corrige) { t = toMs(corrAt[it.corrige]); part = t ? 1 : 0; }
-    else if (it.clic) { const v = mp[coursId(chapId)]; if (v && v.termine) { t = toMs(v.date) || now; part = 1; } }
+    else if (it.exemple) { const v = mp[exemplesId(chapId)], vu = v && v.vus && v.vus[it.exemple]; if (vu) { t = toMs(vu) || now; part = 1; } }
     else if (it.anim) {
       const v = mp["anim:" + chapId], rep = (v && v.reponses) || {};
       const n = Object.values(rep).filter(x => x.ok || x.t >= 2).length, tot = it.questions || 1;
@@ -52,10 +53,10 @@ export function etat(ch, src){
   sv.forEach((s, k) => { cum += s.h; const tn = k + 1 < sv.length ? sv[k + 1].t : Math.min(now, limite);
     const rr = Math.min(cum, contenu) - faitA(tn); scores.push(rr <= 0 ? 1 : rr <= 1 ? 0.5 : 0); });
   const corr = items.filter(x => x.corrige), avant = x => x.t && x.t <= limite;
-  const anim = items.find(x => x.anim), cours = items.find(x => x.clic);
+  const anim = items.find(x => x.anim), exs = items.filter(x => x.exemple);
   const pts = {
     corriges: corr.length ? BAREME.corriges * corr.filter(avant).length / corr.length : BAREME.corriges,
-    cours: cours ? (avant(cours) ? BAREME.cours : 0) : BAREME.cours,
+    cours: exs.length ? BAREME.cours * exs.filter(avant).length / exs.length : BAREME.cours,
     anim: anim ? BAREME.anim * anim.part : BAREME.anim,
     regularite: scores.length ? BAREME.regularite * scores.reduce((a, b) => a + b, 0) / scores.length : BAREME.regularite,
     attitude: Math.max(0, Math.min(BAREME.attitude, BAREME.attitude + 0.5 * (+r.attitude || 0)))
