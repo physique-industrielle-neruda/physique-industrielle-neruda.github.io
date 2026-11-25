@@ -765,7 +765,7 @@ function apercuRythme(ch){
   /* Professeur et invités : exemple fictif pour voir à quoi ressemble la jauge */
   const corrAt = {}, t0 = Date.now() - 7 * 864e5;
   ch.rythme.items.slice(0, 3).forEach((it, i) => { if (it.corrige) corrAt[it.corrige] = t0 + i * 864e5; });
-  const r = { seances: [{ t: t0, h: 1 }, { t: t0 + 2 * 864e5, h: 2 }, { t: t0 + 4 * 864e5, h: 1 }, { t: t0 + 6 * 864e5, h: 1 }], evalDate: "" };
+  const r = { seances: [{ t: t0, h: 1 }, { t: t0 + 2 * 864e5, h: 2, tp: true }, { t: t0 + 4 * 864e5, h: 1 }], evalDate: "" };
   return etatRythme(ch, { corrAt, mp: {}, r });
 }
 function freine(c, d){
@@ -784,10 +784,11 @@ function jaugeBox(c, ch){
   const st = STATUTS[e.statut], pc = x => Math.max(0, Math.min(100, 100 * x / e.total)).toFixed(1);
   const box = document.createElement("div"); box.className = "rythme";
   const dateEval = e.evalDate ? new Date(e.evalDate + "T12:00:00").toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" }) : "";
-  const conseil = e.statut === "vert" ? (e.frein ? "Tu es en avance : la suite s'ouvrira après la prochaine séance. Profites-en pour les « Côté terrain ★ » ou les cartes de révision." : "Continue comme ça.")
+  const conseil = e.frein ? "Tu as plus d'1 h d'avance : la suite s'ouvrira après la prochaine séance. Profites-en pour les « Côté terrain ★ » ou les cartes de révision."
+    : e.statut === "avance" ? "Tu es en avance, continue comme ça." : e.statut === "vert" ? "Tu es à jour, continue comme ça."
     : e.statut === "orange" ? "Prévois un peu de travail à la maison pour rattraper avant la prochaine séance."
     : "Tu as pris du retard : organise-toi dès maintenant (maison, coups de pouce, appel au professeur).";
-  box.innerHTML = `<div class="ry-head"><b>Mon rythme dans le dossier</b>${apercu ? '<span class="ry-apercu">Aperçu professeur (exemple fictif)</span>' : ""}<span class="ry-st" style="color:${st.couleur};background:${st.fond}">${st.lib}</span></div>
+  box.innerHTML = `<div class="ry-head"><b>Mon rythme dans le dossier</b>${apercu ? '<span class="ry-apercu">Aperçu professeur (exemple fictif)</span>' : ""}<span class="ry-st" style="color:${st.couleur};background:${st.fond}">${st.lib}${e.statut === "avance" ? " · +" + heures(e.avance) : ""}${e.frein ? " 🔒" : ""}</span></div>
     <div class="ry-bar" role="img" aria-label="Travail fait ${heures(e.fait)} sur ${heures(e.contenu)}, temps de cours écoulé ${heures(e.ecoule)} sur ${heures(e.total)}">
       <span class="ry-fill" style="width:${pc(e.fait)}%;background:${st.couleur}"></span>
       <span class="ry-marge" style="left:${pc(e.contenu)}%"></span>
@@ -795,8 +796,8 @@ function jaugeBox(c, ch){
     </div>
     <div class="ry-leg"><span><i class="ry-k fill" style="background:${st.couleur}"></i>Travail fait : ${heures(e.fait)} sur ${heures(e.contenu)}</span><span><i class="ry-k now"></i>Cours écoulés : ${heures(e.ecoule)} sur ${heures(e.total)}</span><span><i class="ry-k marge"></i>1 h de marge</span></div>
     <p class="ry-msg">Il te reste <b>${heures(e.reste)}</b> de travail. Il reste <b>${heures(e.resteCours)}</b> de cours avant la fin du dossier${dateEval ? ` (évaluation le ${esc(dateEval)})` : ""}. ${conseil}</p>
-    <details class="ry-liste"><summary>Ce qu'il me reste à faire</summary><ol>${e.items.map(x => `<li class="${x.fait ? "ok" : x.part ? "part" : ""}">${x.fait ? "✓ " : ""}${esc(x.titre)} <span>(${heures(x.duree)}${x.tp ? ", en classe" : ""}${x.part && !x.fait ? ", " + Math.round(100 * x.part) + " % fait" : ""})</span></li>`).join("")}</ol>
-      <p class="ry-note">Une activité, un TP ou un exercice compte comme fait quand le professeur a débloqué son corrigé. Une partie du cours compte comme faite quand tu as ouvert la correction de son exemple (sous-dossier « Cours », « Correction des exemples »). Les coups de pouce ne comptent jamais contre toi.</p></details>`;
+    <details class="ry-liste"><summary>Ce qu'il me reste à faire</summary><ol>${e.items.map(x => `<li class="${x.fait ? "ok" : x.part ? "part" : ""}">${x.fait ? "✓ " : ""}${esc(x.titre)} <span>(${x.tp ? "en classe avec tout le monde, hors jauge" : heures(x.duree)}${x.part && !x.fait ? ", " + Math.round(100 * x.part) + " % fait" : ""})</span></li>`).join("")}</ol>
+      <p class="ry-note">Les TP se font en classe tous ensemble : ils ne comptent pas dans la jauge. Une activité, un TP ou un exercice compte comme fait quand le professeur a débloqué son corrigé. Une partie du cours compte comme faite quand tu as ouvert la correction de son exemple (sous-dossier « Cours », « Correction des exemples »). Les coups de pouce ne comptent jamais contre toi.</p></details>`;
   return box;
 }
 

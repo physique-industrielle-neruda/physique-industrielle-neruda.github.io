@@ -6,6 +6,8 @@
    - Travail fait : corrigé débloqué (activités, TP, exercices), correction de l'exemple ouverte (une partie du cours
      par exemple, « Correction des exemples » → pointsdecours « exemples:<dossier> »), animation terminée,
      parcours avant l'évaluation terminé.
+   - TP (25/11/2026) : faits par toute la classe en même temps, hors jauge : une séance « J'ai TP » (tp: true) ne compte pas
+     dans le temps écoulé et le TP ne compte pas dans le travail fait ; son corrigé rapporte toujours ses points « Corrigés ».
    - Frein : plus d'1 h d'avance sur le temps écoulé -> la suite (hors TP et cours) attend la prochaine séance.
    - Note /20 : corrigés 8, cours 2, animation 3, régularité 5, attitude 2 (+ ajustement du professeur),
      arrêtée à la fin du jour de l'évaluation. Les coups de pouce ne comptent jamais. */
@@ -36,14 +38,15 @@ export function etat(ch, src){
     else if (it.parcours) { const v = mp["parcours:" + it.parcours]; if (v && v.fini) { t = toMs(v.date) || now; part = 1; } }
     return { ...it, t, part, fait: !!t };
   });
-  const contenu = items.reduce((s, x) => s + x.duree, 0), marge = R.marge ?? 1, total = contenu + marge;
+  const contenu = items.reduce((s, x) => s + (x.tp ? 0 : x.duree), 0), marge = R.marge ?? 1, total = contenu + marge;
   const limite = finJour(r.evalDate);
-  const seances = (r.seances || []).map(s => ({ t: toMs(s.t), h: +s.h || 0 })).filter(s => s.t).sort((a, b) => a.t - b.t);
+  const toutes = (r.seances || []).map(s => ({ t: toMs(s.t), h: +s.h || 0, tp: !!s.tp })).filter(s => s.t).sort((a, b) => a.t - b.t);
+  const seances = toutes.filter(s => !s.tp);   // séances de TP : hors jauge
   const ecoule = seances.reduce((s, x) => s + x.h, 0);
-  const faitA = t => items.reduce((s, x) => s + (x.t && x.t <= t ? x.duree : 0), 0);
+  const faitA = t => items.reduce((s, x) => s + (!x.tp && x.t && x.t <= t ? x.duree : 0), 0);
   const fait = faitA(now);
   const retard = Math.min(ecoule, contenu) - fait;
-  const statut = retard <= 0 ? "vert" : retard <= 1 ? "orange" : "rouge";
+  const statut = retard < -1e-6 ? "avance" : retard <= 1e-6 ? "vert" : retard <= 1 ? "orange" : "rouge";
   const avance = fait - ecoule;
   const frein = avance >= marge && ecoule < contenu;
   const reste = Math.max(0, contenu - fait), resteCours = Math.max(0, total - ecoule);
@@ -63,9 +66,10 @@ export function etat(ch, src){
   };
   const brut = Object.values(pts).reduce((a, b) => a + b, 0) + (+r.ajust || 0);
   const note = Math.max(0, Math.min(20, Math.round(brut * 2) / 2));
-  return { items, contenu, marge, total, ecoule, fait, retard, statut, avance, frein, reste, resteCours, seances, scores, pts, note, limite, evalDate: r.evalDate || "" };
+  return { toutes, items, contenu, marge, total, ecoule, fait, retard, statut, avance, frein, reste, resteCours, seances, scores, pts, note, limite, evalDate: r.evalDate || "" };
 }
 export const STATUTS = {
+  avance: { lib: "En avance",      couleur: "#2E75B6", fond: "#DEEAF6" },
   vert:   { lib: "Dans les temps", couleur: "#3F7A3A", fond: "#E6F1E3" },
   orange: { lib: "Léger retard",   couleur: "#C55A11", fond: "#FBE5D6" },
   rouge:  { lib: "Retard important", couleur: "#C0392B", fond: "#FBE5E1" }
