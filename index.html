@@ -558,6 +558,7 @@ function renderNav(){
   /* Onglet « Mes évaluations » de l'élève, juste après sa classe (24/11/2026) */
   if (S.user && !S.prof && !S.tous && S.site) { const n = nbMesEvals(); items.push({id:"mes-evaluations", n:"Mes évaluations", mini:"Évals", s: n ? n + " copie" + (n > 1 ? "s" : "") + " corrigée" + (n > 1 ? "s" : "") : "Copies corrigées"}); }
   if (S.evals) items.push({id:"evaluations", n:"Évaluations", mini:"Évals", s:"Copies corrigées et bilans"});
+  if (S.evals && S.maitre) items.push({id:"calendrier", n:"Calendrier", mini:"Calendrier", s:"Séances et heures par classe"});
   if (!S.user) items.push({id:"connexion", n:"Connexion", mini:"Connexion", s:"Accès aux cours de votre BTS"});
   if (S.user && testsOuverts().length) { const n = fichesAFaire(); items.push({id:"revisions", n:"Mes révisions", mini:"Révisions", s: n ? n + " fiche" + (n > 1 ? "s" : "") + " à travailler" : "Tests d'entrée et fiches"}); }
   if (S.user && (CAT.outils || []).length) items.push({id:"outils", n:"Outils", mini:"Outils", s:"Fiches méthodes et simulations"});
@@ -730,13 +731,14 @@ function remplirParNumero(c, docs, parent, k0, forceOpen){
 function render(){
   renderNav(); renderWho(); controleDonnees();
   if (VUE_REV) return;   // test en cours ou résultat affiché : ne pas effacer
-  $("#searchBox").hidden = !S.user || current === "revisions" || current === "mes-evaluations" || current === "mes-competences";
+  $("#searchBox").hidden = !S.user || current === "revisions" || current === "mes-evaluations" || current === "mes-competences" || current === "calendrier";
   const view = $("#view"); view.innerHTML = "";
   if (current === "demo") { $("#searchBox").hidden = true; renderDemo(view); return; }
   if (S.demo) { const b = demoBandeau(); if (b) view.appendChild(b); }
   if (current === "revisions") { renderRevisions(view); return; }
   if (current === "connexion") { view.appendChild(loginBox()); return; }
   if (current === "evaluations" && S.evals) { renderEvaluationsProf(view); return; }
+  if (current === "calendrier" && S.evals) { renderCalendrier(view); return; }
   if (current === "mes-evaluations") { renderMesEvals(view); return; }
   if (current === "mes-competences") { renderMesCompetences(view); return; }
   const q = $("#q").value.trim().toLowerCase();
@@ -1505,12 +1507,128 @@ function loginBox(){
   return box;
 }
 
+/* ================= Onglet « Calendrier » (25/11/2026) : compte professeur seulement =================
+   Planning lu sur Pronote (calendrier.json → docs/prive/planning.bin, chiffré par la clé maître des corrigés,
+   mis à jour avec _outils/publier_planning.py). Heures faites / restantes par classe, prochaines séances,
+   calendrier semaine par semaine, et dossier en cours (séances cochées « J'ai cours » dans l'appli prof). */
+const CAL_NOMS = { cira1: "BTS CIRA 1re année", cim2: "BTS CIM 2e année", et1a: "BTS ET 1re année (alternants)", et2: "BTS ET 2e année", et2a: "BTS ET 2e année (alternants)" };
+const CAL_ORDRE = ["et2", "et2a", "et1a", "cira1", "cim2"];
+const CAL_FIN = { et2: "2027-05-14", et2a: "2027-05-14", cim2: "2027-05-14" };   // examens : plus de séances comptées ensuite
+let CAL = null, CAL_SEL = "tout", CAL_RY = null;
+(() => { const st = document.createElement("style");
+  st.textContent = ".cal-sel{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 14px}.cal-sel button{font:inherit;font-size:.9rem;font-weight:600;border:1px solid #D8E0EA;background:#fff;color:#1F3864;border-radius:999px;padding:6px 12px;cursor:pointer}"
+  + ".cal-sel button[aria-pressed=true]{background:#1F3864;color:#fff;border-color:#1F3864}"
+  + ".cal-kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:0 0 14px}.cal-kpi div{background:#fff;border:1px solid #D8E0EA;border-radius:10px;padding:10px 12px}"
+  + ".cal-kpi b{display:block;font-size:1.5rem;color:#1F3864;line-height:1.2}.cal-kpi span{font-size:.82rem;color:#5A6577}"
+  + ".cal-tab{width:100%;border-collapse:collapse;background:#fff;border:1px solid #D8E0EA;border-radius:10px;overflow:hidden;font-size:.92rem;margin-bottom:14px}"
+  + ".cal-tab th{background:#1F3864;color:#fff;text-align:left;padding:8px 10px;font-weight:700}.cal-tab td{padding:8px 10px;border-top:1px solid #D8E0EA;vertical-align:top}.cal-tab tr.cl{cursor:pointer}.cal-tab tr.cl:hover td{background:#F4F6F9}"
+  + ".cal-box{background:#fff;border:1px solid #D8E0EA;border-radius:10px;padding:12px 14px;margin:0 0 14px}.cal-box h3{margin:0 0 6px;font-size:1.05rem;color:#1F3864}.cal-box p{margin:4px 0}"
+  + ".cal-mois{margin:16px 0 6px;font-weight:700;color:#C55A11;text-transform:capitalize}.cal-sem{display:flex;gap:8px;align-items:flex-start;padding:6px 0;border-top:1px dashed #D8E0EA}"
+  + ".cal-sem .w{flex:none;width:92px;font-size:.8rem;color:#5A6577;padding-top:4px}.cal-sem .s{display:flex;flex-wrap:wrap;gap:6px}.cal-sem.vac .s{color:#5A6577;font-style:italic;font-size:.88rem;padding-top:3px}"
+  + ".cal-c{font-size:.8rem;border-radius:7px;padding:3px 8px;background:#DEEAF6;color:#1F3864;white-space:nowrap}.cal-c.tp{background:#E2EFDA;color:#3F7A3A}"
+  + ".cal-c.passe{opacity:.55}.cal-c.annule{background:#F2F2F2;color:#8A95A6;text-decoration:line-through}.cal-c.deplace{box-shadow:inset 0 0 0 1.5px #C55A11}.cal-c.auj{box-shadow:inset 0 0 0 2px #1F3864;font-weight:700}"
+  + ".cal-leg{font-size:.82rem;color:#5A6577;margin:8px 0}.cal-leg .cal-c{margin-right:4px}";
+  document.head.appendChild(st); })();
+async function chargerCalendrier(){
+  if (CAL) return CAL;
+  const m = await fetch(BASE + "calendrier.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null).catch(() => null);
+  if (!m || !m.planning) throw new Error("absent");
+  const key = await corrKey(m.planning); if (!key) throw new Error("cle");
+  const blob = await decryptBlob(BASE + "docs/" + m.planning.fichier, key, "application/json");
+  const P = JSON.parse(await blob.text());
+  const mn = t => +t.slice(0, 2) * 60 + +t.slice(3, 5);
+  const seances = P.seances.map(s => { const d = new Date(s.date + "T" + s.debut + ":00"), f = new Date(s.date + "T" + s.fin + ":00");
+    return { ...s, d, f, h: Math.max(1, Math.round((mn(s.fin) - mn(s.debut)) / 55)), tenue: s.statut !== "annulé" }; })
+    .filter(s => !CAL_FIN[s.classe] || s.date <= CAL_FIN[s.classe]).sort((a, b) => a.d - b.d);
+  CAL = { maj: m.maj, du: P.du, au: P.au, seances };
+  return CAL;
+}
+/* Dossier en cours de chaque classe : documents « rythme » (séances cochées, date de l'évaluation), lisibles par le compte prof */
+async function chargerRythmesCal(){
+  if (CAL_RY) return CAL_RY;
+  CAL_RY = {};
+  try { const snap = await getDocs(collection(db, "deblocages"));
+    snap.forEach(x => { const v = x.data(); if (!v.doc || !String(v.doc).startsWith("rythme:") || !v.classe) return;
+      const chap = v.doc.slice(7), k = v.classe + "|" + chap, n = (v.seances || []).length;
+      if (!CAL_RY[k] || n > (CAL_RY[k].seances || []).length || (v.evalDate && !CAL_RY[k].evalDate)) CAL_RY[k] = { classe: v.classe, chap, seances: v.seances || [], evalDate: v.evalDate || "" }; }); }
+  catch(_) { CAL_RY.illisible = true; }
+  return CAL_RY;
+}
+const calH = n => (Math.round(n * 2) / 2).toLocaleString("fr-FR") + " h";
+const calJour = d => d.toLocaleDateString("fr-FR", { weekday: "short", day: "numeric", month: "short" });
+const calHeure = s => s.debut.replace(":", "h");
+function calStats(cid, now){
+  const S2 = CAL.seances.filter(s => s.classe === cid), ten = S2.filter(s => s.tenue);
+  const fait = ten.filter(s => s.f <= now), reste = ten.filter(s => s.d > now);
+  const som = (l, ty) => l.filter(s => !ty || s.type === ty).reduce((a, s) => a + s.h, 0);
+  return { all: S2, fait, reste, hFait: som(fait), hReste: som(reste), hResteCours: som(reste, "cours"), hResteTp: som(reste, "tp"),
+    annules: S2.filter(s => !s.tenue && s.d > now).length, prochaine: reste[0], aTp: ten.some(s => s.type === "tp"), fin: CAL_FIN[cid] || CAL.au };
+}
+function titreChapCal(chap){ for (const c of CAT.classes) for (const ch of c.chapitres) if ((ch.verrou && ch.verrou.id === chap) || ch.titre === chap) return ch.titre; return chap; }
+async function renderCalendrier(view){
+  const head = document.createElement("div"); head.className = "classhead";
+  head.innerHTML = `<h2>Calendrier</h2><span class="status is-open">Visible par vous seul</span>`;
+  view.appendChild(head);
+  const zone = document.createElement("div"); zone.innerHTML = `<p class="empty">Chargement du planning…</p>`; view.appendChild(zone);
+  try { await chargerCalendrier(); } catch(e) { zone.innerHTML = `<p class="empty">${e.message === "cle" ? "Le planning ne s'ouvre qu'avec le compte professeur." : "Planning indisponible pour l'instant."}</p>`; return; }
+  await chargerRythmesCal();
+  if (current !== "calendrier") return;
+  const now = new Date(), cls = CAL_ORDRE.filter(id => CAL.seances.some(s => s.classe === id));
+  const sel = `<div class="cal-sel">${[["tout", "Vue d'ensemble"]].concat(cls.map(id => [id, CAL_NOMS[id] || id])).map(([id, n]) => `<button type="button" data-cal="${id}" aria-pressed="${CAL_SEL === id}">${esc(n)}</button>`).join("")}</div>`;
+  let h = sel;
+  if (CAL_SEL === "tout" || !cls.includes(CAL_SEL)) {
+    h += `<table class="cal-tab"><tr><th>Classe</th><th>Faites</th><th>Restantes</th><th>Prochaine séance</th><th>Fin</th></tr>`
+      + cls.map(id => { const s = calStats(id, now);
+        return `<tr class="cl" data-cal="${id}"><td><b>${esc(CAL_NOMS[id] || id)}</b></td><td>${calH(s.hFait)}</td><td><b>${calH(s.hReste)}</b>${s.aTp ? `<br><small>cours ${calH(s.hResteCours)} · TP ${calH(s.hResteTp)}</small>` : ""}</td>`
+          + `<td>${s.prochaine ? esc(calJour(s.prochaine.d)) + " · " + esc(calHeure(s.prochaine)) + " (" + s.prochaine.h + " h" + (s.prochaine.type === "tp" ? ", TP" : "") + ")" : "–"}</td><td>${esc(new Date(s.fin + "T12:00").toLocaleDateString("fr-FR", { day: "numeric", month: "short" }))}${CAL_FIN[id] ? "<br><small>examens</small>" : ""}</td></tr>`; }).join("") + `</table>`
+      + `<p class="cal-leg">Heures comptées à partir du ${esc(new Date(CAL.du + "T12:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long" }))}, d'après Pronote (lu le ${esc(new Date(CAL.maj + "T12:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long" }))}). Un cours annulé ne compte pas ; un cours déplacé compte à sa nouvelle place. 2e année : plus de séances après le 14 mai (examens). Touchez une classe pour son calendrier.</p>`;
+  } else {
+    const id = CAL_SEL, s = calStats(id, now);
+    h += `<div class="cal-kpi"><div><b>${calH(s.hFait)}</b><span>faites depuis le ${esc(new Date(CAL.du + "T12:00").toLocaleDateString("fr-FR", { day: "numeric", month: "short" }))}</span></div>`
+      + `<div><b>${calH(s.hReste)}</b><span>restantes jusqu'au ${esc(new Date(s.fin + "T12:00").toLocaleDateString("fr-FR", { day: "numeric", month: "short" }))}${s.aTp ? ` (cours ${calH(s.hResteCours)}, TP ${calH(s.hResteTp)})` : ""}</span></div>`
+      + `<div><b>${s.reste.length}</b><span>séances restantes${s.annules ? ` · ${s.annules} annulée${s.annules > 1 ? "s" : ""} à venir` : ""}</span></div>`
+      + `<div><b>${s.prochaine ? esc(calJour(s.prochaine.d)) : "–"}</b><span>${s.prochaine ? "prochaine séance, " + esc(calHeure(s.prochaine)) + " (" + s.prochaine.h + " h" + (s.prochaine.type === "tp" ? ", TP" : "") + ")" : "plus de séance prévue"}</span></div></div>`;
+    /* Dossiers suivis avec « J'ai cours » dans l'appli prof */
+    const rys = Object.values(CAL_RY).filter(r => r && r.classe === id);
+    if (CAL_RY.illisible) h += `<div class="cal-box"><p>Le suivi des dossiers (séances cochées dans l'appli) s'affiche avec le compte « prof » de l'appli.</p></div>`;
+    rys.sort((a, b) => ((b.seances.slice(-1)[0] || {}).t || 0) - ((a.seances.slice(-1)[0] || {}).t || 0)).forEach(r => {
+      const auto = r.seances.filter(x => !x.tp), coche = auto.reduce((a, x) => a + (+x.h || 0), 0), debut = r.seances.length ? Math.min(...r.seances.map(x => x.t)) : null;
+      const prevues = debut ? s.fait.filter(x => x.d.getTime() >= debut - 12 * 3600e3 && x.type === "cours").reduce((a, x) => a + x.h, 0) : 0;
+      const ev = r.evalDate ? new Date(r.evalDate + "T23:59") : null;
+      const avant = ev ? s.reste.filter(x => x.d <= ev) : [];
+      const hAv = avant.filter(x => x.type === "cours").reduce((a, x) => a + x.h, 0), tpAv = avant.filter(x => x.type === "tp").length;
+      h += `<div class="cal-box"><h3>📁 ${esc(titreChapCal(r.chap))}</h3>`
+        + `<p>Séances cochées « J'ai cours » : <b>${auto.length}</b> (${calH(coche)})${debut ? ` · d'après Pronote depuis le ${esc(new Date(debut).toLocaleDateString("fr-FR", { day: "numeric", month: "short" }))} : ${calH(prevues)} de cours${Math.abs(prevues - coche) >= 1 ? ` <b style="color:#C55A11">(écart de ${calH(Math.abs(prevues - coche))} : séance oubliée ou en trop ?)</b>` : ""}` : ""}</p>`
+        + (ev ? `<p>Évaluation le <b>${esc(ev.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" }))}</b> : encore <b>${avant.filter(x => x.type === "cours").length} séance${avant.filter(x => x.type === "cours").length > 1 ? "s" : ""} de cours (${calH(hAv)})</b>${tpAv ? ` et ${tpAv} TP` : ""} d'ici là.</p>`
+          : `<p>Date de l'évaluation pas encore saisie (appli prof, tableau du dossier).</p>`) + `</div>`;
+    });
+    /* Calendrier semaine par semaine, avec les vacances */
+    const lundi = d => { const x = new Date(d); x.setHours(0, 0, 0, 0); x.setDate(x.getDate() - ((x.getDay() + 6) % 7)); return x; };
+    const sem = new Map(); s.all.forEach(x => { const k = lundi(x.d).getTime(); if (!sem.has(k)) sem.set(k, []); sem.get(k).push(x); });
+    const ks = [...sem.keys()].sort((a, b) => a - b); let mois = "", prec = null; const W = 7 * 864e5;
+    const auj = new Date(); auj.setHours(0, 0, 0, 0);
+    h += `<div class="cal-leg"><span class="cal-c">cours</span>${s.aTp ? `<span class="cal-c tp">TP</span>` : ""}<span class="cal-c deplace">déplacé</span><span class="cal-c annule">annulé</span><span class="cal-c passe">passé</span><span class="cal-c auj">aujourd'hui</span></div>`;
+    ks.forEach(k => {
+      if (prec !== null && k - prec > W * 1.5) { const nb = Math.round((k - prec) / W) - 1;
+        h += `<div class="cal-sem vac"><span class="w">${nb} semaine${nb > 1 ? "s" : ""}</span><span class="s">Vacances ou pas de cours</span></div>`; }
+      const m = new Date(k).toLocaleDateString("fr-FR", { month: "long", year: "numeric" });
+      if (m !== mois) { mois = m; h += `<div class="cal-mois">${esc(m)}</div>`; }
+      h += `<div class="cal-sem"><span class="w">sem. du ${esc(new Date(k).toLocaleDateString("fr-FR", { day: "numeric", month: "short" }))}</span><span class="s">` + sem.get(k).map(x => {
+        const c = ["cal-c", x.type === "tp" ? "tp" : "", !x.tenue ? "annule" : "", x.statut === "déplacé" ? "deplace" : "", x.f < now ? "passe" : "", lundi(x.d).getTime() === lundi(auj).getTime() && x.d.toDateString() === auj.toDateString() ? "auj" : ""].filter(Boolean).join(" ");
+        return `<span class="${c}" title="${esc(x.statut || (x.type === "tp" ? "TP" : "cours"))}">${esc(calJour(x.d))} · ${esc(calHeure(x))} · ${x.h} h${x.type === "tp" ? " TP" : ""}</span>`; }).join("") + `</span></div>`;
+      prec = k; });
+    h += `<p class="cal-leg">D'après Pronote, lu le ${esc(new Date(CAL.maj + "T12:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long" }))}. Pour tenir compte d'un changement, demandez à Claude de relire votre emploi du temps.</p>`;
+  }
+  zone.innerHTML = h;
+  zone.querySelectorAll("[data-cal]").forEach(b => b.onclick = () => { CAL_SEL = b.dataset.cal; render(); window.scrollTo(0, 0); });
+}
+
 function route(){
   const h = location.hash.slice(1);
   VUE_REV = null;
   const ids = visibleClasses().map(c => c.id);
   if (!S.user) current = "connexion";
-  else current = (h === "evaluations" && S.evals) ? h : (h === "mes-evaluations" && !S.prof && !S.tous && S.site) ? h : (h === "mes-competences" && !S.prof && !S.tous && S.site) ? h : (h === "revisions" && testsVisibles().length) ? h : ids.includes(h) || (h === "outils" && (CAT.outils || []).length) ? h : (S.site || ids[0]);
+  else current = ((h === "evaluations" || h === "calendrier") && S.evals) ? h : (h === "mes-evaluations" && !S.prof && !S.tous && S.site) ? h : (h === "mes-competences" && !S.prof && !S.tous && S.site) ? h : (h === "revisions" && testsVisibles().length) ? h : ids.includes(h) || (h === "outils" && (CAT.outils || []).length) ? h : (S.site || ids[0]);
   if (S.user && S.demo && (!S.demoCfg || h === "demo")) current = "demo";
   render();
 }
