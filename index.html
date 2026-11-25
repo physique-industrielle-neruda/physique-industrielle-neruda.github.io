@@ -810,7 +810,7 @@ function controleDonnees(){
     <p><b>Les copies :</b> quand une IA aide ton professeur à corriger, ton nom est masqué avant : elle ne sait pas à qui est la copie, et c'est ton professeur qui décide de ta note.</p>
     <p><b>Combien de temps :</b> tout est supprimé au plus tard le 31 août qui suit la fin de ton BTS.</p>
     <p><b>Tes droits :</b> tu peux demander à voir tes données, à les corriger ou à les faire effacer, auprès de ton professeur ou de la direction du lycée.</p>
-    <p class="donnees-fiche"><a href="${BASE}docs/fiche-etudiants.pdf" target="_blank" rel="noopener">📄 Lis aussi la fiche « Comment on travaille en physique industrielle » (2 pages)</a></p>
+    <p class="donnees-fiche"><a href="${BASE}docs/fiche-etudiants.pdf" target="_blank" rel="noopener">📄 Lis aussi la fiche « Comment on travaille en physique industrielle » (2 pages)</a><br><span style="font-size:.9em">Ces deux documents restent ensuite dans la rubrique « Outils ».</span></p>
     <label class="donnees-ok"><input type="checkbox"> J'ai lu ces informations et la fiche « Comment on travaille ».</label>
     <button type="button" disabled>Valider</button></div>`;
   const cb = ov.querySelector("input"), bt = ov.querySelector("button");
@@ -1461,6 +1461,18 @@ function renderOutils(view, q){
   view.appendChild(head);
   if (!q) { const p = document.createElement("p"); p.className = "intro-outils"; p.textContent = "Fiches méthodes des appareils et logiciels utilisés en TP, avec une simulation pour s'entraîner avant la séance."; view.appendChild(p); }
   let grp = null, n = 0;
+  /* 25/11/2026 : fiche « Comment on travaille » et information sur les données, en accès direct pour tous les comptes */
+  const fiches = [["Comment on travaille en physique industrielle", "Fiche étudiants (2 pages) : dossiers, coups de pouce, jauge, mini-oral, notes", "docs/fiche-etudiants.pdf"],
+                  ["Tes données sur le site", "Ce qui est enregistré, qui le voit, les copies anonymes, tes droits (1 page)", "docs/donnees-etudiants.pdf"]]
+    .filter(f => !q || (f[0] + " " + f[1] + " fonctionnement données").toLowerCase().includes(q));
+  if (fiches.length) {
+    const h = document.createElement("h3"); h.className = "groupe"; h.textContent = "Fonctionnement et données"; view.appendChild(h);
+    const ul = document.createElement("ul"); ul.className = "docs";
+    fiches.forEach(([t, m, f]) => { const li = document.createElement("li");
+      li.innerHTML = `<span class="type corr">Fiche</span><span class="title">${esc(t)}<span class="meta">${esc(m)}</span></span><span class="actions"><a class="open" href="${BASE}${f}" target="_blank" rel="noopener">Ouvrir</a></span>`;
+      ul.appendChild(li); });
+    view.appendChild(ul); n += fiches.length;
+  }
   outils.forEach(x => {
     if (x.ch.groupe !== grp) { grp = x.ch.groupe; const h = document.createElement("h3"); h.className = "groupe"; h.textContent = grp; view.appendChild(h); }
     n += x.docs.length; view.appendChild(chapBlock(O, x.ch, x.docs, !!q, true));
