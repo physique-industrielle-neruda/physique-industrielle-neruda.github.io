@@ -559,6 +559,15 @@
        "rubrique": "Cours"
       },
       {
+       "titre": "Correction des exemples",
+       "type": "Exemples",
+       "format": "exemples",
+       "fichier": "2973bb6b2371bf4c64d62c3e.bin",
+       "taille": 8791,
+       "cv": "et-chap-statique-des-fluides",
+       "rubrique": "Cours"
+      },
+      {
        "titre": "Fiche animation",
        "type": "Fiche",
        "fichier": "d8eba77dc88d2b26b69e6609.bin",
@@ -814,6 +823,111 @@
         "4.4": "VAL"
        }
       }
+     },
+     "rythme": {
+      "marge": 1.0,
+      "seances": [
+       1
+      ],
+      "items": [
+       {
+        "num": "Activité 1",
+        "titre": "Activité 1 – La pression dans le filtre à sable",
+        "duree": 0.75,
+        "corrige": "et-statique-des-fluides-corrige-activite-1-la-pression-dans-le-filtre-a-sa"
+       },
+       {
+        "num": "Exemple 1",
+        "titre": "Cours partie 1 et EXEMPLE 1",
+        "duree": 0.1167,
+        "exemple": 1
+       },
+       {
+        "num": "Exemple 2",
+        "titre": "Cours partie 1 et EXEMPLE 2",
+        "duree": 0.1167,
+        "exemple": 2
+       },
+       {
+        "num": "Exemple 3",
+        "titre": "Cours partie 1 et EXEMPLE 3",
+        "duree": 0.1,
+        "exemple": 3
+       },
+       {
+        "num": "Activité 2",
+        "titre": "Activité 2 – La pression au robinet du hameau",
+        "duree": 0.75,
+        "corrige": "et-statique-des-fluides-corrige-activite-2-la-pression-au-robinet-du-hamea"
+       },
+       {
+        "num": "Exemple 4",
+        "titre": "Cours partie 2 et EXEMPLE 4",
+        "duree": 0.1167,
+        "exemple": 4
+       },
+       {
+        "num": "Exemple 5",
+        "titre": "Cours partie 2 et EXEMPLE 5",
+        "duree": 0.1167,
+        "exemple": 5
+       },
+       {
+        "num": "Exemple 6",
+        "titre": "Cours partie 2 et EXEMPLE 6",
+        "duree": 0.1,
+        "exemple": 6
+       },
+       {
+        "num": "Activité 3",
+        "titre": "Activité 3 – Le capteur de niveau de la bâche",
+        "duree": 0.75,
+        "corrige": "et-statique-des-fluides-corrige-activite-3-le-capteur-de-niveau-de-la-bach"
+       },
+       {
+        "num": "Exemple 7",
+        "titre": "Cours partie 3 et EXEMPLE 7",
+        "duree": 0.25,
+        "exemple": 7
+       },
+       {
+        "num": "Animation",
+        "titre": "Animation – Statique des fluides",
+        "duree": 1.0,
+        "anim": true,
+        "questions": 18
+       },
+       {
+        "num": "Exercice 1",
+        "titre": "Exercice 1 – Le pneu du chariot élévateur",
+        "duree": 0.1667,
+        "corrige": "et-statique-des-fluides-corrige-exercice-1"
+       },
+       {
+        "num": "Exercice 2",
+        "titre": "Exercice 2 – La cuve de fioul du diesel de secours",
+        "duree": 0.25,
+        "corrige": "et-statique-des-fluides-corrige-exercice-2"
+       },
+       {
+        "num": "Exercice 3",
+        "titre": "Exercice 3 – Le vérin de levage d'un transformateur",
+        "duree": 0.25,
+        "corrige": "et-statique-des-fluides-corrige-exercice-3"
+       },
+       {
+        "num": "Exercice 4",
+        "titre": "Exercice 4 – La prise d'eau dans la Loire",
+        "duree": 0.3333,
+        "corrige": "et-statique-des-fluides-corrige-exercice-4"
+       },
+       {
+        "num": "Parcours",
+        "titre": "Mon parcours avant l'évaluation",
+        "duree": 1.0,
+        "parcours": "et-statique-des-fluides-parcours"
+       }
+      ]
      }
     },
     {
@@ -2262,6 +2376,15 @@
        "rubrique": "Cours"
       },
       {
+       "titre": "Correction des exemples",
+       "type": "Exemples",
+       "format": "exemples",
+       "fichier": "4653fb62a11ca0adff1aaf70.bin",
+       "taille": 10088,
+       "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
+       "rubrique": "Cours"
+      },
+      {
        "titre": "Fiche animation",
        "type": "Fiche",
        "fichier": "94dc72f752cebb90df4904c1.bin",
@@ -2538,6 +2661,129 @@
         "5.4": "REA"
        }
       }
+     },
+     "rythme": {
+      "marge": 1.0,
+      "seances": {
+       "et2": [
+        2
+       ],
+       "et2a": [
+        1
+       ]
+      },
+      "items": [
+       {
+        "num": "Activité 1",
+        "titre": "Activité 1 – Le facteur de charge d'un réacteur",
+        "duree": 0.75,
+        "corrige": "et-sources-conversions-et-stockage-de-l-ene-corrige-activite-1-le-facteur-de-charge-d-un-react"
+       },
+       {
+        "num": "Exemple 1",
+        "titre": "Cours partie 1 et EXEMPLE 1",
+        "duree": 0.1333,
+        "exemple": 1
+       },
+       {
+        "num": "Exemple 2",
+        "titre": "Cours partie 1 et EXEMPLE 2",
+        "duree": 0.15,
+        "exemple": 2
+       },
+       {
+        "num": "Exemple 3",
+        "titre": "Cours partie 1 et EXEMPLE 3",
+        "duree": 0.1333,
+        "exemple": 3
+       },
+       {
+        "num": "Activité 2",
+        "titre": "Activité 2 – Le rendement du diesel d'ultime secours",
+        "duree": 0.75,
+        "corrige": "et-sources-conversions-et-stockage-de-l-ene-corrige-activite-2-le-rendement-du-diesel-d-ultime"
+       },
+       {
+        "num": "Exemple 4",
+        "titre": "Cours partie 2 et EXEMPLE 4",
+        "duree": 0.1667,
+        "exemple": 4
+       },
+       {
+        "num": "Exemple 5",
+        "titre": "Cours partie 2 et EXEMPLE 5",
+        "duree": 0.1667,
+        "exemple": 5
+       },
+       {
+        "num": "Activité 3",
+        "titre": "Activité 3 – L'autonomie de la batterie 125 V",
+        "duree": 0.75,
+        "corrige": "et-sources-conversions-et-stockage-de-l-ene-corrige-activite-3-l-autonomie-de-la-batterie-125-"
+       },
+       {
+        "num": "Exemple 6",
+        "titre": "Cours partie 3 et EXEMPLE 6",
+        "duree": 0.1333,
+        "exemple": 6
+       },
+       {
+        "num": "Exemple 7",
+        "titre": "Cours partie 3 et EXEMPLE 7",
+        "duree": 0.1167,
+        "exemple": 7
+       },
+       {
+        "num": "Activité 4",
+        "titre": "Activité 4 – Un projet d'ombrière solaire",
+        "duree": 0.75,
+        "corrige": "et-sources-conversions-et-stockage-de-l-ene-corrige-activite-4-un-projet-d-ombriere-solaire"
+       },
+       {
+        "num": "Exemple 8",
+        "titre": "Cours partie 4 et EXEMPLE 8",
+        "duree": 0.25,
+        "exemple": 8
+       },
+       {
+        "num": "Animation",
+        "titre": "Animation – Sources, conversions et stockage de l'énergie",
+        "duree": 1.0,
+        "anim": true,
+        "questions": 21
+       },
+       {
+        "num": "Exercice 1",
+        "titre": "Exercice 1 – La centrale solaire au sol",
+        "duree": 0.1667,
+        "corrige": "et-sources-conversions-et-stockage-de-l-ene-corrige-exercice-1"
+       },
+       {
+        "num": "Exercice 2",
+        "titre": "Exercice 2 – Le monte-charge de la papeterie",
+        "duree": 0.25,
+        "corrige": "et-sources-conversions-et-stockage-de-l-ene-corrige-exercice-2"
+       },
+       {
+        "num": "Exercice 3",
+        "titre": "Exercice 3 – Le chauffe-eau thermodynamique de la caserne",
+        "duree": 0.25,
+        "corrige": "et-sources-conversions-et-stockage-de-l-ene-corrige-exercice-3"
+       },
+       {
+        "num": "Exercice 4",
+        "titre": "Exercice 4 – Les batteries de la station de captage",
+        "duree": 0.3333,
+        "corrige": "et-sources-conversions-et-stockage-de-l-ene-corrige-exercice-4"
+       },
+       {
+        "num": "Parcours",
+        "titre": "Mon parcours avant l'évaluation",
+        "duree": 1.0,
+        "parcours": "et-sources-conversions-et-stockage-de-l-ene-parcours"
+       }
+      ],
+      "classeCours": "et2a"
      }
     }
    ]
@@ -4194,9 +4440,9 @@
   }
  ],
  "outilsWk": {
-  "et": "Y98eVhsdlX4tGli9Row8d+7gFZn54u1p1e0N3z/BWmQVRAEpfGlVJAgPboFwvqN6q3hmswspkqcJYTTC",
-  "cira": "4w+dg9g4Fz8XuQukta4cQBmQC2k6JKnqXiKO2w9VmOodKzEgDLBytb6CdVmiqP88GnHRJo50p4qhEYkf",
-  "cim": "QfYy99cTjYeCco66RbLZHoro/QUng1UkyU64bTmoS7dQIp/F4Zq2m5GxG2ETif4FpbcPB0RLsWhOR+Lp"
+  "et": "e3mU6PeczCXC1MZiDWsuQxFF3hoDQNCN1LXdW/fg6GOOB7lTJD19QyaW02y+5PELAVihp3TDMJ2oykFS",
+  "cira": "fVGwNMPibl/62RX7qlpb0i0srRESii6MJbh0H3cu+JCoeBfc5IWl7+6wf48FKLb4CCDOhtfmU1LYwFkS",
+  "cim": "Z0DX77BWTYv9UI2sQvJDiBuKS7cYnsJg/wCsiAFbMyxlOxQrk6O0nyBUcXUwMlm79lezC1uoUux68teJ"
  },
  "outils": [
   {

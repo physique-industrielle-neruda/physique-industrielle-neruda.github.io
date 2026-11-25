@@ -519,6 +519,11 @@ function rythmePanel(c, g, el, getP, rerender){
   const ch = g.ch, R = ch.rythme;
   if (!R) return { html: () => "", bind: () => {}, stop: () => {} };
   const chapId = ch.verrou ? ch.verrou.id : ch.titre, docId = rythmeDoc(chapId);
+  /* 25/11/2026 (ET « Sources… ») : un élève inscrit dans deux classes (2ET/2ETA) suit les séances de la classe où il a cours (R.classeCours) */
+  const kc = R.classeCours && R.classeCours !== c.id ? CLASSES.find(k => k.id === R.classeCours) : null;
+  const ailleurs = kc ? el.filter(e => (kc.eleves || []).some(x => x.login === e.login)) : [];
+  el = el.filter(e => !ailleurs.includes(e));
+  const aTP = R.items.some(x => x.tp);
   let AT = {}, DOCS = {}, busy = false;
   const ref = uid => doc(db, "deblocages", rythmeDocId(chapId, uid));
   const stop = onSnapshot(collection(db, "deblocages"), snap => {
@@ -554,14 +559,14 @@ function rythmePanel(c, g, el, getP, rerender){
     const actif = Object.keys(DOCS).length > 0, k = commun(), fg = figee();
     const contenu = R.items.reduce((s, x) => s + (x.tp ? 0 : x.duree), 0), marge = R.marge ?? 1;
     let h = `<p class="sec">Rythme du dossier et note d'investissement</p><div class="card ry">`;
-    if (!actif) return h + `<p class="note">Travail en autonomie prévu : ${heures(contenu)} + ${heures(marge)} de marge = <b>${heures(contenu + marge)}</b> (les TP, faits en classe tous ensemble, sont hors jauge). Le suivi n'est pas encore démarré : les élèves ne voient pas encore la jauge.</p>
+    if (!actif) return h + `<p class="note">Travail en autonomie prévu : ${heures(contenu)} + ${heures(marge)} de marge = <b>${heures(contenu + marge)}</b>${aTP ? " (les TP, faits en classe tous ensemble, sont hors jauge)" : ""}. Le suivi n'est pas encore démarré : les élèves ne voient pas encore la jauge.</p>
       <button class="btn" id="ryStart">Démarrer le suivi du rythme pour la classe</button></div>`;
     const auto = k.seances.filter(x => !x.tp), tps = k.seances.filter(x => x.tp);
     const ecoule = auto.reduce((s, x) => s + (+x.h || 0), 0), der = k.seances[k.seances.length - 1];
-    const sc = (R.seances || [1, 2]);
+    const sc = Array.isArray(R.seances) ? R.seances : ((R.seances || {})[c.id] || [1, 2]);
     h += `<p class="note">Travail en autonomie prévu : ${heures(contenu)} + ${heures(marge)} de marge = <b>${heures(contenu + marge)}</b> · Cours écoulés : <b>${heures(ecoule)}</b> (${auto.length} séance${auto.length > 1 ? "s" : ""})${tps.length ? ` · TP faits : ${tps.length}` : ""}</p>
-      <div class="btns">${sc.map(x => `<button class="btn ok" data-h="${x}">J'ai cours : ${x} h</button>`).join("")}<button class="btn ok" data-h="${tpH}" data-tp="1">J'ai TP : ${tpH} h</button></div>
-      <p class="note">Coche la séance <b>en fin de cours</b>. Une séance de TP ne fait pas avancer la jauge. ${der ? `Dernière : ${jour(der.t)} (${der.tp ? "TP, " : ""}${der.h} h) · <button class="linkbtn" id="ryUndo">annuler la dernière séance</button>` : ""}</p>
+      <div class="btns">${sc.map(x => `<button class="btn ok" data-h="${x}">J'ai cours : ${x} h</button>`).join("")}${aTP ? `<button class="btn ok" data-h="${tpH}" data-tp="1">J'ai TP : ${tpH} h</button>` : ""}</div>
+      <p class="note">Coche la séance <b>en fin de cours</b>.${aTP ? " Une séance de TP ne fait pas avancer la jauge." : ""}${ailleurs.length ? ` ${ailleurs.map(e => esc(e.nom)).join(", ")} : suivi${ailleurs.length > 1 ? "s" : ""} avec la classe ${esc(kc.nom)} (séances cochées là-bas).` : ""} ${der ? `Dernière : ${jour(der.t)} (${der.tp ? "TP, " : ""}${der.h} h) · <button class="linkbtn" id="ryUndo">annuler la dernière séance</button>` : ""}</p>
       <label class="note ry-date">Date de l'évaluation (la note est arrêtée ce jour-là) : <input type="date" id="ryEval" value="${esc(k.evalDate)}"></label></div>`;
     const lignes = el.map(e => ({ e, ...valeurs(e), v: DOCS[e.uid] || {} }));
     h += `${fg ? `<p class="note ry-fige">🔒 Notes figées le ${esc(jour(fg.date))} : elles ne bougent plus. <button class="linkbtn" id="ryDefige">Défiger</button></p>` : ""}
