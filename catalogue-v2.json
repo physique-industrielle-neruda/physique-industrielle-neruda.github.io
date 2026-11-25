@@ -1528,6 +1528,15 @@
      "titre": "Les chaînes de mesure",
      "docs": [
       {
+       "titre": "Comment ça marche – profil de compétences",
+       "type": "Document",
+       "fichier": "f5aec0de3caff6b7d33ecd0f.bin",
+       "taille": 59074,
+       "pages": 1,
+       "cv": "et-chap-les-chaines-de-mesure",
+       "rubrique": "Pour commencer"
+      },
+      {
        "titre": "Essentiel du chapitre",
        "type": "Cours",
        "fichier": "4676a0567460355870aad788.bin",
@@ -1549,8 +1558,8 @@
        "titre": "Activité 1 – Boucle 4-20 mA du pressuriseur du réacteur nucléaire - coups de pouce",
        "type": "Activité",
        "format": "pouce",
-       "fichier": "71b5df8b02c4d4c24e4b97b2.bin",
-       "taille": 12310,
+       "fichier": "77acf350bde25b12102a5f0d.bin",
+       "taille": 13756,
        "pouce": "pouce:et-les-chaines-de-mesure-corrige-eleve-activite-1-boucle-4-20-ma-du-pressur",
        "lie": "et-les-chaines-de-mesure-corrige-eleve-activite-1-boucle-4-20-ma-du-pressur",
        "cv": "et-chap-les-chaines-de-mesure",
@@ -1581,8 +1590,8 @@
        "titre": "Activité 2 – Numérisation d'une mesure de température - coups de pouce",
        "type": "Activité",
        "format": "pouce",
-       "fichier": "667e92d4a6e3788584caef12.bin",
-       "taille": 12047,
+       "fichier": "a4ba68d6ef1f53a07b502c51.bin",
+       "taille": 13480,
        "pouce": "pouce:et-les-chaines-de-mesure-corrige-eleve-activite-2-numerisation-d-une-mesure",
        "lie": "et-les-chaines-de-mesure-corrige-eleve-activite-2-numerisation-d-une-mesure",
        "cv": "et-chap-les-chaines-de-mesure",
@@ -1613,8 +1622,8 @@
        "titre": "Activité 3 – Temps de réponse et précision d'une sonde Pt100 - coups de pouce",
        "type": "Activité",
        "format": "pouce",
-       "fichier": "8d13862e5864e0ba2d53e892.bin",
-       "taille": 11271,
+       "fichier": "ddfb59f0147a39c18d87f870.bin",
+       "taille": 12691,
        "pouce": "pouce:et-les-chaines-de-mesure-corrige-eleve-activite-3-temps-de-reponse-et-preci",
        "lie": "et-les-chaines-de-mesure-corrige-eleve-activite-3-temps-de-reponse-et-preci",
        "cv": "et-chap-les-chaines-de-mesure",
@@ -1644,7 +1653,7 @@
       {
        "titre": "Animation – Révision de la chaîne de mesure",
        "type": "Animation",
-       "fichier": "4bc86afa46285ea3ea06be3d.bin",
+       "fichier": "bf558815d6664e901ad0802a.bin",
        "format": "html",
        "cv": "et-chap-les-chaines-de-mesure",
        "rubrique": "Animation"
@@ -1670,8 +1679,8 @@
        "titre": "Exercice 1 - coups de pouce",
        "type": "Exercices",
        "format": "pouce",
-       "fichier": "c657a56cb1e5691b00ad7967.bin",
-       "taille": 9930,
+       "fichier": "6e6e5847991490fbe61ffa6e.bin",
+       "taille": 11284,
        "pouce": "pouce:et-les-chaines-de-mesure-corrige-eleve-exercice-1",
        "lie": "et-les-chaines-de-mesure-corrige-eleve-exercice-1",
        "cv": "et-chap-les-chaines-de-mesure",
@@ -1702,8 +1711,8 @@
        "titre": "Exercice 2 - coups de pouce",
        "type": "Exercices",
        "format": "pouce",
-       "fichier": "ae7f1ca138e3d2a1bf9fdb2c.bin",
-       "taille": 9677,
+       "fichier": "2d29dd678bb36d892b7e18e2.bin",
+       "taille": 11017,
        "pouce": "pouce:et-les-chaines-de-mesure-corrige-eleve-exercice-2",
        "lie": "et-les-chaines-de-mesure-corrige-eleve-exercice-2",
        "cv": "et-chap-les-chaines-de-mesure",
@@ -1734,8 +1743,8 @@
        "titre": "Exercice 3 - coups de pouce",
        "type": "Exercices",
        "format": "pouce",
-       "fichier": "075a8b368802672cbf6e4c05.bin",
-       "taille": 9774,
+       "fichier": "e6d5084e80270a029d187641.bin",
+       "taille": 11128,
        "pouce": "pouce:et-les-chaines-de-mesure-corrige-eleve-exercice-3",
        "lie": "et-les-chaines-de-mesure-corrige-eleve-exercice-3",
        "cv": "et-chap-les-chaines-de-mesure",
@@ -1766,8 +1775,8 @@
        "titre": "Exercice 4 - coups de pouce",
        "type": "Exercices",
        "format": "pouce",
-       "fichier": "e649c07dc3d20fcf8b3c9b15.bin",
-       "taille": 9499,
+       "fichier": "5ddcf5d1fd1f2569e07bb1c2.bin",
+       "taille": 10839,
        "pouce": "pouce:et-les-chaines-de-mesure-corrige-eleve-exercice-4",
        "lie": "et-les-chaines-de-mesure-corrige-eleve-exercice-4",
        "cv": "et-chap-les-chaines-de-mesure",
@@ -1784,6 +1793,18 @@
         "wk": "9JZcsOAhlkBkhL5zduGkkS4XNm6gruN13yPunG0WAw1BmOow3sPt+LA0wMKzdSMdbWvQDPanOluf7Mqm"
        },
        "rubrique": "Exercices"
+      },
+      {
+       "titre": "Mon parcours avant l'évaluation",
+       "type": "Parcours",
+       "format": "parcours",
+       "fichier": "b5df217c341995886d6c6fde.bin",
+       "taille": 38453,
+       "corrige": {
+        "id": "et-les-chaines-de-mesure-parcours",
+        "wk": "hZnkCrwFpLJnAB0Za8vonaMxpFJIk31+6m8yasGE6kVj/KV+Ac7QCelfFFw6zO72v8BwKYUtjLv6H4T0"
+       },
+       "rubrique": "Mon profil de compétences"
       },
       {
        "titre": "Bilan",
@@ -1809,6 +1830,103 @@
      "verrou": {
       "id": "et-chap-les-chaines-de-mesure",
       "wk": "++h1n1tFtZaH6sM1s5v1IXmkAYXRDyz4BXTOWqe1qevwHv4/v3p4hBf7T5tN9oFnwc1PA2MQn4nQaYui"
+     },
+     "competences": {
+      "referentiel": "BTS ET",
+      "questions": {
+       "Activité 1": {
+        "A1": "APP",
+        "A3": "APP",
+        "A4": "ANA",
+        "A5": "REA",
+        "A6": "REA",
+        "B1": "REA",
+        "B2": "ANA",
+        "B5": "VAL",
+        "B6": "REA",
+        "B7 (réponse à la problématique)": "COM"
+       },
+       "Activité 2": {
+        "A1": "APP",
+        "A2": "REA",
+        "A4": "REA",
+        "A5": "REA",
+        "A7": "ANA",
+        "B1": "REA",
+        "B4": "VAL",
+        "B5": "ANA",
+        "B6 (réponse à la problématique)": "COM"
+       },
+       "Activité 3": {
+        "A1": "APP",
+        "A2": "REA",
+        "A4": "REA",
+        "A6": "VAL",
+        "B1": "REA",
+        "B3": "REA",
+        "B4": "ANA",
+        "B5 (réponse à la problématique)": "COM"
+       },
+       "Exercice 1": {
+        "1.1": "APP",
+        "1.2": "ANA",
+        "1.3": "REA",
+        "1.4": "REA",
+        "1.5": "VAL"
+       },
+       "Exercice 2": {
+        "2.2": "ANA",
+        "2.3": "ANA",
+        "2.4": "REA",
+        "2.5": "VAL"
+       },
+       "Exercice 3": {
+        "3.1": "REA",
+        "3.2": "APP",
+        "3.3": "REA",
+        "3.4": "VAL",
+        "3.5": "ANA"
+       },
+       "Exercice 4": {
+        "4.1": "REA",
+        "4.2": "APP",
+        "4.3": "REA",
+        "4.5": "VAL"
+       },
+       "Animation": {
+        "1": "APP",
+        "2": "APP",
+        "3": "APP",
+        "4": "APP",
+        "5": "REA",
+        "6": "REA",
+        "7": "REA",
+        "8": "ANA",
+        "9": "ANA",
+        "10": "APP",
+        "11": "APP",
+        "12": "REA",
+        "13": "REA",
+        "14": "REA",
+        "15": "REA",
+        "16": "ANA",
+        "17": "REA",
+        "18": "ANA",
+        "19": "REA",
+        "20": "APP",
+        "21": "REA",
+        "22": "REA",
+        "23": "ANA",
+        "24": "VAL"
+       }
+      },
+      "groupes": [
+       "et2a"
+      ],
+      "aussi": [
+       "donovan.f",
+       "mathis.c"
+      ]
      }
     },
     {
@@ -3959,9 +4077,9 @@
   }
  ],
  "outilsWk": {
-  "et": "c10p6eInQCGqzBmNZbIkyhhG3cDeQWaf9OHrMa7kpsLUgC6iQhLPCr5DaCDVO7PPZhrbXfLKYLn7/Rz3",
-  "cira": "19kOpmijX3JgfzfWY1vXcyyQhCjD+TpR4yI96Nlp7LCCH/uTinTIwfX0OLFWdXQtiXfkD8HSQz8zHi5i",
-  "cim": "0WxFViFQ6EOBtYtZm5QRpSbul/Mre7JgHxBCrW5vmqLsgmepFQN6thSiPiiah2DEVhSWL0tnqfNClT7h"
+  "et": "mvbnqZJaJwQp/2o0Z+xTWE+bYQy4e/fCHekYiJabdQC/FqJTRgMkWFdnvpcDBEDCkQ0VJVNA6cxIQSv2",
+  "cira": "nMmUu0yT4DJ+sxEDwX5mvgHQN+KaADlwPOw3cV87Wtb/YAU3fOdFLYxe44KEGPZTjYdJsCWirk3iHIxI",
+  "cim": "/MOA85cTqhVcdTnjP9MjCSKR04ihXGc/nYqCNfqOLy1WsY2HdnXq3Mx8Bta4NRsFwSYfKqA2qqAnX/Gn"
  },
  "outils": [
   {

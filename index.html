@@ -385,7 +385,7 @@ async function openDoc(cls, d, download){
     if (!key) throw new Error(d.cv && !d.corrige ? "chapitre" : "verrou");
     let blob = await decryptBlob(BASE + "docs/" + cls + "/" + d.fichier, key, d.format === "html" ? "text/html;charset=utf-8" : d.format === "cartes" ? "application/json" : null);
     /* Animation d'un dossier avec profil de compétences : reprise là où l'élève s'était arrêté (24/11/2026) */
-    if (d.type === "Animation" && d.format === "html" && eleveRev()) { const ch = chapDe(cls, d), st = ch && ch.competences ? MP[animId(ch)] : null;
+    if (d.type === "Animation" && d.format === "html" && eleveRev()) { const ch = chapDe(cls, d), st = compDe(ch) ? MP[animId(ch)] : null;
       if (st && st.reponses) { const t = await blob.text(); blob = new Blob([t.replace("</head>", () => "<script>window.ANIM_INIT = " + JSON.stringify(st.reponses) + ";<\/script></head>")], { type: "text/html;charset=utf-8" }); } }
     if (d.format === "cartes") {
       // Cartes d'un chapitre verrouillé : déchiffrées ici, puis confiées à cartes.html (même site, stockage local)
@@ -628,7 +628,7 @@ function chapBlock(c, ch, docs, forceOpen, outil){
     const apres = ["Cours", "Activités et TP", "Activités", "Pour commencer"].map(r => groupes.findIndex(x => x.r === r)).find(i => i >= 0);
     groupes.splice(apres === undefined ? groupes.length : apres + 1, 0, {r: "Points de cours", docs: pdcs.map(d => ({...d, revision: true}))});
   }
-  if (ch.competences && !outil) {
+  if (compDe(ch) && !outil) {
     let g = groupes.find(x => x.r === "Mon profil de compétences");
     if (!g) { const i = groupes.findIndex(x => x.r === "Exercices"); groupes.splice(i >= 0 ? i + 1 : groupes.length, 0, g = { r: "Mon profil de compétences", docs: [] }); }
     g.docs = [{ titre: "Mon profil de compétences", type: "Profil" }].concat(g.docs).map(d => ({ ...d, _c: c, _ch: ch }));
@@ -698,7 +698,7 @@ function render(){
   if (S.user && (q || current === "outils")) found += renderOutils(view, q);
   const classes = q ? visibleClasses() : visibleClasses().filter(c => c.id === current);
   for (const c of classes) {
-    let chaps = c.chapitres.filter(anneeOK).map(ch => ({ch, docs: ch.docs.filter(d => !q || (chapOK(ch) && (d.titre + " " + d.type + " " + ch.titre).toLowerCase().includes(q)))}))
+    let chaps = c.chapitres.filter(anneeOK).map(ch => ({ch, docs: ch.docs.filter(d => docCompOK(ch, d)).filter(d => !q || (chapOK(ch) && (d.titre + " " + d.type + " " + ch.titre).toLowerCase().includes(q)))}))
       .filter(x => x.docs.length);
     chaps = ordreChaps(c, chaps);
     if (q && !chaps.length) continue;
@@ -1041,7 +1041,7 @@ async function ouvrirPouce(c, d){
   } catch(e) { toast(e.message === "chapitre" ? "Ce chapitre n'est pas encore ouvert." : "Impossible d'ouvrir les coups de pouce. Rechargez la page."); return; }
   const eleve = eleveRev(), st = MP[d.pouce];
   const init = "<script>window.POUCE_ID = " + JSON.stringify((S.user ? S.user.uid : "") + "|" + d.pouce) + "; window.POUCE_INIT = " + JSON.stringify(eleve && st && st.niveaux ? st.niveaux : {})
-    + (eleve ? "" : "; window.POUCE_PROF = true") + ";<\/script></head>";
+    + (eleve ? "" : "; window.POUCE_PROF = true") + (compDe(chapDe(c.id, d)) || !(chapDe(c.id, d) || {}).competences ? "" : "; window.POUCE_SANS_COMP = true") + ";<\/script></head>";
   html = html.replace("</head>", () => init);
   const ov = document.createElement("div"); ov.className = "fiche-ov";
   ov.innerHTML = `<div class="bar"><b>${esc(d.titre)}</b><button type="button">Fermer</button></div><iframe title="${esc(d.titre)}"></iframe>`;
@@ -1080,10 +1080,21 @@ const ANIMS = new Map();   // fenêtres d'animation ouvertes → { c, d }
   + ".mc-d{display:flex;align-items:center;gap:10px;padding:10px 14px;border-top:1px solid var(--grid)}.mc-d:first-child{border-top:0}.mc-d b{flex:1}"; document.head.appendChild(st2); })();
 const chapDe = (cid, d) => { const c = (CAT.classes || []).find(x => x.id === cid); return c ? c.chapitres.find(ch => ch.docs.includes(d)) : null; };
 const animId = ch => "anim:" + (ch.verrou ? ch.verrou.id : ch.titre);
+/* Profil réservé à certaines classes (25/11/2026, « Les chaînes de mesure » : 2ETA seulement, les 2ET avaient fini le dossier).
+   competences.groupes = classes concernées ; competences.aussi = identifiants des élèves inscrits dans deux classes.
+   Hors de ces classes : ni profil, ni fiche « Comment ça marche », ni parcours, ni étiquettes dans les coups de pouce. */
+function compDe(ch){
+  const k = ch && ch.competences; if (!k) return null;
+  if (!k.groupes || !S.user || S.prof || S.premium || S.tous) return k;
+  if (k.groupes.includes(S.groupe)) return k;
+  const login = String(S.user.email || "").split("@")[0];
+  return (k.aussi || []).includes(login) ? k : null;
+}
+const docCompOK = (ch, d) => !ch.competences || !!compDe(ch) || !(d.format === "parcours" || /^Comment ça marche – profil/i.test(d.titre));
 window.addEventListener("message", async e => {
   if (!e.data || e.data.type !== "anim-reponse") return;
   const info = ANIMS.get(e.source); if (!info || !eleveRev()) return;
-  const ch = chapDe(info.c, info.d); if (!ch || !ch.competences) return;
+  const ch = chapDe(info.c, info.d); if (!compDe(ch)) return;
   const id = animId(ch), rep = Object.assign({}, MP[id] && MP[id].reponses), n = String(e.data.n), old = rep[n];
   if (old && (old.ok || old.t >= 2)) return;          // seuls les deux premiers essais comptent
   rep[n] = { t: Math.min(2, +e.data.essai || 1), ok: !!e.data.ok };
@@ -1141,7 +1152,7 @@ async function evalTaux(c, ch){
   return Object.keys(out).length ? out : null;
 }
 /* Onglet « Mes compétences » : tous les dossiers ouverts de la classe qui ont un profil, dans l'ordre du cours */
-function chapsCompetencesEleve(){ const c = (CAT.classes || []).find(x => x.id === S.site); return c ? c.chapitres.filter(ch => ch.competences && chapOK(ch)) : []; }
+function chapsCompetencesEleve(){ const c = (CAT.classes || []).find(x => x.id === S.site); return c ? c.chapitres.filter(ch => compDe(ch) && chapOK(ch)) : []; }
 let MC_JETON = 0;
 async function renderMesCompetences(view){
   const c = (CAT.classes || []).find(x => x.id === S.site); if (!c) return;

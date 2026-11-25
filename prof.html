@@ -268,14 +268,16 @@ function elevesDe(c){
   const uidDe = {}; CLASSES.forEach(k => (k.eleves || []).forEach(e => { if (e.uid) uidDe[e.login] = e.uid; }));
   return (c.eleves || []).map(e => e.uid ? e : (uidDe[e.login] ? { ...e, uid: uidDe[e.login] } : e)).filter(e => e.uid);
 }
-function corriges(site){
+function corriges(site, cid){
+  // 25/11/2026 : parcours d'un profil réservé à d'autres classes (Chaînes de mesure : 2ETA seulement) → pas de colonne
+  const horsProfil = (ch, d) => d.format === "parcours" && cid && ch.competences && ch.competences.groupes && !ch.competences.groupes.includes(cid);
   const c = CAT.classes.find(x => x.id === site); if (!c) return [];
   // Un chapitre verrouillé apparaît en tête de sa liste, comme un corrigé : « Ouvrir le chapitre » = transmettre sa clé
   // Test d'entrée sous son propre cadenas (19/11/2026) : à ouvrir avant le chapitre
   const testDe = ch => ch.verrou && (REV.tests || []).find(t => t.site === site && t.verrou && t.verrou.chap === ch.verrou.id);
   return c.chapitres.map(ch => { const t = testDe(ch);
     return { ch, docs: (t ? [{ titre: "🔒 Accès au test d'entrée", chapitre: true, test: true, corrige: t.verrou }] : [])
-      .concat(ch.verrou ? [{ titre: "🔒 Accès au chapitre (dossier verrouillé)", chapitre: true, corrige: ch.verrou }] : []).concat(ch.docs.filter(d => d.corrige && d.type !== "Point de cours").map(d => { const p = ch.docs.find(p => p.type === "Point de cours" && p.corrige.id === d.corrige.id); return p ? { ...d, avecPdc: true, pdc: p.pdc } : d; })) }; }).filter(x => x.docs.length);
+      .concat(ch.verrou ? [{ titre: "🔒 Accès au chapitre (dossier verrouillé)", chapitre: true, corrige: ch.verrou }] : []).concat(ch.docs.filter(d => d.corrige && d.type !== "Point de cours" && !horsProfil(ch, d)).map(d => { const p = ch.docs.find(p => p.type === "Point de cours" && p.corrige.id === d.corrige.id); return p ? { ...d, avecPdc: true, pdc: p.pdc } : d; })) }; }).filter(x => x.docs.length);
 }
 async function unwrap(d){
   const w = b64(d.corrige.wk);
@@ -293,7 +295,7 @@ function home(){
     $("#imp").onclick = () => go(settings); return;
   }
   const html = CLASSES.map(c => {
-    const n = (c.eleves || []).length, nc = corriges(c.site).reduce((a, x) => a + x.docs.filter(d => !d.chapitre).length, 0);
+    const n = (c.eleves || []).length, nc = corriges(c.site, c.id).reduce((a, x) => a + x.docs.filter(d => !d.chapitre).length, 0);
     return `<button class="row" data-id="${esc(c.id)}"><span class="main"><span class="t">${esc(c.nom)}</span><span class="m">${n} élève${n>1?"s":""} · ${nc} corrigé${nc>1?"s":""}</span></span><span class="chev"></span></button>`;
   }).join("");
   $("#app").innerHTML = `<div id="notif"></div><div class="card">${html}</div>`;
@@ -339,7 +341,7 @@ function suivreDeblocages(c, cb){
 
 /* Onglet Corrigés : un dossier par chapitre, comme sur le site */
 function paneCorriges(c){
-  const groups = corriges(c.site), total = elevesDe(c).length;
+  const groups = corriges(c.site, c.id), total = elevesDe(c).length;
   const ma = /(\d)\s*(?:re|ère|e|ème)\s+ann[ée]e/i.exec(c.nom || ""), monAn = ma ? +ma[1] : null;
   if (!groups.length) { $("#pane").innerHTML = `<p class="empty">Aucun corrigé élève pour ce BTS pour l'instant.</p>`; return; }
   let choix = paneCorriges.niv[c.id] ?? null, last = {};
@@ -398,7 +400,7 @@ paneCorriges.niv = {};   // niveau choisi, gardé au retour
 /* Un chapitre ouvert : accès au chapitre puis corrigés rangés par Activités / TP / Exercices */
 function chapitreCorriges(cid, titre){
   const c = CLASSES.find(x => x.id === cid); if (!c) return home();
-  const g = corriges(c.site).find(x => x.ch.titre === titre); if (!g) return classe(cid, "corriges");
+  const g = corriges(c.site, c.id).find(x => x.ch.titre === titre); if (!g) return classe(cid, "corriges");
   setBar(titre, c.nom, true);
   return chapitreGrille(c, g);   // tous les dossiers en tableau (24/11/2026)
   const total = elevesDe(c).length;
@@ -512,7 +514,7 @@ function chapitreGrille(c, g){
   + ".cg tr.el{cursor:pointer}.cg td.pc{font-size:.78rem;white-space:normal;min-width:90px}.al{color:#C0392B;font-weight:700}"
   + ".exl{display:flex;gap:8px;align-items:center;padding:8px 14px;border-top:1px solid var(--grid);font-size:.9rem}.exl:first-child{border-top:0}.exl b{flex:1}";
   document.head.appendChild(st); const st2 = document.createElement("style"); st2.textContent = ANNEE_CSS; document.head.appendChild(st2); })();
-const chapsCompetences = c => { const k = CAT.classes.find(x => x.id === c.site); return k ? k.chapitres.filter(ch => ch.competences) : []; };
+const chapsCompetences = c => { const k = CAT.classes.find(x => x.id === c.site); return k ? k.chapitres.filter(ch => ch.competences && (!ch.competences.groupes || ch.competences.groupes.includes(c.id))) : []; };
 const numDoc = t => { const n = (t || "").normalize("NFKD").replace(/[̀-ͯ]/g, "").toLowerCase().match(/\b(tp|exercice|activite)\s*(\d+)/);
   return n ? (n[1] === "activite" ? "Activité" : n[1] === "exercice" ? "Exercice" : "TP") + " " + n[2] : null; };
 const animIdP = ch => "anim:" + (ch.verrou ? ch.verrou.id : ch.titre);
