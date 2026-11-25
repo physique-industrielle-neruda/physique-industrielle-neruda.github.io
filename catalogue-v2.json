@@ -953,7 +953,8 @@
        "la pression et ses unités (p = F / S)",
        "la relation fondamentale de la statique des fluides (Δp = ρ g Δh)",
        "capteur de pression relatif ou absolu"
-      ]
+      ],
+      "oral": true
      }
     },
     {
@@ -2973,7 +2974,8 @@
        "énergie, puissance et facteur de charge (E = P × Δt)",
        "le rendement d'une chaîne de conversion et le COP",
        "l'autonomie d'un stockage"
-      ]
+      ],
+      "oral": true
      }
     }
    ]
@@ -4152,7 +4154,8 @@
        "le gain d'un montage non inverseur et d'un montage inverseur",
        "le soustracteur pour décaler le zéro",
        "la mise à l'échelle du conditionneur complet"
-      ]
+      ],
+      "oral": true
      }
     }
    ]

@@ -176,7 +176,10 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore, doc, getDoc, getDocs, setDoc, deleteDoc, collection, query, where, onSnapshot, serverTimestamp, writeBatch, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { profil as calcProfil, profilHtml, synthese, PROFIL_CSS, COMPS, LIBS as CLIBS, NIVEAUX, niveauDe, pointsAnim, bilanAnnee, anneeHtml, ANNEE_CSS } from "./competences.js";
-import { etat as etatRythme, STATUTS, heures, baremeDe, rythmeDoc, rythmeDocId } from "./rythme.js";
+import { etat as etatRythme, STATUTS, heures, baremeDe, rythmeDoc, rythmeDocId, oralActs, oralCible, comDe, ORAL_NIVEAUX } from "./rythme.js";
+/* Documents « rythme » de chaque élève (mini-oral, tutorats) pour le profil de compétences (25/11/2026) */
+const RYD = {};
+const noterRyd = v => { if (v && v.uid && String(v.doc || "").startsWith("rythme:")) RYD[v.uid + "|" + v.doc] = v; };
 
 const FB = {"apiKey":"AIzaSyDH32Ma0shVbsIHR0xNJbahb5MO0RKHRS0","authDomain":"physique-neruda.firebaseapp.com","projectId":"physique-neruda","storageBucket":"physique-neruda.firebasestorage.app","messagingSenderId":"62730174289","appId":"1:62730174289:web:588c846aadd4eec2109d70"};
 const DOMAINE = "@physique-neruda.firebaseapp.com";
@@ -466,7 +469,8 @@ function chapitreGrille(c, g){
   const aPouceBase = docs.some(d => d.corrige && pouceIds.has("pouce:" + d.corrige.id));
   let aPouce = aPouceBase;
   const caseDe = (d, uid) => {
-    if (!D.has(d.corrige.id + "_" + uid)) return "🔒";
+    if (!D.has(d.corrige.id + "_" + uid)) { const ci = RY.aOral && RY.cibleDe ? RY.cibleDe(uid) : null;
+      return ci && !ci.fait && ci.corrige === d.corrige.id ? `<span title="Mini-oral à faire à cette activité">🔒🎤</span>` : "🔒"; }
     if (d.chapitre) return `<span title="${d.test ? "Test ouvert" : "Dossier ouvert"}">🔓</span>`;
     if (!d.avecPdc) return `<span style="color:var(--ok);font-weight:700">✓</span>`;
     const v = P[uid + "__" + d.pdc];
@@ -487,6 +491,10 @@ function chapitreGrille(c, g){
     $("#app").querySelectorAll("td.c").forEach(td => td.onclick = async () => {
       const d = cols[+td.dataset.j], uid = td.dataset.uid, id = d.corrige.id + "_" + uid; if (busy.has(id)) return;
       const val = !D.has(id);
+      /* Mini-oral (25/11/2026) : l'élève l'a à cette activité → choisir son niveau avant de débloquer le corrigé */
+      if (val && !d.chapitre && RY.aOral) { const ci = RY.cibleDe(uid);
+        if (ci && !ci.fait && ci.corrige === d.corrige.id) { const n = await new Promise(ok => choisirOral((el.find(e => e.uid === uid) || {}).nom, ci.num, ok, true));
+          if (n === null) return; if (n) await RY.noterOral(uid, n, ci.num); } }
       if (!val && d.chapitre && !confirm((d.test ? "Refermer le test d'entrée pour " : "Refermer le dossier pour ") + (el.find(e => e.uid === uid) || {}).nom + " ?")) return; busy.add(id); render();
       try { if (val) await setDoc(ref(d, uid), { uid, doc:d.corrige.id, classe:c.id, cle: await key(d), at: serverTimestamp() }); else await deleteDoc(ref(d, uid)); }
       catch(e){ toast(e.message === "cles" ? "Clés absentes : importez le fichier dans Réglages." : "Échec, vérifiez la connexion."); }
@@ -516,6 +524,22 @@ function chapitreGrille(c, g){
   unsub = () => { a(); b(); RY.stop(); };
 }
 
+/* Choix du niveau du mini-oral (25/11/2026) : Clair / Partiel / À reprendre ; « Plus tard » débloque sans noter */
+function choisirOral(nom, act, fini, avecDeblocage){
+  const ov = document.createElement("div"); ov.className = "or-ov";
+  ov.innerHTML = `<div class="or-box"><b>🎤 Mini-oral – ${esc(nom || "")}</b><p>${act ? esc(act) + " : " : ""}il t'explique en une minute ce qu'il a fait. Son niveau :</p>
+    <div class="or-btns">${Object.entries(ORAL_NIVEAUX).map(([k, x]) => `<button class="btn or-${k}" data-n="${k}">${esc(x.lib)}</button>`).join("")}</div>
+    <p class="note">Clair : démarche expliquée avec le bon vocabulaire et une conclusion sur la situation. Partiel : le calcul sans le lien avec le problème, ou un vocabulaire hésitant. À reprendre : il ne sait pas expliquer ce qu'il a écrit.</p>
+    <div class="or-btns">${avecDeblocage ? `<button class="btn ghost" data-n="">Plus tard (débloquer sans noter)</button>` : ""}<button class="btn ghost" data-n="x">Annuler</button></div></div>`;
+  document.body.appendChild(ov);
+  ov.querySelectorAll("button").forEach(b => b.onclick = () => { ov.remove(); fini(b.dataset.n === "x" ? null : b.dataset.n); });
+}
+(() => { const st = document.createElement("style");
+  st.textContent = ".or-ov{position:fixed;inset:0;background:rgba(15,25,40,.45);display:flex;align-items:center;justify-content:center;z-index:99;padding:16px}"
+  + ".or-box{background:var(--surface,#fff);border-radius:10px;padding:16px;max-width:460px;width:100%}.or-box p{margin:8px 0}"
+  + ".or-btns{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}.btn.or-clair,.or-clair{background:#E2EFDA;color:#3F7A3A}.btn.or-partiel,.or-partiel{background:#FBE5D6;color:#C55A11}"
+  + ".btn.or-reprendre,.or-reprendre{background:#FBE5E1;color:#C0392B}.ry-or{white-space:nowrap;font-size:.82rem}";
+  document.head.appendChild(st); })();
 function rythmePanel(c, g, el, getP, rerender){
   const ch = g.ch, R = ch.rythme, BAREME_C = baremeDe(ch);
   if (!R) return { html: () => "", bind: () => {}, stop: () => {} };
@@ -531,12 +555,13 @@ function rythmePanel(c, g, el, getP, rerender){
   const ailleurs = kc ? el.filter(e => (kc.eleves || []).some(x => x.login === e.login)) : [];
   el = el.filter(e => !ailleurs.includes(e));
   const aTP = R.items.some(x => x.tp), aEss = R.items.some(x => x.horsEss);   // chemin essentiel (25/11/2026)
+  const aOral = oralActs(ch).length > 0 && !(R.groupes && !R.groupes.includes(c.id));   // mini-oral et tutorat (25/11/2026)
   let AT = {}, DOCS = {}, busy = false;
   const ref = uid => doc(db, "deblocages", rythmeDocId(chapId, uid));
   const stop = onSnapshot(collection(db, "deblocages"), snap => {
     AT = {}; DOCS = {};
     snap.forEach(x => { const v = x.data(); if (!el.some(e => e.uid === v.uid)) return;
-      if (v.doc === docId) { DOCS[v.uid] = v; return; }
+      if (v.doc === docId) { DOCS[v.uid] = v; noterRyd(v); return; }
       (AT[v.uid] = AT[v.uid] || {})[v.doc] = v.at && v.at.toMillis ? v.at.toMillis() : Date.now(); });
     rerender();
   }, e => toast("Lecture du rythme impossible : " + e.code));
@@ -591,7 +616,7 @@ function rythmePanel(c, g, el, getP, rerender){
         : `<p>Personne n'est en retard pour l'instant.</p>`}</div>`;
     }
     h += `${fg ? `<p class="note ry-fige">🔒 Notes figées le ${esc(jour(fg.date))} : elles ne bougent plus. <button class="linkbtn" id="ryDefige">Défiger</button></p>` : ""}
-      <div class="card grille ryg"><table><tr><th class="nom">Élève</th><th>Rythme</th><th>Corrigés<small class="tsc">/${BAREME_C.corriges}</small></th><th>Cours<small class="tsc">/${BAREME_C.cours}</small></th><th>Anim.<small class="tsc">/${BAREME_C.anim}</small></th><th>Régul.<small class="tsc">/${BAREME_C.regularite}</small></th><th>Ajust.</th><th>Note<small class="tsc">/20</small></th></tr>`
+      <div class="card grille ryg"><table><tr><th class="nom">Élève</th><th>Rythme</th><th>Corrigés<small class="tsc">/${BAREME_C.corriges}</small></th><th>Cours<small class="tsc">/${BAREME_C.cours}</small></th><th>Anim.<small class="tsc">/${BAREME_C.anim}</small></th><th>Régul.<small class="tsc">/${BAREME_C.regularite}</small></th><th>Ajust.</th><th>Note<small class="tsc">/20</small></th>${aOral ? `<th title="Mini-oral (une fois par dossier) et tutorats : compétence Communiquer, hors note">Oral · tutorat</th>` : ""}</tr>`
       + lignes.map(({ e, s, pts, note, fige, v }) => { const st = STATUTS[s.statut];
         const pill = s.statut === "avance" ? "+" + heures(s.avance) : heures(s.fait) + " / " + heures(Math.min(s.ecoule, s.contenu));
         const ctl = (attr, val, lib) => fige ? "" : `<button ${attr}="${val}" data-uid="${esc(e.uid)}" aria-label="${lib}">${val > 0 ? "+" : "−"}</button>`;
@@ -600,7 +625,7 @@ function rythmePanel(c, g, el, getP, rerender){
         <td><span class="ry-pill" style="color:${st.couleur};background:${st.fond}" title="${st.lib} : ${heures(s.fait)} faites pour ${heures(s.ecoule)} de cours">${pill}</span>${s.frein ? ' <span title="Frein : plus d\'1 h d\'avance, la suite attend la prochaine séance">🔒</span>' : ""}${aEss && (s.ess || s.statut === "orange" || s.statut === "rouge") && !fige ? `<br><button class="linkbtn ry-ess" data-ess="${esc(e.uid)}" title="${s.ess ? "Revenir au dossier complet" : "Ouvrir le chemin essentiel : les pièces facultatives sortent de sa jauge"}">${s.ess ? "✓ chemin essentiel" : "→ chemin essentiel"}</button>` : s.ess ? '<br><small class="tsc">chemin essentiel</small>' : ""}</td>
         <td>${f1(pts.corriges)}</td><td>${exDe(e)}<br>${f1(pts.cours)}</td><td>${f1(pts.anim)}</td><td>${f1(pts.regularite)}</td>
         <td class="ry-ctl">${ctl("data-aj", -0.5, "Ajustement moins")}${(+v.ajust || 0) > 0 ? "+" : ""}${f1(+v.ajust || 0)}${ctl("data-aj", 0.5, "Ajustement plus")}</td>
-        <td><b>${f1(note)}</b></td></tr>`; }).join("")
+        <td><b>${f1(note)}</b></td>${aOral ? `<td class="ry-or">${oralCellule(e)}</td>` : ""}</tr>`; }).join("")
       + `</table></div>
       <div class="btns">${fg ? "" : `<button class="btn" id="ryFige">Figer les notes et enregistrer le PDF</button>`}<button class="btn ghost" id="ryPdf">${fg ? "Enregistrer le PDF des notes figées" : "Aperçu PDF (sans figer)"}</button></div>
       <button class="btn ghost" id="ryCopy">Copier les notes pour Pronote</button>
@@ -661,7 +686,41 @@ function rythmePanel(c, g, el, getP, rerender){
       try { await navigator.clipboard.writeText(txt); toast("Notes copiées."); } catch(_) { prompt("Copie ces notes :", txt); }
     };
   };
-  return { html, bind, stop };
+  /* Mini-oral et tutorat (25/11/2026) */
+  const cibleDe = uid => oralCible(ch, DOCS[uid] || {}, AT[uid] || {});
+  const oralCellule = e => { const v = DOCS[e.uid] || {}, ci = cibleDe(e.uid), nt = (v.tutorats || []).length;
+    const or = !ci ? "–" : ci.fait ? `<span class="ry-pill or-${esc(ci.niveau)}">🎤 ${esc(ORAL_NIVEAUX[ci.niveau].lib)}</span>${ci.act ? `<br><small class="tsc">${esc(ci.act)}</small>` : ""}`
+      : `<button class="linkbtn" data-oral="${esc(e.uid)}">🎤 ${ci.libre ? "à faire" : esc(ci.num)}${ci.report ? " (reporté)" : ""}</button>`;
+    return `${or}<br><button class="linkbtn" data-tut="${esc(e.uid)}" title="Ajouter un tutorat : il a expliqué une notion à un camarade">🤝 ${nt ? nt + " tutorat" + (nt > 1 ? "s" : "") : "+ tutorat"}</button>`; };
+  /* Répartition automatique des mini-oraux sur les activités (une fois, dès que le suivi est démarré) */
+  let repartiFait = false;
+  const repartir = async () => {
+    const acts = oralActs(ch); if (!acts.length || repartiFait || !Object.keys(DOCS).length) return;
+    const sans = el.filter(e => (DOCS[e.uid] || {}).oralIdx == null); if (!sans.length) { repartiFait = true; return; }
+    repartiFait = true;
+    const cpt = acts.map((_, i) => el.filter(e => (DOCS[e.uid] || {}).oralIdx === i).length);
+    try { const batch = writeBatch(db);
+      sans.forEach(e => { const i = cpt.indexOf(Math.min(...cpt)); cpt[i]++;
+        batch.set(ref(e.uid), { uid: e.uid, doc: docId, classe: c.id, oralIdx: i, maj: serverTimestamp() }, { merge: true }); });
+      await batch.commit(); } catch(x){ repartiFait = false; }
+  };
+  const noterOral = async (uid, niveau, act) => {
+    try { await setDoc(ref(uid), { uid, doc: docId, classe: c.id, oral: niveau ? { niveau, act: act || "", date: Date.now() } : null, maj: serverTimestamp() }, { merge: true }); toast(niveau ? "Mini-oral noté : " + ORAL_NIVEAUX[niveau].lib + "." : "Mini-oral effacé."); }
+    catch(x){ toast("Échec (" + (x.code || x.message) + ")."); }
+  };
+  const bindOral = () => {
+    repartir();
+    document.querySelectorAll(".ryg [data-oral]").forEach(b => b.onclick = () => { const uid = b.dataset.oral, ci = cibleDe(uid) || {};
+      choisirOral((el.find(e => e.uid === uid) || {}).nom, ci.num || "", n => n && noterOral(uid, n, ci.num || "")); });
+    document.querySelectorAll(".ryg [data-tut]").forEach(b => b.onclick = async () => { const uid = b.dataset.tut, v = DOCS[uid] || {}, nom = (el.find(e => e.uid === uid) || {}).nom || "";
+      const nt = (v.tutorats || []).length;
+      const ch2 = prompt(nom + " : " + nt + " tutorat" + (nt > 1 ? "s" : "") + " noté" + (nt > 1 ? "s" : "") + ".\nTape + pour en ajouter un, - pour retirer le dernier.", "+");
+      if (ch2 !== "+" && ch2 !== "-") return;
+      const t = ch2 === "+" ? (v.tutorats || []).concat([Date.now()]) : (v.tutorats || []).slice(0, -1);
+      try { await setDoc(ref(uid), { uid, doc: docId, classe: c.id, tutorats: t, maj: serverTimestamp() }, { merge: true }); toast(ch2 === "+" ? "Tutorat noté." : "Dernier tutorat retiré."); }
+      catch(x){ toast("Échec (" + (x.code || x.message) + ")."); } });
+  };
+  return { html, bind: () => { bind(); if (aOral) bindOral(); }, stop, cibleDe, noterOral, aOral };
 }
 
 /* ================= Onglet « Compétences » (24/11/2026, prototype BTS CIRA « Amplification ») =================
@@ -683,7 +742,7 @@ function profilDe(ch, uid, P, D){
   ch.docs.filter(d => d.format === "pouce").forEach(d => { const k = numDoc(d.titre); if (!k) return;
     const v = P[uid + "__" + d.pouce]; pouces[k] = { niveaux: (v && v.niveaux) || {}, valide: D.has(d.lie + "_" + uid) }; });
   const a = P[uid + "__" + animIdP(ch)];
-  return calcProfil(ch.competences.questions, pouces, a ? a.reponses : {});
+  return calcProfil(ch.competences.questions, pouces, a ? a.reponses : {}, comDe(RYD[uid + "|" + rythmeDoc(ch.verrou ? ch.verrou.id : ch.titre)]));
 }
 function etatParcours(v){
   if (!v) return { txt: "–", rates: 0 };
@@ -725,7 +784,7 @@ function anneeCompetences(c){
     $("#app").querySelectorAll("tr.el").forEach(tr => tr.onclick = () => { const e = el[+tr.dataset.i]; go(eleveAnnee, c, e, bs[+tr.dataset.i]); });
   };
   render();
-  const a = onSnapshot(collection(db, "deblocages"), snap => { D = new Set(); snap.forEach(x => { const v = x.data(); if (mesUid.has(v.uid)) D.add(v.doc + "_" + v.uid); }); render(); }, () => {});
+  const a = onSnapshot(collection(db, "deblocages"), snap => { D = new Set(); snap.forEach(x => { const v = x.data(); if (mesUid.has(v.uid)) { D.add(v.doc + "_" + v.uid); noterRyd(v); } }); render(); }, () => {});
   const b = onSnapshot(collection(db, "pointsdecours"), snap => { P = {}; snap.forEach(x => { const v = x.data(); if (mesUid.has(v.uid)) P[v.uid + "__" + v.pdc] = v; }); render(); }, () => {});
   unsub = () => { a(); b(); };
 }
@@ -764,7 +823,7 @@ function chapitreCompetences(c, ch){
     $("#app").querySelectorAll("tr.el").forEach(tr => tr.onclick = () => go(eleveCompetences, c, ch, el[+tr.dataset.i]));
   };
   render();
-  const a = onSnapshot(collection(db, "deblocages"), snap => { D = new Set(); snap.forEach(x => { const v = x.data(); if (mesUid.has(v.uid)) D.add(v.doc + "_" + v.uid); }); render(); }, e => toast("Lecture impossible : " + e.code));
+  const a = onSnapshot(collection(db, "deblocages"), snap => { D = new Set(); snap.forEach(x => { const v = x.data(); if (mesUid.has(v.uid)) { D.add(v.doc + "_" + v.uid); noterRyd(v); } }); render(); }, e => toast("Lecture impossible : " + e.code));
   const b = onSnapshot(collection(db, "pointsdecours"), snap => { P = {}; snap.forEach(x => { const v = x.data(); if (mesUid.has(v.uid)) P[v.uid + "__" + v.pdc] = v; }); render(); }, () => {});
   unsub = () => { a(); b(); };
 }
@@ -800,7 +859,7 @@ function eleveCompetences(c, ch, e){
     $("#raz1").onclick = () => raz(false); $("#raz2").onclick = () => raz(true);
   };
   render();
-  const a = onSnapshot(query(collection(db, "deblocages"), where("uid", "==", e.uid)), snap => { D = new Set(); snap.forEach(x => { const v = x.data(); D.add(v.doc + "_" + v.uid); }); render(); }, () => {});
+  const a = onSnapshot(query(collection(db, "deblocages"), where("uid", "==", e.uid)), snap => { D = new Set(); snap.forEach(x => { const v = x.data(); D.add(v.doc + "_" + v.uid); noterRyd(v); }); render(); }, () => {});
   const b = onSnapshot(query(collection(db, "pointsdecours"), where("uid", "==", e.uid)), snap => { P = {}; snap.forEach(x => { const v = x.data(); P[v.uid + "__" + v.pdc] = v; }); render(); }, () => {});
   unsub = () => { a(); b(); };
 }

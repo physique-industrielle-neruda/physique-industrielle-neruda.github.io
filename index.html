@@ -80,6 +80,7 @@ nav.classes button[aria-pressed="true"] .n,nav.classes button[aria-pressed="true
 .btn{font:inherit;font-weight:700;border:0;border-radius:8px;padding:10px 16px;cursor:pointer;background:var(--ink);color:var(--surface)}
 .err{color:var(--accent);font-weight:700;margin:8px 0 0;min-height:1.2em}
 
+.ry-oral{margin:6px 0;padding:6px 10px;background:#FFF2CC;border-left:4px solid #C55A11;font-size:.9rem}
 .methode{margin:0 0 16px;padding:10px 14px;background:var(--surface);border:1px solid var(--grid);border-left:5px solid var(--accent);border-radius:0;font-size:.92rem;line-height:1.5;color:var(--text)}
 .methode b{display:block;font-family:"Barlow Condensed","Arial Narrow",sans-serif;font-size:1.15rem;color:var(--ink);margin-bottom:4px}
 .methode p{margin:2px 0;padding-left:1.4em;text-indent:-1.4em}.methode p span{display:inline-block;width:1.4em;text-indent:0;color:var(--accent)}
@@ -270,7 +271,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut, setPersistence, browserLocalPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore, doc, getDoc, getDocs, setDoc as fbSetDoc, collection, query, where, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { profil as calcProfil, profilHtml, synthese, PROFIL_CSS, bilanAnnee, anneeHtml, ANNEE_CSS } from "./competences.js";
-import { etat as etatRythme, STATUTS, heures, exemplesId, itemDuDoc, rythmeDoc } from "./rythme.js";
+import { etat as etatRythme, STATUTS, heures, exemplesId, itemDuDoc, rythmeDoc, oralCible, comDe } from "./rythme.js";
 
 const FB = {"apiKey":"AIzaSyDH32Ma0shVbsIHR0xNJbahb5MO0RKHRS0","authDomain":"physique-neruda.firebaseapp.com","projectId":"physique-neruda","storageBucket":"physique-neruda.firebasestorage.app","messagingSenderId":"62730174289","appId":"1:62730174289:web:588c846aadd4eec2109d70"};
 const DOMAINE = "@physique-neruda.firebaseapp.com";
@@ -806,6 +807,14 @@ function freine(c, d){
   const x = e.items.find(y => y.num === it.num);
   return x && !x.fait && x.part === 0;
 }
+/* Mini-oral (25/11/2026) : l'élève sait à quelle activité il expliquera son travail au professeur */
+function oralBox(ch, apercu){
+  const r = apercu ? { oralIdx: 1 } : (S.rythme || {})[chapIdDe(ch)];
+  const ci = oralCible(ch, r, apercu ? {} : S.corrAt);
+  if (!ci) return "";
+  if (ci.fait) return `<p class="ry-oral">🎤 Mini-oral fait${ci.act ? " (" + esc(ci.act) + ")" : ""}. Merci !</p>`;
+  return `<p class="ry-oral">🎤 <b>Ton mini-oral${ci.libre ? "" : " : à la fin de l'" + esc(ci.num)}.</b> Quand tu appelles le professeur pour le corrigé, tu lui expliques en une minute ce que tu as fait et ce que tu en conclus.${ci.libre ? " Préviens-le dès ta prochaine activité terminée." : ""}</p>`;
+}
 function jaugeBox(c, ch){
   if (!chapOK(ch)) return null;
   const apercu = !eleveRev();
@@ -814,7 +823,7 @@ function jaugeBox(c, ch){
   const st = STATUTS[e.statut], pc = x => Math.max(0, Math.min(100, 100 * x / e.total)).toFixed(1);
   const box = document.createElement("div"); box.className = "rythme";
   const dateEval = e.evalDate ? new Date(e.evalDate + "T12:00:00").toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" }) : "";
-  const conseil = e.frein ? "Tu as plus d'1 h d'avance : la suite s'ouvrira après la prochaine séance. Profites-en pour les « Côté terrain ★ » ou les cartes de révision."
+  const conseil = e.frein ? "Tu as plus d'1 h d'avance : la suite s'ouvrira après la prochaine séance. Profites-en pour les « Côté terrain ★ » ou les cartes de révision, ou propose au professeur d'aider un camarade en retard (tutorat)."
     : e.statut === "avance" ? "Tu es en avance, continue comme ça." : e.statut === "vert" ? "Tu es à jour, continue comme ça."
     : e.statut === "orange" ? "Prévois un peu de travail à la maison pour rattraper avant la prochaine séance."
     : "Tu as pris du retard : organise-toi dès maintenant (maison, coups de pouce, appel au professeur).";
@@ -830,6 +839,7 @@ function jaugeBox(c, ch){
     </div>
     <div class="ry-leg"><span><i class="ry-k fill" style="background:${st.couleur}"></i>Travail fait : ${heures(e.fait)} sur ${heures(e.contenu)}</span><span><i class="ry-k now"></i>Cours écoulés : ${heures(e.ecoule)} sur ${heures(e.total)}</span><span><i class="ry-k marge"></i>1 h de marge</span></div>
     <p class="ry-msg">Il te reste <b>${heures(e.reste)}</b> de travail. Il reste <b>${heures(e.resteCours)}</b> de cours avant la fin du dossier${dateEval ? ` (évaluation le ${esc(dateEval)})` : ""}. ${conseil}${conseilEss}</p>
+    ${oralBox(ch, apercu)}
     <details class="ry-liste"><summary>Ce qu'il me reste à faire</summary><ol>${e.items.map(x => `<li class="${x.fait ? "ok" : x.part ? "part" : ""}">${x.fait ? "✓ " : ""}${esc(x.titre)} <span>(${e.ess && x.horsEss ? "facultatif, " : ""}${x.tp ? "en classe avec tout le monde, hors jauge" : heures(x.duree)}${x.part && !x.fait ? ", " + Math.round(100 * x.part) + " % fait" : ""})</span></li>`).join("")}</ol>
       <p class="ry-note">${e.items.some(x => x.tp) ? "Les TP se font en classe tous ensemble : ils ne comptent pas dans la jauge. Une activité, un TP ou un exercice" : "Une activité ou un exercice"} compte comme fait quand le professeur a débloqué son corrigé. Un exemple du cours compte comme fait quand tu as ouvert sa correction (sous-dossier « Cours », « Correction des exemples »).${e.items.some(x => x.pdc) ? " Un point de cours compte comme fait quand tu l'as terminé en ligne." : ""} Les coups de pouce ne comptent jamais contre toi.</p></details>`;
   return box;
@@ -1262,7 +1272,7 @@ function donneesProfil(ch){
   ch.docs.filter(d => d.format === "pouce").forEach(d => { const k = numeroDoc(d); if (!k) return;
     const st = MP[d.pouce]; pouces[k] = { niveaux: (st && st.niveaux) || {}, valide: !!S.corr[d.lie] }; });
   const an = MP[animId(ch)];
-  return calcProfil(ch.competences.questions, pouces, an ? an.reponses : {});
+  return calcProfil(ch.competences.questions, pouces, an ? an.reponses : {}, comDe(S.rythme && S.rythme[ch.verrou ? ch.verrou.id : ch.titre]));
 }
 const EXEMPLE_PROFIL = { APP: { score: 2.6, nP: 3, nA: 0, niveau: "solide" }, ANA: { score: 1.0, nP: 8, nA: 4, niveau: "fragile" },
   REA: { score: 2.5, nP: 10, nA: 7, niveau: "solide", alerte: null }, VAL: { score: 1.7, nP: 6, nA: 2, niveau: "moyen" }, COM: { score: 2.0, nP: 3, nA: 0, niveau: "moyen" } };
