@@ -30,7 +30,7 @@
    "id": "et-les-chaines-de-mesure",
    "site": "et",
    "titre": "Test d'entrée – Les chaînes de mesure",
-   "chapitre": "Les chaînes de mesure",
+   "chapitre": "Les chaînes de mesure (2ETA)",
    "duree": "15 min",
    "nb": 10,
    "fiches": [
@@ -48,7 +48,7 @@
     "wkc": "0iN6GA90Cu/VHK715c0pPq+QODfQz8qQCn8GEStNS9qeteRHMkx/nSK6CMMpkJCfNJYDXCw39xM9c5Kp",
     "chap": "et-chap-les-chaines-de-mesure"
    },
-   "fichier": "beb3ebc828c650dbd8b0cff8.bin"
+   "fichier": "727843b440024eee668eb6bf.bin"
   },
   {
    "id": "et-sources-conversions-et-stockage-de-l-energie",
@@ -103,9 +103,17 @@
    "titre": "Aire d'un disque",
    "fichier": "6771ff26a041f32c0fb8dafd.bin"
   },
+  "aire-d-un-rectangle-et-d-un-triangle": {
+   "titre": "Aire d'un rectangle et d'un triangle",
+   "fichier": "3b69ddbbdc20a0302e0d1927.bin"
+  },
   "conversions-de-surfaces-et-de-volumes": {
    "titre": "Conversions de surfaces et de volumes",
    "fichier": "063a7c5937f5f3edba027ded.bin"
+  },
+  "conversions-de-vitesses": {
+   "titre": "Conversions de vitesses",
+   "fichier": "effd9d37bbe08efde3f6f5a8.bin"
   },
   "decalage-de-zero-et-gain": {
    "titre": "Décalage de zéro et gain",
@@ -166,6 +174,10 @@
   "puissances-de-2-et-nombres-binaires": {
    "titre": "Puissances de 2 et nombres binaires",
    "fichier": "4310734ed09c947b3d033e2e.bin"
+  },
+  "perimetre-d-un-cercle": {
+   "titre": "Périmètre d'un cercle",
+   "fichier": "3f5b5a59c44b1501fb45bc6a.bin"
   },
   "periode-et-frequence": {
    "titre": "Période et fréquence",

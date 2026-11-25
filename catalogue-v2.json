@@ -412,6 +412,15 @@
        "rubrique": "Pour commencer"
       },
       {
+       "titre": "Feuille de route du dossier",
+       "type": "Document",
+       "fichier": "13793cefe664956d0d19bdbe.bin",
+       "taille": 57210,
+       "pages": 1,
+       "cv": "et-chap-statique-des-fluides",
+       "rubrique": "Pour commencer"
+      },
+      {
        "titre": "Activité 1 – La pression dans le filtre à sable",
        "type": "Activité",
        "fichier": "6b4b6735e1eb8932bab8e0e0.bin",
@@ -447,8 +456,8 @@
        "titre": "Point de cours – Activité 1",
        "type": "Point de cours",
        "format": "pdc",
-       "fichier": "b35df4438b68efa534b52487.bin",
-       "taille": 15233,
+       "fichier": "d630da86f38ae61545a7b972.bin",
+       "taille": 15677,
        "corrige": {
         "id": "et-statique-des-fluides-corrige-activite-1-la-pression-dans-le-filtre-a-sa",
         "wk": "pxLayu59OS5kcPRVcfwi/KNeOHZqIR+nfebhXBoNUq2Wwm3NZ/vo+VqjFtgVHwjNiFArQYm9yvWgd5um"
@@ -493,8 +502,8 @@
        "titre": "Point de cours – Activité 2",
        "type": "Point de cours",
        "format": "pdc",
-       "fichier": "8a445da020abc54810f5df61.bin",
-       "taille": 14831,
+       "fichier": "73bc103d548f441c75d2c7e6.bin",
+       "taille": 15213,
        "corrige": {
         "id": "et-statique-des-fluides-corrige-activite-2-la-pression-au-robinet-du-hamea",
         "wk": "toBbl0BInxOSHDbmry9Jx7KGxGxqa3lXEsjFYzKzC81q2ml8Ga7s4JbmOs7SCD8l+hgBMxIgeaq2ogab"
@@ -539,8 +548,8 @@
        "titre": "Point de cours – Activité 3",
        "type": "Point de cours",
        "format": "pdc",
-       "fichier": "62eb95b60b0e3ef5a576797b.bin",
-       "taille": 14988,
+       "fichier": "9f832be2e174a12f9ee5bdfe.bin",
+       "taille": 15341,
        "corrige": {
         "id": "et-statique-des-fluides-corrige-activite-3-le-capteur-de-niveau-de-la-bach",
         "wk": "SW/UmdqkMwOW9cJ+YmPPogvwkhDJxl1MUua1G8SLiVd8Ne4ojqP/mMUz/hhUsOnybeUWHDRP1x/PhwSy"
@@ -562,34 +571,17 @@
        "titre": "Correction des exemples",
        "type": "Exemples",
        "format": "exemples",
-       "fichier": "2973bb6b2371bf4c64d62c3e.bin",
-       "taille": 8791,
+       "fichier": "d1187a93e545e88bc358ddb8.bin",
+       "taille": 9510,
        "cv": "et-chap-statique-des-fluides",
        "rubrique": "Cours"
       },
       {
-       "titre": "Fiche animation",
-       "type": "Fiche",
-       "fichier": "d8eba77dc88d2b26b69e6609.bin",
-       "taille": 124862,
-       "pages": 2,
-       "cv": "et-chap-statique-des-fluides",
-       "rubrique": "Animation"
-      },
-      {
-       "titre": "Animation – Statique des fluides",
-       "type": "Animation",
-       "fichier": "6fbb23b057c9cceac74d1621.bin",
-       "format": "html",
-       "cv": "et-chap-statique-des-fluides",
-       "rubrique": "Animation"
-      },
-      {
        "titre": "Exercice 1 – Le pneu du chariot élévateur",
        "type": "Exercices",
-       "fichier": "f7862c7fa3b97650dde3d7f4.bin",
-       "taille": 97656,
-       "pages": 1,
+       "fichier": "00958a3a4b7e9d609d97e226.bin",
+       "taille": 108804,
+       "pages": 2,
        "cv": "et-chap-statique-des-fluides",
        "rubrique": "Exercices"
       },
@@ -619,9 +611,9 @@
       {
        "titre": "Exercice 2 – La cuve de fioul du diesel de secours",
        "type": "Exercices",
-       "fichier": "c28aa79ab826bb0404d143f1.bin",
-       "taille": 90265,
-       "pages": 1,
+       "fichier": "264fff3b3f53ed966a22aff7.bin",
+       "taille": 94255,
+       "pages": 2,
        "cv": "et-chap-statique-des-fluides",
        "rubrique": "Exercices"
       },
@@ -651,9 +643,9 @@
       {
        "titre": "Exercice 3 – Le vérin de levage d'un transformateur",
        "type": "Exercices",
-       "fichier": "5da16ec3dda67c1a896f94d1.bin",
-       "taille": 103025,
-       "pages": 1,
+       "fichier": "c3f1e21ee44acc69c8d3ff84.bin",
+       "taille": 106891,
+       "pages": 2,
        "cv": "et-chap-statique-des-fluides",
        "rubrique": "Exercices"
       },
@@ -683,9 +675,9 @@
       {
        "titre": "Exercice 4 – La prise d'eau dans la Loire",
        "type": "Exercices",
-       "fichier": "59c3cc780a4341b00d067280.bin",
-       "taille": 107127,
-       "pages": 1,
+       "fichier": "c766b632a4b12a5e4285f3e2.bin",
+       "taille": 118156,
+       "pages": 2,
        "cv": "et-chap-statique-des-fluides",
        "rubrique": "Exercices"
       },
@@ -711,6 +703,23 @@
         "wk": "l8xoSC/oSjXhcBhWkkRzN8r8TTBYuLWW553ks/ycNylfKdRJr9q7KqaESEsRFIWZqwOVOKw6oSR4LsBX"
        },
        "rubrique": "Exercices"
+      },
+      {
+       "titre": "Fiche animation",
+       "type": "Fiche",
+       "fichier": "d8eba77dc88d2b26b69e6609.bin",
+       "taille": 124862,
+       "pages": 2,
+       "cv": "et-chap-statique-des-fluides",
+       "rubrique": "Animation"
+      },
+      {
+       "titre": "Animation – Statique des fluides",
+       "type": "Animation",
+       "fichier": "6fbb23b057c9cceac74d1621.bin",
+       "format": "html",
+       "cv": "et-chap-statique-des-fluides",
+       "rubrique": "Animation"
       },
       {
        "titre": "Mon parcours avant l'évaluation",
@@ -861,6 +870,12 @@
         "exemple": 3
        },
        {
+        "num": "Exercice 1",
+        "titre": "Exercice 1 – Le pneu du chariot élévateur",
+        "duree": 0.1667,
+        "corrige": "et-statique-des-fluides-corrige-exercice-1"
+       },
+       {
         "num": "Activité 2",
         "titre": "Activité 2 – La pression au robinet du hameau",
         "duree": 0.75,
@@ -891,6 +906,20 @@
         "exemple": 6
        },
        {
+        "num": "Exercice 2",
+        "titre": "Exercice 2 – La cuve de fioul du diesel de secours",
+        "duree": 0.25,
+        "corrige": "et-statique-des-fluides-corrige-exercice-2",
+        "horsEss": true
+       },
+       {
+        "num": "Exercice 3",
+        "titre": "Exercice 3 – Le vérin de levage d'un transformateur",
+        "duree": 0.25,
+        "corrige": "et-statique-des-fluides-corrige-exercice-3",
+        "horsEss": true
+       },
+       {
         "num": "Activité 3",
         "titre": "Activité 3 – Le capteur de niveau de la bâche",
         "duree": 0.75,
@@ -909,38 +938,18 @@
         "exemple": 7
        },
        {
+        "num": "Exercice 4",
+        "titre": "Exercice 4 – La prise d'eau dans la Loire",
+        "duree": 0.3333,
+        "corrige": "et-statique-des-fluides-corrige-exercice-4"
+       },
+       {
         "num": "Animation",
         "titre": "Animation – Statique des fluides",
         "duree": 1.0,
         "anim": true,
         "questions": 18,
         "horsEss": true
-       },
-       {
-        "num": "Exercice 1",
-        "titre": "Exercice 1 – Le pneu du chariot élévateur",
-        "duree": 0.1667,
-        "corrige": "et-statique-des-fluides-corrige-exercice-1"
-       },
-       {
-        "num": "Exercice 2",
-        "titre": "Exercice 2 – La cuve de fioul du diesel de secours",
-        "duree": 0.25,
-        "corrige": "et-statique-des-fluides-corrige-exercice-2",
-        "horsEss": true
-       },
-       {
-        "num": "Exercice 3",
-        "titre": "Exercice 3 – Le vérin de levage d'un transformateur",
-        "duree": 0.25,
-        "corrige": "et-statique-des-fluides-corrige-exercice-3",
-        "horsEss": true
-       },
-       {
-        "num": "Exercice 4",
-        "titre": "Exercice 4 – La prise d'eau dans la Loire",
-        "duree": 0.3333,
-        "corrige": "et-statique-des-fluides-corrige-exercice-4"
        },
        {
         "num": "Parcours",
@@ -1669,29 +1678,11 @@
      "titre": "Les chaînes de mesure",
      "docs": [
       {
-       "titre": "Comment ça marche – profil de compétences",
-       "type": "Document",
-       "fichier": "f5aec0de3caff6b7d33ecd0f.bin",
-       "taille": 59074,
-       "pages": 1,
-       "cv": "et-chap-les-chaines-de-mesure",
-       "rubrique": "Pour commencer"
-      },
-      {
        "titre": "Essentiel du chapitre",
        "type": "Cours",
        "fichier": "4676a0567460355870aad788.bin",
        "taille": 716085,
        "pages": 8,
-       "cv": "et-chap-les-chaines-de-mesure",
-       "rubrique": "Cours"
-      },
-      {
-       "titre": "Correction des exemples",
-       "type": "Exemples",
-       "format": "exemples",
-       "fichier": "21d5ef21f1f3561d2af8242b.bin",
-       "taille": 8729,
        "cv": "et-chap-les-chaines-de-mesure",
        "rubrique": "Cours"
       },
@@ -1945,18 +1936,6 @@
        "rubrique": "Exercices"
       },
       {
-       "titre": "Mon parcours avant l'évaluation",
-       "type": "Parcours",
-       "format": "parcours",
-       "fichier": "b5df217c341995886d6c6fde.bin",
-       "taille": 38453,
-       "corrige": {
-        "id": "et-les-chaines-de-mesure-parcours",
-        "wk": "hZnkCrwFpLJnAB0Za8vonaMxpFJIk31+6m8yasGE6kVj/KV+Ac7QCelfFFw6zO72v8BwKYUtjLv6H4T0"
-       },
-       "rubrique": "Mon profil de compétences"
-      },
-      {
        "titre": "Bilan",
        "type": "Fiche",
        "fichier": "25b7beb313f31fa7efef32af.bin",
@@ -1980,6 +1959,375 @@
      "verrou": {
       "id": "et-chap-les-chaines-de-mesure",
       "wk": "++h1n1tFtZaH6sM1s5v1IXmkAYXRDyz4BXTOWqe1qevwHv4/v3p4hBf7T5tN9oFnwc1PA2MQn4nQaYui"
+     }
+    },
+    {
+     "num": "",
+     "titre": "Les chaînes de mesure (2ETA)",
+     "docs": [
+      {
+       "titre": "Comment ça marche – profil de compétences",
+       "type": "Document",
+       "fichier": "b8b1479bce10547a445012fa.bin",
+       "taille": 59074,
+       "pages": 1,
+       "cv": "et-chap-les-chaines-de-mesure-2eta",
+       "rubrique": "Pour commencer"
+      },
+      {
+       "titre": "Feuille de route du dossier",
+       "type": "Document",
+       "fichier": "9c7a8a1bc3e13ba563f869b4.bin",
+       "taille": 58596,
+       "pages": 1,
+       "cv": "et-chap-les-chaines-de-mesure-2eta",
+       "rubrique": "Pour commencer"
+      },
+      {
+       "titre": "Activité 1 – Boucle 4-20 mA du pressuriseur du réacteur nucléaire",
+       "type": "Activité",
+       "fichier": "c22ef441a8a3479d12dc0f5a.bin",
+       "taille": 348392,
+       "pages": 5,
+       "cv": "et-chap-les-chaines-de-mesure-2eta",
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "Activité 1 – Boucle 4-20 mA du pressuriseur du réacteur nucléaire - coups de pouce",
+       "type": "Activité",
+       "format": "pouce",
+       "fichier": "cacde6751dfff89fa7b77e10.bin",
+       "taille": 13756,
+       "pouce": "pouce:et-les-chaines-de-mesure-2eta-corrige-activite-1-boucle-4-20-ma-du-pressuriseur-",
+       "lie": "et-les-chaines-de-mesure-2eta-corrige-activite-1-boucle-4-20-ma-du-pressuriseur-",
+       "cv": "et-chap-les-chaines-de-mesure-2eta",
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "Corrigé Activité 1 – Boucle 4-20 mA du pressuriseur du réacteur nucléaire",
+       "type": "Corrigé",
+       "fichier": "ee710bf250b35b55cdc21021.bin",
+       "taille": 196415,
+       "pages": 3,
+       "corrige": {
+        "id": "et-les-chaines-de-mesure-2eta-corrige-activite-1-boucle-4-20-ma-du-pressuriseur-",
+        "wk": "+oZTzvNCdegjL3wNOgzVXz+qqQyWY2EQkcMo9uMefRckSREFBeqWRqnVjy/COdKX+6tMk4W7LflevOLa"
+       },
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "Point de cours – Activité 1",
+       "type": "Point de cours",
+       "format": "pdc",
+       "fichier": "0e8f913a66b1262717d81888.bin",
+       "taille": 16128,
+       "corrige": {
+        "id": "et-les-chaines-de-mesure-2eta-corrige-activite-1-boucle-4-20-ma-du-pressuriseur-",
+        "wk": "+oZTzvNCdegjL3wNOgzVXz+qqQyWY2EQkcMo9uMefRckSREFBeqWRqnVjy/COdKX+6tMk4W7LflevOLa"
+       },
+       "pdc": "et-les-chaines-de-mesure-2eta-pdc-activite-1",
+       "activite": "Activité 1",
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "Activité 2 – Numérisation d'une mesure de température",
+       "type": "Activité",
+       "fichier": "6a357f11d96465710302c310.bin",
+       "taille": 314983,
+       "pages": 5,
+       "cv": "et-chap-les-chaines-de-mesure-2eta",
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "Activité 2 – Numérisation d'une mesure de température - coups de pouce",
+       "type": "Activité",
+       "format": "pouce",
+       "fichier": "e9cccfcdb958173a5f7e1a05.bin",
+       "taille": 13480,
+       "pouce": "pouce:et-les-chaines-de-mesure-2eta-corrige-activite-2-numerisation-d-une-mesure-de-te",
+       "lie": "et-les-chaines-de-mesure-2eta-corrige-activite-2-numerisation-d-une-mesure-de-te",
+       "cv": "et-chap-les-chaines-de-mesure-2eta",
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "Corrigé Activité 2 – Numérisation d'une mesure de température",
+       "type": "Corrigé",
+       "fichier": "84a527940d0d1c0064b1b05f.bin",
+       "taille": 133251,
+       "pages": 3,
+       "corrige": {
+        "id": "et-les-chaines-de-mesure-2eta-corrige-activite-2-numerisation-d-une-mesure-de-te",
+        "wk": "28X2WYv/z4uoc4nx9+ennRMAJjBoUQKLSGcGHKjrDkA9+ZFc8NSwEUEzo4UCv9pIsM0ghBco5q0h9P1N"
+       },
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "Point de cours – Activité 2",
+       "type": "Point de cours",
+       "format": "pdc",
+       "fichier": "355ac134e2df726a4d49886a.bin",
+       "taille": 15261,
+       "corrige": {
+        "id": "et-les-chaines-de-mesure-2eta-corrige-activite-2-numerisation-d-une-mesure-de-te",
+        "wk": "28X2WYv/z4uoc4nx9+ennRMAJjBoUQKLSGcGHKjrDkA9+ZFc8NSwEUEzo4UCv9pIsM0ghBco5q0h9P1N"
+       },
+       "pdc": "et-les-chaines-de-mesure-2eta-pdc-activite-2",
+       "activite": "Activité 2",
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "Activité 3 – Temps de réponse et précision d'une sonde Pt100",
+       "type": "Activité",
+       "fichier": "97d918e2271cd6bdc4659e36.bin",
+       "taille": 205725,
+       "pages": 4,
+       "cv": "et-chap-les-chaines-de-mesure-2eta",
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "Activité 3 – Temps de réponse et précision d'une sonde Pt100 - coups de pouce",
+       "type": "Activité",
+       "format": "pouce",
+       "fichier": "3e7796b4565a9425ad758842.bin",
+       "taille": 12691,
+       "pouce": "pouce:et-les-chaines-de-mesure-2eta-corrige-activite-3-temps-de-reponse-et-precision-d",
+       "lie": "et-les-chaines-de-mesure-2eta-corrige-activite-3-temps-de-reponse-et-precision-d",
+       "cv": "et-chap-les-chaines-de-mesure-2eta",
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "Corrigé Activité 3 – Temps de réponse et précision d'une sonde Pt100",
+       "type": "Corrigé",
+       "fichier": "644f94c2cb56cbb0c0b899ba.bin",
+       "taille": 123415,
+       "pages": 2,
+       "corrige": {
+        "id": "et-les-chaines-de-mesure-2eta-corrige-activite-3-temps-de-reponse-et-precision-d",
+        "wk": "oY9Zam/0Ow64GkZTT5drtXzka9Gxbfns+ywLpqX0J4sXC5a1azreG0vfK347Gf1Lh6yURWMqHoKv4iz7"
+       },
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "Point de cours – Activité 3",
+       "type": "Point de cours",
+       "format": "pdc",
+       "fichier": "ea22f92e5fe120586fa0da83.bin",
+       "taille": 15430,
+       "corrige": {
+        "id": "et-les-chaines-de-mesure-2eta-corrige-activite-3-temps-de-reponse-et-precision-d",
+        "wk": "oY9Zam/0Ow64GkZTT5drtXzka9Gxbfns+ywLpqX0J4sXC5a1azreG0vfK347Gf1Lh6yURWMqHoKv4iz7"
+       },
+       "pdc": "et-les-chaines-de-mesure-2eta-pdc-activite-3",
+       "activite": "Activité 3",
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "L'essentiel du dossier",
+       "type": "Cours",
+       "fichier": "fb515a39b40e0a955aa86ff6.bin",
+       "taille": 723357,
+       "pages": 9,
+       "cv": "et-chap-les-chaines-de-mesure-2eta",
+       "rubrique": "Cours"
+      },
+      {
+       "titre": "Correction des exemples",
+       "type": "Exemples",
+       "format": "exemples",
+       "fichier": "f467b88d595d697260d1b9b9.bin",
+       "taille": 9449,
+       "cv": "et-chap-les-chaines-de-mesure-2eta",
+       "rubrique": "Cours"
+      },
+      {
+       "titre": "Exercice 1",
+       "type": "Exercices",
+       "fichier": "59154e3edd63e8dc405b5c03.bin",
+       "taille": 123178,
+       "pages": 1,
+       "cv": "et-chap-les-chaines-de-mesure-2eta",
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 1 - coups de pouce",
+       "type": "Exercices",
+       "format": "pouce",
+       "fichier": "72cfbbcf18ae0aa8bbc3fb68.bin",
+       "taille": 11284,
+       "pouce": "pouce:et-les-chaines-de-mesure-2eta-corrige-exercice-1",
+       "lie": "et-les-chaines-de-mesure-2eta-corrige-exercice-1",
+       "cv": "et-chap-les-chaines-de-mesure-2eta",
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Corrigé Exercice 1",
+       "type": "Corrigé",
+       "fichier": "83b9322eb8572baff869bc6f.bin",
+       "taille": 104687,
+       "pages": 2,
+       "corrige": {
+        "id": "et-les-chaines-de-mesure-2eta-corrige-exercice-1",
+        "wk": "g0Bn0e9qi1K8n57rCOlabIOkOdme/QPmZgJt9SimX3+tFJHufHL6my6OQ2Xh3z31JqYCl4NKmn9FiJQN"
+       },
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 2",
+       "type": "Exercices",
+       "fichier": "7480427e99a259d75c82a57c.bin",
+       "taille": 106946,
+       "pages": 1,
+       "cv": "et-chap-les-chaines-de-mesure-2eta",
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 2 - coups de pouce",
+       "type": "Exercices",
+       "format": "pouce",
+       "fichier": "4c5d91d1dc32b21f51c74d35.bin",
+       "taille": 11017,
+       "pouce": "pouce:et-les-chaines-de-mesure-2eta-corrige-exercice-2",
+       "lie": "et-les-chaines-de-mesure-2eta-corrige-exercice-2",
+       "cv": "et-chap-les-chaines-de-mesure-2eta",
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Corrigé Exercice 2",
+       "type": "Corrigé",
+       "fichier": "54501c27c0504a387322abd9.bin",
+       "taille": 100220,
+       "pages": 2,
+       "corrige": {
+        "id": "et-les-chaines-de-mesure-2eta-corrige-exercice-2",
+        "wk": "Mlkjii683OM0xgx3RI1EdjaJUfX36NdCntfaCizzQ1litjg7VbNieHktODwR5bUBCB23DY4l1K8rftHG"
+       },
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 3",
+       "type": "Exercices",
+       "fichier": "3fe1d3c0dc1549f54a7759a6.bin",
+       "taille": 140043,
+       "pages": 1,
+       "cv": "et-chap-les-chaines-de-mesure-2eta",
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 3 - coups de pouce",
+       "type": "Exercices",
+       "format": "pouce",
+       "fichier": "9bd9d94f8bdda9b2434f2f98.bin",
+       "taille": 11128,
+       "pouce": "pouce:et-les-chaines-de-mesure-2eta-corrige-exercice-3",
+       "lie": "et-les-chaines-de-mesure-2eta-corrige-exercice-3",
+       "cv": "et-chap-les-chaines-de-mesure-2eta",
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Corrigé Exercice 3",
+       "type": "Corrigé",
+       "fichier": "7864b975db85882ebf23639f.bin",
+       "taille": 99376,
+       "pages": 2,
+       "corrige": {
+        "id": "et-les-chaines-de-mesure-2eta-corrige-exercice-3",
+        "wk": "q0foQl49ujT/7aHccLpuJ/LbruRrTI1dC9GXXGIDf7F8B+F/QUml7VoEDk0AJVr1s3BRqgGel7W8Ryi8"
+       },
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 4",
+       "type": "Exercices",
+       "fichier": "ec231479eef20ef2ceaca6a9.bin",
+       "taille": 155791,
+       "pages": 1,
+       "cv": "et-chap-les-chaines-de-mesure-2eta",
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 4 - coups de pouce",
+       "type": "Exercices",
+       "format": "pouce",
+       "fichier": "2617687e7fe7525f7f69345c.bin",
+       "taille": 10839,
+       "pouce": "pouce:et-les-chaines-de-mesure-2eta-corrige-exercice-4",
+       "lie": "et-les-chaines-de-mesure-2eta-corrige-exercice-4",
+       "cv": "et-chap-les-chaines-de-mesure-2eta",
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Corrigé Exercice 4",
+       "type": "Corrigé",
+       "fichier": "1a757135fdc8bec422546121.bin",
+       "taille": 106975,
+       "pages": 2,
+       "corrige": {
+        "id": "et-les-chaines-de-mesure-2eta-corrige-exercice-4",
+        "wk": "fXKLQeOXZ9oHMZ9q7GnxrxmgLnbHldlWAUGePEdfQknPYMbgv4xvmNUgxrHVbqylXWK4ExGJq6RaxN+q"
+       },
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Fiche animation",
+       "type": "Fiche",
+       "fichier": "a66b11506e48fb76a87759a8.bin",
+       "taille": 151048,
+       "pages": 2,
+       "cv": "et-chap-les-chaines-de-mesure-2eta",
+       "rubrique": "Animation"
+      },
+      {
+       "titre": "Animation – Révision de la chaîne de mesure",
+       "type": "Animation",
+       "fichier": "db5fdd3cb238dc66179b8a6c.bin",
+       "format": "html",
+       "cv": "et-chap-les-chaines-de-mesure-2eta",
+       "rubrique": "Animation"
+      },
+      {
+       "titre": "Simulation – Banc de la chaîne de mesure",
+       "type": "Animation",
+       "fichier": "d7e310ee53fa02cb1ece49bd.bin",
+       "format": "html",
+       "cv": "et-chap-les-chaines-de-mesure-2eta",
+       "rubrique": "Animation"
+      },
+      {
+       "titre": "Mon parcours avant l'évaluation",
+       "type": "Parcours",
+       "format": "parcours",
+       "fichier": "b5df217c341995886d6c6fde.bin",
+       "taille": 38453,
+       "corrige": {
+        "id": "et-les-chaines-de-mesure-2eta-parcours",
+        "wk": "hZnkCrwFpLJnAB0Za8vonaMxpFJIk31+6m8yasGE6kVj/KV+Ac7QCelfFFw6zO72v8BwKYUtjLv6H4T0"
+       },
+       "rubrique": "Mon profil de compétences"
+      },
+      {
+       "titre": "Bilan",
+       "type": "Fiche",
+       "fichier": "bf818cf5d8a99e0e75f67300.bin",
+       "taille": 119018,
+       "pages": 2,
+       "cv": "et-chap-les-chaines-de-mesure-2eta",
+       "rubrique": "Réviser"
+      },
+      {
+       "titre": "cartes de révision",
+       "type": "Cartes",
+       "nombre": 10,
+       "fichier": "3f86c7bd9a8425065527caa4.bin",
+       "format": "cartes",
+       "ch": "les-chaines-de-mesure-2eta",
+       "cv": "et-chap-les-chaines-de-mesure-2eta",
+       "rubrique": "Réviser"
+      }
+     ],
+     "annee": 2,
+     "verrou": {
+      "id": "et-chap-les-chaines-de-mesure-2eta",
+      "wk": "nwY4WpsHjI+JeOGCl+aqXWpPOaNg3iQ57ONMF0PQapmtFsSNau9wHfVAXJFsI7+6/nxS35AiwJlzp8XJ"
      },
      "competences": {
       "referentiel": "BTS ET",
@@ -2090,7 +2438,13 @@
         "num": "Activité 1",
         "titre": "Activité 1 – Boucle 4-20 mA du pressuriseur du réacteur nucléaire",
         "duree": 0.75,
-        "corrige": "et-les-chaines-de-mesure-corrige-eleve-activite-1-boucle-4-20-ma-du-pressur"
+        "corrige": "et-les-chaines-de-mesure-2eta-corrige-activite-1-boucle-4-20-ma-du-pressuriseur-"
+       },
+       {
+        "num": "Point de cours – Activité 1",
+        "titre": "Point de cours – Activité 1",
+        "duree": 0.1667,
+        "pdc": "et-les-chaines-de-mesure-2eta-pdc-activite-1"
        },
        {
         "num": "Exemple 1",
@@ -2105,10 +2459,22 @@
         "exemple": 2
        },
        {
+        "num": "Exercice 1",
+        "titre": "Exercice 1",
+        "duree": 0.25,
+        "corrige": "et-les-chaines-de-mesure-2eta-corrige-exercice-1"
+       },
+       {
         "num": "Activité 2",
         "titre": "Activité 2 – Numérisation d'une mesure de température",
         "duree": 0.75,
-        "corrige": "et-les-chaines-de-mesure-corrige-eleve-activite-2-numerisation-d-une-mesure"
+        "corrige": "et-les-chaines-de-mesure-2eta-corrige-activite-2-numerisation-d-une-mesure-de-te"
+       },
+       {
+        "num": "Point de cours – Activité 2",
+        "titre": "Point de cours – Activité 2",
+        "duree": 0.1667,
+        "pdc": "et-les-chaines-de-mesure-2eta-pdc-activite-2"
        },
        {
         "num": "Exemple 3",
@@ -2129,10 +2495,29 @@
         "exemple": 5
        },
        {
+        "num": "Exercice 2",
+        "titre": "Exercice 2",
+        "duree": 0.25,
+        "corrige": "et-les-chaines-de-mesure-2eta-corrige-exercice-2"
+       },
+       {
+        "num": "Exercice 3",
+        "titre": "Exercice 3",
+        "duree": 0.25,
+        "corrige": "et-les-chaines-de-mesure-2eta-corrige-exercice-3",
+        "horsEss": true
+       },
+       {
         "num": "Activité 3",
         "titre": "Activité 3 – Temps de réponse et précision d'une sonde Pt100",
         "duree": 0.75,
-        "corrige": "et-les-chaines-de-mesure-corrige-eleve-activite-3-temps-de-reponse-et-preci"
+        "corrige": "et-les-chaines-de-mesure-2eta-corrige-activite-3-temps-de-reponse-et-precision-d"
+       },
+       {
+        "num": "Point de cours – Activité 3",
+        "titre": "Point de cours – Activité 3",
+        "duree": 0.1667,
+        "pdc": "et-les-chaines-de-mesure-2eta-pdc-activite-3"
        },
        {
         "num": "Exemple 6",
@@ -2147,6 +2532,12 @@
         "exemple": 7
        },
        {
+        "num": "Exercice 4",
+        "titre": "Exercice 4",
+        "duree": 0.25,
+        "corrige": "et-les-chaines-de-mesure-2eta-corrige-exercice-4"
+       },
+       {
         "num": "Animation",
         "titre": "Animation – Révision de la chaîne de mesure",
         "duree": 1.0,
@@ -2155,38 +2546,18 @@
         "horsEss": true
        },
        {
-        "num": "Exercice 1",
-        "titre": "Exercice 1",
-        "duree": 0.25,
-        "corrige": "et-les-chaines-de-mesure-corrige-eleve-exercice-1"
-       },
-       {
-        "num": "Exercice 2",
-        "titre": "Exercice 2",
-        "duree": 0.25,
-        "corrige": "et-les-chaines-de-mesure-corrige-eleve-exercice-2",
-        "horsEss": true
-       },
-       {
-        "num": "Exercice 3",
-        "titre": "Exercice 3",
-        "duree": 0.25,
-        "corrige": "et-les-chaines-de-mesure-corrige-eleve-exercice-3",
-        "horsEss": true
-       },
-       {
-        "num": "Exercice 4",
-        "titre": "Exercice 4",
-        "duree": 0.25,
-        "corrige": "et-les-chaines-de-mesure-corrige-eleve-exercice-4"
-       },
-       {
         "num": "Parcours",
         "titre": "Mon parcours avant l'évaluation",
         "duree": 1.0,
-        "parcours": "et-les-chaines-de-mesure-parcours"
+        "parcours": "et-les-chaines-de-mesure-2eta-parcours"
        }
       ],
+      "notions": [
+       "la mise à l'échelle d'un signal 4-20 mA",
+       "le quantum et le nombre de bits d'un CAN",
+       "le temps de réponse d'un capteur (τ et t₅ %)"
+      ],
+      "oral": true,
       "classeCours": "et2a",
       "groupes": [
        "et2a"
@@ -2194,11 +2565,6 @@
       "aussi": [
        "donovan.f",
        "mathis.c"
-      ],
-      "notions": [
-       "la mise à l'échelle d'un signal 4-20 mA",
-       "le quantum et le nombre de bits d'un CAN",
-       "le temps de réponse d'un capteur (τ et t₅ %)"
       ]
      }
     },
@@ -2342,6 +2708,15 @@
        "rubrique": "Pour commencer"
       },
       {
+       "titre": "Feuille de route du dossier",
+       "type": "Document",
+       "fichier": "127dd0aad69b531b21ad43a6.bin",
+       "taille": 60630,
+       "pages": 1,
+       "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
+       "rubrique": "Pour commencer"
+      },
+      {
        "titre": "Activité 1 – Le facteur de charge d'un réacteur",
        "type": "Activité",
        "fichier": "11daa36ba9b8d0f9e74112d1.bin",
@@ -2377,8 +2752,8 @@
        "titre": "Point de cours – Activité 1",
        "type": "Point de cours",
        "format": "pdc",
-       "fichier": "5900b11323961147b84adcd3.bin",
-       "taille": 15724,
+       "fichier": "2065e15a9e1b462b6f6169a0.bin",
+       "taille": 16161,
        "corrige": {
         "id": "et-sources-conversions-et-stockage-de-l-ene-corrige-activite-1-le-facteur-de-charge-d-un-react",
         "wk": "3gaP612WPCkYO5a9l61ncf8WYencaxUgZX4vW1sHn4HJPLL+Rqk4wz5PgBe65O0BuFAk23ArO7zRju9a"
@@ -2423,8 +2798,8 @@
        "titre": "Point de cours – Activité 2",
        "type": "Point de cours",
        "format": "pdc",
-       "fichier": "0cbae64595528c64e90d800f.bin",
-       "taille": 16101,
+       "fichier": "78d2cefc4594f22c01ca3dff.bin",
+       "taille": 16503,
        "corrige": {
         "id": "et-sources-conversions-et-stockage-de-l-ene-corrige-activite-2-le-rendement-du-diesel-d-ultime",
         "wk": "K2CNvVgoC/ueD5GX13KwvC1A/8TNF3eSTcpoh8M0XeGoB2dVwrVsUwsKjeoPBWZoutQCDNWJGMLDnUkS"
@@ -2469,8 +2844,8 @@
        "titre": "Point de cours – Activité 3",
        "type": "Point de cours",
        "format": "pdc",
-       "fichier": "f2ca5b53127c7afd0a794b1f.bin",
-       "taille": 15662,
+       "fichier": "e5913f5abd6432b95576c942.bin",
+       "taille": 16048,
        "corrige": {
         "id": "et-sources-conversions-et-stockage-de-l-ene-corrige-activite-3-l-autonomie-de-la-batterie-125-",
         "wk": "9ej2MIW52zyC/F0Mm4jq0SiyXAYjdUm+QChf9R5JT5cKkVOs1XW+zBb071F2Fhwue9527O3r2R/1aDJ9"
@@ -2515,8 +2890,8 @@
        "titre": "Point de cours – Activité 4",
        "type": "Point de cours",
        "format": "pdc",
-       "fichier": "0e4f4c7691346da06cc6b2ec.bin",
-       "taille": 15558,
+       "fichier": "cfd2419c0ac942e2fb4caa42.bin",
+       "taille": 15958,
        "corrige": {
         "id": "et-sources-conversions-et-stockage-de-l-ene-corrige-activite-4-un-projet-d-ombriere-solaire",
         "wk": "mojZjvQCkvy9r75wDdjrlv9HKGmXfTWlw49qMYZzHKJC1QgfZgjIIV/ynPYZ0t/AU1H7ftB6wNRt2b9V"
@@ -2538,34 +2913,17 @@
        "titre": "Correction des exemples",
        "type": "Exemples",
        "format": "exemples",
-       "fichier": "4653fb62a11ca0adff1aaf70.bin",
-       "taille": 10088,
+       "fichier": "763870beec097d3e9c303548.bin",
+       "taille": 10898,
        "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
        "rubrique": "Cours"
       },
       {
-       "titre": "Fiche animation",
-       "type": "Fiche",
-       "fichier": "94dc72f752cebb90df4904c1.bin",
-       "taille": 142795,
-       "pages": 2,
-       "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
-       "rubrique": "Animation"
-      },
-      {
-       "titre": "Animation – Sources, conversions et stockage de l'énergie",
-       "type": "Animation",
-       "fichier": "b1888627106228d47d55854a.bin",
-       "format": "html",
-       "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
-       "rubrique": "Animation"
-      },
-      {
        "titre": "Exercice 1 – La centrale solaire au sol",
        "type": "Exercices",
-       "fichier": "ea9af39efe101b0eb967804a.bin",
-       "taille": 121610,
-       "pages": 1,
+       "fichier": "f7b577ab5400c2abc24eb0e0.bin",
+       "taille": 132659,
+       "pages": 2,
        "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
        "rubrique": "Exercices"
       },
@@ -2595,8 +2953,8 @@
       {
        "titre": "Exercice 2 – Le monte-charge de la papeterie",
        "type": "Exercices",
-       "fichier": "a1d4720d5fa98c9d1891fe7f.bin",
-       "taille": 111578,
+       "fichier": "2cc18526b49a146c05bdda51.bin",
+       "taille": 115077,
        "pages": 2,
        "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
        "rubrique": "Exercices"
@@ -2627,9 +2985,9 @@
       {
        "titre": "Exercice 3 – Le chauffe-eau thermodynamique de la caserne",
        "type": "Exercices",
-       "fichier": "18df7eb1ca66022cb7e93743.bin",
-       "taille": 117252,
-       "pages": 1,
+       "fichier": "ebe2e0897f95d593bc4657a5.bin",
+       "taille": 121654,
+       "pages": 2,
        "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
        "rubrique": "Exercices"
       },
@@ -2659,9 +3017,9 @@
       {
        "titre": "Exercice 4 – Les batteries de la station de captage",
        "type": "Exercices",
-       "fichier": "14a33c5cfc7eccccf497d7ab.bin",
-       "taille": 112683,
-       "pages": 1,
+       "fichier": "2a8db6e9bf5e0ac2e08a764e.bin",
+       "taille": 123295,
+       "pages": 2,
        "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
        "rubrique": "Exercices"
       },
@@ -2687,6 +3045,23 @@
         "wk": "fcMaEzsnw/jtYjrzMt/9gz/HhZZRBOyiXnTWj/Bsj+LeLxrT/FKEVMAILn2VPFI67/M7eGIY8lQ2Gn+u"
        },
        "rubrique": "Exercices"
+      },
+      {
+       "titre": "Fiche animation",
+       "type": "Fiche",
+       "fichier": "94dc72f752cebb90df4904c1.bin",
+       "taille": 142795,
+       "pages": 2,
+       "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
+       "rubrique": "Animation"
+      },
+      {
+       "titre": "Animation – Sources, conversions et stockage de l'énergie",
+       "type": "Animation",
+       "fichier": "b1888627106228d47d55854a.bin",
+       "format": "html",
+       "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
+       "rubrique": "Animation"
       },
       {
        "titre": "Mon parcours avant l'évaluation",
@@ -2863,6 +3238,12 @@
         "exemple": 3
        },
        {
+        "num": "Exercice 1",
+        "titre": "Exercice 1 – La centrale solaire au sol",
+        "duree": 0.1667,
+        "corrige": "et-sources-conversions-et-stockage-de-l-ene-corrige-exercice-1"
+       },
+       {
         "num": "Activité 2",
         "titre": "Activité 2 – Le rendement du diesel d'ultime secours",
         "duree": 0.75,
@@ -2887,6 +3268,20 @@
         "exemple": 5
        },
        {
+        "num": "Exercice 2",
+        "titre": "Exercice 2 – Le monte-charge de la papeterie",
+        "duree": 0.25,
+        "corrige": "et-sources-conversions-et-stockage-de-l-ene-corrige-exercice-2",
+        "horsEss": true
+       },
+       {
+        "num": "Exercice 3",
+        "titre": "Exercice 3 – Le chauffe-eau thermodynamique de la caserne",
+        "duree": 0.25,
+        "corrige": "et-sources-conversions-et-stockage-de-l-ene-corrige-exercice-3",
+        "horsEss": true
+       },
+       {
         "num": "Activité 3",
         "titre": "Activité 3 – L'autonomie de la batterie 125 V",
         "duree": 0.75,
@@ -2909,6 +3304,12 @@
         "titre": "Cours partie 3 et EXEMPLE 7",
         "duree": 0.1167,
         "exemple": 7
+       },
+       {
+        "num": "Exercice 4",
+        "titre": "Exercice 4 – Les batteries de la station de captage",
+        "duree": 0.3333,
+        "corrige": "et-sources-conversions-et-stockage-de-l-ene-corrige-exercice-4"
        },
        {
         "num": "Activité 4",
@@ -2937,45 +3338,19 @@
         "horsEss": true
        },
        {
-        "num": "Exercice 1",
-        "titre": "Exercice 1 – La centrale solaire au sol",
-        "duree": 0.1667,
-        "corrige": "et-sources-conversions-et-stockage-de-l-ene-corrige-exercice-1"
-       },
-       {
-        "num": "Exercice 2",
-        "titre": "Exercice 2 – Le monte-charge de la papeterie",
-        "duree": 0.25,
-        "corrige": "et-sources-conversions-et-stockage-de-l-ene-corrige-exercice-2",
-        "horsEss": true
-       },
-       {
-        "num": "Exercice 3",
-        "titre": "Exercice 3 – Le chauffe-eau thermodynamique de la caserne",
-        "duree": 0.25,
-        "corrige": "et-sources-conversions-et-stockage-de-l-ene-corrige-exercice-3",
-        "horsEss": true
-       },
-       {
-        "num": "Exercice 4",
-        "titre": "Exercice 4 – Les batteries de la station de captage",
-        "duree": 0.3333,
-        "corrige": "et-sources-conversions-et-stockage-de-l-ene-corrige-exercice-4"
-       },
-       {
         "num": "Parcours",
         "titre": "Mon parcours avant l'évaluation",
         "duree": 1.0,
         "parcours": "et-sources-conversions-et-stockage-de-l-ene-parcours"
        }
       ],
-      "classeCours": "et2a",
       "notions": [
        "énergie, puissance et facteur de charge (E = P × Δt)",
        "le rendement d'une chaîne de conversion et le COP",
        "l'autonomie d'un stockage"
       ],
-      "oral": true
+      "oral": true,
+      "classeCours": "et2a"
      }
     }
    ]
@@ -3593,10 +3968,19 @@
        "rubrique": "Pour commencer"
       },
       {
+       "titre": "Feuille de route du dossier",
+       "type": "Document",
+       "fichier": "57d983524c5a7dfe69861a1f.bin",
+       "taille": 62107,
+       "pages": 1,
+       "cv": "cira-chap-amplification",
+       "rubrique": "Pour commencer"
+      },
+      {
        "titre": "Activité 1 – L'ADI et le montage suiveur",
        "type": "Activité",
-       "fichier": "8908064218adf1f2902c4590.bin",
-       "taille": 294540,
+       "fichier": "55dbe455cd5d73d51e12d12f.bin",
+       "taille": 296187,
        "pages": 5,
        "cv": "cira-chap-amplification",
        "rubrique": "Activités et TP"
@@ -3627,9 +4011,9 @@
       {
        "titre": "TP 1 – Amplificateurs non inverseur et inverseur",
        "type": "TP",
-       "fichier": "7689e46060df9130c545be29.bin",
-       "taille": 419769,
-       "pages": 7,
+       "fichier": "e9207e5a106cac68afd23063.bin",
+       "taille": 421931,
+       "pages": 8,
        "cv": "cira-chap-amplification",
        "rubrique": "Activités et TP"
       },
@@ -3659,8 +4043,8 @@
       {
        "titre": "Activité 2 – Le soustracteur et le décalage de zéro",
        "type": "Activité",
-       "fichier": "6ff3612f810ee49cfabffb87.bin",
-       "taille": 259479,
+       "fichier": "4d1810dfb5bf19a542838b95.bin",
+       "taille": 261033,
        "pages": 5,
        "cv": "cira-chap-amplification",
        "rubrique": "Activités et TP"
@@ -3691,8 +4075,8 @@
       {
        "titre": "TP 2 – Conditionneur à deux ADI pour la sonde Pt100",
        "type": "TP",
-       "fichier": "8ba53335e9485f27537fed4c.bin",
-       "taille": 440538,
+       "fichier": "29125c7b2d1f6e92982b4c30.bin",
+       "taille": 442029,
        "pages": 7,
        "cv": "cira-chap-amplification",
        "rubrique": "Activités et TP"
@@ -3723,8 +4107,8 @@
       {
        "titre": "Activité 3 – L'amplificateur d'instrumentation",
        "type": "Activité",
-       "fichier": "445730ae0e171236ef567d38.bin",
-       "taille": 286248,
+       "fichier": "c02cfd1d9999d14baec90ba1.bin",
+       "taille": 287788,
        "pages": 5,
        "cv": "cira-chap-amplification",
        "rubrique": "Activités et TP"
@@ -3765,33 +4149,16 @@
        "titre": "Correction des exemples",
        "type": "Exemples",
        "format": "exemples",
-       "fichier": "5878dfcbe7e74c7b3ea163a5.bin",
-       "taille": 7429,
+       "fichier": "c85602996ff7649914cef735.bin",
+       "taille": 8425,
        "cv": "cira-chap-amplification",
        "rubrique": "Cours"
       },
       {
-       "titre": "Fiche animation",
-       "type": "Fiche",
-       "fichier": "e6cc3863721bd399304e20bb.bin",
-       "taille": 135815,
-       "pages": 2,
-       "cv": "cira-chap-amplification",
-       "rubrique": "Animation"
-      },
-      {
-       "titre": "Animation – Amplification",
-       "type": "Animation",
-       "fichier": "cec09a9ce5a4fd9994821c42.bin",
-       "format": "html",
-       "cv": "cira-chap-amplification",
-       "rubrique": "Animation"
-      },
-      {
        "titre": "Exercice 1 – Le débit d'une station d'épuration",
        "type": "Exercices",
-       "fichier": "27c69a4bc2b93658783927dd.bin",
-       "taille": 115574,
+       "fichier": "3ddab31c6852f960e68be127.bin",
+       "taille": 125834,
        "pages": 2,
        "cv": "cira-chap-amplification",
        "rubrique": "Exercices"
@@ -3822,8 +4189,8 @@
       {
        "titre": "Exercice 2 – La vitesse d'un agitateur de fromagerie",
        "type": "Exercices",
-       "fichier": "ff190041256ff00431da3ad2.bin",
-       "taille": 161777,
+       "fichier": "46dbfd4a08bacf8eb3f18401.bin",
+       "taille": 165079,
        "pages": 2,
        "cv": "cira-chap-amplification",
        "rubrique": "Exercices"
@@ -3854,8 +4221,8 @@
       {
        "titre": "Exercice 3 – Le bac de rinçage d'une ligne de traitement de surface",
        "type": "Exercices",
-       "fichier": "b990bae32d5afeb924b26f99.bin",
-       "taille": 166467,
+       "fichier": "9e3ce5fd24fddd13a7d74205.bin",
+       "taille": 169689,
        "pages": 2,
        "cv": "cira-chap-amplification",
        "rubrique": "Exercices"
@@ -3886,8 +4253,8 @@
       {
        "titre": "Exercice 4 – Le pesage au crochet d'un pont roulant",
        "type": "Exercices",
-       "fichier": "47e3ad53254054f916acaaca.bin",
-       "taille": 172170,
+       "fichier": "d7144c143e4fa78a77f7094e.bin",
+       "taille": 175507,
        "pages": 2,
        "cv": "cira-chap-amplification",
        "rubrique": "Exercices"
@@ -3914,6 +4281,23 @@
         "wk": "X52pBwMMO9qpvErSAIdL8aOtAcC5VZo2VogsWkwcakbz+k+DkENTxSgeOZcsUQbkbqetyGmeNCBkZI4y"
        },
        "rubrique": "Exercices"
+      },
+      {
+       "titre": "Fiche animation",
+       "type": "Fiche",
+       "fichier": "e6cc3863721bd399304e20bb.bin",
+       "taille": 135815,
+       "pages": 2,
+       "cv": "cira-chap-amplification",
+       "rubrique": "Animation"
+      },
+      {
+       "titre": "Animation – Amplification",
+       "type": "Animation",
+       "fichier": "cec09a9ce5a4fd9994821c42.bin",
+       "format": "html",
+       "cv": "cira-chap-amplification",
+       "rubrique": "Animation"
       },
       {
        "titre": "Mon parcours avant l'évaluation",
@@ -4060,6 +4444,12 @@
         "exemple": 1
        },
        {
+        "num": "Exercice 1",
+        "titre": "Exercice 1 – Le débit d'une station d'épuration",
+        "duree": 0.1667,
+        "corrige": "cira-amplification-corrige-exercice-1"
+       },
+       {
         "num": "TP 1",
         "titre": "TP 1 – Amplificateurs non inverseur et inverseur",
         "duree": 2.0,
@@ -4073,6 +4463,13 @@
         "exemple": 2
        },
        {
+        "num": "Exercice 2",
+        "titre": "Exercice 2 – La vitesse d'un agitateur de fromagerie",
+        "duree": 0.25,
+        "corrige": "cira-amplification-corrige-exercice-2",
+        "horsEss": true
+       },
+       {
         "num": "Activité 2",
         "titre": "Activité 2 – Le soustracteur et le décalage de zéro",
         "duree": 0.75,
@@ -4083,6 +4480,13 @@
         "titre": "Cours partie 3 et EXEMPLE 3",
         "duree": 0.1667,
         "exemple": 3
+       },
+       {
+        "num": "Exercice 3",
+        "titre": "Exercice 3 – Le bac de rinçage d'une ligne de traitement de surface",
+        "duree": 0.25,
+        "corrige": "cira-amplification-corrige-exercice-3",
+        "horsEss": true
        },
        {
         "num": "TP 2",
@@ -4110,38 +4514,18 @@
         "exemple": 5
        },
        {
+        "num": "Exercice 4",
+        "titre": "Exercice 4 – Le pesage au crochet d'un pont roulant",
+        "duree": 0.25,
+        "corrige": "cira-amplification-corrige-exercice-4"
+       },
+       {
         "num": "Animation",
         "titre": "Animation – Amplification",
         "duree": 1.0,
         "anim": true,
         "questions": 16,
         "horsEss": true
-       },
-       {
-        "num": "Exercice 1",
-        "titre": "Exercice 1 – Le débit d'une station d'épuration",
-        "duree": 0.1667,
-        "corrige": "cira-amplification-corrige-exercice-1"
-       },
-       {
-        "num": "Exercice 2",
-        "titre": "Exercice 2 – La vitesse d'un agitateur de fromagerie",
-        "duree": 0.25,
-        "corrige": "cira-amplification-corrige-exercice-2",
-        "horsEss": true
-       },
-       {
-        "num": "Exercice 3",
-        "titre": "Exercice 3 – Le bac de rinçage d'une ligne de traitement de surface",
-        "duree": 0.25,
-        "corrige": "cira-amplification-corrige-exercice-3",
-        "horsEss": true
-       },
-       {
-        "num": "Exercice 4",
-        "titre": "Exercice 4 – Le pesage au crochet d'un pont roulant",
-        "duree": 0.25,
-        "corrige": "cira-amplification-corrige-exercice-4"
        },
        {
         "num": "Parcours",
@@ -4641,9 +5025,9 @@
   }
  ],
  "outilsWk": {
-  "et": "bQUOk9JZ5zG5nQvpGlsUwV4O/saxf3OkB411x1SqrS16mUhN4UWADTw5OT7MjJt0QSPMZSk5m3MHDJOW",
-  "cira": "VzNRJBCfY61dAC17hH64aTh28nuKVk0DWMuFd0zJ1V4SD3AdThM87UsAQNXCSiuWJKwOfI99hKgINa/R",
-  "cim": "mt6nPH3keYuQ2/31pwSZjPQbnAo7kxN4yCPT95S8UIOAXqg+ZJo6MJPiUOFLtbUl8PN922YXmc1+LCko"
+  "et": "/Pz3MG8MmovQRCpF3lzWDbvjagK2+lo1NkhfrBsr7u6j6AdxekmaiV4ZLBj5J3e3obqH4n4UIpVbze9n",
+  "cira": "kdKuCDIA6MOvzq30I2w4N5sEFQs7MIqbGRMDMMSUYOuU9K9/pnCkhXNEcp45YQhgAihld4X/J29j4eDB",
+  "cim": "35oXRWwQPNKzKCIKGTfj8zXNg3V+QrLBylUw1Y0eWFB4rcx4plZBmU4vDZvxX8m2l8N3/+2rgzkei79A"
  },
  "outils": [
   {
