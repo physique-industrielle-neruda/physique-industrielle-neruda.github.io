@@ -311,18 +311,18 @@ function home(){
     return `<button class="row" data-id="${esc(c.id)}"><span class="main"><span class="t">${esc(c.nom)}</span><span class="m">${n} élève${n>1?"s":""} · ${nc} corrigé${nc>1?"s":""}</span></span><span class="chev"></span></button>`;
   }).join("");
   $("#app").innerHTML = `<div id="notif"></div><div class="card">${html}</div>`;
-  $("#app").querySelectorAll(".card .row").forEach(b => b.onclick = () => go(classe, b.dataset.id, "corriges"));
+  $("#app").querySelectorAll(".card .row").forEach(b => b.onclick = () => { const k = CLASSES.find(x => x.id === b.dataset.id); go(classe, b.dataset.id, k && chapsJour(k).length ? "jour" : "corriges"); });
   if ((REV.tests || []).length) suivreTests(etat => afficherNotif(etat));
 }
 
 /* ---------- Une classe ---------- */
 function classe(id, tab){
   const c = CLASSES.find(x => x.id === id); if (!c) return home();
-  setBar(c.nom, tab === "corriges" ? "Corrigés à débloquer" : tab === "evaluations" ? "Évaluations corrigées" : tab === "tests" ? "Tests d'entrée" : tab === "pdc" ? "Points de cours" : tab === "competences" ? "Profils de compétences" : "Élèves et comptes", true);
-  const tabs = `<div class="tabs" role="tablist"><button role="tab" aria-selected="${tab==="corriges"}" data-t="corriges">Corrigés</button><button role="tab" aria-selected="${tab==="evaluations"}" data-t="evaluations">Évaluations</button>${testsClasse(c).length ? `<button role="tab" aria-selected="${tab==="tests"}" data-t="tests">Tests</button>` : ""}${chapsCompetences(c).length ? `<button role="tab" aria-selected="${tab==="competences"}" data-t="competences">Compétences</button>` : ""}<button role="tab" aria-selected="${tab==="eleves"}" data-t="eleves">Élèves</button></div>`;
+  setBar(c.nom, tab === "jour" ? "Tableau de bord de la séance" : tab === "corriges" ? "Corrigés à débloquer" : tab === "evaluations" ? "Évaluations corrigées" : tab === "tests" ? "Tests d'entrée" : tab === "pdc" ? "Points de cours" : tab === "competences" ? "Profils de compétences" : "Élèves et comptes", true);
+  const tabs = `<div class="tabs" role="tablist">${chapsJour(c).length ? `<button role="tab" aria-selected="${tab==="jour"}" data-t="jour">Aujourd'hui</button>` : ""}<button role="tab" aria-selected="${tab==="corriges"}" data-t="corriges">Corrigés</button><button role="tab" aria-selected="${tab==="evaluations"}" data-t="evaluations">Évaluations</button>${testsClasse(c).length ? `<button role="tab" aria-selected="${tab==="tests"}" data-t="tests">Tests</button>` : ""}${chapsCompetences(c).length ? `<button role="tab" aria-selected="${tab==="competences"}" data-t="competences">Compétences</button>` : ""}<button role="tab" aria-selected="${tab==="eleves"}" data-t="eleves">Élèves</button></div>`;
   $("#app").innerHTML = tabs + `<div id="pane"></div>`;
   $("#app").querySelectorAll(".tabs button").forEach(b => b.onclick = () => { stack[stack.length-1] = [classe, [id, b.dataset.t]]; stopLive(); classe(id, b.dataset.t); });
-  if (tab === "corriges") paneCorriges(c); else if (tab === "evaluations") paneEvals(c); else if (tab === "tests") paneTests(c); else if (tab === "pdc") panePdc(c); else if (tab === "competences") paneCompetences(c); else paneEleves(c);
+  if (tab === "jour") paneJour(c); else if (tab === "corriges") paneCorriges(c); else if (tab === "evaluations") paneEvals(c); else if (tab === "tests") paneTests(c); else if (tab === "pdc") panePdc(c); else if (tab === "competences") paneCompetences(c); else paneEleves(c);
 }
 
 /* Rubrique d'un corrigé (Activités, TP, Exercices) : celle du catalogue, sinon devinée d'après le titre */
@@ -482,7 +482,7 @@ function chapitreGrille(c, g){
       + el.map(e => `<tr><td class="nom">${esc(e.nom)}</td>${cols.map((d, j) => `<td class="c${d.chapitre ? " lk" : ""}${sep(j)}${busy.has(d.corrige.id + "_" + e.uid) ? " busy" : ""}" data-j="${j}" data-uid="${esc(e.uid)}">${caseDe(d, e.uid)}</td>`).join("")}</tr>`).join("")
       + `<tr class="tot"><td class="nom">Ouverts</td>${cols.map((d, j) => `<td class="${sep(j)}">${counts[d.corrige.id] || 0}/${el.length}</td>`).join("")}</tr></table></div>`
       + `<p class="note">Touche une case pour ouvrir à l'élève ; touche-la à nouveau pour refermer (une confirmation est demandée pour refermer le dossier ou le test). Touche le titre d'une colonne pour toute la classe.${locks.length ? " Les premières colonnes sont les cadenas du " + (locks.some(d => d.test) ? "test d'entrée et du " : "") + "dossier." : ""}<br>🔓 dossier ou test ouvert · 🔒 verrouillé · <span class="dot non"></span> point de cours pas commencé · <span class="dot cours"></span> en cours · <span class="dot fini"></span> terminé · ✓ corrigé ouvert (sans point de cours)</p>`
-      + (aPouce ? `<p class="sec">Coups de pouce utilisés</p><div class="card grille cpg"><table><tr><th class="nom">Élève</th>${docs.map(d => `<th title="${esc(d.titre)}">${esc(courtDe(d))}</th>`).join("")}</tr>`
+      + (aPouce ? `<p class="sec" id="cpTab">Coups de pouce utilisés</p><div class="card grille cpg"><table><tr><th class="nom">Élève</th>${docs.map(d => `<th title="${esc(d.titre)}">${esc(courtDe(d))}</th>`).join("")}</tr>`
         + el.map(e => `<tr><td class="nom">${esc(e.nom)}</td>${docs.map(d => `<td>${pouceDe(d, e.uid)}</td>`).join("")}</tr>`).join("")
         + `</table></div><p class="note">Pour chaque élève, les questions où il a débloqué un coup de pouce supplémentaire : <span class="cp n2">B5 2</span> niveau 2 · <span class="cp n3">B5 3</span> niveau 3. <span class="cp vu">lu</span> fiche ouverte, niveau 1 seulement · – fiche jamais ouverte.</p>` : "");
     const sx = $(".grille") ? $(".grille").scrollLeft : 0;
@@ -556,10 +556,10 @@ function rythmePanel(c, g, el, getP, rerender){
   el = el.filter(e => !ailleurs.includes(e));
   const aTP = R.items.some(x => x.tp), aEss = R.items.some(x => x.horsEss);   // chemin essentiel (25/11/2026)
   const aOral = oralActs(ch).length > 0 && !(R.groupes && !R.groupes.includes(c.id));   // mini-oral et tutorat (25/11/2026)
-  let AT = {}, DOCS = {}, busy = false;
+  let AT = {}, DOCS = {}, busy = false, charge = false;
   const ref = uid => doc(db, "deblocages", rythmeDocId(chapId, uid));
   const stop = onSnapshot(collection(db, "deblocages"), snap => {
-    AT = {}; DOCS = {};
+    AT = {}; DOCS = {}; charge = true;
     snap.forEach(x => { const v = x.data(); if (!el.some(e => e.uid === v.uid)) return;
       if (v.doc === docId) { DOCS[v.uid] = v; noterRyd(v); return; }
       (AT[v.uid] = AT[v.uid] || {})[v.doc] = v.at && v.at.toMillis ? v.at.toMillis() : Date.now(); });
@@ -720,7 +720,215 @@ function rythmePanel(c, g, el, getP, rerender){
       try { await setDoc(ref(uid), { uid, doc: docId, classe: c.id, tutorats: t, maj: serverTimestamp() }, { merge: true }); toast(ch2 === "+" ? "Tutorat noté." : "Dernier tutorat retiré."); }
       catch(x){ toast("Échec (" + (x.code || x.message) + ")."); } });
   };
-  return { html, bind: () => { bind(); if (aOral) bindOral(); }, stop, cibleDe, noterOral, aOral };
+  /* Accès pour l'onglet « Aujourd'hui » (25/11/2026) : mêmes données et mêmes écritures que ce tableau */
+  const api = { charge: () => charge, el: () => el, docs: () => DOCS, etatDe, commun, ecrireTous, ref, docId, tpH, aTP, aEss, ailleurs, kc,
+    sc: () => Array.isArray(R.seances) ? R.seances : ((R.seances || {})[c.id] || [1, 2]) };
+  return { html, bind: () => { bind(); if (aOral) bindOral(); }, stop, cibleDe, noterOral, aOral, api };
+}
+
+/* ================= Onglet « Aujourd'hui » (25/11/2026) : tableau de bord de la séance, par classe =================
+   Ne remplace aucun onglet. Pour le dossier en cours de la classe (nouvelle méthode, avec rythme) :
+   déblocages (test, dossier, parcours), séance, prochain corrigé de chacun, mini-oraux, élèves en alerte,
+   en avance / freinés (tutorat), signal pour la classe (coups de pouce niveau 3), fiches non faites, liens. */
+const chapsJour = c => { const k = CAT.classes.find(x => x.id === c.site); if (!k) return [];
+  return k.chapitres.filter(ch => ch.rythme && ch.verrou && (!ch.rythme.groupes || ch.rythme.groupes.includes(c.id))); };
+(() => { const st = document.createElement("style");
+  st.textContent = ".jr{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:10px 14px;border-top:1px solid var(--grid)}.jr:first-child{border-top:0}"
+  + ".jr .n{flex:1;min-width:130px}.jr .n small{display:block;color:var(--muted);font-weight:400}.jr .mini{white-space:nowrap}"
+  + ".j-now{color:#C55A11;font-weight:700}.j-dos{display:flex;gap:8px;align-items:center;margin:12px 0 0;font-weight:700}"
+  + ".j-dos select{flex:1;font:inherit;font-weight:600;padding:9px 12px;border:1px solid var(--grid);border-radius:10px;background:var(--surface);color:var(--ink)}"
+  + ".j-deb{background:#FFF7E0;border-color:#E8C35A}.j-ok{color:var(--ok);font-weight:700}.j-n{font-weight:400;color:var(--muted)}"
+  + ".j-sea .btns{padding:0 12px}.j-sea .note{padding:0 12px}";
+  document.head.appendChild(st); })();
+const JOUR = {};   // dossier choisi à la main, par classe (gardé au retour)
+function paneJour(c){
+  const el = elevesDe(c), mesUid = new Set(el.map(e => e.uid)), an = anDeClasse(c), chs = chapsJour(c);
+  if (!el.length) { $("#pane").innerHTML = `<p class="empty">Créez d'abord les comptes des élèves (onglet « Élèves et comptes »).</p>`; return; }
+  if (!chs.length) { $("#pane").innerHTML = `<p class="empty">Pas encore de dossier de la nouvelle méthode pour cette classe.</p>`; return; }
+  $("#pane").innerHTML = `<p class="empty">Chargement…</p>`;
+  let D = new Set(), PREM = {}, P = {}, TE = [], T = null, F = null, RY = null, chCur = null, g = null, pret = false;
+  const busy = new Set(), cles = {};
+  const key = async d => { if (!cles[d.corrige.id]) { if (!MAITRE) throw new Error("cles"); cles[d.corrige.id] = await unwrap(d); } return cles[d.corrige.id]; };
+  const refD = (d, uid) => doc(db, "deblocages", d.corrige.id + "_" + uid);
+  const erreur = e => toast(e && e.message === "cles" ? "Clés absentes : importez le fichier dans Réglages." : "Échec, vérifiez la connexion.");
+  const nomDe = uid => (el.find(e => e.uid === uid) || {}).nom || "";
+  const ouverts = () => chs.filter(ch => PREM[ch.verrou.id]).sort((a, b) => PREM[b.verrou.id] - PREM[a.verrou.id]);
+  const choisir = () => {
+    const o = ouverts(), pref = chs.find(ch => ch.titre === JOUR[c.id]);
+    if (pref) return pref;
+    return o[0] || chs.find(ch => !ch.annee || !an || ch.annee === an) || null;
+  };
+  const installer = ch => {
+    if (RY) RY.stop();
+    chCur = ch; g = corriges(c.site, c.id).find(x => x.ch.titre === ch.titre) || { ch, docs: [] };
+    RY = rythmePanel(c, g, el, () => P, () => render());
+  };
+  const debloquerUn = async (d, uid) => {
+    const id = d.corrige.id + "_" + uid; if (busy.has(id)) return;
+    /* Mini-oral prévu à cette activité : choisir le niveau avant de débloquer (comme dans le tableau du dossier) */
+    if (!d.chapitre && RY && RY.aOral) { const ci = RY.cibleDe(uid);
+      if (ci && !ci.fait && ci.corrige === d.corrige.id) { const n = await new Promise(ok => choisirOral(nomDe(uid), ci.num, ok, true));
+        if (n === null) return; if (n) await RY.noterOral(uid, n, ci.num); } }
+    busy.add(id); render();
+    try { await setDoc(refD(d, uid), { uid, doc: d.corrige.id, classe: c.id, cle: await key(d), at: serverTimestamp() }); toast("Débloqué pour " + nomDe(uid) + "."); }
+    catch(e){ erreur(e); }
+    busy.delete(id); render();
+  };
+  const debloquerClasse = async (d, quoi) => {
+    const manque = el.filter(e => !D.has(d.corrige.id + "_" + e.uid)); if (!manque.length) return;
+    if (!confirm("Ouvrir " + quoi + " pour toute la classe (" + plur(manque.length, "élève") + " de plus) ?")) return;
+    try { const k = await key(d), batch = writeBatch(db);
+      manque.forEach(e => batch.set(refD(d, e.uid), { uid: e.uid, doc: d.corrige.id, classe: c.id, cle: k, at: serverTimestamp() }));
+      await batch.commit(); toast("Ouvert à toute la classe."); }
+    catch(e){ erreur(e); }
+  };
+  const ecrireR = async (uid, data, msg) => { const A = RY.api;
+    try { await setDoc(A.ref(uid), { uid, doc: A.docId, classe: c.id, ...data, maj: serverTimestamp() }, { merge: true }); if (msg) toast(msg); }
+    catch(x){ toast("Échec (" + (x.code || x.message) + ")."); } };
+  const pill = s => { const st = STATUTS[s.statut];
+    return `<span class="ry-pill" style="color:${st.couleur};background:${st.fond}">${s.statut === "avance" ? "+" + heures(s.avance) : s.statut === "vert" ? "à jour" : "−" + heures(s.retard)}</span>`; };
+  const court = t => String(t || "").replace(/\s*[–-]\s*coups de pouce$/i, "");
+
+  const render = () => {
+    if (!pret) return;
+    const ch = choisir();
+    if (!ch) { $("#pane").innerHTML = `<p class="empty">Pas encore de dossier de la nouvelle méthode pour cette classe.</p>`; return; }
+    if (ch !== chCur) installer(ch);
+    const A = RY.api, R = ch.rythme, items = R.items, acts = [];
+    const btn = (lib, fn, cls = "mini", dis = false) => { acts.push(fn); return `<button class="${cls}" data-act="${acts.length - 1}"${dis ? " disabled" : ""}>${lib}</button>`; };
+    const nOpen = d => el.filter(e => D.has(d.corrige.id + "_" + e.uid)).length;
+    const lockT = g.docs.find(d => d.test), lockD = g.docs.find(d => d.chapitre && !d.test), parcD = g.docs.find(d => d.format === "parcours");
+    const docDe = id => g.docs.find(d => d.corrige && d.corrige.id === id);
+    const DOCS = A.docs(), elR = A.el(), lance = Object.keys(DOCS).length > 0, k = A.commun();
+    const dosOuvert = lockD ? nOpen(lockD) > 0 : true;
+    const S = lance ? elR.map(e => ({ e, s: A.etatDe(e), r: DOCS[e.uid] || {} })) : [];
+    let h = "";
+
+    /* Choix du dossier (si plusieurs dossiers de la nouvelle méthode sont ouverts) */
+    const opts = [...new Set(ouverts().concat([ch]))];
+    if (opts.length > 1) h += `<label class="j-dos">Dossier <select id="jdos">${opts.map((x, i) => `<option value="${i}"${x === ch ? " selected" : ""}>${esc(x.titre)}${PREM[x.verrou.id] ? "" : " (fermé)"}</option>`).join("")}</select></label>`;
+    else h += `<p class="sec" style="margin-top:14px">Dossier en cours</p><p class="note" style="margin-top:2px"><b style="color:var(--ink)">${esc(ch.titre)}</b></p>`;
+
+    /* 1. Déblocages : test d'entrée, dossier, parcours avant l'évaluation */
+    const debs = [[lockT, "Test d'entrée", "le test d'entrée"], [lockD, "Dossier", "le dossier « " + ch.titre + " »"], [parcD, "Parcours avant l'évaluation", "le parcours avant l'évaluation"]].filter(x => x[0]);
+    const aOuvrir = debs.filter(([d]) => nOpen(d) < el.length);
+    h += `<p class="sec">Déblocages</p><div class="card j-deb">` + (aOuvrir.length ? aOuvrir.map(([d, lib, quoi]) => { const n = nOpen(d);
+        return `<div class="jr"><span class="n"><b>🔒 ${esc(lib)}</b><small>${n ? "ouvert pour " + n + "/" + el.length : "fermé pour toute la classe"}${d === parcD ? " · séance d'1 h en fin de dossier" : ""}</small></span>${btn("Ouvrir à la classe", () => debloquerClasse(d, quoi))}</div>`; }).join("")
+      : `<div class="jr"><span class="n j-ok">🔓 Test, dossier et parcours ouverts à toute la classe</span></div>`)
+      + `<div class="jr"><span class="n"><small>Élève par élève : tableau du dossier</small></span>${btn("Ouvrir le tableau", () => go(chapitreCorriges, c.id, ch.titre))}</div></div>`;
+
+    /* 2. Séance : « J'ai cours » / « J'ai TP » */
+    h += `<p class="sec">Séance</p><div class="card ry j-sea">`;
+    if (!A.charge()) h += `<p class="note">Chargement du rythme…</p>`;
+    else if (!lance) h += `<p class="note">Le suivi du rythme n'est pas encore démarré : les élèves ne voient pas encore la jauge.</p>`
+      + `<div class="btns">${btn("Démarrer le suivi du rythme", () => { if (confirm("Démarrer le suivi du rythme pour toute la classe ? Les élèves verront la jauge dans le dossier.")) A.ecrireTous({ seances: [], evalDate: "" }, "Suivi démarré."); }, "btn", !dosOuvert)}</div>`;
+    else {
+      const auto = k.seances.filter(x => !x.tp), ecoule = auto.reduce((s, x) => s + (+x.h || 0), 0), der = k.seances[k.seances.length - 1];
+      const seance = (hh, tp) => { if (!confirm("Enregistrer une séance " + (tp ? "de TP " : "") + "de " + hh + " h pour la classe ?")) return;
+        A.ecrireTous({ seances: A.commun().seances.concat([{ t: Date.now(), h: hh, ...(tp ? { tp: true } : {}) }]) }, (tp ? "Séance de TP" : "Séance de " + hh + " h") + " enregistrée."); };
+      h += `<div class="btns">${A.sc().map(x => btn("J'ai cours : " + x + " h", () => seance(x, false), "btn ok", !dosOuvert)).join("")}${A.aTP ? btn("J'ai TP : " + A.tpH + " h", () => seance(A.tpH, true), "btn ok", !dosOuvert) : ""}</div>`
+        + `<p class="note">Coche la séance <b>en fin de cours</b>. Cours écoulés : <b>${heures(ecoule)}</b>${der ? ` · dernière : ${new Date(der.t).toLocaleString("fr-FR", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })} (${der.tp ? "TP, " : ""}${der.h} h)` : ""}.${A.ailleurs.length ? " " + A.ailleurs.map(e => esc(e.nom)).join(", ") + " : séances cochées avec la classe " + esc(A.kc.nom) + "." : ""}</p>`;
+    }
+    if (!dosOuvert) h += `<p class="note" style="color:#C55A11"><b>🔒 Ouvre d'abord le dossier</b> (Déblocages ci-dessus) : tant qu'il est verrouillé, les séances ne sont pas comptées.</p>`;
+    h += `</div>`;
+
+    /* 3. Corrigés à vérifier : prochain corrigé de chaque élève, dans l'ordre du dossier */
+    const essDe = uid => !!(DOCS[uid] || {}).essentiel;
+    const prochain = e => items.find(it => it.corrige && !it.tp && !(essDe(e.uid) && it.horsEss) && !D.has(it.corrige + "_" + e.uid));
+    const etatE = uid => (S.find(x => x.e.uid === uid) || {}).s;
+    const lignesC = el.filter(e => !lockD || D.has(lockD.corrige.id + "_" + e.uid)).map(e => ({ e, it: prochain(e) })).filter(x => x.it);
+    const finis = el.filter(e => (!lockD || D.has(lockD.corrige.id + "_" + e.uid)) && !prochain(e)).length;
+    const tpSeances = k.seances.filter(x => x.tp).length;
+    const tps = items.filter(it => it.tp && it.corrige).slice(0, tpSeances).filter(it => el.some(e => !D.has(it.corrige + "_" + e.uid)));
+    if (lignesC.length || tps.length) {
+      h += `<p class="sec">Corrigés à vérifier</p><div class="card">`
+        + tps.map(it => { const d = docDe(it.corrige), n = el.filter(e => D.has(it.corrige + "_" + e.uid)).length;
+            return d ? `<div class="jr"><span class="n"><b>Corrigé du ${esc(it.num)}</b><small>TP fait en classe · ${n}/${el.length} débloqués</small></span>${btn("Débloquer pour la classe", () => debloquerClasse(d, "le corrigé du " + it.num))}</div>` : ""; }).join("")
+        + lignesC.map(({ e, it }) => { const d = docDe(it.corrige), s = etatE(e.uid), ci = RY.aOral ? RY.cibleDe(e.uid) : null;
+            const oral = ci && !ci.fait && ci.corrige === it.corrige;
+            return `<div class="jr"><span class="n"><b>${esc(e.nom)}</b><small>${esc(it.titre || it.num)}${oral ? ' · <span class="j-now">🎤 mini-oral à cette activité</span>' : ""}</small></span>${s ? pill(s) + (s.frein ? ' <span title="Frein : plus d\'1 h d\'avance">🔒</span>' : "") : ""}`
+              + (d ? btn(busy.has(it.corrige + "_" + e.uid) ? "…" : "Débloquer", () => debloquerUn(d, e.uid)) : "") + `</div>`; }).join("")
+        + `</div><p class="note">L'appli ne sait pas si l'élève a fini : débloque quand tu as vérifié son travail.${finis ? " " + plur(finis, "élève") + (finis > 1 ? " ont" : " a") + " déjà tout débloqué." : ""}</p>`;
+    }
+
+    /* 4. Mini-oraux à faire */
+    if (RY.aOral && lance) {
+      const oraux = elR.map(e => ({ e, ci: RY.cibleDe(e.uid), it: prochain(e) })).filter(x => x.ci && !x.ci.fait)
+        .map(x => ({ ...x, now: x.ci.libre || (x.it && x.it.corrige === x.ci.corrige) })).sort((a, b) => b.now - a.now);
+      if (oraux.length) h += `<p class="sec">Mini-oraux à faire</p><div class="card">` + oraux.map(({ e, ci, now }) =>
+        `<div class="jr"><span class="n"><b>${esc(e.nom)}</b><small>${ci.libre ? "toutes ses activités sont corrigées : à faire avant l'évaluation" : "à la fin de " + esc(ci.num) + (ci.report ? " (reporté)" : "")}${now ? ' · <span class="j-now">maintenant</span>' : ""}</small></span>`
+        + btn("🎤 Noter", () => choisirOral(e.nom, ci.num || "", n => n && RY.noterOral(e.uid, n, ci.num || ""))) + `</div>`).join("") + `</div>`;
+    }
+
+    /* 5. Élèves en alerte : retard, chemin essentiel, reprise de 20 min, parcours raté */
+    const retards = S.filter(x => x.s.statut === "orange" || x.s.statut === "rouge" || x.s.ess).sort((a, b) => b.s.retard - a.s.retard);
+    const deuxTiers = S.some(x => x.s.deuxTiers);
+    const parcK = parcD ? el.map(e => ({ e, p: etatParcours(P[e.uid + "__parcours:" + parcD.corrige.id]) })).filter(x => x.p.rates) : [];
+    if (retards.length || parcK.length) {
+      h += `<p class="sec">Élèves en alerte</p>`;
+      if (deuxTiers && retards.length) h += `<div class="card ry-alerte"><b>⚠ Deux tiers du dossier écoulés</b><p>Ouvre le chemin essentiel aux élèves en retard, puis prends-les <b>20 min</b> pendant le parcours avant l'évaluation${(R.notions || []).length ? " sur : " + R.notions.map(n => "<b>" + esc(n) + "</b>").join(" ; ") : ""}.</p></div>`;
+      h += `<div class="card">` + retards.map(({ e, s, r }) => `<div class="jr"><span class="n"><b>${esc(e.nom)}</b><small>${esc(STATUTS[s.statut].lib)}${s.ess ? " · chemin essentiel" : ""}${r.reprise ? " · reprise faite" : ""}</small></span>${pill(s)}`
+          + (A.aEss ? btn(s.ess ? "✓ Essentiel" : "→ Chemin essentiel", () => { if (confirm(s.ess ? "Remettre " + e.nom + " sur le dossier complet ?" : "Ouvrir le chemin essentiel à " + e.nom + " ? Les pièces facultatives sortent de sa jauge.")) ecrireR(e.uid, { essentiel: s.ess ? null : Date.now() }, s.ess ? "Dossier complet rétabli." : "Chemin essentiel ouvert."); }) : "")
+          + (deuxTiers ? btn(r.reprise ? "✓ Reprise 20 min" : "Reprise 20 min faite", () => ecrireR(e.uid, { reprise: r.reprise ? null : Date.now() }, r.reprise ? "Reprise effacée." : "Reprise notée.")) : "") + `</div>`).join("")
+        + parcK.map(({ e, p }) => `<div class="jr"><span class="n"><b>${esc(e.nom)}</b><small>Parcours avant l'évaluation : ${esc(p.txt)}</small></span><span class="al">⚠ ${p.rates} ratée${p.rates > 1 ? "s" : ""} deux fois</span>${btn("Voir", () => go(eleveCompetences, c, ch, e))}</div>`).join("") + `</div>`;
+    }
+
+    /* 6. En avance / freinés : tutorat proposé avec un élève en retard */
+    const avance = S.filter(x => x.s.statut === "avance").sort((a, b) => b.s.avance - a.s.avance);
+    if (avance.length) {
+      const aider = retards;
+      h += `<p class="sec">En avance</p><div class="card">` + avance.map(({ e, s, r }, i) => { const cible = aider[i], nt = (r.tutorats || []).length;
+          return `<div class="jr"><span class="n"><b>${esc(e.nom)}</b><small>${s.frein ? "🔒 freiné : la suite attend la prochaine séance" : "en avance"}${cible ? " · peut aider <b>" + esc(cible.e.nom) + "</b>" : ""}${nt ? " · " + plur(nt, "tutorat") : ""}</small></span>${pill(s)}`
+            + btn("🤝 Tutorat fait", () => ecrireR(e.uid, { tutorats: (r.tutorats || []).concat([Date.now()]) }, "Tutorat noté.")) + `</div>`; }).join("") + `</div>`;
+    }
+
+    /* 7. Signal pour la classe : une question où au moins la moitié de la classe a ouvert le niveau 3 */
+    const seuil = Math.max(2, Math.ceil(el.length / 2)), signaux = [];
+    ch.docs.filter(d => d.format === "pouce").forEach(d => { const nb = {};
+      el.forEach(e => { const v = P[e.uid + "__" + d.pouce]; Object.entries((v && v.niveaux) || {}).forEach(([q, n]) => { if (n >= 3) nb[q] = (nb[q] || 0) + 1; }); });
+      Object.entries(nb).filter(([, n]) => n >= seuil).forEach(([q, n]) => signaux.push({ lib: numDoc(d.titre) || court(d.titre), q, n })); });
+    h += `<p class="sec">Signal pour la classe</p><div class="card">` + (signaux.length ? signaux.map(x => `<div class="jr"><span class="n"><b>${esc(x.lib)} · ${esc(x.q)}</b><small>${x.n} élèves sur ${el.length} au coup de pouce niveau 3 : un moment collectif s'impose</small></span></div>`).join("")
+      : `<div class="jr"><span class="n j-n">Aucune question bloquante pour la moitié de la classe.</span></div>`)
+      + `<div class="jr"><span class="n"><small>Détail par élève et par question</small></span>${btn("Tableau des coups de pouce", () => { go(chapitreCorriges, c.id, ch.titre); setTimeout(() => { const x = document.getElementById("cpTab"); if (x) x.scrollIntoView({ block: "start" }); }, 600); })}</div></div>`;
+
+    /* 8. Fiches de révision non faites (test d'entrée du dossier) */
+    const test = (REV.tests || []).find(t => t.site === c.site && t.verrou && t.verrou.chap === ch.verrou.id);
+    if (test) {
+      const fiches = TE.filter(t => t.test === test.id && mesUid.has(t.uid) && !t.pret);
+      const pasFait = lockT ? el.filter(e => D.has(lockT.corrige.id + "_" + e.uid) && !TE.some(t => t.test === test.id && t.uid === e.uid)) : [];
+      if (fiches.length || pasFait.length) h += `<p class="sec">Fiches non faites</p><div class="card">`
+        + pasFait.map(e => `<div class="jr"><span class="n"><b>${esc(e.nom)}</b><small>Test d'entrée ouvert, pas encore fait</small></span></div>`).join("")
+        + fiches.map(t => { const nf = t.fiches.filter(x => x.fait).length;
+            return `<div class="jr"><span class="n"><b>${esc(nomDe(t.uid) || t.nom)}</b><small>Fiches de révision : ${nf}/${t.fiches.length} terminée${nf > 1 ? "s" : ""}</small></span></div>`; }).join("") + `</div>`;
+    }
+
+    /* 9. Raccourcis vers les tableaux habituels */
+    h += `<p class="sec">Tableaux</p><div class="card">`
+      + `<button class="row" data-go="dos"><span class="main"><span class="t">Tableau du dossier</span><span class="m">Corrigés élève par élève · coups de pouce · rythme et note d'investissement</span></span><span class="chev"></span></button>`
+      + (ch.competences && (!ch.competences.groupes || ch.competences.groupes.includes(c.id)) ? `<button class="row" data-go="comp"><span class="main"><span class="t">Profils de compétences du dossier</span><span class="m">Parcours avant l'évaluation</span></span><span class="chev"></span></button>` : "")
+      + (testsClasse(c).length ? `<button class="row" data-go="tests"><span class="main"><span class="t">Tests d'entrée</span><span class="m">Résultats et fiches de révision</span></span><span class="chev"></span></button>` : "") + `</div>`;
+
+    $("#pane").innerHTML = h;
+    $("#pane").querySelectorAll("[data-act]").forEach(b => b.onclick = () => acts[+b.dataset.act]());
+    const sel = $("#jdos"); if (sel) sel.onchange = () => { JOUR[c.id] = opts[+sel.value].titre; render(); };
+    $("#pane").querySelectorAll("[data-go]").forEach(b => b.onclick = () => {
+      if (b.dataset.go === "dos") go(chapitreCorriges, c.id, ch.titre);
+      else if (b.dataset.go === "comp") go(chapitreCompetences, c, ch);
+      else { stack[stack.length - 1] = [classe, [c.id, "tests"]]; stopLive(); classe(c.id, "tests"); } });
+  };
+
+  const ids = new Set(chs.map(ch => ch.verrou.id));
+  const a = onSnapshot(collection(db, "deblocages"), snap => {
+    D = new Set(); PREM = {};
+    snap.forEach(x => { const v = x.data(); if (!mesUid.has(v.uid)) return; D.add(v.doc + "_" + v.uid);
+      if (ids.has(v.doc)) { const t = v.at && v.at.toMillis ? v.at.toMillis() : Date.now(); if (!PREM[v.doc] || t < PREM[v.doc]) PREM[v.doc] = t; } });
+    pret = true; render();
+  }, e => toast("Lecture impossible : " + e.code));
+  const b = onSnapshot(collection(db, "pointsdecours"), snap => { P = {}; snap.forEach(x => { const v = x.data(); if (mesUid.has(v.uid)) P[v.uid + "__" + v.pdc] = v; }); render(); }, () => {});
+  const majT = () => { if (T && F) { TE = etatTests(T, F); render(); } };
+  const t1 = onSnapshot(collection(db, "tests"), snap => { T = []; snap.forEach(x => T.push({ id: x.id, ...x.data() })); majT(); }, () => {});
+  const t2 = onSnapshot(collection(db, "revisions"), snap => { F = []; snap.forEach(x => F.push(x.data())); majT(); }, () => {});
+  unsub = () => { a(); b(); t1(); t2(); if (RY) RY.stop(); };
 }
 
 /* ================= Onglet « Compétences » (24/11/2026, prototype BTS CIRA « Amplification ») =================
