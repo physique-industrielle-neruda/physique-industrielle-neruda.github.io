@@ -913,7 +913,8 @@
         "titre": "Animation – Statique des fluides",
         "duree": 1.0,
         "anim": true,
-        "questions": 18
+        "questions": 18,
+        "horsEss": true
        },
        {
         "num": "Exercice 1",
@@ -925,13 +926,15 @@
         "num": "Exercice 2",
         "titre": "Exercice 2 – La cuve de fioul du diesel de secours",
         "duree": 0.25,
-        "corrige": "et-statique-des-fluides-corrige-exercice-2"
+        "corrige": "et-statique-des-fluides-corrige-exercice-2",
+        "horsEss": true
        },
        {
         "num": "Exercice 3",
         "titre": "Exercice 3 – Le vérin de levage d'un transformateur",
         "duree": 0.25,
-        "corrige": "et-statique-des-fluides-corrige-exercice-3"
+        "corrige": "et-statique-des-fluides-corrige-exercice-3",
+        "horsEss": true
        },
        {
         "num": "Exercice 4",
@@ -945,6 +948,11 @@
         "duree": 1.0,
         "parcours": "et-statique-des-fluides-parcours"
        }
+      ],
+      "notions": [
+       "la pression et ses unités (p = F / S)",
+       "la relation fondamentale de la statique des fluides (Δp = ρ g Δh)",
+       "capteur de pression relatif ou absolu"
       ]
      }
     },
@@ -2142,7 +2150,8 @@
         "titre": "Animation – Révision de la chaîne de mesure",
         "duree": 1.0,
         "anim": true,
-        "questions": 24
+        "questions": 24,
+        "horsEss": true
        },
        {
         "num": "Exercice 1",
@@ -2154,13 +2163,15 @@
         "num": "Exercice 2",
         "titre": "Exercice 2",
         "duree": 0.25,
-        "corrige": "et-les-chaines-de-mesure-corrige-eleve-exercice-2"
+        "corrige": "et-les-chaines-de-mesure-corrige-eleve-exercice-2",
+        "horsEss": true
        },
        {
         "num": "Exercice 3",
         "titre": "Exercice 3",
         "duree": 0.25,
-        "corrige": "et-les-chaines-de-mesure-corrige-eleve-exercice-3"
+        "corrige": "et-les-chaines-de-mesure-corrige-eleve-exercice-3",
+        "horsEss": true
        },
        {
         "num": "Exercice 4",
@@ -2182,6 +2193,11 @@
       "aussi": [
        "donovan.f",
        "mathis.c"
+      ],
+      "notions": [
+       "la mise à l'échelle d'un signal 4-20 mA",
+       "le quantum et le nombre de bits d'un CAN",
+       "le temps de réponse d'un capteur (τ et t₅ %)"
       ]
      }
     },
@@ -2916,7 +2932,8 @@
         "titre": "Animation – Sources, conversions et stockage de l'énergie",
         "duree": 1.0,
         "anim": true,
-        "questions": 21
+        "questions": 21,
+        "horsEss": true
        },
        {
         "num": "Exercice 1",
@@ -2928,13 +2945,15 @@
         "num": "Exercice 2",
         "titre": "Exercice 2 – Le monte-charge de la papeterie",
         "duree": 0.25,
-        "corrige": "et-sources-conversions-et-stockage-de-l-ene-corrige-exercice-2"
+        "corrige": "et-sources-conversions-et-stockage-de-l-ene-corrige-exercice-2",
+        "horsEss": true
        },
        {
         "num": "Exercice 3",
         "titre": "Exercice 3 – Le chauffe-eau thermodynamique de la caserne",
         "duree": 0.25,
-        "corrige": "et-sources-conversions-et-stockage-de-l-ene-corrige-exercice-3"
+        "corrige": "et-sources-conversions-et-stockage-de-l-ene-corrige-exercice-3",
+        "horsEss": true
        },
        {
         "num": "Exercice 4",
@@ -2949,7 +2968,12 @@
         "parcours": "et-sources-conversions-et-stockage-de-l-ene-parcours"
        }
       ],
-      "classeCours": "et2a"
+      "classeCours": "et2a",
+      "notions": [
+       "énergie, puissance et facteur de charge (E = P × Δt)",
+       "le rendement d'une chaîne de conversion et le COP",
+       "l'autonomie d'un stockage"
+      ]
      }
     }
    ]
@@ -4088,7 +4112,8 @@
         "titre": "Animation – Amplification",
         "duree": 1.0,
         "anim": true,
-        "questions": 16
+        "questions": 16,
+        "horsEss": true
        },
        {
         "num": "Exercice 1",
@@ -4100,13 +4125,15 @@
         "num": "Exercice 2",
         "titre": "Exercice 2 – La vitesse d'un agitateur de fromagerie",
         "duree": 0.25,
-        "corrige": "cira-amplification-corrige-exercice-2"
+        "corrige": "cira-amplification-corrige-exercice-2",
+        "horsEss": true
        },
        {
         "num": "Exercice 3",
         "titre": "Exercice 3 – Le bac de rinçage d'une ligne de traitement de surface",
         "duree": 0.25,
-        "corrige": "cira-amplification-corrige-exercice-3"
+        "corrige": "cira-amplification-corrige-exercice-3",
+        "horsEss": true
        },
        {
         "num": "Exercice 4",
@@ -4120,6 +4147,11 @@
         "duree": 1.0,
         "parcours": "cira-amplification-parcours"
        }
+      ],
+      "notions": [
+       "le gain d'un montage non inverseur et d'un montage inverseur",
+       "le soustracteur pour décaler le zéro",
+       "la mise à l'échelle du conditionneur complet"
       ]
      }
     }

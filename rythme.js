@@ -9,12 +9,16 @@
    - TP (25/11/2026) : faits par toute la classe en même temps, hors jauge : une séance « J'ai TP » (tp: true) ne compte pas
      dans le temps écoulé et le TP ne compte pas dans le travail fait ; son corrigé rapporte toujours ses points « Corrigés ».
    - Frein : plus d'1 h d'avance sur le temps écoulé -> la suite (hors TP et cours) attend la prochaine séance.
-   - Note /20 : corrigés 8, cours 2, animation 3, régularité 5, attitude 2 (+ ajustement du professeur),
-     arrêtée à la fin du jour de l'évaluation. Les coups de pouce ne comptent jamais. */
+   - Note /20 (25/11/2026 : critère « attitude » supprimé, la note ne porte que sur le travail) :
+     corrigés 10, cours 2, animation 3, régularité 5 (dossier avec points de cours en ligne : corrigés 9, cours 3)
+     + ajustement du professeur, arrêtée à la fin du jour de l'évaluation. Les coups de pouce ne comptent jamais.
+   - Chemin essentiel (25/11/2026) : le professeur l'ouvre à un élève en retard (r.essentiel = date). Les pièces
+     marquées « horsEss » (catalogue) deviennent facultatives : la jauge et la régularité (séances suivantes) ne
+     portent plus que sur le chemin essentiel. La note d'investissement continue de compter tout le dossier. */
 export const toMs = x => x == null ? null : typeof x === "number" ? x : x.toMillis ? x.toMillis() : x instanceof Date ? x.getTime() : (typeof x === "string" ? Date.parse(x) : null);
-export const BAREME = { corriges: 8, cours: 2, anim: 3, regularite: 5, attitude: 2 };
+export const BAREME = { corriges: 10, cours: 2, anim: 3, regularite: 5 };
 /* 25/11/2026 : dossier avec points de cours en ligne → corrigés 7, cours 3 (exemples + points de cours) */
-export const BAREME_PDC = { corriges: 7, cours: 3, anim: 3, regularite: 5, attitude: 2 };
+export const BAREME_PDC = { corriges: 9, cours: 3, anim: 3, regularite: 5 };
 export const baremeDe = ch => ch && ch.rythme && ch.rythme.items.some(x => x.pdc) ? BAREME_PDC : BAREME;
 export const exemplesId = chapId => "exemples:" + chapId;
 export const rythmeDocId = (chapId, uid) => "rythme_" + chapId + "_" + uid;
@@ -25,7 +29,7 @@ export function heures(h){
 }
 export function finJour(iso){ if (!iso) return Infinity; const d = new Date(iso + "T23:59:59"); return isNaN(d) ? Infinity : d.getTime(); }
 
-/* src = { corrAt: {corrigeId: ms}, mp: {pdc: doc pointsdecours}, r: doc rythme (seances, evalDate, attitude, ajust), now } */
+/* src = { corrAt: {corrigeId: ms}, mp: {pdc: doc pointsdecours}, r: doc rythme (seances, evalDate, ajust, essentiel), now } */
 export function etat(ch, src){
   const R = ch.rythme, chapId = ch.verrou ? ch.verrou.id : ch.titre, now = src.now || Date.now();
   const r = src.r || {}, corrAt = src.corrAt || {}, mp = src.mp || {};
@@ -42,23 +46,30 @@ export function etat(ch, src){
     else if (it.parcours) { const v = mp["parcours:" + it.parcours]; if (v && v.fini) { t = toMs(v.date) || now; part = 1; } }
     return { ...it, t, part, fait: !!t };
   });
-  const contenu = items.reduce((s, x) => s + (x.tp ? 0 : x.duree), 0), marge = R.marge ?? 1, total = contenu + marge;
+  const contenuTout = items.reduce((s, x) => s + (x.tp ? 0 : x.duree), 0), marge = R.marge ?? 1, total = contenuTout + marge;
+  const contenuEss = items.reduce((s, x) => s + (x.tp || x.horsEss ? 0 : x.duree), 0);
+  const essDepuis = toMs(r.essentiel), ess = !!essDepuis && contenuEss < contenuTout;
+  const ecart = contenuTout - contenuEss;   // temps gagné par le chemin essentiel
+  const contenu = ess ? contenuEss : contenuTout;
   const limite = finJour(r.evalDate);
   const toutes = (r.seances || []).map(s => ({ t: toMs(s.t), h: +s.h || 0, tp: !!s.tp })).filter(s => s.t).sort((a, b) => a.t - b.t);
   const seances = toutes.filter(s => !s.tp);   // séances de TP : hors jauge
   const ecoule = seances.reduce((s, x) => s + x.h, 0);
-  const faitA = t => items.reduce((s, x) => s + (!x.tp && x.t && x.t <= t ? x.duree : 0), 0);
+  const faitA = (t, e = ess) => items.reduce((s, x) => s + (!x.tp && !(e && x.horsEss) && x.t && x.t <= t ? x.duree : 0), 0);
   const fait = faitA(now);
-  const retard = Math.min(ecoule, contenu) - fait;
+  /* Temps de cours « attendu » : sur le chemin essentiel, l'élève dispose du temps gagné (pièces facultatives) */
+  const attendu = (cum, e = ess) => e ? Math.min(Math.max(0, cum - ecart), contenuEss) : Math.min(cum, contenuTout);
+  const retard = attendu(ecoule) - fait;
+  const deuxTiers = ecoule >= (2 / 3) * total - 1e-6;   // alerte aux deux tiers du dossier
   const statut = retard < -1e-6 ? "avance" : retard <= 1e-6 ? "vert" : retard <= 1 ? "orange" : "rouge";
-  const avance = fait - ecoule;
-  const frein = avance >= marge && ecoule < contenu;
+  const avance = fait - (ess ? attendu(ecoule) : ecoule);
+  const frein = !ess && avance >= marge && ecoule < contenu;
   const reste = Math.max(0, contenu - fait), resteCours = Math.max(0, total - ecoule);
   /* Régularité : à chaque séance, l'élève est-il à jour avant la séance suivante ? (vert 1, orange 0,5, rouge 0) */
   const scores = []; let cum = 0;
   const sv = seances.filter(s => s.t <= limite);
   sv.forEach((s, k) => { cum += s.h; const tn = k + 1 < sv.length ? sv[k + 1].t : Math.min(now, limite);
-    const rr = Math.min(cum, contenu) - faitA(tn); scores.push(rr <= 0 ? 1 : rr <= 1 ? 0.5 : 0); });
+    const e = ess && s.t >= essDepuis, rr = attendu(cum, e) - faitA(tn, e); scores.push(rr <= 0 ? 1 : rr <= 1 ? 0.5 : 0); });
   const corr = items.filter(x => x.corrige), avant = x => x.t && x.t <= limite;
   const B = baremeDe(ch);
   const anim = items.find(x => x.anim), exs = items.filter(x => x.exemple || x.pdc);   // critère « Cours » : exemples + points de cours en ligne
@@ -66,12 +77,11 @@ export function etat(ch, src){
     corriges: corr.length ? B.corriges * corr.filter(avant).length / corr.length : B.corriges,
     cours: exs.length ? B.cours * exs.filter(avant).length / exs.length : B.cours,
     anim: anim ? B.anim * anim.part : B.anim,
-    regularite: scores.length ? B.regularite * scores.reduce((a, b) => a + b, 0) / scores.length : B.regularite,
-    attitude: Math.max(0, Math.min(B.attitude, B.attitude + 0.5 * (+r.attitude || 0)))
+    regularite: scores.length ? B.regularite * scores.reduce((a, b) => a + b, 0) / scores.length : B.regularite
   };
   const brut = Object.values(pts).reduce((a, b) => a + b, 0) + (+r.ajust || 0);
   const note = Math.max(0, Math.min(20, Math.round(brut * 2) / 2));
-  return { bareme: B, toutes, items, contenu, marge, total, ecoule, fait, retard, statut, avance, frein, reste, resteCours, seances, scores, pts, note, limite, evalDate: r.evalDate || "" };
+  return { bareme: B, toutes, items, contenu, contenuTout, contenuEss, ess, deuxTiers, marge, total, ecoule, fait, retard, statut, avance, frein, reste, resteCours, seances, scores, pts, note, limite, evalDate: r.evalDate || "" };
 }
 export const STATUTS = {
   avance: { lib: "En avance",      couleur: "#2E75B6", fond: "#DEEAF6" },

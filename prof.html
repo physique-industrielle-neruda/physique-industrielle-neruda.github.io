@@ -117,6 +117,7 @@ label.f{display:block;font-size:.9rem;color:var(--muted);margin-top:10px}
 .linkbtn{border:0;background:none;color:var(--accent);text-decoration:underline;cursor:pointer;padding:0;font-size:inherit}
 .ry-ex{display:inline-flex;gap:2px}.ry-ex i{font-style:normal;font-size:.7rem;width:16px;height:16px;line-height:16px;border-radius:50%;background:var(--grid);color:var(--muted)}.ry-ex i.on{background:var(--ok);color:#fff}
 .ry-fige{color:#2E75B6;font-weight:700}
+.ry-alerte{border-left:5px solid #C55A11;background:#FBE5D6;padding:10px 14px;margin:10px 0}.ry-alerte p{margin:6px 0}.ry-ess{font-size:.78rem}
 .ry-pill{display:inline-block;font-weight:700;font-size:.78rem;padding:2px 8px;border-radius:999px}
 .ry-ctl{white-space:nowrap}.ry-ctl button{border:1px solid var(--grid);background:var(--surface);border-radius:6px;width:26px;height:26px;margin:0 4px;cursor:pointer;font-weight:700}
 
@@ -529,7 +530,7 @@ function rythmePanel(c, g, el, getP, rerender){
   const kc = R.classeCours && R.classeCours !== c.id ? CLASSES.find(k => k.id === R.classeCours) : null;
   const ailleurs = kc ? el.filter(e => (kc.eleves || []).some(x => x.login === e.login)) : [];
   el = el.filter(e => !ailleurs.includes(e));
-  const aTP = R.items.some(x => x.tp);
+  const aTP = R.items.some(x => x.tp), aEss = R.items.some(x => x.horsEss);   // chemin essentiel (25/11/2026)
   let AT = {}, DOCS = {}, busy = false;
   const ref = uid => doc(db, "deblocages", rythmeDocId(chapId, uid));
   const stop = onSnapshot(collection(db, "deblocages"), snap => {
@@ -581,16 +582,23 @@ function rythmePanel(c, g, el, getP, rerender){
       <p class="note">Coche la séance <b>en fin de cours</b>.${aTP ? " Une séance de TP ne fait pas avancer la jauge." : ""}${ailleurs.length ? ` ${ailleurs.map(e => esc(e.nom)).join(", ")} : suivi${ailleurs.length > 1 ? "s" : ""} avec la classe ${esc(kc.nom)} (séances cochées là-bas).` : ""} ${der ? `Dernière : ${jour(der.t)} (${der.tp ? "TP, " : ""}${der.h} h) · <button class="linkbtn" id="ryUndo">annuler la dernière séance</button>` : ""}</p>
       <label class="note ry-date">Date de l'évaluation (la note est arrêtée ce jour-là) : <input type="date" id="ryEval" value="${esc(k.evalDate)}"></label></div>`;
     const lignes = el.map(e => ({ e, ...valeurs(e), v: DOCS[e.uid] || {} }));
+    /* 25/11/2026 : alerte aux deux tiers du dossier (chemin essentiel + 20 min de reprise avec le professeur) */
+    if (aEss && !fg && ecoule >= (2 / 3) * (contenu + marge) - 1e-6) {
+      const enRetard = lignes.filter(x => x.s.statut === "orange" || x.s.statut === "rouge" || x.s.ess);
+      h += `<div class="card ry-alerte"><b>⚠ Deux tiers du dossier écoulés</b>${enRetard.length
+        ? `<p>En retard : ${enRetard.map(x => `${esc(x.e.nom)} <span class="ry-pill" style="color:${STATUTS[x.s.statut].couleur};background:${STATUTS[x.s.statut].fond}">${x.s.ess ? "essentiel · " : ""}${STATUTS[x.s.statut].lib.toLowerCase()}</span>`).join(" · ")}.</p>
+        <p>1. Ouvre-leur le <b>chemin essentiel</b> (bouton sous leur rythme dans le tableau).<br>2. Pendant le <b>parcours avant l'évaluation</b>, prends-les <b>20 min</b> au tableau${(R.notions || []).length ? " sur : " + R.notions.map(n => "<b>" + esc(n) + "</b>").join(" ; ") : " sur les 2 ou 3 notions clés du dossier"}. Les autres font leur parcours en autonomie.</p>`
+        : `<p>Personne n'est en retard pour l'instant.</p>`}</div>`;
+    }
     h += `${fg ? `<p class="note ry-fige">🔒 Notes figées le ${esc(jour(fg.date))} : elles ne bougent plus. <button class="linkbtn" id="ryDefige">Défiger</button></p>` : ""}
-      <div class="card grille ryg"><table><tr><th class="nom">Élève</th><th>Rythme</th><th>Corrigés<small class="tsc">/${BAREME_C.corriges}</small></th><th>Cours<small class="tsc">/${BAREME_C.cours}</small></th><th>Anim.<small class="tsc">/${BAREME_C.anim}</small></th><th>Régul.<small class="tsc">/${BAREME_C.regularite}</small></th><th>Attitude<small class="tsc">/${BAREME_C.attitude}</small></th><th>Ajust.</th><th>Note<small class="tsc">/20</small></th></tr>`
+      <div class="card grille ryg"><table><tr><th class="nom">Élève</th><th>Rythme</th><th>Corrigés<small class="tsc">/${BAREME_C.corriges}</small></th><th>Cours<small class="tsc">/${BAREME_C.cours}</small></th><th>Anim.<small class="tsc">/${BAREME_C.anim}</small></th><th>Régul.<small class="tsc">/${BAREME_C.regularite}</small></th><th>Ajust.</th><th>Note<small class="tsc">/20</small></th></tr>`
       + lignes.map(({ e, s, pts, note, fige, v }) => { const st = STATUTS[s.statut];
         const pill = s.statut === "avance" ? "+" + heures(s.avance) : heures(s.fait) + " / " + heures(Math.min(s.ecoule, s.contenu));
         const ctl = (attr, val, lib) => fige ? "" : `<button ${attr}="${val}" data-uid="${esc(e.uid)}" aria-label="${lib}">${val > 0 ? "+" : "−"}</button>`;
         const autre = (R.aussi || []).includes(e.login) ? CLASSES.filter(k => k.id !== c.id && (k.eleves || []).some(x => x.login === e.login)).map(k => k.nom).join(", ") : "";
         return `<tr><td class="nom">${esc(e.nom)}${autre ? `<br><small class="tsc" title="Cours avec cette classe, TP avec ${esc(autre)}">cours ici · TP avec ${esc(autre.replace(/^BTS ET – /, ""))}</small>` : ""}</td>
-        <td><span class="ry-pill" style="color:${st.couleur};background:${st.fond}" title="${st.lib} : ${heures(s.fait)} faites pour ${heures(s.ecoule)} de cours">${pill}</span>${s.frein ? ' <span title="Frein : plus d\'1 h d\'avance, la suite attend la prochaine séance">🔒</span>' : ""}</td>
+        <td><span class="ry-pill" style="color:${st.couleur};background:${st.fond}" title="${st.lib} : ${heures(s.fait)} faites pour ${heures(s.ecoule)} de cours">${pill}</span>${s.frein ? ' <span title="Frein : plus d\'1 h d\'avance, la suite attend la prochaine séance">🔒</span>' : ""}${aEss && (s.ess || s.statut === "orange" || s.statut === "rouge") && !fige ? `<br><button class="linkbtn ry-ess" data-ess="${esc(e.uid)}" title="${s.ess ? "Revenir au dossier complet" : "Ouvrir le chemin essentiel : les pièces facultatives sortent de sa jauge"}">${s.ess ? "✓ chemin essentiel" : "→ chemin essentiel"}</button>` : s.ess ? '<br><small class="tsc">chemin essentiel</small>' : ""}</td>
         <td>${f1(pts.corriges)}</td><td>${exDe(e)}<br>${f1(pts.cours)}</td><td>${f1(pts.anim)}</td><td>${f1(pts.regularite)}</td>
-        <td class="ry-ctl">${ctl("data-att", -1, "Attitude moins")}${f1(pts.attitude)}${ctl("data-att", 1, "Attitude plus")}</td>
         <td class="ry-ctl">${ctl("data-aj", -0.5, "Ajustement moins")}${(+v.ajust || 0) > 0 ? "+" : ""}${f1(+v.ajust || 0)}${ctl("data-aj", 0.5, "Ajustement plus")}</td>
         <td><b>${f1(note)}</b></td></tr>`; }).join("")
       + `</table></div>
@@ -598,14 +606,14 @@ function rythmePanel(c, g, el, getP, rerender){
       <button class="btn ghost" id="ryCopy">Copier les notes pour Pronote</button>
       <p class="note">Rythme (travail en autonomie, hors TP) : <span class="ry-pill" style="color:${STATUTS.avance.couleur};background:${STATUTS.avance.fond}">+1 h</span> en avance · <span class="ry-pill" style="color:${STATUTS.vert.couleur};background:${STATUTS.vert.fond}">à jour</span> · <span class="ry-pill" style="color:${STATUTS.orange.couleur};background:${STATUTS.orange.fond}">jusqu'à 1 h de retard</span> · <span class="ry-pill" style="color:${STATUTS.rouge.couleur};background:${STATUTS.rouge.fond}">plus d'1 h</span> · 🔒 frein : plus d'1 h d'avance, la suite attend la prochaine séance.<br>
       Corrigés : activités, TP et exercices dont tu as débloqué le corrigé avant la fin du jour de l'évaluation. Cours : corrections des exemples ouvertes par l'élève lui-même, sans demande${R.items.some(x => x.pdc) ? ", et points de cours en ligne terminés (pastilles P1, P2…)" : ""} ; pastille verte = fait, date au survol ou en appui long. Animation : part des questions traitées.
-      Régularité : à chaque séance cochée (hors TP), l'élève est-il à jour avant la séance suivante (à jour ou en avance 1, orange ½, rouge 0) ? Attitude : 2 points par défaut, − retire ½ point (à utiliser par exception), + rend ½ point. Ajust. : ta correction manuelle de la note. Les coups de pouce ne comptent jamais.
+      Régularité : à chaque séance cochée (hors TP), l'élève est-il à jour avant la séance suivante (à jour ou en avance 1, orange ½, rouge 0) ? Ajust. : ta correction manuelle de la note. La note ne porte que sur le travail : les coups de pouce et le comportement ne comptent jamais.${aEss ? "<br>Chemin essentiel : pour un élève en retard, les pièces facultatives (" + esc(R.items.filter(x => x.horsEss).map(x => x.titre).join(", ")) + ") sortent de sa jauge et de sa régularité à partir du jour où tu l'ouvres. Sa note d'investissement compte toujours tout le dossier." : ""}
       « Figer » enregistre les notes du jour : elles ne changent plus, même si un élève continue l'animation.</p>`;
     return h;
   };
   const imprimer = () => {
     const k = commun(), fg = figee(), w = window.open("", "_blank");
     if (!w) return toast("Autorise l'ouverture des fenêtres pour enregistrer le PDF.");
-    const L = ["corriges", "cours", "anim", "regularite", "attitude"], T = { corriges: "Corrigés", cours: "Cours", anim: "Animation", regularite: "Régularité", attitude: "Attitude" };
+    const L = ["corriges", "cours", "anim", "regularite"], T = { corriges: "Corrigés", cours: "Cours", anim: "Animation", regularite: "Régularité" };
     const rows = el.map(e => { const x = valeurs(e), v = DOCS[e.uid] || {};
       return `<tr><td class="n">${esc(e.nom)}</td>${L.map(l => `<td>${f1(x.pts[l])}</td>`).join("")}<td>${(+v.ajust || 0) > 0 ? "+" : ""}${f1(+v.ajust || 0)}</td><td class="b">${f1(x.note)}</td></tr>`; }).join("");
     w.document.write(`<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>Note d'investissement – ${esc(ch.titre)} – ${esc(c.nom)}</title>
@@ -615,7 +623,7 @@ function rythmePanel(c, g, el, getP, rerender){
       <h1>Note d'investissement – ${esc(ch.titre)}</h1>
       <p><b>${esc(c.nom)}</b> · ${fg ? "notes figées le " + esc(jour(fg.date)) : "aperçu du " + esc(jour(Date.now())) + " (non figé)"}${k.evalDate ? " · évaluation le " + esc(new Date(k.evalDate + "T12:00:00").toLocaleDateString("fr-FR")) : ""}</p>
       <table><tr><th>Élève</th>${L.map(l => `<th>${T[l]} /${BAREME_C[l]}</th>`).join("")}<th>Ajust.</th><th>Note /20</th></tr>${rows}</table>
-      <p style="margin-top:10px">Corrigés : corrigés débloqués (activités, TP, exercices) · Cours : corrections des exemples ouvertes${R.items.some(x => x.pdc) ? " et points de cours terminés" : ""} · Animation : questions traitées · Régularité : élève à jour à chaque séance (hors TP) · Attitude : 2 points, ½ point retiré par remarque. Note arrondie au demi-point.</p>
+      <p style="margin-top:10px">Corrigés : corrigés débloqués (activités, TP, exercices) · Cours : corrections des exemples ouvertes${R.items.some(x => x.pdc) ? " et points de cours terminés" : ""} · Animation : questions traitées · Régularité : élève à jour à chaque séance (hors TP). La note ne porte que sur le travail. Note arrondie au demi-point.</p>
       <script>window.onload = () => setTimeout(() => window.print(), 300);<\/script></body></html>`);
     w.document.close();
   };
@@ -628,9 +636,15 @@ function rythmePanel(c, g, el, getP, rerender){
     });
     const u = $("#ryUndo"); if (u) u.onclick = () => { const k = commun(); if (!k.seances.length || !confirm("Annuler la dernière séance cochée ?")) return; ecrireTous({ seances: k.seances.slice(0, -1) }, "Dernière séance annulée."); };
     const d = $("#ryEval"); if (d) d.onchange = () => ecrireTous({ evalDate: d.value || "" }, d.value ? "Date de l'évaluation enregistrée." : "Date de l'évaluation effacée.");
-    document.querySelectorAll(".ryg [data-att], .ryg [data-aj]").forEach(b => b.onclick = async () => {
+    document.querySelectorAll(".ryg [data-ess]").forEach(b => b.onclick = async () => {
+      const uid = b.dataset.ess, v = DOCS[uid] || {}, nom = (el.find(e => e.uid === uid) || {}).nom || "";
+      if (!confirm(v.essentiel ? "Remettre " + nom + " sur le dossier complet ?" : "Ouvrir le chemin essentiel à " + nom + " ? Les pièces facultatives sortent de sa jauge.")) return;
+      try { await setDoc(ref(uid), { uid, doc: docId, classe: c.id, essentiel: v.essentiel ? null : Date.now(), maj: serverTimestamp() }, { merge: true }); toast(v.essentiel ? "Dossier complet rétabli." : "Chemin essentiel ouvert."); }
+      catch(x){ toast("Échec (" + (x.code || x.message) + ")."); }
+    });
+    document.querySelectorAll(".ryg [data-aj]").forEach(b => b.onclick = async () => {
       const uid = b.dataset.uid, v = DOCS[uid] || {};
-      const data = b.dataset.att ? { attitude: Math.max(-4, Math.min(0, (+v.attitude || 0) + +b.dataset.att)) } : { ajust: Math.max(-10, Math.min(10, (+v.ajust || 0) + +b.dataset.aj)) };
+      const data = { ajust: Math.max(-10, Math.min(10, (+v.ajust || 0) + +b.dataset.aj)) };
       try { await setDoc(ref(uid), { uid, doc: docId, classe: c.id, ...data, maj: serverTimestamp() }, { merge: true }); }
       catch(x){ toast("Échec (" + (x.code || x.message) + ")."); }
     });
