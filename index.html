@@ -636,7 +636,7 @@ function chapBlock(c, ch, docs, forceOpen, outil){
   const badge = !outil && ch.verrou && (S.prof || S.premium) ? `<span class="badge-verrou">${LOCK}Chapitre sous cadenas</span>` : "";
   s.innerHTML = `<summary>${outil ? FOLDER.replace('class="folder"', 'class="folder outil"') : FOLDER}<h3><span>${esc(ch.titre)}</span><span class="count">${n} document${n > 1 ? "s" : ""}</span></h3>${badge}<span class="chev" aria-hidden="true"></span></summary>`;
   s.addEventListener("toggle", () => { if (s.open) opened.add(key); else opened.delete(key); });
-  if (!outil && ch.rythme) { const j = jaugeBox(c, ch); if (j) s.appendChild(j); }
+  if (!outil && rythmeDe(ch)) { const j = jaugeBox(c, ch); if (j) s.appendChild(j); }
   if (outil || !docs.some(d => d.rubrique)) {
     const ul = document.createElement("ul"); ul.className = "docs";
     docs.forEach(d => ul.appendChild(docRow(c, d)));
@@ -770,7 +770,7 @@ function apercuRythme(ch){
 }
 function freine(c, d){
   if (!eleveRev() || d.corrige || d.lien || /coups?\s+de\s+pouce/i.test(d.titre)) return false;
-  const ch = chapDe(c.id, d); if (!ch || !ch.rythme || !chapOK(ch)) return false;
+  const ch = chapDe(c.id, d); if (!ch || !rythmeDe(ch) || !chapOK(ch)) return false;
   const it = itemDuDoc(ch, numeroDoc(d), d); if (!it || it.tp || it.exemple) return false;
   const e = etatEleve(ch); if (!e || !e.frein) return false;
   const x = e.items.find(y => y.num === it.num);
@@ -1200,7 +1200,17 @@ function compDe(ch){
   const login = String(S.user.email || "").split("@")[0];
   return (k.aussi || []).includes(login) ? k : null;
 }
-const docCompOK = (ch, d) => !ch.competences || !!compDe(ch) || !(d.format === "parcours" || /^Comment ça marche – profil/i.test(d.titre));
+/* Rythme réservé à certaines classes (25/11/2026, « Les chaînes de mesure » : 2ETA seulement ; rythme.groupes / rythme.aussi).
+   Hors de ces classes : ni jauge, ni frein, ni page « Correction des exemples » pour ce dossier. */
+function rythmeDe(ch){
+  const r = ch && ch.rythme; if (!r) return null;
+  if (!r.groupes || !S.user || S.prof || S.premium || S.tous) return r;
+  if (r.groupes.includes(S.groupe)) return r;
+  const login = String(S.user.email || "").split("@")[0];
+  return (r.aussi || []).includes(login) ? r : null;
+}
+const docCompOK = (ch, d) => (d.format !== "exemples" || !ch.rythme || !!rythmeDe(ch))
+  && (!ch.competences || !!compDe(ch) || !(d.format === "parcours" || /^Comment ça marche – profil/i.test(d.titre)));
 window.addEventListener("message", async e => {
   if (!e.data || e.data.type !== "anim-reponse") return;
   const info = ANIMS.get(e.source); if (!info || !eleveRev()) return;

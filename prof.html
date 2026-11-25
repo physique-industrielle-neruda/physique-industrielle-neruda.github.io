@@ -518,6 +518,12 @@ function chapitreGrille(c, g){
 function rythmePanel(c, g, el, getP, rerender){
   const ch = g.ch, R = ch.rythme, BAREME_C = baremeDe(ch);
   if (!R) return { html: () => "", bind: () => {}, stop: () => {} };
+  /* 25/11/2026 (ET « Les chaînes de mesure ») : rythme réservé à certaines classes (R.groupes) ; ailleurs, simple rappel */
+  if (R.groupes && !R.groupes.includes(c.id)) {
+    const noms = R.groupes.map(id => (CLASSES.find(k => k.id === id) || {}).nom || id).join(", ");
+    const doubles = el.filter(e => (R.aussi || []).includes(e.login)).map(e => esc(e.nom));
+    return { html: () => `<p class="sec">Rythme du dossier et note d'investissement</p><div class="card ry"><p class="note">Pas de rythme ni de note d'investissement dans ce dossier pour cette classe : ils sont suivis seulement avec la classe <b>${esc(noms)}</b>.${doubles.length ? ` ${doubles.join(" et ")} ${doubles.length > 1 ? "ont" : "a"} le cours avec la classe ${esc(noms)} : ${doubles.length > 1 ? "leur rythme et leur note sont suivis" : "son rythme et sa note sont suivis"} là-bas (pas ici).` : ""}</p></div>`, bind: () => {}, stop: () => {} };
+  }
   const chapId = ch.verrou ? ch.verrou.id : ch.titre, docId = rythmeDoc(chapId);
   /* 25/11/2026 (ET « Sources… ») : un élève inscrit dans deux classes (2ET/2ETA) suit les séances de la classe où il a cours (R.classeCours) */
   const kc = R.classeCours && R.classeCours !== c.id ? CLASSES.find(k => k.id === R.classeCours) : null;
@@ -576,7 +582,8 @@ function rythmePanel(c, g, el, getP, rerender){
       + lignes.map(({ e, s, pts, note, fige, v }) => { const st = STATUTS[s.statut];
         const pill = s.statut === "avance" ? "+" + heures(s.avance) : heures(s.fait) + " / " + heures(Math.min(s.ecoule, s.contenu));
         const ctl = (attr, val, lib) => fige ? "" : `<button ${attr}="${val}" data-uid="${esc(e.uid)}" aria-label="${lib}">${val > 0 ? "+" : "−"}</button>`;
-        return `<tr><td class="nom">${esc(e.nom)}</td>
+        const autre = (R.aussi || []).includes(e.login) ? CLASSES.filter(k => k.id !== c.id && (k.eleves || []).some(x => x.login === e.login)).map(k => k.nom).join(", ") : "";
+        return `<tr><td class="nom">${esc(e.nom)}${autre ? `<br><small class="tsc" title="Cours avec cette classe, TP avec ${esc(autre)}">cours ici · TP avec ${esc(autre.replace(/^BTS ET – /, ""))}</small>` : ""}</td>
         <td><span class="ry-pill" style="color:${st.couleur};background:${st.fond}" title="${st.lib} : ${heures(s.fait)} faites pour ${heures(s.ecoule)} de cours">${pill}</span>${s.frein ? ' <span title="Frein : plus d\'1 h d\'avance, la suite attend la prochaine séance">🔒</span>' : ""}</td>
         <td>${f1(pts.corriges)}</td><td>${exDe(e)}<br>${f1(pts.cours)}</td><td>${f1(pts.anim)}</td><td>${f1(pts.regularite)}</td>
         <td class="ry-ctl">${ctl("data-att", -1, "Attitude moins")}${f1(pts.attitude)}${ctl("data-att", 1, "Attitude plus")}</td>

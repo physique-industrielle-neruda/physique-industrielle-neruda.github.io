@@ -1678,6 +1678,15 @@
        "rubrique": "Cours"
       },
       {
+       "titre": "Correction des exemples",
+       "type": "Exemples",
+       "format": "exemples",
+       "fichier": "21d5ef21f1f3561d2af8242b.bin",
+       "taille": 8729,
+       "cv": "et-chap-les-chaines-de-mesure",
+       "rubrique": "Cours"
+      },
+      {
        "titre": "Activité 1 – Boucle 4-20 mA du pressuriseur du réacteur nucléaire",
        "type": "Activité",
        "fichier": "83426bb313f3cb91e7d9cf47.bin",
@@ -2052,6 +2061,121 @@
         "24": "VAL"
        }
       },
+      "groupes": [
+       "et2a"
+      ],
+      "aussi": [
+       "donovan.f",
+       "mathis.c"
+      ]
+     },
+     "rythme": {
+      "marge": 1.0,
+      "seances": {
+       "et2a": [
+        1
+       ]
+      },
+      "items": [
+       {
+        "num": "Activité 1",
+        "titre": "Activité 1 – Boucle 4-20 mA du pressuriseur du réacteur nucléaire",
+        "duree": 0.75,
+        "corrige": "et-les-chaines-de-mesure-corrige-eleve-activite-1-boucle-4-20-ma-du-pressur"
+       },
+       {
+        "num": "Exemple 1",
+        "titre": "Cours partie 1 et EXEMPLE 1",
+        "duree": 0.1667,
+        "exemple": 1
+       },
+       {
+        "num": "Exemple 2",
+        "titre": "Cours partie 2 et EXEMPLE 2",
+        "duree": 0.25,
+        "exemple": 2
+       },
+       {
+        "num": "Activité 2",
+        "titre": "Activité 2 – Numérisation d'une mesure de température",
+        "duree": 0.75,
+        "corrige": "et-les-chaines-de-mesure-corrige-eleve-activite-2-numerisation-d-une-mesure"
+       },
+       {
+        "num": "Exemple 3",
+        "titre": "Cours partie 3 et EXEMPLE 3",
+        "duree": 0.1667,
+        "exemple": 3
+       },
+       {
+        "num": "Exemple 4",
+        "titre": "Cours partie 4 et EXEMPLE 4",
+        "duree": 0.1333,
+        "exemple": 4
+       },
+       {
+        "num": "Exemple 5",
+        "titre": "Cours partie 4 et EXEMPLE 5",
+        "duree": 0.1167,
+        "exemple": 5
+       },
+       {
+        "num": "Activité 3",
+        "titre": "Activité 3 – Temps de réponse et précision d'une sonde Pt100",
+        "duree": 0.75,
+        "corrige": "et-les-chaines-de-mesure-corrige-eleve-activite-3-temps-de-reponse-et-preci"
+       },
+       {
+        "num": "Exemple 6",
+        "titre": "Cours partie 5 et EXEMPLE 6",
+        "duree": 0.1667,
+        "exemple": 6
+       },
+       {
+        "num": "Exemple 7",
+        "titre": "Cours partie 6 et EXEMPLE 7",
+        "duree": 0.1667,
+        "exemple": 7
+       },
+       {
+        "num": "Animation",
+        "titre": "Animation – Révision de la chaîne de mesure",
+        "duree": 1.0,
+        "anim": true,
+        "questions": 24
+       },
+       {
+        "num": "Exercice 1",
+        "titre": "Exercice 1",
+        "duree": 0.25,
+        "corrige": "et-les-chaines-de-mesure-corrige-eleve-exercice-1"
+       },
+       {
+        "num": "Exercice 2",
+        "titre": "Exercice 2",
+        "duree": 0.25,
+        "corrige": "et-les-chaines-de-mesure-corrige-eleve-exercice-2"
+       },
+       {
+        "num": "Exercice 3",
+        "titre": "Exercice 3",
+        "duree": 0.25,
+        "corrige": "et-les-chaines-de-mesure-corrige-eleve-exercice-3"
+       },
+       {
+        "num": "Exercice 4",
+        "titre": "Exercice 4",
+        "duree": 0.25,
+        "corrige": "et-les-chaines-de-mesure-corrige-eleve-exercice-4"
+       },
+       {
+        "num": "Parcours",
+        "titre": "Mon parcours avant l'évaluation",
+        "duree": 1.0,
+        "parcours": "et-les-chaines-de-mesure-parcours"
+       }
+      ],
+      "classeCours": "et2a",
       "groupes": [
        "et2a"
       ],
@@ -4482,9 +4606,9 @@
   }
  ],
  "outilsWk": {
-  "et": "XlNce8LBrF6XU0tdoSL4Su9JUQgjwUKjZ1Tcc7rUrQ9i06QDwzl3yMx31v8vcTMSYRcL5KM8GPXy4NWi",
-  "cira": "1AMtxiQ7hVwmasLidze7VCUpsAaZ1mb7sOg9jTdF1BRqo9JQsKBECpU3Ii0M0dHl+hTtAJ05lBKnXxgZ",
-  "cim": "jomzV7wxdVHVE03R2ByHonPAN2tFHmIZqwMqLD+oEnDmA4E2onHi1x6wXLMyidWuKtPdbxLQGsN712Gu"
+  "et": "bQUOk9JZ5zG5nQvpGlsUwV4O/saxf3OkB411x1SqrS16mUhN4UWADTw5OT7MjJt0QSPMZSk5m3MHDJOW",
+  "cira": "VzNRJBCfY61dAC17hH64aTh28nuKVk0DWMuFd0zJ1V4SD3AdThM87UsAQNXCSiuWJKwOfI99hKgINa/R",
+  "cim": "mt6nPH3keYuQ2/31pwSZjPQbnAo7kxN4yCPT95S8UIOAXqg+ZJo6MJPiUOFLtbUl8PN922YXmc1+LCko"
  },
  "outils": [
   {
