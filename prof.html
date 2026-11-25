@@ -115,6 +115,7 @@ label.f{display:block;font-size:.9rem;color:var(--muted);margin-top:10px}
 .note{color:var(--muted);font-size:.92rem;margin:8px 4px}
 .ry .btns{padding:0 12px}.ry .note{padding:0 12px}.ry-date{display:block;padding-bottom:12px}.ry-date input{font:inherit;margin-left:6px}
 .linkbtn{border:0;background:none;color:var(--accent);text-decoration:underline;cursor:pointer;padding:0;font-size:inherit}
+.ry-ex{display:inline-flex;gap:2px}.ry-ex i{font-style:normal;font-size:.7rem;width:16px;height:16px;line-height:16px;border-radius:50%;background:var(--grid);color:var(--muted)}.ry-ex i.on{background:var(--ok);color:#fff}
 .ry-fige{color:#2E75B6;font-weight:700}
 .ry-pill{display:inline-block;font-weight:700;font-size:.78rem;padding:2px 8px;border-radius:999px}
 .ry-ctl{white-space:nowrap}.ry-ctl button{border:1px solid var(--grid);background:var(--surface);border-radius:6px;width:26px;height:26px;margin:0 4px;cursor:pointer;font-weight:700}
@@ -545,6 +546,10 @@ function rythmePanel(c, g, el, getP, rerender){
   /* Valeurs affichées : figées si le professeur a figé les notes, sinon calculées en direct */
   const valeurs = e => { const v = DOCS[e.uid] || {}, s = etatDe(e);
     return v.fige ? { s, pts: v.fige.pts, note: v.fige.note, fige: true } : { s, pts: s.pts, note: s.note, fige: false }; };
+  /* Exemples du cours : une pastille par exemple, verte quand l'élève a ouvert sa correction (date au survol) */
+  const nEx = R.items.filter(x => x.exemple).map(x => x.exemple);
+  const exDe = e => { const v = mpDe(e.uid)["exemples:" + chapId], vus = (v && v.vus) || {};
+    return `<span class="ry-ex">${nEx.map(n => vus[n] ? `<i class="on" title="Exemple ${n} : correction ouverte le ${esc(jour(vus[n]))}">${n}</i>` : `<i title="Exemple ${n} : pas encore ouvert">${n}</i>`).join("")}</span>`; };
   const html = () => {
     const actif = Object.keys(DOCS).length > 0, k = commun(), fg = figee();
     const contenu = R.items.reduce((s, x) => s + (x.tp ? 0 : x.duree), 0), marge = R.marge ?? 1;
@@ -566,7 +571,7 @@ function rythmePanel(c, g, el, getP, rerender){
         const ctl = (attr, val, lib) => fige ? "" : `<button ${attr}="${val}" data-uid="${esc(e.uid)}" aria-label="${lib}">${val > 0 ? "+" : "−"}</button>`;
         return `<tr><td class="nom">${esc(e.nom)}</td>
         <td><span class="ry-pill" style="color:${st.couleur};background:${st.fond}" title="${st.lib} : ${heures(s.fait)} faites pour ${heures(s.ecoule)} de cours">${pill}</span>${s.frein ? ' <span title="Frein : plus d\'1 h d\'avance, la suite attend la prochaine séance">🔒</span>' : ""}</td>
-        <td>${f1(pts.corriges)}</td><td>${f1(pts.cours)}</td><td>${f1(pts.anim)}</td><td>${f1(pts.regularite)}</td>
+        <td>${f1(pts.corriges)}</td><td>${exDe(e)}<br>${f1(pts.cours)}</td><td>${f1(pts.anim)}</td><td>${f1(pts.regularite)}</td>
         <td class="ry-ctl">${ctl("data-att", -1, "Attitude moins")}${f1(pts.attitude)}${ctl("data-att", 1, "Attitude plus")}</td>
         <td class="ry-ctl">${ctl("data-aj", -0.5, "Ajustement moins")}${(+v.ajust || 0) > 0 ? "+" : ""}${f1(+v.ajust || 0)}${ctl("data-aj", 0.5, "Ajustement plus")}</td>
         <td><b>${f1(note)}</b></td></tr>`; }).join("")
@@ -574,7 +579,7 @@ function rythmePanel(c, g, el, getP, rerender){
       <div class="btns">${fg ? "" : `<button class="btn" id="ryFige">Figer les notes et enregistrer le PDF</button>`}<button class="btn ghost" id="ryPdf">${fg ? "Enregistrer le PDF des notes figées" : "Aperçu PDF (sans figer)"}</button></div>
       <button class="btn ghost" id="ryCopy">Copier les notes pour Pronote</button>
       <p class="note">Rythme (travail en autonomie, hors TP) : <span class="ry-pill" style="color:${STATUTS.avance.couleur};background:${STATUTS.avance.fond}">+1 h</span> en avance · <span class="ry-pill" style="color:${STATUTS.vert.couleur};background:${STATUTS.vert.fond}">à jour</span> · <span class="ry-pill" style="color:${STATUTS.orange.couleur};background:${STATUTS.orange.fond}">jusqu'à 1 h de retard</span> · <span class="ry-pill" style="color:${STATUTS.rouge.couleur};background:${STATUTS.rouge.fond}">plus d'1 h</span> · 🔒 frein : plus d'1 h d'avance, la suite attend la prochaine séance.<br>
-      Corrigés : activités, TP et exercices dont tu as débloqué le corrigé avant la fin du jour de l'évaluation. Cours : corrections des exemples ouvertes par l'élève (une par partie du cours). Animation : part des questions traitées.
+      Corrigés : activités, TP et exercices dont tu as débloqué le corrigé avant la fin du jour de l'évaluation. Cours : corrections des exemples ouvertes par l'élève lui-même, sans demande (une par partie du cours) ; pastille verte = correction ouverte, date au survol ou en appui long. Animation : part des questions traitées.
       Régularité : à chaque séance cochée (hors TP), l'élève est-il à jour avant la séance suivante (à jour ou en avance 1, orange ½, rouge 0) ? Attitude : 2 points par défaut, − retire ½ point (à utiliser par exception), + rend ½ point. Ajust. : ta correction manuelle de la note. Les coups de pouce ne comptent jamais.
       « Figer » enregistre les notes du jour : elles ne changent plus, même si un élève continue l'animation.</p>`;
     return h;
