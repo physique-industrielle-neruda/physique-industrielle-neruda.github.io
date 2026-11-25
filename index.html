@@ -244,6 +244,109 @@ li.fresh{animation:fresh 2.4s ease-out}
 li.pdc-fait .meta{color:#1f7a3f;font-weight:600}
 li.pdc-cours .meta{color:#b45309;font-weight:600}
 li.pdc-gris{opacity:.6}
+/* ===== Nouvelle présentation (26/11/2026) : en-tête sobre, cartes de dossiers, bouton « Reprendre », parcours à pastilles ===== */
+body.nv header{background:#1F3864;border-bottom:0}
+body.nv .head{padding:18px 16px 16px}
+body.nv h1{color:#fff;font-size:clamp(1.7rem,5vw,2.3rem)}
+body.nv .who{color:rgba(255,255,255,.82)}
+body.nv .trace{display:none}
+body.nv nav.classes{border:0;border-bottom:1px solid var(--grid);border-radius:0;background:transparent;overflow-x:auto;scrollbar-width:none;margin:10px 0 4px;gap:22px}
+body.nv nav.classes::-webkit-scrollbar{display:none}
+body.nv nav.classes button{flex:0 0 auto;border:0;border-bottom:3px solid transparent;border-radius:0;padding:12px 0 9px;text-align:left;background:none}
+body.nv nav.classes .s,body.nv nav.classes .mini{display:none!important}
+body.nv nav.classes .n:not(.mini){display:block!important;font-family:inherit;font-size:1rem;font-weight:700;color:var(--muted)}
+body.nv nav.classes button[aria-pressed="true"]{background:none;border-bottom-color:#C55A11}
+body.nv nav.classes button[aria-pressed="true"] .n{color:var(--ink)}
+body:not(.nv) .nv-only{display:none}
+.nv-theme{margin-left:12px}
+.nv{--bleu:#2E75B6}
+.nv h3{font-family:inherit}
+.nv-tuile{flex:none;display:flex;align-items:center;justify-content:center;border-radius:12px;
+  color:color-mix(in srgb,var(--c) 78%,var(--text));background:color-mix(in srgb,var(--c) 15%,var(--surface))}
+.nv-chip{display:inline-block;font-size:.74rem;font-weight:700;letter-spacing:.03em;text-transform:uppercase;padding:3px 9px;border-radius:999px;white-space:nowrap;
+  background:var(--bg);color:var(--muted);border:1px solid var(--grid)}
+.nv-chip.encours{background:color-mix(in srgb,#2E75B6 14%,var(--surface));color:var(--ink);border-color:transparent}
+.nv-chip.fait{background:var(--ok-soft);color:var(--ok);border-color:transparent}
+.nv-chip.test{background:var(--accent-soft);color:var(--accent);border-color:transparent}
+/* Accueil de la classe */
+.nv-hero{background:var(--surface);border:1px solid var(--grid);border-radius:14px;padding:16px;margin:16px 0 18px;display:flex;flex-direction:column;gap:14px;box-shadow:var(--shadow)}
+.nv-hero-top{display:flex;gap:16px;align-items:center}
+.nv-ring{position:relative;flex:none;line-height:0}
+.nv-ring>span{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--ink);line-height:1}
+.nv-sur{display:block;font-size:.74rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:color-mix(in srgb,#2E75B6 75%,var(--text))}
+.nv-hero h3{font-size:1.55rem;margin:2px 0}
+.nv-next{display:block;font-size:.92rem;color:var(--muted)}
+.nv-ry{display:flex;flex-direction:column;gap:6px;font-size:.95rem;padding:10px 12px;border-radius:10px;background:var(--bg)}
+.nv-ry .nv-chip{align-self:flex-start}
+.nv-reprendre{display:flex;align-items:center;justify-content:center;gap:8px;min-height:50px;border-radius:10px;background:#C55A11;color:#fff;font-weight:700;font-size:1.05rem;text-decoration:none}
+.nv-reprendre:hover{filter:brightness(1.08)}
+.nv-reprendre.second{background:var(--surface);color:var(--ink);border:1px solid var(--ink)}
+.nv-h{font-size:1.35rem;margin:22px 0 10px}
+.nv-grille{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:12px}
+@media (min-width:700px){.nv-grille{grid-template-columns:repeat(auto-fill,minmax(190px,1fr))}}
+.nv-carte-d{background:var(--surface);border:1px solid var(--grid);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:10px;text-decoration:none;color:var(--text);box-shadow:var(--shadow)}
+a.nv-carte-d:hover{border-color:var(--ink)}
+.nv-carte-d.actuel{border:2px solid #2E75B6;padding:13px}
+.nv-carte-d.ferme{background:var(--bg);border-style:dashed;color:var(--muted);box-shadow:none}
+.nv-carte-d .hd{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.nv-carte-d b{font-size:1.05rem;line-height:1.25;flex:1}
+.nv-carte-d .pied{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:.8rem;color:var(--muted);margin-top:auto}
+/* Page d'un dossier */
+.nv-retour{display:inline-flex;align-items:center;gap:4px;min-height:44px;margin-top:8px;font-weight:700;text-decoration:none;color:var(--ink)}
+.nv-dos-head{display:flex;gap:14px;align-items:center;margin:2px 0 12px}
+.nv-dos-head h2{font-size:clamp(1.6rem,5vw,2.1rem)}
+.nv-dos-head .st{display:block;color:var(--muted);font-size:.92rem;margin-top:3px}
+.nv-prog{display:flex;flex-direction:column;gap:6px;margin:0 0 10px}
+.nv-prog .barre{height:10px;background:var(--grid);border-radius:5px;overflow:hidden}
+.nv-prog .barre i{display:block;height:100%;background:#2E75B6;border-radius:5px}
+.nv-prog .leg{display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px 12px;font-size:.88rem;color:var(--muted)}
+.nv-prog .leg b{color:var(--text)}
+body.nv .nv .rythme{margin:10px 0 6px;background:var(--surface)}
+.nv-parcours{list-style:none;margin:18px 0 0;padding:0}
+.nv-et{display:flex;gap:12px}
+.nv-rail{width:32px;flex:none;display:flex;flex-direction:column;align-items:center}
+.nv-pas{width:32px;height:32px;flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;
+  background:var(--surface);border:2px solid var(--grid);color:var(--muted)}
+.nv-et.fait .nv-pas{background:#3F7A3A;border-color:#3F7A3A;color:#fff}
+.nv-et.encours .nv-pas{border-color:#2E75B6;color:var(--ink)}
+.nv-et.actuelle .nv-pas{background:#2E75B6;border-color:#2E75B6;color:#fff;box-shadow:0 0 0 5px color-mix(in srgb,#2E75B6 22%,transparent)}
+.nv-et.libre .nv-pas{border-style:dashed}
+.nv-et.eval .nv-pas{border-color:#C55A11;color:#C55A11;background:var(--accent-soft)}
+.nv-fil{width:2px;flex:1;min-height:10px;background:var(--grid);margin:3px 0}
+.nv-et.fait .nv-fil{background:#3F7A3A}
+.nv-et:last-child .nv-fil{display:none}
+.nv-carte{flex:1;min-width:0;margin-bottom:10px;background:var(--surface);border:1px solid var(--grid);border-radius:12px;box-shadow:var(--shadow)}
+.nv-et.actuelle .nv-carte{border:2px solid #2E75B6}
+.nv-carte>summary{list-style:none;cursor:pointer;display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:12px;min-height:44px}
+.nv-carte>summary::-webkit-details-marker{display:none}
+.nv-carte>summary:hover{background:var(--bg)}
+.nv-carte[open]>summary{border-bottom:1px solid var(--grid);border-radius:12px 12px 0 0}
+.nv-carte .txt{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+.nv-carte .lab{font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:color-mix(in srgb,var(--c) 78%,var(--text))}
+.nv-carte .tt{font-weight:700;line-height:1.25}
+.nv-etat{font-size:.72rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap;color:var(--muted)}
+.nv-etat.fait{color:var(--ok)}
+.nv-etat.encours{color:color-mix(in srgb,#2E75B6 75%,var(--text))}
+.nv-chev{flex:none;width:10px;height:10px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(-45deg);transition:transform .15s;margin:0 4px}
+.nv-carte[open] .nv-chev{transform:rotate(45deg)}
+@media (prefers-reduced-motion: reduce){.nv-chev{transition:none}}
+.nv-carte ul.docs{padding:0 12px 2px}
+.nv-carte ul.docs li:last-child{border-bottom:0}
+.nv-carte h4{margin:12px 12px 0;font-size:.95rem;color:var(--ink)}
+.nv-carte .nv-info{margin:10px 12px;font-size:.9rem;color:var(--muted)}
+.nv-vide{color:var(--muted);margin:12px 0}
+@media (min-width:1000px){
+  body.nv .wrap,body.nv .head{max-width:1120px}
+  .nv-dos-corps{display:grid;grid-template-columns:minmax(0,360px) minmax(0,1fr);gap:28px;align-items:start}
+  .nv-dos-corps>.nv-parcours:only-child{grid-column:1/-1}
+  .nv-cote{position:sticky;top:14px}
+  .nv-dos-corps .nv-parcours{margin-top:0}
+  .nv-hero{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);align-items:center;column-gap:24px}
+  .nv-hero .nv-reprendre{grid-column:2}
+  .nv-hero .nv-ry{grid-column:2;grid-row:1}
+  .nv-hero .nv-hero-top{grid-row:1 / span 2}
+}
+.nv-an{font-size:.85rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin:16px 0 8px}
 </style>
 </head>
 <body>
@@ -577,8 +680,9 @@ function renderWho(){
   if (!S.user) { w.hidden = true; return; }
   w.hidden = false;
   const grp = (CAT.groupes || []).find(g => g.id === S.groupe);
-  w.innerHTML = `<span>Connecté : <strong>${esc(S.prof ? "Professeur" : S.nom)}</strong>${grp && !S.prof && !S.premium ? " · " + esc(grp.nom) : ""}</span><button class="linkbtn" type="button">Se déconnecter</button>`;
-  w.querySelector("button").onclick = async () => { await signOut(auth); location.hash = ""; };
+  w.innerHTML = `<span>Connecté : <strong>${esc(S.prof ? "Professeur" : S.nom)}</strong>${grp && !S.prof && !S.premium ? " · " + esc(grp.nom) : ""}</span><span><button class="linkbtn" type="button" data-act="sortie">Se déconnecter</button><button class="linkbtn nv-only nv-theme" type="button" data-act="theme">${nvTheme() ? "Mode clair" : "Mode sombre"}</button></span>`;
+  w.querySelector('[data-act="theme"]').onclick = nvBasculeTheme;
+  w.querySelector('[data-act="sortie"]').onclick = async () => { await signOut(auth); location.hash = ""; };
 }
 
 function docRow(c, d){
@@ -728,8 +832,296 @@ function remplirParNumero(c, docs, parent, k0, forceOpen){
   });
 }
 
+/* ================= Nouvelle présentation (26/11/2026) =================
+   Accueil de la classe : encadré « Dossier en cours » (anneau d'avancement, rythme, bouton « Reprendre ») et cartes de dossiers.
+   Page d'un dossier (#<classe>/<titre du dossier>) : jauge du rythme puis parcours à pastilles, une étape par activité, TP,
+   cours, animation, série d'exercices… Les lignes de documents (docRow) et toute la logique (corrigés, coups de pouce,
+   points de cours, tests) sont inchangées. Classes concernées : NOUVELLE_UI (essai sur le BTS CIRA). */
+const NOUVELLE_UI = new Set(["cira", "et", "cim"]);
+let DOSSIER_VU = null, ALLER_ETAPE = false;
+const nvLien = (c, ch) => "#" + c.id + "/" + encodeURIComponent(ch.titre);
+const nvSvg = (p, t, sw) => `<svg viewBox="0 0 24 24" width="${t}" height="${t}" fill="none" stroke="currentColor" stroke-width="${sw || 1.7}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
+const NV_COCHE = '<path d="M5 12l5 5 9-10"/>';
+const NV_ICO = {
+  amplif: '<path d="M5 4v16l14-8z"/><path d="M2 9h3M2 15h3M19 12h3"/>',
+  chaine: '<rect x="2" y="8" width="6" height="8" rx="1"/><rect x="16" y="8" width="6" height="8" rx="1"/><path d="M8 12h8M13 9l3 3-3 3"/>',
+  signal: '<path d="M2 12c2-6 4-6 5 0s3 6 5 0 3-6 5 0 3 6 5 0"/>',
+  dipole: '<path d="M2 12h4l2-4 3 8 3-8 3 8 2-4h3"/>',
+  moteur: '<circle cx="12" cy="12" r="8"/><path d="M8.5 15.5v-7l3.5 4.5 3.5-4.5v7"/>',
+  fluide: '<path d="M12 3c4 5 6 8 6 11a6 6 0 0 1-12 0c0-3 2-6 6-11z"/>',
+  lumiere: '<path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0 0 12 3z"/>',
+  energie: '<rect x="3" y="7" width="16" height="10" rx="2"/><path d="M21 10v4M12 9l-2 3h4l-2 3"/>',
+  transitoire: '<path d="M3 20h18M3 20V4"/><path d="M4 18c3-10 7-12 16-12"/>',
+  hacheur: '<path d="M3 16h3V8h4v8h3V8h4v8h4"/>',
+  thermique: '<path d="M14 14.8V5a2 2 0 0 0-4 0v9.8a4 4 0 1 0 4 0z"/><path d="M12 9v7"/>',
+  nonlin: '<path d="M3 20h18M3 20V4"/><path d="M5 17h4l2-7h4l2-4h3"/>',
+  meca: '<circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/>',
+  dossier: '<path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4M9 12h7M9 16h7"/>'
+};
+const NV_TEINTES = ["#2E75B6", "#3F7A3A", "#C55A11", "#1F3864", "#7A4FB5", "#5A6577"];
+function nvIcoDossier(t){
+  const s = sansAccent(t);
+  const k = /amplif/.test(s) ? "amplif" : /acquisition|mesure|capteur/.test(s) ? "chaine" : /signal|fourier|spectr/.test(s) ? "signal"
+    : /dipole|circuit|resist/.test(s) ? "dipole" : /moteur|machine|convertisseur|asynchrone/.test(s) ? "moteur" : /fluide|hydraul|pression/.test(s) ? "fluide"
+    : /lumiere|photometr|optique/.test(s) ? "lumiere" : /source|energie|stockage|batter/.test(s) ? "energie" : /transitoire/.test(s) ? "transitoire"
+    : /hacheur|redress|onduleur/.test(s) ? "hacheur" : /thermi|chaleur/.test(s) ? "thermique" : /non lineaire/.test(s) ? "nonlin"
+    : /mecanique|solide|rotation/.test(s) ? "meca" : "dossier";
+  return NV_ICO[k];
+}
+const NV_TYPES = {
+  "Activité":       { ico: '<circle cx="11" cy="11" r="6"/><path d="M16 16l5 5"/>', c: "#1F3864", lab: "Activité" },
+  "TP":             { ico: '<path d="M14.5 5.5a4 4 0 0 0 4.9 4.9L11 18.8a2 2 0 0 1-2.8-2.8l8.4-8.4"/>', c: "#2E75B6", lab: "TP" },
+  "Cours":          { ico: '<path d="M3 5h6a3 3 0 0 1 3 3v12a2 2 0 0 0-2-2H3zM21 5h-6a3 3 0 0 0-3 3v12a2 2 0 0 1 2-2h7z"/>', c: "#C55A11", lab: "Cours" },
+  "Animation":      { ico: '<rect x="3" y="4" width="18" height="13" rx="2"/><path d="M10 8.5v5l4-2.5z"/><path d="M8 21h8"/>', c: "#3F7A3A", lab: "Animation" },
+  "Exercices":      { ico: '<path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 7l3 3"/>', c: "#5A6577", lab: "Exercices" },
+  "Pour commencer": { ico: '<path d="M5 21V4h11l-2 4 2 4H5"/>', c: "#5A6577", lab: "Pour commencer" },
+  "Réviser":        { ico: '<rect x="3" y="7" width="13" height="13" rx="2"/><path d="M8 3h11a2 2 0 0 1 2 2v11"/>', c: "#7A4FB5", lab: "Réviser" },
+  "Profil":         { ico: '<path d="M4 20V11M10 20V5M16 20v-6M2 20h20"/>', c: "#2E75B6", lab: "Profil de compétences" },
+  "Points de cours":{ ico: '<path d="M10 6h10M10 12h10M10 18h10"/><path d="M4 6l1.2 1.2L7.5 5M4 12l1.2 1.2 2.3-2.2M4 18l1.2 1.2 2.3-2.2"/>', c: "#3F7A3A", lab: "Points de cours" },
+  "Autres":         { ico: '<path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4"/>', c: "#5A6577", lab: "Documents" }
+};
+const nvTuile = (ico, c, t, r) => `<span class="nv-tuile" style="--c:${c};width:${t}px;height:${t}px;border-radius:${r || 12}px">${nvSvg(ico, Math.round(t * 0.56))}</span>`;
+function nvAnneau(pc, t, ep, txt){
+  const r = (t - ep) / 2, L = 2 * Math.PI * r, f = Math.max(0, Math.min(1, pc));
+  const coul = f >= 1 ? "#3F7A3A" : "#2E75B6";
+  return `<span class="nv-ring" role="img" aria-label="Avancement ${Math.round(100 * f)} %"><svg width="${t}" height="${t}" viewBox="0 0 ${t} ${t}" aria-hidden="true">
+    <circle cx="${t / 2}" cy="${t / 2}" r="${r}" fill="none" stroke="var(--grid)" stroke-width="${ep}"/>
+    ${f > 0 ? `<circle cx="${t / 2}" cy="${t / 2}" r="${r}" fill="none" stroke="${coul}" stroke-width="${ep}" stroke-linecap="round" stroke-dasharray="${(L * f).toFixed(1)} ${L.toFixed(1)}" transform="rotate(-90 ${t / 2} ${t / 2})"/>` : ""}
+    ${f >= 1 && !txt ? `<path d="M${t * .32} ${t * .5}l${t * .12} ${t * .12} ${t * .24}-${t * .26}" fill="none" stroke="#3F7A3A" stroke-width="${Math.max(2, ep * .7)}" stroke-linecap="round" stroke-linejoin="round"/>` : ""}
+    </svg>${txt ? `<span style="font-size:${Math.round(t / 4.4)}px">${txt}</span>` : ""}</span>`;
+}
+const nvDuree = h => h ? heures(h) : "";
+const nvSansNum = t => String(t).replace(/^(activit[ée]|tp|td|exercice)\s*\d+\s*[–—-]\s*/i, "");
+
+/* Étapes du dossier, dans l'ordre du dossier élève. Chaque étape : { cle, type, lab, titre, docs, sous, test, etat }
+   etat (élève seulement) : "fait", "encours", "afaire", ou null (documents à consulter, sans suivi) */
+function nvEtapes(c, ch, docs){
+  const key = c.id + "/" + ch.titre, eleve = eleveRev();
+  const tEntree = testDuChapitre(c, ch);
+  const its = eleve && rythmeDe(ch) ? etatRythme(ch, { corrAt: S.corrAt, mp: MP, r: {} }).items : null;
+  const itsDe = f => its ? its.filter(f) : [];
+  const etatDe = (xs, docsE) => {
+    if (!eleve) return null;
+    if (xs && xs.length) { const f = xs.filter(x => x.fait).length; return f === xs.length ? "fait" : f || xs.some(x => x.part > 0) ? "encours" : "afaire"; }
+    const cs = (docsE || []).filter(d => d.corrige && d.type !== "Point de cours" && d.format !== "parcours" && d.type !== "Profil");
+    if (!cs.length) return null;
+    const f = cs.filter(d => S.corr[d.corrige.id]).length;
+    return f === cs.length ? "fait" : f ? "encours" : "afaire";
+  };
+  const dureeDe = xs => xs.reduce((s, x) => s + (x.duree || 0), 0);
+  const groupes = [];
+  docs.forEach(d => { const r = d.rubrique || "Autres documents"; let g = groupes.find(x => x.r === r); if (!g) groupes.push(g = { r, docs: [] }); g.docs.push(d); });
+  if (tEntree) { let g = groupes.find(x => x.r === "Pour commencer"); if (!g) groupes.unshift(g = { r: "Pour commencer", docs: [] }); g.test = tEntree; }
+  const pdcs = docs.filter(d => d.type === "Point de cours");
+  if (pdcs.length) {
+    const apres = ["Cours", "Activités et TP", "Activités", "Pour commencer"].map(r => groupes.findIndex(x => x.r === r)).find(i => i >= 0);
+    groupes.splice(apres === undefined ? groupes.length : apres + 1, 0, { r: "Points de cours", docs: pdcs.map(d => ({ ...d, revision: true })) });
+  }
+  if (compDe(ch)) {
+    let g = groupes.find(x => x.r === "Mon profil de compétences");
+    if (!g) { const i = groupes.findIndex(x => x.r === "Exercices"); groupes.splice(i >= 0 ? i + 1 : groupes.length, 0, g = { r: "Mon profil de compétences", docs: [] }); }
+    g.docs = [{ titre: "Mon profil de compétences", type: "Profil" }].concat(g.docs).map(d => ({ ...d, _c: c, _ch: ch }));
+  }
+  const paquetsDe = liste => {
+    const seuls = [], paquets = [];
+    liste.forEach(d => { const num = numeroDoc(d); if (!num) { seuls.push(d); return; } let p = paquets.find(x => x.num === num); if (!p) paquets.push(p = { num, docs: [] }); p.docs.push(d); });
+    paquets.forEach(p => { const en = p.docs.find(d => !d.corrige && d.type !== "Corrigé" && !/coups?\s+de\s+pouce|r[ée]sultats|corrig/i.test(d.titre)); p.titre = en ? en.titre : p.num; });
+    return { seuls, paquets };
+  };
+  const E = [];
+  groupes.forEach(g => {
+    const k = key + "/" + g.r;
+    if (["Activités", "TP", "Activités et TP"].includes(g.r)) {
+      const { seuls, paquets } = paquetsDe(g.docs);
+      paquets.forEach(p => {
+        const type = /^TP/.test(p.num) ? "TP" : "Activité", it = its ? its.find(x => x.num === p.num) : null;
+        const ri = ch.rythme ? ch.rythme.items.find(x => x.num === p.num) : null;
+        E.push({ cle: k + "/" + p.num, type, lab: p.num + (ri && ri.duree ? " · " + nvDuree(ri.duree) : "") + (type === "TP" && ri && ri.tp ? " · en classe" : ""),
+          titre: nvSansNum(p.titre) || p.num, docs: p.docs, etat: etatDe(it ? [it] : null, p.docs) });
+      });
+      if (seuls.length) E.push({ cle: k + "/autres", type: "Autres", lab: g.r, titre: "Autres documents", docs: seuls, etat: null });
+      return;
+    }
+    if (g.r === "Exercices") {
+      const { seuls, paquets } = paquetsDe(g.docs), xs = itsDe(x => /^Exercice/.test(x.num));
+      const ri = ch.rythme ? ch.rythme.items.filter(x => /^Exercice/.test(x.num)) : [];
+      const n = paquets.length;
+      E.push({ cle: k, type: "Exercices", lab: "Exercices" + (ri.length ? " · " + nvDuree(dureeDe(ri)) : ""), titre: n ? (n > 1 ? "Exercices 1 à " + n : "Exercice 1") : "Exercices",
+        docs: seuls, sous: paquets, etat: etatDe(xs.length ? xs : null, g.docs) });
+      return;
+    }
+    if (g.r === "Cours") {
+      const xs = itsDe(x => x.exemple), cours = g.docs.find(d => d.type === "Cours");
+      const t = cours ? cours.titre.replace(/^Essentiel du chapitre$/i, "L'essentiel du dossier") : "Cours";
+      E.push({ cle: k, type: "Cours", lab: "Cours" + (xs.length ? " · " + xs.length + " exemple" + (xs.length > 1 ? "s" : "") : ""), titre: t, docs: g.docs, etat: xs.length ? etatDe(xs) : null });
+      return;
+    }
+    if (g.r === "Animation") {
+      const xs = itsDe(x => x.anim), ri = ch.rythme ? ch.rythme.items.find(x => x.anim) : null;
+      E.push({ cle: k, type: "Animation", lab: "Animation" + (ri ? " · " + nvDuree(ri.duree) + " max" : ""), titre: "Reprise des notions", docs: g.docs, etat: xs.length ? etatDe(xs) : null });
+      return;
+    }
+    if (g.r === "Mon profil de compétences") {
+      const xs = itsDe(x => x.parcours);
+      E.push({ cle: k, type: "Profil", lab: "Avant l'évaluation", titre: "Mon profil de compétences", docs: g.docs, etat: xs.length ? etatDe(xs) : null });
+      return;
+    }
+    if (g.r === "Pour commencer") {
+      E.push({ cle: k, type: "Pour commencer", lab: "Pour commencer", titre: g.test ? "Test d'entrée" : "Pour commencer", docs: g.docs, test: g.test,
+        etat: eleve && g.test ? (MT[g.test.id] ? "fait" : "afaire") : null });
+      return;
+    }
+    const type = g.r === "Réviser" ? "Réviser" : g.r === "Points de cours" ? "Points de cours" : "Autres";
+    E.push({ cle: k, type, lab: NV_TYPES[type].lab, titre: g.r === "Réviser" ? "Cartes et fiches de révision" : g.r === "Points de cours" ? "Tous les points de cours" : g.r, docs: g.docs, etat: null });
+  });
+  return E;
+}
+function nvAvancement(E){
+  const suivies = E.filter(e => e.etat), faites = suivies.filter(e => e.etat === "fait").length;
+  const actuelle = suivies.find(e => e.etat !== "fait") || null;
+  return { total: suivies.length, faites, pc: suivies.length ? faites / suivies.length : 0, actuelle };
+}
+
+function renderClasseNv(view, c, chaps){
+  if (DOSSIER_VU) { const x = chaps.find(y => y.ch.titre === DOSSIER_VU); if (x) { renderDossierNv(view, c, x.ch, x.docs); return; } }
+  const box = document.createElement("div"); box.className = "nv"; view.appendChild(box);
+  const head = document.createElement("div"); head.className = "classhead";
+  head.innerHTML = `<h2>${esc(c.nom)}</h2>`;
+  box.appendChild(head);
+  if (!chaps.length) { const p = document.createElement("p"); p.className = "empty"; p.textContent = "Aucun document pour l'instant."; box.appendChild(p); return; }
+  const eleve = eleveRev();
+  const infos = chaps.map((x, i) => ({ ...x, i, E: chapOK(x.ch) ? nvEtapes(c, x.ch, x.docs) : [] })).map(x => ({ ...x, av: nvAvancement(x.E) }));
+  const grp = (CAT.groupes || []).find(g => g.id === S.groupe), mon = eleve && grp ? grp.annee : null;
+  const deMonAn = x => !mon || !x.ch.annee || x.ch.annee === mon;
+  const cur = infos.find(x => chapOK(x.ch) && x.ch.verrou && deMonAn(x)) || infos.find(x => chapOK(x.ch) && deMonAn(x)) || infos.find(x => chapOK(x.ch));
+  if (cur) box.appendChild(nvHero(c, cur));
+  const h = document.createElement("h3"); h.className = "nv-h"; h.textContent = "Mes dossiers"; box.appendChild(h);
+  /* ET : dossiers rangés par année (celle de l'élève d'abord) */
+  const ans = [...new Set(infos.map(x => x.ch.annee || 0))].sort((a, b) => (b === mon) - (a === mon) || b - a);
+  ans.forEach(a => {
+    if (ans.length > 1) { const st = document.createElement("h4"); st.className = "nv-an"; st.textContent = (a === 1 ? "1re année" : a ? a + "e année" : "Autres dossiers") + (a && a === mon ? " · ma classe" : ""); box.appendChild(st); }
+    const grille = document.createElement("div"); grille.className = "nv-grille";
+    infos.filter(x => (x.ch.annee || 0) === a).forEach(x => grille.appendChild(nvCarteDossier(c, x, x === cur)));
+    box.appendChild(grille);
+  });
+  const m = bandeauMethode(chaps); if (m) { m.style.marginTop = "22px"; box.appendChild(m); }
+}
+function nvHero(c, x){
+  const eleve = eleveRev(), ch = x.ch, av = x.av;
+  const s = document.createElement("section"); s.className = "nv-hero"; s.setAttribute("aria-label", "Dossier en cours");
+  const coul = NV_TEINTES[Math.max(0, c.chapitres.indexOf(x.ch)) % NV_TEINTES.length];
+  const gauche = eleve && av.total ? nvAnneau(av.pc, 84, 9, Math.round(100 * av.pc) + " %") : nvTuile(nvIcoDossier(ch.titre), coul, 64, 16);
+  const a = av.actuelle, nomEt = !a ? "" : a.type === "Activité" || a.type === "TP" ? a.lab.split(" · ")[0] + " – " + a.titre : a.type === "Cours" ? "le cours (" + a.titre + ")" : a.type === "Animation" ? "l'animation" : a.titre;
+  const prochaine = !eleve ? "Vue professeur : tous les documents sont ouverts" : a ? "Prochaine étape : " + nomEt : av.total ? "Toutes les étapes sont faites" : "";
+  let ry = "";
+  const e = eleve && rythmeDe(ch) ? etatEleve(ch) : null;
+  if (e) {
+    const st = STATUTS[e.statut], pv = previsionEleve(ch, e);
+    ry = `<div class="nv-ry"><span class="nv-chip" style="background:${st.fond};color:${st.couleur};border-color:transparent">${esc(st.lib)}${e.frein ? " · suite après la prochaine séance" : ""}</span>
+      <span>Il te reste environ <b>${esc(heures(e.reste))}</b> de travail dans ce dossier.</span>
+      ${pv ? `<span>Évaluation ${pv.fixe ? "le" : "prévue vers le"} <b>${esc(new Date(pv.ev).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" }))}</b> : encore <b>${pv.n} séance${pv.n > 1 ? "s" : ""}</b> de cours d'ici là.</span>` : ""}</div>`;
+  }
+  const lib = !eleve ? "Ouvrir le dossier" : !av.total || av.faites === 0 && !(av.actuelle && av.actuelle.etat === "encours") ? "Commencer" : av.actuelle ? "Reprendre" : "Revoir le dossier";
+  s.innerHTML = `<div class="nv-hero-top">${gauche}<div><span class="nv-sur">Dossier en cours</span><h3>${esc(ch.titre)}</h3><span class="nv-next">${esc(prochaine)}</span></div></div>
+    ${ry}<a class="nv-reprendre" href="${nvLien(c, ch)}">${nvSvg('<path d="M7 4v16l13-8z" fill="currentColor"/>', 18)}${lib}</a>`;
+  s.querySelector("a").addEventListener("click", () => { ALLER_ETAPE = true; });
+  return s;
+}
+function nvCarteDossier(c, x, actuel){
+  const ch = x.ch, eleve = eleveRev(), av = x.av, coul = NV_TEINTES[Math.max(0, c.chapitres.indexOf(x.ch)) % NV_TEINTES.length];
+  const ok = chapOK(ch), tEntree = !ok ? testDuChapitre(c, ch) : null;
+  let chip, droite = "";
+  if (!ok) chip = tEntree ? `<span class="nv-chip test">Test d'entrée à faire</span>` : `<span class="nv-chip">${LOCK}Verrouillé</span>`;
+  else if (!eleve) chip = ch.verrou && !(OUV && OUV[ch.verrou.id]) ? `<span class="nv-chip test">${LOCK}Sous cadenas</span>` : `<span class="nv-chip">${x.docs.length} documents</span>`;
+  else if (!av.total) chip = `<span class="nv-chip">${x.docs.length} document${x.docs.length > 1 ? "s" : ""}</span>`;
+  else {
+    chip = av.faites === av.total ? `<span class="nv-chip fait">Terminé</span>` : av.faites || (av.actuelle && av.actuelle.etat === "encours") ? `<span class="nv-chip encours">En cours</span>` : `<span class="nv-chip">À commencer</span>`;
+    chip += `<span>${av.faites} / ${av.total} étapes</span>`;
+    droite = nvAnneau(av.pc, 36, 4);
+  }
+  const ico = ok || tEntree ? nvTuile(nvIcoDossier(ch.titre), coul, 48) : nvTuile(nvIcoDossier(ch.titre), "#5A6577", 48);
+  const html = `<span class="hd">${ico}${droite}</span><b>${esc(ch.titre)}</b><span class="pied">${chip}</span>`;
+  if (!ok && !tEntree) { const d = document.createElement("div"); d.className = "nv-carte-d ferme"; d.innerHTML = html; d.title = "Le professeur ouvrira ce dossier bientôt"; return d; }
+  const a = document.createElement("a"); a.className = "nv-carte-d" + (actuel && ok ? " actuel" : ""); a.href = nvLien(c, ch); a.innerHTML = html;
+  return a;
+}
+
+function renderDossierNv(view, c, ch, docs){
+  const key = c.id + "/" + ch.titre, eleve = eleveRev();
+  const box = document.createElement("div"); box.className = "nv"; view.appendChild(box);
+  const idx = c.chapitres.indexOf(ch), coul = NV_TEINTES[Math.max(0, idx) % NV_TEINTES.length];
+  const ok = chapOK(ch), E = ok ? nvEtapes(c, ch, docs) : [], av = nvAvancement(E);
+  const retour = document.createElement("a"); retour.className = "nv-retour"; retour.href = "#" + c.id;
+  retour.innerHTML = nvSvg('<path d="M15 6l-6 6 6 6"/>', 18, 2) + "Mes dossiers";
+  box.appendChild(retour);
+  const st = !ok ? "Dossier verrouillé" : eleve && av.total ? E.length + " étapes · " + av.faites + " sur " + av.total + " terminée" + (av.faites > 1 ? "s" : "") : E.length + " étapes" + (eleve ? "" : " · vue professeur");
+  const hd = document.createElement("div"); hd.className = "nv-dos-head";
+  hd.innerHTML = `${nvTuile(nvIcoDossier(ch.titre), coul, 56, 14)}<div><h2>${esc(ch.titre)}</h2><span class="st">${esc(st)}</span></div>`;
+  box.appendChild(hd);
+  if (!ok) {
+    const t = testDuChapitre(c, ch);
+    const p = document.createElement("p"); p.className = "nv-vide";
+    p.textContent = t ? "Fais d'abord le test d'entrée : le professeur ouvrira ensuite le dossier." : "Le professeur ouvrira ce dossier bientôt.";
+    box.appendChild(p);
+    if (t) { const ol = document.createElement("ol"); ol.className = "nv-parcours"; ol.appendChild(nvEtape(c, { cle: key + "/Pour commencer", type: "Pour commencer", lab: "Pour commencer", titre: "Test d'entrée", docs: [], test: t, etat: eleve ? (MT[t.id] ? "fait" : "afaire") : null }, 1, true, true)); box.appendChild(ol); }
+    return;
+  }
+  const corpsD = document.createElement("div"); corpsD.className = "nv-dos-corps";
+  const cote = document.createElement("div"); cote.className = "nv-cote";
+  corpsD.appendChild(cote); box.appendChild(corpsD);
+  if (eleve && av.total) {
+    const pr = document.createElement("div"); pr.className = "nv-prog";
+    pr.innerHTML = `<div class="barre" role="img" aria-label="${av.faites} étapes terminées sur ${av.total}"><i style="width:${(100 * av.pc).toFixed(1)}%"></i></div>
+      <div class="leg"><span><b>${Math.round(100 * av.pc)} %</b> du dossier</span><span>${av.faites} / ${av.total} étapes</span></div>`;
+    cote.appendChild(pr);
+  }
+  if (rythmeDe(ch)) { const j = jaugeBox(c, ch); if (j) cote.appendChild(j); }
+  if (!cote.children.length) cote.remove();
+  const ol = document.createElement("ol"); ol.className = "nv-parcours"; ol.setAttribute("aria-label", "Déroulé du dossier");
+  let cible = null;
+  E.forEach((e, i) => { const li = nvEtape(c, e, i + 1, e === av.actuelle, false); if (e === av.actuelle) cible = li; ol.appendChild(li); });
+  corpsD.appendChild(ol);
+  if (ALLER_ETAPE) { ALLER_ETAPE = false; if (cible) requestAnimationFrame(() => cible.scrollIntoView({ block: "start", behavior: "smooth" })); }
+}
+function nvEtape(c, e, n, actuelle, ouvrir){
+  const T = NV_TYPES[e.type] || NV_TYPES.Autres;
+  const li = document.createElement("li");
+  li.className = "nv-et " + (e.etat || "libre") + (actuelle ? " actuelle" : "");
+  const pas = e.etat === "fait" ? nvSvg(NV_COCHE, 16, 3) : String(n);
+  const etat = e.etat === "fait" ? (e.type === "Pour commencer" ? "Fait" : e.docs.some(d => d.corrige) || (e.sous || []).length ? "Corrigé" : "Fait") : e.etat === "encours" ? "En cours" : e.etat === "afaire" ? (actuelle ? "À faire" : "") : "";
+  li.innerHTML = `<div class="nv-rail"><span class="nv-pas" aria-hidden="true">${pas}</span><span class="nv-fil"></span></div>`;
+  const d = document.createElement("details"); d.className = "nv-carte";
+  if (ouvrir || opened.has(e.cle) || (actuelle && !fermes.has(e.cle))) d.open = true;
+  d.innerHTML = `<summary>${nvTuile(T.ico, T.c, 38, 10)}<span class="txt"><span class="lab" style="--c:${T.c}">${esc(e.lab)}</span><span class="tt">${esc(e.titre)}</span></span>${etat ? `<span class="nv-etat ${e.etat}">${esc(etat)}</span>` : ""}<span class="nv-chev" aria-hidden="true"></span></summary>`;
+  d.addEventListener("toggle", () => { if (d.open) { opened.add(e.cle); fermes.delete(e.cle); } else { opened.delete(e.cle); fermes.add(e.cle); } });
+  const corps = document.createElement("div");
+  if (e.test) { const ul = document.createElement("ul"); ul.className = "docs"; ul.appendChild(ligneTest(c, e.test)); corps.appendChild(ul); }
+  if (e.docs.length) { const ul = document.createElement("ul"); ul.className = "docs"; e.docs.forEach(x => ul.appendChild(docRow(c, x))); corps.appendChild(ul); }
+  (e.sous || []).forEach(p => {
+    const h = document.createElement("h4"); h.textContent = p.titre; corps.appendChild(h);
+    const ul = document.createElement("ul"); ul.className = "docs"; p.docs.forEach(x => ul.appendChild(docRow(c, x))); corps.appendChild(ul);
+  });
+  d.appendChild(corps);
+  li.appendChild(d);
+  return li;
+}
+function nvTheme(){
+  let t = null; try { t = localStorage.getItem("theme"); } catch(_) {}
+  const sombre = t ? t === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  return sombre;
+}
+function nvBasculeTheme(){
+  const sombre = !nvTheme(), t = sombre ? "dark" : "light";
+  document.documentElement.setAttribute("data-theme", t);
+  try { localStorage.setItem("theme", t); } catch(_) {}
+  renderWho();
+}
+try { const t = localStorage.getItem("theme"); if (t) document.documentElement.setAttribute("data-theme", t); } catch(_) {}
+
+
 function render(){
   renderNav(); renderWho(); controleDonnees();
+  document.body.classList.add("nv");
   if (VUE_REV) return;   // test en cours ou résultat affiché : ne pas effacer
   $("#searchBox").hidden = !S.user || current === "revisions" || current === "mes-evaluations" || current === "mes-competences" || current === "calendrier";
   const view = $("#view"); view.innerHTML = "";
@@ -750,6 +1142,7 @@ function render(){
       .filter(x => x.docs.length);
     chaps = ordreChaps(c, chaps);
     if (q && !chaps.length) continue;
+    if (!q && NOUVELLE_UI.has(c.id)) { renderClasseNv(view, c, chaps); continue; }
     const head = document.createElement("div"); head.className = "classhead";
     head.innerHTML = `<h2>${esc(c.nom)}</h2><span class="status is-open">Documents ouverts</span>`;
     view.appendChild(head);
@@ -1020,7 +1413,9 @@ function carteTest(t){
   }
   if (!r) {
     bd.innerHTML = `<p>Fais d'abord le <strong>test d'entrée</strong> : il est dans le dossier du chapitre « ${esc(t.chapitre)} », rubrique « Pour commencer ». Tes fiches de révision apparaîtront ensuite ici.</p><button class="btn" type="button">Aller au chapitre</button>`;
-    bd.querySelector("button").onclick = () => { opened.add(t.site + "/" + t.chapitre); opened.add(t.site + "/" + t.chapitre + "/Pour commencer"); location.hash = t.site; };
+    bd.querySelector("button").onclick = () => { opened.add(t.site + "/" + t.chapitre); opened.add(t.site + "/" + t.chapitre + "/Pour commencer");
+      const chT = NOUVELLE_UI.has(t.site) ? ((CAT.classes.find(k => k.id === t.site) || { chapitres: [] }).chapitres.find(x => sansAccent(x.titre) === sansAccent(t.chapitre))) : null;
+      location.hash = chT ? t.site + "/" + encodeURIComponent(chT.titre) : t.site; };
     return box;
   }
   bd.innerHTML = `<p>Test fait le ${esc(dateFr(r.date))}.</p>`;
@@ -1684,13 +2079,17 @@ function previsionEleve(ch, e){
 }
 
 function route(){
-  const h = location.hash.slice(1);
+  const brut = location.hash.slice(1), cut = brut.indexOf("/");
+  const h = cut >= 0 ? brut.slice(0, cut) : brut;
+  let dv = null; if (cut >= 0) { try { dv = decodeURIComponent(brut.slice(cut + 1)); } catch(_) { dv = brut.slice(cut + 1); } }
+  const changeDossier = dv !== DOSSIER_VU; DOSSIER_VU = dv;
   VUE_REV = null;
   const ids = visibleClasses().map(c => c.id);
   if (!S.user) current = "connexion";
   else current = ((h === "evaluations" || h === "calendrier") && S.evals) ? h : (h === "mes-evaluations" && !S.prof && !S.tous && S.site) ? h : (h === "mes-competences" && !S.prof && !S.tous && S.site) ? h : (h === "revisions" && testsVisibles().length) ? h : ids.includes(h) || (h === "outils" && (CAT.outils || []).length) ? h : (S.site || ids[0]);
   if (S.user && S.demo && (!S.demoCfg || h === "demo")) current = "demo";
   render();
+  if (changeDossier && !ALLER_ETAPE) window.scrollTo(0, 0);
 }
 
 async function startSession(user){
