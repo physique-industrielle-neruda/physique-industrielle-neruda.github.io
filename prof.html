@@ -113,6 +113,11 @@ details.annee[open]>summary{margin-bottom:4px}
 input[type=text],input[type=password]{width:100%;font:inherit;padding:12px;border:1px solid var(--grid);border-radius:10px;background:var(--surface);color:var(--text);margin:6px 0}
 label.f{display:block;font-size:.9rem;color:var(--muted);margin-top:10px}
 .note{color:var(--muted);font-size:.92rem;margin:8px 4px}
+.ry .btns{padding:0 12px}.ry .note{padding:0 12px}.ry-date{display:block;padding-bottom:12px}.ry-date input{font:inherit;margin-left:6px}
+.linkbtn{border:0;background:none;color:var(--accent);text-decoration:underline;cursor:pointer;padding:0;font-size:inherit}
+.ry-pill{display:inline-block;font-weight:700;font-size:.78rem;padding:2px 8px;border-radius:999px}
+.ry-ctl{white-space:nowrap}.ry-ctl button{border:1px solid var(--grid);background:var(--surface);border-radius:6px;width:26px;height:26px;margin:0 4px;cursor:pointer;font-weight:700}
+
 .err{color:var(--accent);font-weight:700;min-height:1.3em;margin:6px 0}
 .pill{display:inline-block;font-size:.78rem;font-weight:700;border-radius:20px;padding:1px 8px;border:1px solid currentColor}
 .pill.ok{color:var(--ok)}.pill.no{color:var(--accent)}
@@ -168,6 +173,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore, doc, getDoc, getDocs, setDoc, deleteDoc, collection, query, where, onSnapshot, serverTimestamp, writeBatch, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { profil as calcProfil, profilHtml, synthese, PROFIL_CSS, COMPS, LIBS as CLIBS, NIVEAUX, niveauDe, pointsAnim, bilanAnnee, anneeHtml, ANNEE_CSS } from "./competences.js";
+import { etat as etatRythme, STATUTS, heures, BAREME, rythmeDoc, rythmeDocId } from "./rythme.js";
 
 const FB = {"apiKey":"AIzaSyDH32Ma0shVbsIHR0xNJbahb5MO0RKHRS0","authDomain":"physique-neruda.firebaseapp.com","projectId":"physique-neruda","storageBucket":"physique-neruda.firebasestorage.app","messagingSenderId":"62730174289","appId":"1:62730174289:web:588c846aadd4eec2109d70"};
 const DOMAINE = "@physique-neruda.firebaseapp.com";
@@ -473,7 +479,8 @@ function chapitreGrille(c, g){
         + el.map(e => `<tr><td class="nom">${esc(e.nom)}</td>${docs.map(d => `<td>${pouceDe(d, e.uid)}</td>`).join("")}</tr>`).join("")
         + `</table></div><p class="note">Pour chaque élève, les questions où il a débloqué un coup de pouce supplémentaire : <span class="cp n2">B5 2</span> niveau 2 · <span class="cp n3">B5 3</span> niveau 3. <span class="cp vu">lu</span> fiche ouverte, niveau 1 seulement · – fiche jamais ouverte.</p>` : "");
     const sx = $(".grille") ? $(".grille").scrollLeft : 0;
-    $("#app").innerHTML = html; if ($(".grille")) $(".grille").scrollLeft = sx;
+    $("#app").innerHTML = html + (g.ch.rythme ? RY.html() : ""); if ($(".grille")) $(".grille").scrollLeft = sx;
+    if (g.ch.rythme) RY.bind();
     $("#app").querySelectorAll("td.c").forEach(td => td.onclick = async () => {
       const d = cols[+td.dataset.j], uid = td.dataset.uid, id = d.corrige.id + "_" + uid; if (busy.has(id)) return;
       const val = !D.has(id);
@@ -492,6 +499,8 @@ function chapitreGrille(c, g){
       catch(e){ toast(e.message === "cles" ? "Clés absentes : importez le fichier dans Réglages." : "Échec, vérifiez la connexion."); }
     });
   };
+  /* Rythme du dossier et note d'investissement (25/11/2026) : séances « J'ai cours », jauge par élève, note /20 */
+  const RY = rythmePanel(c, g, el, () => P, () => render());
   render();
   const a = onSnapshot(collection(db, "deblocages"), snap => {
     D = new Set(); counts = {};
@@ -501,7 +510,83 @@ function chapitreGrille(c, g){
     P = {}; aPouce = aPouceBase;
     snap.forEach(x => { const v = x.data(); if (mesUid.has(v.uid)) { P[v.uid + "__" + v.pdc] = v; if (v.type === "pouce" && docs.some(d => "pouce:" + d.corrige.id === v.pdc)) aPouce = true; } }); render();
   }, () => {});
-  unsub = () => { a(); b(); };
+  unsub = () => { a(); b(); RY.stop(); };
+}
+
+function rythmePanel(c, g, el, getP, rerender){
+  const ch = g.ch, R = ch.rythme;
+  if (!R) return { html: () => "", bind: () => {}, stop: () => {} };
+  const chapId = ch.verrou ? ch.verrou.id : ch.titre, docId = rythmeDoc(chapId);
+  let AT = {}, DOCS = {}, busy = false;
+  const ref = uid => doc(db, "deblocages", rythmeDocId(chapId, uid));
+  const stop = onSnapshot(collection(db, "deblocages"), snap => {
+    AT = {}; DOCS = {};
+    snap.forEach(x => { const v = x.data(); if (!el.some(e => e.uid === v.uid)) return;
+      if (v.doc === docId) { DOCS[v.uid] = v; return; }
+      (AT[v.uid] = AT[v.uid] || {})[v.doc] = v.at && v.at.toMillis ? v.at.toMillis() : Date.now(); });
+    rerender();
+  }, e => toast("Lecture du rythme impossible : " + e.code));
+  const mpDe = uid => { const P = getP(), o = {}; for (const k in P) if (k.startsWith(uid + "__")) o[P[k].pdc] = P[k]; return o; };
+  const etatDe = e => etatRythme(ch, { corrAt: AT[e.uid] || {}, mp: mpDe(e.uid), r: DOCS[e.uid] || {} });
+  const commun = () => { const v = Object.values(DOCS)[0] || {}; return { seances: v.seances || [], evalDate: v.evalDate || "" }; };
+  const ecrireTous = async (data, msg) => {
+    if (busy) return; busy = true;
+    try { const batch = writeBatch(db);
+      el.forEach(e => batch.set(ref(e.uid), { uid: e.uid, doc: docId, classe: c.id, ...data, maj: serverTimestamp() }, { merge: true }));
+      await batch.commit(); if (msg) toast(msg); }
+    catch(x){ toast("Échec (" + (x.code || x.message) + ") : vérifiez la connexion ou les règles Firestore."); }
+    busy = false;
+  };
+  const f1 = x => (Math.round(x * 10) / 10).toLocaleString("fr-FR");
+  const html = () => {
+    const actif = Object.keys(DOCS).length > 0, k = commun();
+    const contenu = R.items.reduce((s, x) => s + x.duree, 0), marge = R.marge ?? 1;
+    let h = `<p class="sec">Rythme du dossier et note d'investissement</p><div class="card ry">`;
+    if (!actif) return h + `<p class="note">Durée prévue : ${heures(contenu)} de travail + ${heures(marge)} de marge = <b>${heures(contenu + marge)}</b>. Le suivi n'est pas encore démarré : les élèves ne voient pas encore la jauge.</p>
+      <button class="btn" id="ryStart">Démarrer le suivi du rythme pour la classe</button></div>`;
+    const ecoule = k.seances.reduce((s, x) => s + (+x.h || 0), 0);
+    const sc = (R.seances || [1, 2]);
+    h += `<p class="note">Durée prévue : ${heures(contenu)} de travail + ${heures(marge)} de marge = <b>${heures(contenu + marge)}</b> · Cours écoulés : <b>${heures(ecoule)}</b> (${k.seances.length} séance${k.seances.length > 1 ? "s" : ""})</p>
+      <div class="btns">${sc.map(x => `<button class="btn ok" data-h="${x}">J'ai cours : ${x} h</button>`).join("")}</div>
+      <p class="note">Coche la séance <b>en fin de cours</b>. ${k.seances.length ? `Dernière : ${new Date(k.seances[k.seances.length - 1].t).toLocaleString("fr-FR", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })} (${k.seances[k.seances.length - 1].h} h) · <button class="linkbtn" id="ryUndo">annuler la dernière séance</button>` : ""}</p>
+      <label class="note ry-date">Date de l'évaluation (la note est arrêtée ce jour-là) : <input type="date" id="ryEval" value="${esc(k.evalDate)}"></label></div>`;
+    const lignes = el.map(e => ({ e, s: etatDe(e), v: DOCS[e.uid] || {} }));
+    h += `<div class="card grille ryg"><table><tr><th class="nom">Élève</th><th>Rythme</th><th>Corrigés<small class="tsc">/${BAREME.corriges}</small></th><th>Cours<small class="tsc">/${BAREME.cours}</small></th><th>Anim.<small class="tsc">/${BAREME.anim}</small></th><th>Régul.<small class="tsc">/${BAREME.regularite}</small></th><th>Attitude<small class="tsc">/${BAREME.attitude}</small></th><th>Ajust.</th><th>Note<small class="tsc">/20</small></th></tr>`
+      + lignes.map(({ e, s, v }) => { const st = STATUTS[s.statut];
+        return `<tr><td class="nom">${esc(e.nom)}</td>
+        <td><span class="ry-pill" style="color:${st.couleur};background:${st.fond}" title="${st.lib}">${heures(s.fait)} / ${heures(Math.min(s.ecoule, s.contenu))}</span></td>
+        <td>${f1(s.pts.corriges)}</td><td>${f1(s.pts.cours)}</td><td>${f1(s.pts.anim)}</td><td>${f1(s.pts.regularite)}</td>
+        <td class="ry-ctl"><button data-att="-1" data-uid="${esc(e.uid)}" aria-label="Attitude moins">−</button>${f1(s.pts.attitude)}<button data-att="1" data-uid="${esc(e.uid)}" aria-label="Attitude plus">+</button></td>
+        <td class="ry-ctl"><button data-aj="-0.5" data-uid="${esc(e.uid)}" aria-label="Ajustement moins">−</button>${(+v.ajust || 0) > 0 ? "+" : ""}${f1(+v.ajust || 0)}<button data-aj="0.5" data-uid="${esc(e.uid)}" aria-label="Ajustement plus">+</button></td>
+        <td><b>${f1(s.note)}</b></td></tr>`; }).join("")
+      + `</table></div>
+      <button class="btn ghost" id="ryCopy">Copier les notes pour Pronote</button>
+      <p class="note">Rythme : travail fait / temps de cours écoulé · vert à jour · orange jusqu'à 1 h de retard · rouge au-delà.<br>
+      Corrigés : activités, TP et exercices dont tu as débloqué le corrigé avant la fin du jour de l'évaluation. Cours : clic « J'ai lu le cours et fait les exemples ». Animation : part des questions traitées.
+      Régularité : à chaque séance cochée, l'élève est-il à jour avant la séance suivante (vert 1, orange ½, rouge 0) ? Attitude : 2 points par défaut, − retire ½ point (à utiliser par exception), + rend ½ point. Ajust. : ta correction manuelle de la note. Les coups de pouce ne comptent jamais.</p>`;
+    return h;
+  };
+  const bind = () => {
+    const st = $("#ryStart"); if (st) st.onclick = () => { if (confirm("Démarrer le suivi du rythme pour toute la classe ? Les élèves verront la jauge dans le dossier.")) ecrireTous({ seances: [], evalDate: "" }, "Suivi démarré."); };
+    document.querySelectorAll(".ry [data-h]").forEach(b => b.onclick = () => {
+      const h = +b.dataset.h, k = commun();
+      if (!confirm("Enregistrer une séance de " + h + " h pour la classe ?")) return;
+      ecrireTous({ seances: k.seances.concat([{ t: Date.now(), h }]) }, "Séance de " + h + " h enregistrée.");
+    });
+    const u = $("#ryUndo"); if (u) u.onclick = () => { const k = commun(); if (!k.seances.length || !confirm("Annuler la dernière séance cochée ?")) return; ecrireTous({ seances: k.seances.slice(0, -1) }, "Dernière séance annulée."); };
+    const d = $("#ryEval"); if (d) d.onchange = () => ecrireTous({ evalDate: d.value || "" }, d.value ? "Date de l'évaluation enregistrée." : "Date de l'évaluation effacée.");
+    document.querySelectorAll(".ryg [data-att], .ryg [data-aj]").forEach(b => b.onclick = async () => {
+      const uid = b.dataset.uid, v = DOCS[uid] || {};
+      const data = b.dataset.att ? { attitude: Math.max(-4, Math.min(0, (+v.attitude || 0) + +b.dataset.att)) } : { ajust: Math.max(-10, Math.min(10, (+v.ajust || 0) + +b.dataset.aj)) };
+      try { await setDoc(ref(uid), { uid, doc: docId, classe: c.id, ...data, maj: serverTimestamp() }, { merge: true }); }
+      catch(x){ toast("Échec (" + (x.code || x.message) + ")."); }
+    });
+    const cp = $("#ryCopy"); if (cp) cp.onclick = async () => {
+      const txt = el.map(e => e.nom + "\t" + String(etatDe(e).note).replace(".", ",")).join("\n");
+      try { await navigator.clipboard.writeText(txt); toast("Notes copiées."); } catch(_) { prompt("Copie ces notes :", txt); }
+    };
+  };
+  return { html, bind, stop };
 }
 
 

@@ -80,6 +80,20 @@ nav.classes button[aria-pressed="true"] .n,nav.classes button[aria-pressed="true
 .btn{font:inherit;font-weight:700;border:0;border-radius:8px;padding:10px 16px;cursor:pointer;background:var(--ink);color:var(--surface)}
 .err{color:var(--accent);font-weight:700;margin:8px 0 0;min-height:1.2em}
 
+.rythme{margin:12px 14px 4px;padding:12px 14px;border:1px solid var(--grid);border-radius:10px;background:var(--bg)}
+.ry-head{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:10px}.ry-head b{color:var(--ink);font-size:1.05rem;flex:1}
+.ry-st{font-weight:700;font-size:.85rem;padding:3px 10px;border-radius:999px}.ry-apercu{font-size:.78rem;color:var(--muted);font-style:italic}
+.ry-bar{position:relative;height:16px;border-radius:8px;background:var(--grid);overflow:visible}
+.ry-fill{position:absolute;left:0;top:0;bottom:0;border-radius:8px}
+.ry-marge{position:absolute;top:0;bottom:0;right:0;background:repeating-linear-gradient(45deg,transparent 0 4px,rgba(90,101,119,.35) 4px 6px);border-radius:0 8px 8px 0}
+.ry-now{position:absolute;top:-5px;bottom:-5px;width:3px;margin-left:-1.5px;background:var(--ink);border-radius:2px}
+.ry-leg{display:flex;flex-wrap:wrap;gap:4px 16px;margin-top:8px;font-size:.82rem;color:var(--muted)}
+.ry-k{display:inline-block;width:12px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}.ry-k.now{width:3px;background:var(--ink)}
+.ry-k.marge{background:repeating-linear-gradient(45deg,transparent 0 3px,rgba(90,101,119,.5) 3px 5px);border:1px solid var(--grid)}
+.ry-msg{margin:10px 0 6px;font-size:.95rem}.ry-liste summary{cursor:pointer;color:var(--ink);font-weight:600;font-size:.9rem}
+.ry-liste ol{margin:6px 0 0 20px;padding:0;font-size:.9rem}.ry-liste li span{color:var(--muted)}.ry-liste li.ok{color:var(--ok)}.ry-liste li.part{color:var(--accent)}
+.ry-note{font-size:.8rem;color:var(--muted);margin:6px 0 0}.ry-cours{margin-top:8px}
+li.freine{opacity:.7}
 .chap{margin:14px 0 0;background:var(--surface);border:1px solid var(--grid);border-radius:10px;box-shadow:var(--shadow)}
 .chap>summary{list-style:none;cursor:pointer;display:flex;gap:14px;align-items:center;padding:14px 16px;border-radius:10px}
 .chap>summary::-webkit-details-marker{display:none}
@@ -253,6 +267,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut, setPersistence, browserLocalPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore, doc, getDoc, getDocs, setDoc, collection, query, where, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { profil as calcProfil, profilHtml, synthese, PROFIL_CSS, bilanAnnee, anneeHtml, ANNEE_CSS } from "./competences.js";
+import { etat as etatRythme, STATUTS, heures, coursId, itemDuDoc, rythmeDoc } from "./rythme.js";
 
 const FB = {"apiKey":"AIzaSyDH32Ma0shVbsIHR0xNJbahb5MO0RKHRS0","authDomain":"physique-neruda.firebaseapp.com","projectId":"physique-neruda","storageBucket":"physique-neruda.firebasestorage.app","messagingSenderId":"62730174289","appId":"1:62730174289:web:588c846aadd4eec2109d70"};
 const DOMAINE = "@physique-neruda.firebaseapp.com";
@@ -269,7 +284,7 @@ const size = n => n > 1e6 ? (n/1e6).toFixed(1).replace(".", ",") + " Mo" : Math.
 let CAT = null, current = null, booted = false;
 let EVAL = { evaluations: [] }, NOMS = {};
 /* Session : rôle, classe, clés */
-let S = { user:null, prof:false, evals:false, premium:false, tous:false, nom:"", site:null, groupe:null, keys:{}, maitre:null, corr:{}, corrAt:{} };
+let S = { user:null, prof:false, evals:false, premium:false, tous:false, nom:"", site:null, groupe:null, keys:{}, maitre:null, corr:{}, corrAt:{}, rythme:{} };
 let unsubCorr = null, fresh = new Set();
 /* Mes révisions : tests d'entrée et fiches de révision (revisions.json, Firestore « tests » et « revisions ») */
 let REV = { tests: [], fiches: {} }, MT = {}, MF = {}, unsubRev = [], VUE_REV = null;
@@ -551,6 +566,13 @@ function docRow(c, d){
   if (d.type === "Point de cours") return pdcRow(c, d);
   if (d.format === "pouce") return pouceRow(c, d);
   const li = document.createElement("li");
+  if (freine(c, d)) {
+    li.className = "freine";
+    li.innerHTML = `<span class="type locked">${LOCK}${esc(d.type)}</span>
+      <span class="title">${esc(d.titre)}<span class="meta">Tu as plus d'1 h d'avance sur le dossier : cette partie s'ouvrira après la prochaine séance. En attendant, fais les « Côté terrain ★ » ou les cartes de révision.</span></span>
+      <span class="actions"><span class="open locked">${LOCK}Bientôt</span></span>`;
+    return li;
+  }
   if (d.lien) {
     const href = /^https?:/.test(d.lien) ? d.lien : BASE + d.lien;
     li.innerHTML = `<span class="type">${esc(d.type)}</span>
@@ -613,6 +635,7 @@ function chapBlock(c, ch, docs, forceOpen, outil){
   const badge = !outil && ch.verrou && (S.prof || S.premium) ? `<span class="badge-verrou">${LOCK}Chapitre sous cadenas</span>` : "";
   s.innerHTML = `<summary>${outil ? FOLDER.replace('class="folder"', 'class="folder outil"') : FOLDER}<h3><span>${esc(ch.titre)}</span><span class="count">${n} document${n > 1 ? "s" : ""}</span></h3>${badge}<span class="chev" aria-hidden="true"></span></summary>`;
   s.addEventListener("toggle", () => { if (s.open) opened.add(key); else opened.delete(key); });
+  if (!outil && ch.rythme) { const j = jaugeBox(c, ch); if (j) s.appendChild(j); }
   if (outil || !docs.some(d => d.rubrique)) {
     const ul = document.createElement("ul"); ul.className = "docs";
     docs.forEach(d => ul.appendChild(docRow(c, d)));
@@ -729,6 +752,63 @@ function render(){
   if (q && !found) { const p = document.createElement("p"); p.className = "empty"; p.textContent = "Aucun document ne correspond à « " + $("#q").value.trim() + " »."; view.appendChild(p); }
 }
 
+
+/* ================= Rythme du dossier : jauge et frein (25/11/2026, prototype CIRA « Amplification ») =================
+   Calcul : rythme.js (partagé avec l'appli professeur). Le suivi démarre quand le professeur l'active dans son appli. */
+const chapIdDe = ch => ch.verrou ? ch.verrou.id : ch.titre;
+function etatEleve(ch){
+  const r = S.rythme[chapIdDe(ch)]; if (!r) return null;
+  return etatRythme(ch, { corrAt: S.corrAt, mp: MP, r });
+}
+function apercuRythme(ch){
+  /* Professeur et invités : exemple fictif pour voir à quoi ressemble la jauge */
+  const corrAt = {}, t0 = Date.now() - 7 * 864e5;
+  ch.rythme.items.slice(0, 3).forEach((it, i) => { if (it.corrige) corrAt[it.corrige] = t0 + i * 864e5; });
+  const r = { seances: [{ t: t0, h: 1 }, { t: t0 + 2 * 864e5, h: 2 }, { t: t0 + 4 * 864e5, h: 1 }, { t: t0 + 6 * 864e5, h: 1 }], evalDate: "" };
+  return etatRythme(ch, { corrAt, mp: {}, r });
+}
+function freine(c, d){
+  if (!eleveRev() || d.corrige || d.lien || /coups?\s+de\s+pouce/i.test(d.titre)) return false;
+  const ch = chapDe(c.id, d); if (!ch || !ch.rythme || !chapOK(ch)) return false;
+  const it = itemDuDoc(ch, numeroDoc(d), d); if (!it || it.tp || it.clic) return false;
+  const e = etatEleve(ch); if (!e || !e.frein) return false;
+  const x = e.items.find(y => y.num === it.num);
+  return x && !x.fait && x.part === 0;
+}
+function jaugeBox(c, ch){
+  if (!chapOK(ch)) return null;
+  const apercu = !eleveRev();
+  const e = apercu ? (S.prof || S.premium ? apercuRythme(ch) : null) : etatEleve(ch);
+  if (!e) return null;
+  const st = STATUTS[e.statut], pc = x => Math.max(0, Math.min(100, 100 * x / e.total)).toFixed(1);
+  const box = document.createElement("div"); box.className = "rythme";
+  const dateEval = e.evalDate ? new Date(e.evalDate + "T12:00:00").toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" }) : "";
+  const conseil = e.statut === "vert" ? (e.frein ? "Tu es en avance : la suite s'ouvrira après la prochaine séance. Profites-en pour les « Côté terrain ★ » ou les cartes de révision." : "Continue comme ça.")
+    : e.statut === "orange" ? "Prévois un peu de travail à la maison pour rattraper avant la prochaine séance."
+    : "Tu as pris du retard : organise-toi dès maintenant (maison, coups de pouce, appel au professeur).";
+  const cours = ch.rythme.items.find(x => x.clic), coursFait = e.items.find(x => x.clic && x.fait);
+  box.innerHTML = `<div class="ry-head"><b>Mon rythme dans le dossier</b>${apercu ? '<span class="ry-apercu">Aperçu professeur (exemple fictif)</span>' : ""}<span class="ry-st" style="color:${st.couleur};background:${st.fond}">${st.lib}</span></div>
+    <div class="ry-bar" role="img" aria-label="Travail fait ${heures(e.fait)} sur ${heures(e.contenu)}, temps de cours écoulé ${heures(e.ecoule)} sur ${heures(e.total)}">
+      <span class="ry-fill" style="width:${pc(e.fait)}%;background:${st.couleur}"></span>
+      <span class="ry-marge" style="left:${pc(e.contenu)}%"></span>
+      <span class="ry-now" style="left:${pc(e.ecoule)}%"></span>
+    </div>
+    <div class="ry-leg"><span><i class="ry-k fill" style="background:${st.couleur}"></i>Travail fait : ${heures(e.fait)} sur ${heures(e.contenu)}</span><span><i class="ry-k now"></i>Cours écoulés : ${heures(e.ecoule)} sur ${heures(e.total)}</span><span><i class="ry-k marge"></i>1 h de marge</span></div>
+    <p class="ry-msg">Il te reste <b>${heures(e.reste)}</b> de travail. Il reste <b>${heures(e.resteCours)}</b> de cours avant la fin du dossier${dateEval ? ` (évaluation le ${esc(dateEval)})` : ""}. ${conseil}</p>
+    <details class="ry-liste"><summary>Ce qu'il me reste à faire</summary><ol>${e.items.map(x => `<li class="${x.fait ? "ok" : x.part ? "part" : ""}">${x.fait ? "✓ " : ""}${esc(x.titre)} <span>(${heures(x.duree)}${x.tp ? ", en classe" : ""}${x.part && !x.fait ? ", " + Math.round(100 * x.part) + " % fait" : ""})</span></li>`).join("")}</ol>
+      <p class="ry-note">Une activité, un TP ou un exercice compte comme fait quand le professeur a débloqué son corrigé. Les coups de pouce ne comptent jamais contre toi.</p></details>
+    ${cours && !apercu ? `<div class="ry-cours">${coursFait ? "✓ Cours lu et exemples faits." : `<button type="button" class="open">J'ai lu le cours et fait les exemples</button>`}</div>` : ""}`;
+  const b = box.querySelector(".ry-cours button");
+  if (b) b.onclick = async () => {
+    if (!confirm("Tu confirmes avoir lu tout le cours et fait tous les exemples ?")) return;
+    const id = coursId(chapIdDe(ch));
+    const v = { uid: S.user.uid, pdc: id, type: "rythme", site: c.id, chap: chapIdDe(ch), titre: "Cours : lecture et exemples", activite: "",
+      nom: S.nom, classe: S.groupe || "", etape: 1, total: 1, erreurs: 0, termine: true, date: serverTimestamp() };
+    MP[id] = { ...v, date: Date.now() }; render();
+    try { await setDoc(doc(db, "pointsdecours", S.user.uid + "__" + id), v); } catch(_) { toast("Enregistrement impossible, vérifie ta connexion."); }
+  };
+  return box;
+}
 
 /* ================= Mes révisions ================= */
 function testsVisibles(){
@@ -1299,7 +1379,7 @@ function route(){
 async function startSession(user){
   if (unsubCorr) { unsubCorr(); unsubCorr = null; }
   unsubRev.forEach(f => f()); unsubRev = []; MT = {}; MF = {}; MP = {}; VUE_REV = null;
-  S = { user:null, prof:false, evals:false, premium:false, tous:false, nom:"", site:null, groupe:null, keys:{}, maitre:null, corr:{}, corrAt:{} };
+  S = { user:null, prof:false, evals:false, premium:false, tous:false, nom:"", site:null, groupe:null, keys:{}, maitre:null, corr:{}, corrAt:{}, rythme:{} };
   KO = null;
   if (!user) return;
   try {
@@ -1345,9 +1425,9 @@ async function startSession(user){
     let first = true;
     unsubCorr = onSnapshot(query(collection(db, "deblocages"), where("uid", "==", user.uid)), snap => {
       const before = new Set(Object.keys(S.corr)); const now = {}, at = {};
-      snap.forEach(x => { const v = x.data(); if (v.doc && v.cle) { now[v.doc] = v.cle; at[v.doc] = v.at && v.at.toMillis ? v.at.toMillis() : Date.now(); } });
+      const ry = {}; snap.forEach(x => { const v = x.data(); if (v.doc && String(v.doc).startsWith("rythme:")) { ry[v.doc.slice(7)] = v; return; } if (v.doc && v.cle) { now[v.doc] = v.cle; at[v.doc] = v.at && v.at.toMillis ? v.at.toMillis() : Date.now(); } });
       if (!first) for (const id in now) if (!before.has(id)) { fresh.add(id); toast(id.startsWith("eval-") ? "Ta copie corrigée est disponible dans « Mes évaluations »." : id.startsWith("test-") ? "Un test d'entrée vient d'être ouvert : il est dans le dossier du chapitre." : chapInfo(id) ? "Un nouveau chapitre vient d'être ouvert !" : aPdc(id) ? "Ton corrigé et ton point de cours sont débloqués !" : "Un corrigé vient d'être débloqué !"); }
-      first = false; S.corr = now; S.corrAt = at; render();
+      first = false; S.corr = now; S.corrAt = at; S.rythme = ry; render();
     }, () => {});
     suivreRevisions(user.uid);
     suivrePdc(user.uid);

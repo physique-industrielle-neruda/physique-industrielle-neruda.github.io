@@ -3592,6 +3592,90 @@
         "3.6": "ANA"
        }
       }
+     },
+     "rythme": {
+      "marge": 1,
+      "seances": [
+       1,
+       2
+      ],
+      "items": [
+       {
+        "num": "Activité 1",
+        "titre": "Activité 1 – L'ADI et le montage suiveur",
+        "duree": 0.75,
+        "corrige": "cira-amplification-corrige-activite-1-l-adi-et-le-montage-suiveur"
+       },
+       {
+        "num": "TP 1",
+        "titre": "TP 1 – Amplificateurs non inverseur et inverseur",
+        "duree": 2,
+        "corrige": "cira-amplification-corrige-tp-1-amplificateurs-non-inverseur-et-inver",
+        "tp": true
+       },
+       {
+        "num": "Activité 2",
+        "titre": "Activité 2 – Le soustracteur et le décalage de zéro",
+        "duree": 0.75,
+        "corrige": "cira-amplification-corrige-activite-2-le-soustracteur-et-le-decalage-"
+       },
+       {
+        "num": "TP 2",
+        "titre": "TP 2 – Conditionneur à deux ADI pour la sonde Pt100",
+        "duree": 2,
+        "corrige": "cira-amplification-corrige-tp-2-conditionneur-a-deux-adi-pour-la-sond",
+        "tp": true
+       },
+       {
+        "num": "Activité 3",
+        "titre": "Activité 3 – L'amplificateur d'instrumentation",
+        "duree": 0.75,
+        "corrige": "cira-amplification-corrige-activite-3-l-amplificateur-d-instrumentati"
+       },
+       {
+        "num": "Cours",
+        "titre": "Cours : lecture et exemples",
+        "duree": 0.75,
+        "clic": true
+       },
+       {
+        "num": "Animation",
+        "titre": "Animation – Amplification",
+        "duree": 1,
+        "anim": true,
+        "questions": 16
+       },
+       {
+        "num": "Exercice 1",
+        "titre": "Exercice 1",
+        "duree": 0.25,
+        "corrige": "cira-amplification-corrige-exercice-1"
+       },
+       {
+        "num": "Exercice 2",
+        "titre": "Exercice 2",
+        "duree": 0.25,
+        "corrige": "cira-amplification-corrige-exercice-2"
+       },
+       {
+        "num": "Exercice 3",
+        "titre": "Exercice 3",
+        "duree": 0.25,
+        "corrige": "cira-amplification-corrige-exercice-3"
+       },
+       {
+        "num": "Exercice 4",
+        "titre": "Exercice 4",
+        "duree": 0.25,
+        "corrige": "cira-amplification-corrige-exercice-4"
+       },
+       {
+        "num": "Parcours",
+        "titre": "Mon parcours avant l'évaluation",
+        "duree": 1,
+        "parcours": "cira-amplification-parcours"
+       }
+      ]
      }
     }
    ]
