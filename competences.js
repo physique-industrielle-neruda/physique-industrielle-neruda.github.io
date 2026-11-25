@@ -5,7 +5,9 @@
      est débloqué (travail vérifié). Aucun coup de pouce = 3 · niveau 1 = 2 · niveau 2 = 1 · niveau 3 = 0.
    - animation : juste au 1er essai = 3 · au 2e essai = 2 · correction affichée = 0 (questions répondues seulement).
    Score d'une compétence (0 à 3) : moyenne des deux sources quand elles existent toutes les deux.
-   Moins de 3 questions comptées : « pas encore assez d'éléments ». Rien n'est noté. */
+   - oral (25/11/2026) : mini-oral de fin d'activité et tutorats, notés par le professeur dans son appli, pour COM
+     seulement (clair 3 · partiel 1,5 · à reprendre 0 · tutorat 3). Une observation directe : elle suffit à situer COM.
+   Moins de 3 questions comptées (sans oral) : « pas encore assez d'éléments ». Rien n'est noté. */
 export const COMPS = ["APP", "ANA", "REA", "VAL", "COM"];
 export const LIBS = { APP: "S'approprier", ANA: "Analyser", REA: "Réaliser", VAL: "Valider", COM: "Communiquer" };
 export const DEFS = {
@@ -34,9 +36,10 @@ export function pointsAnim(r){
   if (r.t >= 2) return 0;
   return null;                                       // 1er essai faux, 2e pas encore fait : pas compté
 }
-export function profil(map, pouces, anim){
+export function profil(map, pouces, anim, com){
   const R = {};
-  COMPS.forEach(c => R[c] = { p: [], a: [] });
+  COMPS.forEach(c => R[c] = { p: [], a: [], o: [] });
+  (com || []).forEach(x => R.COM.o.push(x));   // mini-oral et tutorat (25/11/2026)
   Object.entries(map || {}).forEach(([docu, qs]) => {
     if (docu === "Animation") {
       Object.entries(qs).forEach(([n, c]) => { const r = pointsAnim(anim && anim[n]); if (R[c] && r != null) R[c].a.push(r); });
@@ -48,15 +51,16 @@ export function profil(map, pouces, anim){
   });
   const out = {};
   COMPS.forEach(c => {
-    const P = moy(R[c].p), A = moy(R[c].a), nb = R[c].p.length + R[c].a.length;
+    const P = moy(R[c].p), A = moy(R[c].a), O = moy(R[c].o), nb = R[c].p.length + R[c].a.length + R[c].o.length;
     if (!nb) return;                                   // compétence non travaillée dans ce dossier
-    const score = nb < 3 ? null : P != null && A != null ? (P + A) / 2 : P != null ? P : A;
+    const srcs = [P, A, O].filter(x => x != null);
+    const score = nb < 3 && !R[c].o.length ? null : moy(srcs);
     let alerte = null;
     if (R[c].p.length >= 2 && R[c].a.length >= 2) {
       if (P >= 2.5 && A <= 1.5) alerte = "auto";     // autonome en activité, mais l'animation montre que ce n'est pas fixé
       else if (P <= 1.5 && A >= 2.5) alerte = "progres";
     }
-    out[c] = { score, P, A, nP: R[c].p.length, nA: R[c].a.length, niveau: niveauDe(score), alerte };
+    out[c] = { score, P, A, O, nP: R[c].p.length, nA: R[c].a.length, nO: R[c].o.length, niveau: niveauDe(score), alerte };
   });
   return out;
 }
@@ -78,7 +82,7 @@ export function profilHtml(pr, opts = {}){
   const lignes = COMPS.filter(c => pr[c] || ev[c] != null).map(c => {
     const x = pr[c] || { score: null, nP: 0, nA: 0, niveau: "vide" }, N = NIVEAUX[x.niveau], w = x.score == null ? 0 : Math.max(4, x.score / 3 * 100);
     const e = ev[c], eh = e == null ? "" : `<i class="cpf-m" style="left:calc(${Math.round(e * 100)}% - 7px)" title="Évaluation : ${Math.round(e * 100)} %"></i>`;
-    const det = (x.nP ? x.nP + " question" + (x.nP > 1 ? "s" : "") + " avec coups de pouce" : "") + (x.nP && x.nA ? " · " : "") + (x.nA ? x.nA + " question" + (x.nA > 1 ? "s" : "") + " de l'animation" : "");
+    const det = (x.nP ? x.nP + " question" + (x.nP > 1 ? "s" : "") + " avec coups de pouce" : "") + (x.nP && x.nA ? " · " : "") + (x.nA ? x.nA + " question" + (x.nA > 1 ? "s" : "") + " de l'animation" : "") + (x.nO ? ((x.nP || x.nA) ? " · " : "") + "mini-oral ou tutorat avec le professeur" : "");
     const al = x.alerte === "auto" ? "Tu as été autonome en activité, mais l'animation montre que ce n'est pas encore fixé."
       : x.alerte === "progres" ? "Tu as eu besoin d'aide en activité, mais tu as réussi l'animation seul : tu progresses."  : "";
     return `<div class="cpf-l" title="${esc(det)}"><div class="cpf-n"><b>${esc(LIBS[c])}</b><span>${esc(DEFS[c])}</span></div>
