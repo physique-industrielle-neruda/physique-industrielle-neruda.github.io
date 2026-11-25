@@ -121,3 +121,19 @@ export function comDe(r){
   (r.tutorats || []).slice(0, 2).forEach(() => out.push(3));
   return out;
 }
+
+/* ================= Prévisionnel du dossier (25/11/2026) =================
+   À partir du déblocage du dossier, on fait défiler les séances de COURS de la classe lues sur Pronote (jamais les TP,
+   ni les cours annulés, ni les absences de classe) jusqu'à couvrir la durée du dossier (travail en autonomie + marge).
+   L'évaluation est prévue à la séance de cours suivante. seances = [{ t: début en ms, h: heures, type: "cours" | "tp" }].
+   La date saisie par le professeur (evalDate) reste prioritaire. */
+export function prevision(ch, seances, debut){
+  const R = ch && ch.rythme; if (!R || !debut || !seances) return null;
+  const total = R.items.reduce((s, x) => s + (x.tp ? 0 : x.duree), 0) + (R.marge ?? 1);
+  const cours = seances.filter(s => s.type !== "tp" && s.t > debut).sort((a, b) => a.t - b.t);
+  let cum = 0, i = 0;
+  for (; i < cours.length && cum < total - 1e-6; i++) cum += cours[i].h;
+  if (cum < total - 1e-6) return { total, seances: cours, fin: null, eval: null, n: cours.length };
+  const evalS = cours[i] || null;
+  return { total, seances: cours.slice(0, i), fin: cours[i - 1].t, eval: evalS ? evalS.t : null, n: i };
+}

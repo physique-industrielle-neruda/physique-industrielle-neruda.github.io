@@ -100,7 +100,7 @@ nav.classes button[aria-pressed="true"] .n,nav.classes button[aria-pressed="true
 .ry-leg{display:flex;flex-wrap:wrap;gap:4px 16px;margin-top:8px;font-size:.82rem;color:var(--muted)}
 .ry-k{display:inline-block;width:12px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}.ry-k.now{width:3px;background:var(--ink)}
 .ry-k.marge{background:repeating-linear-gradient(45deg,transparent 0 3px,rgba(90,101,119,.5) 3px 5px);border:1px solid var(--grid)}
-.ry-msg{margin:10px 0 6px;font-size:.95rem}.ry-liste summary{cursor:pointer;color:var(--ink);font-weight:600;font-size:.9rem}
+.ry-msg{margin:10px 0 6px;font-size:.95rem}.ry-eval{display:block;margin-top:8px;padding:8px 10px;border-radius:8px;background:#FBE5D6;color:#18212F}.ry-liste summary{cursor:pointer;color:var(--ink);font-weight:600;font-size:.9rem}
 .ry-liste ol{margin:6px 0 0 20px;padding:0;font-size:.9rem}.ry-liste li span{color:var(--muted)}.ry-liste li.ok{color:var(--ok)}.ry-liste li.part{color:var(--accent)}
 .ry-note{font-size:.8rem;color:var(--muted);margin:6px 0 0}.ry-cours{margin-top:8px}
 li.freine{opacity:.7}
@@ -277,7 +277,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut, setPersistence, browserLocalPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore, doc, getDoc, getDocs, setDoc as fbSetDoc, collection, query, where, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { profil as calcProfil, profilHtml, synthese, PROFIL_CSS, bilanAnnee, anneeHtml, ANNEE_CSS } from "./competences.js";
-import { etat as etatRythme, STATUTS, heures, exemplesId, itemDuDoc, rythmeDoc, oralCible, comDe } from "./rythme.js";
+import { etat as etatRythme, STATUTS, heures, exemplesId, itemDuDoc, rythmeDoc, oralCible, comDe, prevision } from "./rythme.js";
 
 const FB = {"apiKey":"AIzaSyDH32Ma0shVbsIHR0xNJbahb5MO0RKHRS0","authDomain":"physique-neruda.firebaseapp.com","projectId":"physique-neruda","storageBucket":"physique-neruda.firebasestorage.app","messagingSenderId":"62730174289","appId":"1:62730174289:web:588c846aadd4eec2109d70"};
 const DOMAINE = "@physique-neruda.firebaseapp.com";
@@ -866,6 +866,9 @@ function jaugeBox(c, ch){
   const st = STATUTS[e.statut], pc = x => Math.max(0, Math.min(100, 100 * x / e.total)).toFixed(1);
   const box = document.createElement("div"); box.className = "rythme";
   const dateEval = e.evalDate ? new Date(e.evalDate + "T12:00:00").toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" }) : "";
+  /* 25/11/2026 : date d'évaluation prévue d'après le calendrier de la classe (séances de cours seulement), ou fixée par le professeur */
+  const pvE = apercu ? null : previsionEleve(ch, e);
+  const evTxt = pvE ? ` <span class="ry-eval">📅 Évaluation ${pvE.fixe ? "le" : "prévue vers le"} <b>${esc(new Date(pvE.ev).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" }))}</b> : encore ${pvE.n} séance${pvE.n > 1 ? "s" : ""} de cours d'ici là${pvE.fixe ? "" : " (date prévisionnelle, ton professeur la confirmera)"}.</span>` : "";
   const conseil = e.frein ? "Tu as plus d'1 h d'avance : la suite s'ouvrira après la prochaine séance. Profites-en pour les « Côté terrain ★ » ou les cartes de révision, ou propose au professeur d'aider un camarade en retard (tutorat)."
     : e.statut === "avance" ? "Tu es en avance, continue comme ça." : e.statut === "vert" ? "Tu es à jour, continue comme ça."
     : e.statut === "orange" ? "Prévois un peu de travail à la maison pour rattraper avant la prochaine séance."
@@ -881,7 +884,7 @@ function jaugeBox(c, ch){
       <span class="ry-now" style="left:${pc(e.ecoule)}%"></span>
     </div>
     <div class="ry-leg"><span><i class="ry-k fill" style="background:${st.couleur}"></i>Travail fait : ${heures(e.fait)} sur ${heures(e.contenu)}</span><span><i class="ry-k now"></i>Cours écoulés : ${heures(e.ecoule)} sur ${heures(e.total)}</span><span><i class="ry-k marge"></i>1 h de marge</span></div>
-    <p class="ry-msg">Il te reste <b>${heures(e.reste)}</b> de travail. Il reste <b>${heures(e.resteCours)}</b> de cours avant la fin du dossier${dateEval ? ` (évaluation le ${esc(dateEval)})` : ""}. ${conseil}${conseilEss}</p>
+    <p class="ry-msg">Il te reste <b>${heures(e.reste)}</b> de travail. Il reste <b>${heures(e.resteCours)}</b> de cours avant la fin du dossier${dateEval && !pvE ? ` (évaluation le ${esc(dateEval)})` : ""}. ${conseil}${conseilEss}${evTxt}</p>
     ${oralBox(ch, apercu)}
     <details class="ry-liste"><summary>Ce qu'il me reste à faire</summary><ol>${e.items.map(x => `<li class="${x.fait ? "ok" : x.part ? "part" : ""}">${x.fait ? "✓ " : ""}${esc(x.titre)} <span>(${e.ess && x.horsEss ? "facultatif, " : ""}${x.tp ? "en classe avec tout le monde, hors jauge" : heures(x.duree)}${x.part && !x.fait ? ", " + Math.round(100 * x.part) + " % fait" : ""})</span></li>`).join("")}</ol>
       <p class="ry-note">${e.items.some(x => x.tp) ? "Les TP se font en classe tous ensemble : ils ne comptent pas dans la jauge. Une activité, un TP ou un exercice" : "Une activité ou un exercice"} compte comme fait quand le professeur a débloqué son corrigé. Un exemple du cours compte comme fait quand tu as ouvert sa correction (sous-dossier « Cours », « Correction des exemples »).${e.items.some(x => x.pdc) ? " Un point de cours compte comme fait quand tu l'as terminé en ligne." : ""} Les coups de pouce ne comptent jamais contre toi.</p></details>`;
@@ -1510,11 +1513,13 @@ function loginBox(){
 /* ================= Onglet « Calendrier » (25/11/2026) : compte professeur seulement =================
    Planning lu sur Pronote (calendrier.json → docs/prive/planning.bin, chiffré par la clé maître des corrigés,
    mis à jour avec _outils/publier_planning.py). Heures faites / restantes par classe, prochaines séances,
-   calendrier semaine par semaine, et dossier en cours (séances cochées « J'ai cours » dans l'appli prof). */
+   calendrier semaine par semaine (cours et TP séparés), dossiers ouverts avec leur prévisionnel :
+   séances de cours nécessaires depuis le déblocage et date d'évaluation prévue (rythme.js, prevision). */
 const CAL_NOMS = { cira1: "BTS CIRA 1re année", cim2: "BTS CIM 2e année", et1a: "BTS ET 1re année (alternants)", et2: "BTS ET 2e année", et2a: "BTS ET 2e année (alternants)" };
 const CAL_ORDRE = ["et2", "et2a", "et1a", "cira1", "cim2"];
 const CAL_FIN = { et2: "2027-05-14", et2a: "2027-05-14", cim2: "2027-05-14" };   // examens : plus de séances comptées ensuite
-let CAL = null, CAL_SEL = "tout", CAL_RY = null;
+const CAL_SITE = { cira1: "cira", cim2: "cim", et1a: "et", et2: "et", et2a: "et" }, CAL_AN = { cira1: 1, cim2: 2, et1a: 1, et2: 2, et2a: 2 };
+let CAL = null, CAL_SEL = "tout", CAL_RY = null, CAL_UNL = {};
 (() => { const st = document.createElement("style");
   st.textContent = ".cal-sel{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 14px}.cal-sel button{font:inherit;font-size:.9rem;font-weight:600;border:1px solid #D8E0EA;background:#fff;color:#1F3864;border-radius:999px;padding:6px 12px;cursor:pointer}"
   + ".cal-sel button[aria-pressed=true]{background:#1F3864;color:#fff;border-color:#1F3864}"
@@ -1524,9 +1529,11 @@ let CAL = null, CAL_SEL = "tout", CAL_RY = null;
   + ".cal-tab th{background:#1F3864;color:#fff;text-align:left;padding:8px 10px;font-weight:700}.cal-tab td{padding:8px 10px;border-top:1px solid #D8E0EA;vertical-align:top}.cal-tab tr.cl{cursor:pointer}.cal-tab tr.cl:hover td{background:#F4F6F9}"
   + ".cal-box{background:#fff;border:1px solid #D8E0EA;border-radius:10px;padding:12px 14px;margin:0 0 14px}.cal-box h3{margin:0 0 6px;font-size:1.05rem;color:#1F3864}.cal-box p{margin:4px 0}"
   + ".cal-mois{margin:16px 0 6px;font-weight:700;color:#C55A11;text-transform:capitalize}.cal-sem{display:flex;gap:8px;align-items:flex-start;padding:6px 0;border-top:1px dashed #D8E0EA}"
-  + ".cal-sem .w{flex:none;width:92px;font-size:.8rem;color:#5A6577;padding-top:4px}.cal-sem .s{display:flex;flex-wrap:wrap;gap:6px}.cal-sem.vac .s{color:#5A6577;font-style:italic;font-size:.88rem;padding-top:3px}"
+  + ".cal-sem .w{flex:none;width:92px;font-size:.8rem;color:#5A6577;padding-top:4px}.cal-sem .col{display:flex;flex-direction:column;gap:4px}.cal-sem .s{display:flex;flex-wrap:wrap;gap:6px;align-items:center}.cal-sem.vac .s{color:#5A6577;font-style:italic;font-size:.88rem;padding-top:3px}"
+  + ".cal-p{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#5A6577;width:42px}"
   + ".cal-c{font-size:.8rem;border-radius:7px;padding:3px 8px;background:#DEEAF6;color:#1F3864;white-space:nowrap}.cal-c.tp{background:#E2EFDA;color:#3F7A3A}"
   + ".cal-c.passe{opacity:.55}.cal-c.annule{background:#F2F2F2;color:#8A95A6;text-decoration:line-through}.cal-c.deplace{box-shadow:inset 0 0 0 1.5px #C55A11}.cal-c.auj{box-shadow:inset 0 0 0 2px #1F3864;font-weight:700}"
+  + ".cal-c.dos{border-left:4px solid #C55A11}.cal-c.eval{background:#C55A11;color:#fff;font-weight:700}"
   + ".cal-leg{font-size:.82rem;color:#5A6577;margin:8px 0}.cal-leg .cal-c{margin-right:4px}";
   document.head.appendChild(st); })();
 async function chargerCalendrier(){
@@ -1543,12 +1550,14 @@ async function chargerCalendrier(){
   CAL = { maj: m.maj, du: P.du, au: P.au, seances };
   return CAL;
 }
-/* Dossier en cours de chaque classe : documents « rythme » (séances cochées, date de l'évaluation), lisibles par le compte prof */
+/* Compte prof : séances cochées et date d'évaluation (documents « rythme »), date de déblocage de chaque dossier par classe */
 async function chargerRythmesCal(){
   if (CAL_RY) return CAL_RY;
-  CAL_RY = {};
+  CAL_RY = {}; CAL_UNL = {};
   try { const snap = await getDocs(collection(db, "deblocages"));
-    snap.forEach(x => { const v = x.data(); if (!v.doc || !String(v.doc).startsWith("rythme:") || !v.classe) return;
+    snap.forEach(x => { const v = x.data(); if (!v.doc || !v.classe || v.classe === "invites") return;
+      if (!String(v.doc).startsWith("rythme:")) { const t = v.at && v.at.toMillis ? v.at.toMillis() : null, k = v.classe + "|" + v.doc;
+        if (t && (!CAL_UNL[k] || t < CAL_UNL[k])) CAL_UNL[k] = t; return; }
       const chap = v.doc.slice(7), k = v.classe + "|" + chap, n = (v.seances || []).length;
       if (!CAL_RY[k] || n > (CAL_RY[k].seances || []).length || (v.evalDate && !CAL_RY[k].evalDate)) CAL_RY[k] = { classe: v.classe, chap, seances: v.seances || [], evalDate: v.evalDate || "" }; }); }
   catch(_) { CAL_RY.illisible = true; }
@@ -1556,6 +1565,7 @@ async function chargerRythmesCal(){
 }
 const calH = n => (Math.round(n * 2) / 2).toLocaleString("fr-FR") + " h";
 const calJour = d => d.toLocaleDateString("fr-FR", { weekday: "short", day: "numeric", month: "short" });
+const calLong = t => new Date(t).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" });
 const calHeure = s => s.debut.replace(":", "h");
 function calStats(cid, now){
   const S2 = CAL.seances.filter(s => s.classe === cid), ten = S2.filter(s => s.tenue);
@@ -1564,7 +1574,17 @@ function calStats(cid, now){
   return { all: S2, fait, reste, hFait: som(fait), hReste: som(reste), hResteCours: som(reste, "cours"), hResteTp: som(reste, "tp"),
     annules: S2.filter(s => !s.tenue && s.d > now).length, prochaine: reste[0], aTp: ten.some(s => s.type === "tp"), fin: CAL_FIN[cid] || CAL.au };
 }
-function titreChapCal(chap){ for (const c of CAT.classes) for (const ch of c.chapitres) if ((ch.verrou && ch.verrou.id === chap) || ch.titre === chap) return ch.titre; return chap; }
+/* Dossiers de la nouvelle méthode ouverts pour la classe, avec leur prévisionnel (seules les séances de COURS comptent, jamais les TP) */
+function dossiersCal(cid){
+  const k = CAT.classes.find(c => c.id === CAL_SITE[cid]); if (!k) return [];
+  const sc = CAL.seances.filter(s => s.classe === cid && s.tenue).map(s => ({ t: s.d.getTime(), h: s.h, type: s.type }));
+  return k.chapitres.filter(ch => ch.rythme && ch.verrou && (!ch.rythme.groupes || ch.rythme.groupes.includes(cid)) && (!ch.annee || ch.annee === CAL_AN[cid]))
+    .map(ch => { const id = ch.verrou.id, debut = CAL_UNL[cid + "|" + id] || (CAL_RY.illisible && OUV ? OUV[id] : null); if (!debut) return null;
+      const r = CAL_RY[cid + "|" + id] || null, pv = prevision(ch, sc, debut);
+      const fixe = r && r.evalDate ? new Date(r.evalDate + "T12:00").getTime() : null;
+      return { ch, id, debut, r, pv, evalT: fixe || (pv && pv.eval) || null, fixe: !!fixe }; })
+    .filter(Boolean).sort((a, b) => b.debut - a.debut);
+}
 async function renderCalendrier(view){
   const head = document.createElement("div"); head.className = "classhead";
   head.innerHTML = `<h2>Calendrier</h2><span class="status is-open">Visible par vous seul</span>`;
@@ -1574,53 +1594,93 @@ async function renderCalendrier(view){
   await chargerRythmesCal();
   if (current !== "calendrier") return;
   const now = new Date(), cls = CAL_ORDRE.filter(id => CAL.seances.some(s => s.classe === id));
-  const sel = `<div class="cal-sel">${[["tout", "Vue d'ensemble"]].concat(cls.map(id => [id, CAL_NOMS[id] || id])).map(([id, n]) => `<button type="button" data-cal="${id}" aria-pressed="${CAL_SEL === id}">${esc(n)}</button>`).join("")}</div>`;
-  let h = sel;
+  const du = new Date(CAL.du + "T12:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long" }), maj = new Date(CAL.maj + "T12:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long" });
+  let h = `<div class="cal-sel">${[["tout", "Vue d'ensemble"]].concat(cls.map(id => [id, CAL_NOMS[id] || id])).map(([id, n]) => `<button type="button" data-cal="${id}" aria-pressed="${CAL_SEL === id}">${esc(n)}</button>`).join("")}</div>`;
   if (CAL_SEL === "tout" || !cls.includes(CAL_SEL)) {
-    h += `<table class="cal-tab"><tr><th>Classe</th><th>Faites</th><th>Restantes</th><th>Prochaine séance</th><th>Fin</th></tr>`
-      + cls.map(id => { const s = calStats(id, now);
+    h += `<table class="cal-tab"><tr><th>Classe</th><th>Faites</th><th>Restantes</th><th>Prochaine séance</th><th>Prochaine évaluation</th><th>Fin</th></tr>`
+      + cls.map(id => { const s = calStats(id, now), ev = dossiersCal(id).filter(x => x.evalT && x.evalT >= now.getTime() - 864e5).sort((a, b) => a.evalT - b.evalT)[0];
         return `<tr class="cl" data-cal="${id}"><td><b>${esc(CAL_NOMS[id] || id)}</b></td><td>${calH(s.hFait)}</td><td><b>${calH(s.hReste)}</b>${s.aTp ? `<br><small>cours ${calH(s.hResteCours)} · TP ${calH(s.hResteTp)}</small>` : ""}</td>`
-          + `<td>${s.prochaine ? esc(calJour(s.prochaine.d)) + " · " + esc(calHeure(s.prochaine)) + " (" + s.prochaine.h + " h" + (s.prochaine.type === "tp" ? ", TP" : "") + ")" : "–"}</td><td>${esc(new Date(s.fin + "T12:00").toLocaleDateString("fr-FR", { day: "numeric", month: "short" }))}${CAL_FIN[id] ? "<br><small>examens</small>" : ""}</td></tr>`; }).join("") + `</table>`
-      + `<p class="cal-leg">Heures comptées à partir du ${esc(new Date(CAL.du + "T12:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long" }))}, d'après Pronote (lu le ${esc(new Date(CAL.maj + "T12:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long" }))}). Un cours annulé ne compte pas ; un cours déplacé compte à sa nouvelle place. 2e année : plus de séances après le 14 mai (examens). Touchez une classe pour son calendrier.</p>`;
+          + `<td>${s.prochaine ? esc(calJour(s.prochaine.d)) + " · " + esc(calHeure(s.prochaine)) + " (" + s.prochaine.h + " h" + (s.prochaine.type === "tp" ? ", TP" : "") + ")" : "–"}</td>`
+          + `<td>${ev ? esc(calJour(new Date(ev.evalT))) + `<br><small>${esc(ev.ch.titre)}${ev.fixe ? "" : " (prévue)"}</small>` : "–"}</td>`
+          + `<td>${esc(new Date(s.fin + "T12:00").toLocaleDateString("fr-FR", { day: "numeric", month: "short" }))}${CAL_FIN[id] ? "<br><small>examens</small>" : ""}</td></tr>`; }).join("") + `</table>`
+      + `<p class="cal-leg">Heures comptées à partir du ${esc(du)}, d'après Pronote (lu le ${esc(maj)}). Un cours annulé ou une classe absente ne compte pas ; un cours déplacé compte à sa nouvelle place. 2e année : plus de séances après le 14 mai (examens). « Prévue » : date calculée depuis le déblocage du dossier, tant que vous n'avez pas saisi la vraie date dans l'appli. Touchez une classe pour son calendrier.</p>`;
   } else {
-    const id = CAL_SEL, s = calStats(id, now);
-    h += `<div class="cal-kpi"><div><b>${calH(s.hFait)}</b><span>faites depuis le ${esc(new Date(CAL.du + "T12:00").toLocaleDateString("fr-FR", { day: "numeric", month: "short" }))}</span></div>`
+    const id = CAL_SEL, s = calStats(id, now), dos = dossiersCal(id);
+    h += `<div class="cal-kpi"><div><b>${calH(s.hFait)}</b><span>faites depuis le ${esc(du)}</span></div>`
       + `<div><b>${calH(s.hReste)}</b><span>restantes jusqu'au ${esc(new Date(s.fin + "T12:00").toLocaleDateString("fr-FR", { day: "numeric", month: "short" }))}${s.aTp ? ` (cours ${calH(s.hResteCours)}, TP ${calH(s.hResteTp)})` : ""}</span></div>`
       + `<div><b>${s.reste.length}</b><span>séances restantes${s.annules ? ` · ${s.annules} annulée${s.annules > 1 ? "s" : ""} à venir` : ""}</span></div>`
       + `<div><b>${s.prochaine ? esc(calJour(s.prochaine.d)) : "–"}</b><span>${s.prochaine ? "prochaine séance, " + esc(calHeure(s.prochaine)) + " (" + s.prochaine.h + " h" + (s.prochaine.type === "tp" ? ", TP" : "") + ")" : "plus de séance prévue"}</span></div></div>`;
-    /* Dossiers suivis avec « J'ai cours » dans l'appli prof */
-    const rys = Object.values(CAL_RY).filter(r => r && r.classe === id);
-    if (CAL_RY.illisible) h += `<div class="cal-box"><p>Le suivi des dossiers (séances cochées dans l'appli) s'affiche avec le compte « prof » de l'appli.</p></div>`;
-    rys.sort((a, b) => ((b.seances.slice(-1)[0] || {}).t || 0) - ((a.seances.slice(-1)[0] || {}).t || 0)).forEach(r => {
-      const auto = r.seances.filter(x => !x.tp), coche = auto.reduce((a, x) => a + (+x.h || 0), 0), debut = r.seances.length ? Math.min(...r.seances.map(x => x.t)) : null;
-      const prevues = debut ? s.fait.filter(x => x.d.getTime() >= debut - 12 * 3600e3 && x.type === "cours").reduce((a, x) => a + x.h, 0) : 0;
-      const ev = r.evalDate ? new Date(r.evalDate + "T23:59") : null;
-      const avant = ev ? s.reste.filter(x => x.d <= ev) : [];
-      const hAv = avant.filter(x => x.type === "cours").reduce((a, x) => a + x.h, 0), tpAv = avant.filter(x => x.type === "tp").length;
-      h += `<div class="cal-box"><h3>📁 ${esc(titreChapCal(r.chap))}</h3>`
-        + `<p>Séances cochées « J'ai cours » : <b>${auto.length}</b> (${calH(coche)})${debut ? ` · d'après Pronote depuis le ${esc(new Date(debut).toLocaleDateString("fr-FR", { day: "numeric", month: "short" }))} : ${calH(prevues)} de cours${Math.abs(prevues - coche) >= 1 ? ` <b style="color:#C55A11">(écart de ${calH(Math.abs(prevues - coche))} : séance oubliée ou en trop ?)</b>` : ""}` : ""}</p>`
-        + (ev ? `<p>Évaluation le <b>${esc(ev.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" }))}</b> : encore <b>${avant.filter(x => x.type === "cours").length} séance${avant.filter(x => x.type === "cours").length > 1 ? "s" : ""} de cours (${calH(hAv)})</b>${tpAv ? ` et ${tpAv} TP` : ""} d'ici là.</p>`
-          : `<p>Date de l'évaluation pas encore saisie (appli prof, tableau du dossier).</p>`) + `</div>`;
+    if (!dos.length) h += `<div class="cal-box"><p>Aucun dossier de la nouvelle méthode ouvert pour cette classe : le prévisionnel apparaîtra dès que vous débloquerez le prochain.</p></div>`;
+    if (CAL_RY.illisible) h += `<div class="cal-box"><p>Les séances cochées « J'ai cours » et la date d'évaluation saisie s'affichent avec le compte « prof » de l'appli. Ici, les dates sont seulement prévisionnelles.</p></div>`;
+    dos.forEach((x, i) => {
+      const r = x.r || { seances: [] }, auto = r.seances.filter(y => !y.tp), coche = auto.reduce((a, y) => a + (+y.h || 0), 0);
+      const prevues = s.fait.filter(y => y.type === "cours" && y.d.getTime() > x.debut).reduce((a, y) => a + y.h, 0);
+      const avant = x.evalT ? s.reste.filter(y => y.type === "cours" && y.d.getTime() < x.evalT - 6 * 3600e3) : [];
+      const fini = x.evalT && x.evalT < now.getTime() - 864e5;
+      h += `<div class="cal-box"><h3>📁 ${esc(x.ch.titre)}${fini ? " <small style='color:#5A6577;font-weight:400'>(évaluation passée)</small>" : ""}</h3>`
+        + `<p>Ouvert le ${esc(calLong(x.debut))}. Durée prévue : <b>${calH(x.pv ? x.pv.total : 0)}</b> de cours en autonomie, marge comprise${id === "et2" ? " (les TP ne comptent pas)" : ""}.</p>`
+        + (x.pv && x.pv.eval ? `<p>Prévisionnel : <b>${x.pv.n} séance${x.pv.n > 1 ? "s" : ""} de cours</b> jusqu'au ${esc(calLong(x.pv.fin))}, évaluation prévue le <b>${esc(calLong(x.pv.eval))}</b>.</p>`
+          : `<p>Prévisionnel : pas assez de séances de cours dans le planning pour finir le dossier.</p>`)
+        + (x.fixe ? `<p>Date d'évaluation saisie dans l'appli : <b>${esc(calLong(x.evalT))}</b>${x.pv && x.pv.eval && Math.abs(x.pv.eval - x.evalT) > 864e5 ? ` <span style="color:#C55A11">(${x.evalT < x.pv.eval ? "avant" : "après"} le prévisionnel)</span>` : ""}.</p>` : "")
+        + (!fini && x.evalT ? `<p>D'ici l'évaluation : encore <b>${avant.length} séance${avant.length > 1 ? "s" : ""} de cours (${calH(avant.reduce((a, y) => a + y.h, 0))})</b>.</p>` : "")
+        + (x.r ? `<p>Séances cochées « J'ai cours » : <b>${auto.length}</b> (${calH(coche)}) · d'après Pronote depuis l'ouverture : ${calH(prevues)} de cours${Math.abs(prevues - coche) >= 1 ? ` <b style="color:#C55A11">(écart de ${calH(Math.abs(prevues - coche))} : séance oubliée ou en trop ?)</b>` : ""}</p>`
+          : CAL_RY.illisible ? "" : `<p>Suivi du rythme pas encore démarré dans l'appli.</p>`) + `</div>`;
     });
-    /* Calendrier semaine par semaine, avec les vacances */
+    /* Repères du dossier le plus récent dans le calendrier : ses séances (trait orange) et l'évaluation */
+    const cur = dos.find(x => x.evalT && x.evalT >= now.getTime() - 864e5) || dos[0];
+    const tDos = new Set(cur && cur.pv ? cur.pv.seances.map(y => y.t) : []), tEvals = new Set(dos.map(x => x.evalT).filter(Boolean));
+    const estEval = x => [...tEvals].some(t => Math.abs(t - x.d.getTime()) < 6 * 3600e3) && x.type !== "tp" && x.tenue;
+    /* Calendrier semaine par semaine, cours et TP sur deux lignes séparées */
     const lundi = d => { const x = new Date(d); x.setHours(0, 0, 0, 0); x.setDate(x.getDate() - ((x.getDay() + 6) % 7)); return x; };
     const sem = new Map(); s.all.forEach(x => { const k = lundi(x.d).getTime(); if (!sem.has(k)) sem.set(k, []); sem.get(k).push(x); });
-    const ks = [...sem.keys()].sort((a, b) => a - b); let mois = "", prec = null; const W = 7 * 864e5;
-    const auj = new Date(); auj.setHours(0, 0, 0, 0);
-    h += `<div class="cal-leg"><span class="cal-c">cours</span>${s.aTp ? `<span class="cal-c tp">TP</span>` : ""}<span class="cal-c deplace">déplacé</span><span class="cal-c annule">annulé</span><span class="cal-c passe">passé</span><span class="cal-c auj">aujourd'hui</span></div>`;
+    const ks = [...sem.keys()].sort((a, b) => a - b); let mois = "", prec = null; const W = 7 * 864e5, auj = now.toDateString();
+    const chip = x => { const ev = estEval(x);
+      const c = ["cal-c", x.type === "tp" ? "tp" : "", !x.tenue ? "annule" : "", x.statut === "déplacé" ? "deplace" : "", x.f < now ? "passe" : "", tDos.has(x.d.getTime()) ? "dos" : "", ev ? "eval" : "", x.d.toDateString() === auj ? "auj" : ""].filter(Boolean).join(" ");
+      return `<span class="${c}" title="${esc(x.statut || (x.type === "tp" ? "TP" : "cours"))}">${ev ? "★ Éval. · " : ""}${esc(calJour(x.d))} · ${esc(calHeure(x))} · ${x.h} h</span>`; };
+    h += `<div class="cal-leg"><span class="cal-c">cours</span>${s.aTp ? `<span class="cal-c tp">TP</span>` : ""}${cur ? `<span class="cal-c dos">séance du dossier</span><span class="cal-c eval">★ évaluation</span>` : ""}<span class="cal-c deplace">déplacé</span><span class="cal-c annule">annulé</span><span class="cal-c passe">passé</span><span class="cal-c auj">aujourd'hui</span></div>`;
     ks.forEach(k => {
       if (prec !== null && k - prec > W * 1.5) { const nb = Math.round((k - prec) / W) - 1;
-        h += `<div class="cal-sem vac"><span class="w">${nb} semaine${nb > 1 ? "s" : ""}</span><span class="s">Vacances ou pas de cours</span></div>`; }
+        h += `<div class="cal-sem vac"><span class="w">${nb} semaine${nb > 1 ? "s" : ""}</span><span class="s">Vacances, stage ou pas de cours</span></div>`; }
       const m = new Date(k).toLocaleDateString("fr-FR", { month: "long", year: "numeric" });
       if (m !== mois) { mois = m; h += `<div class="cal-mois">${esc(m)}</div>`; }
-      h += `<div class="cal-sem"><span class="w">sem. du ${esc(new Date(k).toLocaleDateString("fr-FR", { day: "numeric", month: "short" }))}</span><span class="s">` + sem.get(k).map(x => {
-        const c = ["cal-c", x.type === "tp" ? "tp" : "", !x.tenue ? "annule" : "", x.statut === "déplacé" ? "deplace" : "", x.f < now ? "passe" : "", lundi(x.d).getTime() === lundi(auj).getTime() && x.d.toDateString() === auj.toDateString() ? "auj" : ""].filter(Boolean).join(" ");
-        return `<span class="${c}" title="${esc(x.statut || (x.type === "tp" ? "TP" : "cours"))}">${esc(calJour(x.d))} · ${esc(calHeure(x))} · ${x.h} h${x.type === "tp" ? " TP" : ""}</span>`; }).join("") + `</span></div>`;
+      const l = sem.get(k), co = l.filter(x => x.type !== "tp"), tp = l.filter(x => x.type === "tp");
+      h += `<div class="cal-sem"><span class="w">sem. du ${esc(new Date(k).toLocaleDateString("fr-FR", { day: "numeric", month: "short" }))}</span><span class="col">`
+        + (s.aTp ? (co.length ? `<span class="s"><span class="cal-p">Cours</span>${co.map(chip).join("")}</span>` : "") + (tp.length ? `<span class="s"><span class="cal-p">TP</span>${tp.map(chip).join("")}</span>` : "")
+          : `<span class="s">${l.map(chip).join("")}</span>`) + `</span></div>`;
       prec = k; });
-    h += `<p class="cal-leg">D'après Pronote, lu le ${esc(new Date(CAL.maj + "T12:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long" }))}. Pour tenir compte d'un changement, demandez à Claude de relire votre emploi du temps.</p>`;
+    h += `<p class="cal-leg">D'après Pronote, lu le ${esc(maj)}. Le prévisionnel ne compte que les séances de cours${s.aTp ? " : les TP sont sur une ligne à part et ne font jamais avancer un dossier" : ""}. Pour tenir compte d'un changement d'emploi du temps, demandez à Claude de relire votre Pronote.</p>`;
   }
   zone.innerHTML = h;
   zone.querySelectorAll("[data-cal]").forEach(b => b.onclick = () => { CAL_SEL = b.dataset.cal; render(); window.scrollTo(0, 0); });
+}
+
+/* ================= Prévisionnel de l'évaluation pour l'élève (25/11/2026) =================
+   Planning de sa classe (docs/prive/cal-<classe>.bin, chiffré avec la clé de son BTS) : séances tenues, cours / TP. */
+let CALE = null, CALE_EN_COURS = false;
+async function chargerCalEleves(){
+  const m = await fetch(BASE + "calendrier.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null).catch(() => null);
+  const out = {};
+  for (const [cid, v] of Object.entries((m && m.classes) || {})) { const k = S.keys[v.site]; if (!k) continue;
+    try { const l = JSON.parse(await (await decryptBlob(BASE + "docs/" + v.fichier, k, "application/json")).text());
+      out[cid] = l.map(x => ({ t: new Date(x.date + "T" + x.debut + ":00").getTime(), h: x.h, type: x.type })).sort((a, b) => a.t - b.t); } catch(_){} }
+  CALE = out;
+}
+function calEleve(cid){
+  if (!CALE) { if (!CALE_EN_COURS) { CALE_EN_COURS = true; chargerCalEleves().then(() => { if (eleveRev()) render(); }).catch(() => { CALE = {}; }); } return null; }
+  return CALE[cid] || null;
+}
+/* Classe dont l'élève suit les cours pour ce dossier (élève inscrit dans deux classes : rythme.classeCours) */
+function classeCoursDe(ch){
+  const r = ch.rythme || {}, login = String((S.user && S.user.email) || "").split("@")[0];
+  return r.classeCours && (r.aussi || []).includes(login) ? r.classeCours : S.groupe;
+}
+function previsionEleve(ch, e){
+  const sc = calEleve(classeCoursDe(ch)); if (!sc) return null;
+  const pv = prevision(ch, sc, S.corrAt[ch.verrou ? ch.verrou.id : ""]);
+  const fixe = e.evalDate ? new Date(e.evalDate + "T12:00:00").getTime() : null, ev = fixe || (pv && pv.eval);
+  if (!ev) return null;
+  const now = Date.now(), n = sc.filter(x => x.type !== "tp" && x.t > now && x.t < ev - 6 * 3600e3).length;
+  return { ev, fixe: !!fixe, n };
 }
 
 function route(){

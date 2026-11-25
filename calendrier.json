@@ -5,7 +5,29 @@
   "fichier": "prive/planning.bin",
   "corrige": {
    "id": "planning",
-   "wk": "/xtlJMgnytA7pajALDTtWm+VQj1DoWSX4iay1VcWnxeaYF79p/O+foPq/OiEsbjATHp0GCXx1IHTdL0B"
+   "wk": "CPtE484XNaS7KcAERNMSL1nkXo6JzTiLL3wuvPXe2Zk3x81NjX319lrQ19RMdn+5ryYry26LM1IW6nwC"
+  }
+ },
+ "classes": {
+  "cim2": {
+   "fichier": "prive/cal-cim2.bin",
+   "site": "cim"
+  },
+  "cira1": {
+   "fichier": "prive/cal-cira1.bin",
+   "site": "cira"
+  },
+  "et1a": {
+   "fichier": "prive/cal-et1a.bin",
+   "site": "et"
+  },
+  "et2": {
+   "fichier": "prive/cal-et2.bin",
+   "site": "et"
+  },
+  "et2a": {
+   "fichier": "prive/cal-et2a.bin",
+   "site": "et"
   }
  }
 }
