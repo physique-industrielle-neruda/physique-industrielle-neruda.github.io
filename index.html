@@ -268,7 +268,7 @@ li.pdc-gris{opacity:.6}
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut, setPersistence, browserLocalPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, doc, getDoc, getDocs, setDoc, collection, query, where, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, doc, getDoc, getDocs, setDoc as fbSetDoc, collection, query, where, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { profil as calcProfil, profilHtml, synthese, PROFIL_CSS, bilanAnnee, anneeHtml, ANNEE_CSS } from "./competences.js";
 import { etat as etatRythme, STATUTS, heures, exemplesId, itemDuDoc, rythmeDoc } from "./rythme.js";
 
@@ -276,6 +276,8 @@ const FB = {"apiKey":"AIzaSyDH32Ma0shVbsIHR0xNJbahb5MO0RKHRS0","authDomain":"phy
 const DOMAINE = "@physique-neruda.firebaseapp.com";
 const PROF = "prof" + DOMAINE;
 const app = initializeApp(FB), auth = getAuth(app), db = getFirestore(app);
+/* Compte de démonstration : aucune écriture vers Firebase (voir « Compte de démonstration » plus bas) */
+const setDoc = (r, v, o) => S.demo ? demoEcrire(r, v) : fbSetDoc(r, v, o);
 
 const BASE = /\/essai\/(index\.html)?$/.test(location.pathname) ? "../" : "";
 const $ = s => document.querySelector(s);
@@ -473,7 +475,7 @@ function folderBox(cls, key, titre, count, forceOpen){
   return s;
 }
 /* Élève : onglet « Mes évaluations » (24/11/2026, auparavant dossier en haut de la classe) */
-const nbMesEvals = () => (EVAL.evaluations || []).filter(e => e.site === S.site && (e.copies || []).some(x => S.corr[x.corrige.id])).length;
+const nbMesEvals = () => S.demo ? (S.demoEvals || []).length : (EVAL.evaluations || []).filter(e => e.site === S.site && (e.copies || []).some(x => S.corr[x.corrige.id])).length;
 function renderMesEvals(view){
   const c = visibleClasses().find(x => x.id === S.site); if (!c) return;
   const head = document.createElement("div"); head.className = "classhead";
@@ -483,6 +485,13 @@ function renderMesEvals(view){
 }
 /* Élève : dossier « Mes évaluations » (seulement ses propres copies, une fois publiées par le professeur) */
 function mesEvals(c){
+  if (S.demo) {   // compte de démonstration : copies fictives, les vraies copies ne sont jamais montrées
+    const de = (S.demoEvals || []).slice().sort((a, b) => b.date.localeCompare(a.date)), n = de.length;
+    const s = folderBox("chap evals", c.id + "/mes-evaluations", "Mes évaluations", n ? n + " copie" + (n > 1 ? "s" : "") + " corrigée" + (n > 1 ? "s" : "") : "Aucune copie corrigée pour l'instant");
+    const ul = document.createElement("ul"); ul.className = "docs";
+    if (!n) { const li = document.createElement("li"); li.innerHTML = `<span class="title"><span class="meta">Tes copies corrigées apparaîtront ici après chaque évaluation.</span></span>`; ul.appendChild(li); }
+    de.forEach(e => ul.appendChild(demoEvalRow(e))); s.appendChild(ul); return s;
+  }
   const evs = (EVAL.evaluations || []).filter(e => e.site === c.id)
     .map(e => ({ e, cp: (e.copies || []).find(x => S.corr[x.corrige.id]) })).filter(x => x.cp)
     .sort((a, b) => (b.e.date || "").localeCompare(a.e.date || ""));
@@ -545,6 +554,7 @@ function renderNav(){
   if (!S.user) items.push({id:"connexion", n:"Connexion", mini:"Connexion", s:"Accès aux cours de votre BTS"});
   if (S.user && testsOuverts().length) { const n = fichesAFaire(); items.push({id:"revisions", n:"Mes révisions", mini:"Révisions", s: n ? n + " fiche" + (n > 1 ? "s" : "") + " à travailler" : "Tests d'entrée et fiches"}); }
   if (S.user && (CAT.outils || []).length) items.push({id:"outils", n:"Outils", mini:"Outils", s:"Fiches méthodes et simulations"});
+  if (S.demo) items.push({id:"demo", n:"Démonstration", mini:"Démo", s:"Changer d'élève"});
   for (const it of items) {
     const b = document.createElement("button");
     b.type = "button"; b.setAttribute("aria-pressed", String(it.id === current));
@@ -715,6 +725,8 @@ function render(){
   if (VUE_REV) return;   // test en cours ou résultat affiché : ne pas effacer
   $("#searchBox").hidden = !S.user || current === "revisions" || current === "mes-evaluations" || current === "mes-competences";
   const view = $("#view"); view.innerHTML = "";
+  if (current === "demo") { $("#searchBox").hidden = true; renderDemo(view); return; }
+  if (S.demo) { const b = demoBandeau(); if (b) view.appendChild(b); }
   if (current === "revisions") { renderRevisions(view); return; }
   if (current === "connexion") { view.appendChild(loginBox()); return; }
   if (current === "evaluations" && S.evals) { renderEvaluationsProf(view); return; }
@@ -1282,6 +1294,7 @@ async function ouvrirProfil(d){
    evaluations.json, chiffré avec la clé de la copie (l'élève ne le lit qu'une fois sa copie publiée). */
 const EVCP = {};
 async function evalTaux(c, ch){
+  if (S.demo) return (S.demoTaux || {})[ch.titre] || null;
   const evs = (EVAL.evaluations || []).filter(e => e.site === c.id && e.dossier && sansAccent(e.dossier) === sansAccent(ch.titre));
   const tous = {};
   for (const e of evs) {
@@ -1435,6 +1448,7 @@ function route(){
   const ids = visibleClasses().map(c => c.id);
   if (!S.user) current = "connexion";
   else current = (h === "evaluations" && S.evals) ? h : (h === "mes-evaluations" && !S.prof && !S.tous && S.site) ? h : (h === "mes-competences" && !S.prof && !S.tous && S.site) ? h : (h === "revisions" && testsVisibles().length) ? h : ids.includes(h) || (h === "outils" && (CAT.outils || []).length) ? h : (S.site || ids[0]);
+  if (S.user && S.demo && (!S.demoCfg || h === "demo")) current = "demo";
   render();
 }
 
@@ -1457,6 +1471,18 @@ async function startSession(user){
       await chargerOuvertures(p.exists() ? p.data().ouvertures : null);
       await nomsEvals();
       try { const cs = await getDocs(collection(db, "classes")); cs.forEach(x => { const v = x.data(); NOMS[x.id] = { nom: v.nom || x.id, eleves: Object.fromEntries((v.eleves || []).map(e => [e.login, e.nom])) }; }); } catch(_){}
+      return;
+    }
+    if (user.email === DEMO) {
+      /* Compte de démonstration (25/11/2026) : clés d'invité premium, puis élève fictif choisi sur l'écran de réglage */
+      const p = await getDoc(doc(db, "prive", "cles"));
+      if (p.exists()) { const k = p.data();
+        for (const c of CAT.classes) if (k.sites && k.sites[c.id]) S.keys[c.id] = await importKey(b64(k.sites[c.id]));
+        if (k.corriges) S.demoMaitre = await crypto.subtle.importKey("raw", b64(k.corriges), "AES-GCM", false, ["decrypt"]); }
+      else toast("Clés absentes : le compte de démonstration doit être un invité premium.");
+      Object.assign(S, { user, nom: "Élève de démonstration", demo: true });
+      let cfg = null; try { cfg = JSON.parse(localStorage.getItem("demo-cfg") || "null"); } catch(_) {}
+      if (cfg) await appliquerDemo(cfg);
       return;
     }
     const e = await getDoc(doc(db, "eleves", user.uid));
@@ -1496,6 +1522,244 @@ async function startSession(user){
   } catch(x) {
     toast("Problème de connexion au serveur. Rechargez la page.");
   }
+}
+
+
+/* ================= Compte de démonstration « julien.m » (25/11/2026) =================
+   Pour présenter le site (proviseur, inspecteur) en se mettant dans la peau d'un étudiant.
+   Écran de réglage : classe, dossier en cours, niveau de l'élève, étape du dossier.
+   Tout est simulé dans ce navigateur : aucune donnée d'élève n'est lue, rien n'est écrit dans Firebase
+   (les écritures passent par setDoc, qui ne fait que mettre à jour l'affichage en mode démo).
+   Le compte est un invité premium (classe Invités) : il lit les clés pour ouvrir les documents « débloqués ». */
+const DEMO = "julien.m" + DOMAINE;
+const DEMO_NIVEAUX = [
+  { id: "fragile", lib: "Fragile", aide: "Ouvre souvent les coups de pouce jusqu'au niveau 3, plusieurs fiches de révision après le test d'entrée, en retard sur la jauge." },
+  { id: "moyen", lib: "Moyen", aide: "Quelques coups de pouce (niveaux 1 et 2), une ou deux fiches de révision, dans les temps." },
+  { id: "aise", lib: "À l'aise", aide: "Presque aucun coup de pouce, aucune fiche de révision, en avance : la suite du dossier est freinée jusqu'à la séance suivante." }
+];
+const DEMO_ETAPES = [
+  { id: "test", lib: "Test d'entrée à faire", aide: "Le dossier est encore sous cadenas : seul le test d'entrée est ouvert. Il peut être passé pour de vrai (rien n'est envoyé) et ouvre les fiches de révision." },
+  { id: "debut", lib: "Test fait, le dossier démarre", aide: "Test d'entrée fait, fiches de révision en cours, dossier ouvert : rien n'est encore commencé." },
+  { id: "activites", lib: "Activités en cours", aide: "La moitié des activités est faite : corrigés et points de cours débloqués au fur et à mesure." },
+  { id: "cours", lib: "Cours et animation", aide: "Toutes les activités sont faites, le cours est lu (exemples corrigés), l'animation est commencée." },
+  { id: "exercices", lib: "Exercices", aide: "Animation terminée, la moitié des exercices est faite." },
+  { id: "avant", lib: "Juste avant l'évaluation", aide: "Tout le dossier est fait : le parcours avant l'évaluation est ouvert." },
+  { id: "fini", lib: "Dossier terminé, évaluation corrigée", aide: "L'évaluation de fin de dossier est passée : le profil de compétences affiche aussi les résultats de l'évaluation." }
+];
+const demoTs = ms => ({ toDate: () => new Date(ms), toMillis: () => ms });
+function demoAlea(graine){ let s = 7; for (const c of graine) s = (s * 31 + c.charCodeAt(0)) >>> 0;
+  return () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; }; }
+const demoTire = (rnd, probas) => { let x = rnd(), i = 0; for (; i < probas.length - 1; i++) { if (x < probas[i]) return i; x -= probas[i]; } return i; };
+const isoJour = ms => { const d = new Date(ms); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); };
+/* Clé d'un document « débloqué » pour l'élève fictif : extraite de l'enveloppe avec la clé maître */
+async function demoCle(id, wk){
+  if (!id || !wk || S.corr[id] || !S.demoMaitre) return;
+  try { const w = b64(wk);
+    const raw = new Uint8Array(await crypto.subtle.decrypt({ name: "AES-GCM", iv: w.slice(0, 12), additionalData: enc.encode(id) }, S.demoMaitre, w.slice(12)));
+    S.corr[id] = btoa(String.fromCharCode(...raw)); } catch(_) {}
+}
+/* Écritures en mode démo : rien ne part vers Firebase, l'affichage est mis à jour sur place */
+function demoEcrire(ref, v){
+  const col = String(ref && ref.path || "").split("/")[0], w = { ...v, date: demoTs(Date.now()) };
+  if (col === "tests") MT[v.test] = w;
+  else if (col === "revisions") MF[cleF(v.test, v.fiche)] = w;
+  else if (col === "pointsdecours") MP[v.pdc] = w;
+  setTimeout(render, 0);
+  return Promise.resolve();
+}
+const demoGroupes = () => (CAT.groupes || []).filter(g => g.site !== "tous" && CAT.classes.some(c => c.id === g.site));
+function demoDossiers(gid){
+  const g = (CAT.groupes || []).find(x => x.id === gid), c = g && CAT.classes.find(x => x.id === g.site); if (!c) return [];
+  return c.chapitres.filter(ch => ch.verrou && (!ch.annee || !g.annee || ch.annee <= g.annee));
+}
+function demoDossierDefaut(gid){
+  const xs = demoDossiers(gid), ok = ch => ch.rythme && (!ch.rythme.groupes || ch.rythme.groupes.includes(gid));
+  const r = xs.filter(ok); return (r.length ? r[r.length - 1] : xs[xs.length - 1]) || null;
+}
+const demoTest = (site, ch) => (REV.tests || []).find(t => t.site === site && sansAccent(t.chapitre) === sansAccent(ch.titre)) || null;
+function demoItems(ch){
+  if (ch.rythme) return ch.rythme.items.map(x => ({ ...x }));
+  return ch.docs.filter(d => d.corrige && d.type === "Corrigé").map(d => { const num = numeroDoc(d) || d.titre;
+    return { num, titre: d.titre, duree: 0.75, corrige: d.corrige.id, tp: /^TP/.test(num) }; });
+}
+/* Simule un dossier : corrigés débloqués, séances, exemples, points de cours, animation, coups de pouce, test d'entrée.
+   E = indice de l'étape (DEMO_ETAPES), fin = instant de référence (maintenant, ou date de l'évaluation d'un ancien dossier). */
+async function demoDossier(c, ch, E, niveau, fin, rnd, debutMin){
+  const chapId = chapIdDe(ch), items = demoItems(ch), comp = ch.competences ? ch.competences.questions : null;
+  const g = (CAT.groupes || []).find(x => x.id === S.groupe) || {};
+  const wkDe = {}; ch.docs.forEach(d => { if (d.corrige) wkDe[d.corrige.id] = d.corrige.wk; });
+  const test = demoTest(c.id, ch);
+  /* Test d'entrée */
+  if (E === 0) { if (test && test.verrou) await demoCle(test.verrou.id, test.verrou.wk); return; }
+  const dur = x => x.tp ? 0 : x.duree;
+  const iA = items.findIndex(x => x.anim), iEx = items.findIndex(x => /^Exercice/.test(x.num));
+  const finPre = iA >= 0 ? iA : iEx >= 0 ? iEx : items.length;
+  const somme = xs => xs.reduce((s, x) => s + dur(x), 0);
+  const hPre = somme(items.slice(0, finPre)), anim = iA >= 0 ? items[iA] : null, hAnim = anim ? anim.duree : 0;
+  const hEx = somme(items.filter((x, i) => i >= finPre && !x.parcours && !x.anim)), hTout = somme(items.filter(x => !x.parcours));
+  const T = [0, 0, hPre * 0.5, hPre + hAnim * 0.5, hPre + hAnim + hEx * 0.5, hTout, Infinity][E];
+  const delta = niveau === "fragile" ? ([0, 0, -0.75, -1.5, -1.5, -1.5, 0][E]) : niveau === "aise" ? ([0, 0, 1.1, 1.1, 1.1, 0, 0][E]) : 0;
+  /* Parcours de l'élève dans le dossier jusqu'à T heures de travail (l'animation peut être faite en partie) */
+  const parcourir = (lim, exclure) => { const part = new Map(); let cum = 0, plein = 0;
+    for (const x of items) {
+      if (x.tp) { if (part.size && [...part.values()].every(v => v >= 1) && cum < lim) part.set(x, 1); continue; }
+      if (x.parcours && E < 6) break;
+      if (exclure && exclure(x)) continue;
+      if (cum + x.duree <= lim + 0.01) { part.set(x, 1); cum += x.duree; plein += x.duree; continue; }
+      if (x.anim && lim > cum) { const p = Math.max(0, Math.min(0.95, (lim - cum) / x.duree)); if (p > 0.05) { part.set(x, p); cum += p * x.duree; } }
+      break;
+    }
+    return { part, cum, plein }; };
+  const base = parcourir(T), fragileFin = niveau === "fragile" && E === 6 ? (x => x.horsEss && x.corrige) : null;
+  const eleve = parcourir(T + delta, fragileFin);
+  items.filter(x => x.tp).forEach(x => { if (base.part.has(x)) eleve.part.set(x, 1); else eleve.part.delete(x); });   // TP : toute la classe en même temps
+  const contenu = somme(items), total = contenu + (ch.rythme && ch.rythme.marge != null ? ch.rythme.marge : 1);
+  const ecoule = E === 6 ? total : base.plein, fait = eleve.cum;   // une animation commencée ne compte dans la jauge qu'une fois finie
+  /* Séances « J'ai cours » (hors TP) puis séances de TP */
+  const motif = (ch.rythme && ch.rythme.seances && (Array.isArray(ch.rythme.seances) ? ch.rythme.seances : ch.rythme.seances[S.groupe])) || [g.site === "et" && g.annee === 2 ? 2 : 1];
+  const hs = [];
+  for (let h = ecoule, k = 0; h > 1e-6; k++) { const x = Math.min(motif[k % motif.length], h); hs.push(x); h -= x; }
+  const dernier = fin - (E === 6 ? 864e5 : 20 * 36e5);
+  const pas = Math.min(7 * 864e5 / motif.length, debutMin ? Math.max(864e5, (dernier - debutMin) / Math.max(1, hs.length)) : Infinity);   // anciens dossiers : séances resserrées sur la période
+  const seances = hs.map((h, k) => ({ t: dernier - (hs.length - 1 - k) * pas, h }));
+  const tps = items.filter(x => x.tp && eleve.part.has(x));
+  let cumS = 0; const cumuls = seances.map(s => cumS += s.h);
+  const tSeance = p => { const j = cumuls.findIndex(v => v >= p - 1e-6); return j >= 0 ? seances[j].t : (seances.length ? seances[seances.length - 1].t : fin - 36e5); };
+  const debut = (seances.length ? seances[0].t : fin - 2 * 36e5) - 864e5;
+  /* Dates de fin de chaque pièce : étalées sur les séances (en avance ou en retard selon le niveau) */
+  const echelle = fait > 0 && ecoule > 0 ? ecoule / fait : 1, tPiece = new Map(); let cum = 0, iTp = 0;
+  for (const x of items) {
+    const p = eleve.part.get(x); if (!p) continue;
+    if (x.tp) { const t0 = tSeance(cum + 1e-3); const t = Math.min(t0 + (iTp + 0.5) * 36e5, fin - 6e4); seances.push({ t: t0 + 36e5, h: 2, tp: true }); iTp++; tPiece.set(x, Math.min(t + 2 * 864e5, fin - 6e4)); continue; }
+    cum += p * x.duree;
+    tPiece.set(x, Math.min(tSeance(cum * echelle) + 50 * 6e4 + Math.floor(rnd() * 20) * 6e4, fin - 6e4));
+  }
+  /* Dossier ouvert, suivi du rythme démarré */
+  S.corr[ch.verrou.id] || await demoCle(ch.verrou.id, ch.verrou.wk); S.corrAt[ch.verrou.id] = debut;
+  S.demoDebut = debut;
+  if (ch.rythme) S.rythme[chapId] = { seances: seances.sort((a, b) => a.t - b.t), evalDate: E === 6 ? isoJour(fin) : isoJour(fin + Math.max(2, Math.ceil(Math.max(0, total - ecoule) / motif.reduce((a, b) => a + b, 0) * 7)) * 864e5), ajust: 0 };
+  const vus = {}; let nbEx = 0;
+  for (const x of items) {
+    if (x.exemple) nbEx++;
+    const p = eleve.part.get(x), t = tPiece.get(x); if (!p) continue;
+    if (x.corrige && p >= 1) { await demoCle(x.corrige, wkDe[x.corrige]); S.corrAt[x.corrige] = t; }
+    if (x.exemple) vus[x.exemple] = t;
+    if (x.pdc) MP[x.pdc] = { pdc: x.pdc, termine: true, etape: 6, total: 6, erreurs: niveau === "fragile" ? 3 : niveau === "moyen" ? 1 : 0, date: demoTs(t) };
+    if (x.parcours) MP["parcours:" + x.parcours] = { pdc: "parcours:" + x.parcours, type: "parcours", plan: [], res: {}, fini: true, etape: 6, total: 6, date: demoTs(t) };
+    if (x.anim) {
+      const qs = comp && comp.Animation ? Object.keys(comp.Animation) : Array.from({ length: x.questions || 10 }, (_, i) => String(i + 1));
+      const n = p >= 1 ? qs.length : Math.round(p * qs.length), probas = niveau === "fragile" ? [0.4, 0.25, 0.35] : niveau === "moyen" ? [0.65, 0.2, 0.15] : [0.88, 0.08, 0.04];
+      const rep = {}; qs.slice(0, n).forEach(q => { const k = demoTire(rnd, probas); rep[q] = k === 0 ? { t: 1, ok: true } : k === 1 ? { t: 2, ok: true } : { t: 2, ok: false }; });
+      MP[animId(ch)] = { pdc: animId(ch), type: "anim", reponses: rep, etape: n, total: 0, date: demoTs(t || fin - 36e5) };
+    }
+  }
+  if (nbEx) MP[exemplesId(chapId)] = { pdc: exemplesId(chapId), type: "exemples", vus, etape: Object.keys(vus).length, total: nbEx, termine: Object.keys(vus).length >= nbEx, date: demoTs(fin - 36e5) };
+  if (E >= 5) { const pc = items.find(x => x.parcours); if (pc) await demoCle(pc.parcours, wkDe[pc.parcours]); }
+  /* Coups de pouce : niveaux ouverts question par question (pièces faites + pièce en cours) */
+  const probasP = niveau === "fragile" ? [0.15, 0.2, 0.25, 0.4] : niveau === "moyen" ? [0.4, 0.3, 0.2, 0.1] : [0.75, 0.2, 0.05, 0];
+  const enCours = items.find(x => x.corrige && !x.tp && !eleve.part.has(x));
+  ch.docs.filter(d => d.format === "pouce").forEach(d => {
+    const it = items.find(x => x.corrige === d.lie); if (!it || (!eleve.part.has(it) && it !== enCours)) return;
+    const qs = comp && comp[it.num] ? Object.keys(comp[it.num]) : ["Q1", "Q2", "Q3", "Q4"];
+    const niveaux = {}; qs.forEach((q, i) => { if (it === enCours && i >= Math.ceil(qs.length / 2)) return; const n = demoTire(rnd, probasP); if (n) niveaux[q] = n; });
+    MP[d.pouce] = { pdc: d.pouce, type: "pouce", corrige: d.lie, niveaux, etape: Math.max(1, ...Object.values(niveaux), 1), total: qs.length, date: demoTs(tPiece.get(it) || fin - 36e5) };
+  });
+  /* Test d'entrée fait, fiches de révision */
+  if (test) {
+    const nb = niveau === "fragile" ? 4 : niveau === "moyen" ? 2 : 0, fiches = (test.fiches || []).slice();
+    const aRevoir = []; while (aRevoir.length < Math.min(nb, fiches.length)) aRevoir.push(fiches.splice(Math.floor(rnd() * fiches.length), 1)[0]);
+    const tt = debut - 864e5;
+    MT[test.id] = { test: test.id, aRevoir, score: (test.nb || 10) - aRevoir.length - (niveau === "fragile" ? 1 : 0), sur: test.nb || 10, date: demoTs(tt) };
+    aRevoir.forEach((f, i) => { if (E >= 2 || i < Math.floor(aRevoir.length / 2)) MF[cleF(test.id, f)] = { test: test.id, fiche: f, erreurs: niveau === "fragile" ? 2 : 0, date: demoTs(tt + (i + 1) * 36e5) }; });
+  }
+  /* Évaluation de fin de dossier corrigée */
+  if (E === 6) {
+    S.demoEvals.push({ titre: "Évaluation " + ch.titre, date: isoJour(fin) });
+    if (comp) { const [a, b] = niveau === "fragile" ? [0.35, 0.2] : niveau === "moyen" ? [0.58, 0.18] : [0.82, 0.13], taux = {};
+      new Set(Object.values(comp).flatMap(o => Object.values(o))).forEach(k => taux[k] = Math.round((a + rnd() * b) * 100) / 100);
+      S.demoTaux[ch.titre] = taux; }
+  }
+}
+async function appliquerDemo(cfg){
+  const g = (CAT.groupes || []).find(x => x.id === cfg.groupe), c = g && CAT.classes.find(x => x.id === g.site);
+  if (!c) return false;
+  Object.assign(S, { site: c.id, groupe: g.id, tous: false, premium: false, prof: false, evals: false, corr: {}, corrAt: {}, rythme: {}, demoCfg: cfg, demoEvals: [], demoTaux: {}, demoDebut: null });
+  MT = {}; MF = {}; MP = {}; fresh.clear(); Object.keys(EVCP).forEach(k => delete EVCP[k]);
+  const xs = demoDossiers(g.id), cur = xs.find(ch => ch.titre === cfg.dossier) || demoDossierDefaut(g.id);
+  const E = Math.max(0, DEMO_ETAPES.findIndex(e => e.id === cfg.etape)), rnd = demoAlea(g.id + cfg.niveau + (cur ? cur.titre : ""));
+  if (cur) {
+    const avant = xs.slice(0, xs.indexOf(cur)), now = Date.now();
+    await demoDossier(c, cur, E, cfg.niveau, now, rnd);
+    /* Dossiers précédents : terminés, répartis depuis la rentrée (ceux d'une année antérieure : l'an dernier) */
+    const d0 = new Date(now), rentree = new Date(d0.getMonth() >= 8 ? d0.getFullYear() : d0.getFullYear() - 1, 8, 4).getTime();
+    const cetteAnnee = avant.filter(ch => !ch.annee || !g.annee || ch.annee === g.annee), avantAn = avant.filter(ch => !cetteAnnee.includes(ch));
+    let fin = (S.demoDebut || now) - 3 * 864e5;
+    const pasA = Math.max(10 * 864e5, (fin - rentree) / Math.max(1, cetteAnnee.length));
+    for (let k = cetteAnnee.length - 1; k >= 0; k--) { await demoDossier(c, cetteAnnee[k], 6, cfg.niveau, fin, rnd, fin - pasA + 4 * 864e5); fin -= pasA; }
+    fin = rentree - 75 * 864e5;
+    for (let k = avantAn.length - 1; k >= 0; k--) { await demoDossier(c, avantAn[k], 6, cfg.niveau, fin, rnd, fin - 25 * 864e5); fin -= 30 * 864e5; }
+  }
+  try { localStorage.setItem("demo-cfg", JSON.stringify(cfg)); } catch(_) {}
+  return true;
+}
+const DEMO_CSS = `.demo-band{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;background:#FFF2CC;border:1px solid #E7C96B;color:#5A4500;border-radius:10px;padding:9px 14px;margin:0 0 14px;font-size:.9rem}
+  .demo-band b{color:#1F3864}.demo-band button{margin-left:auto}
+  .demo-box{background:var(--surface,#fff);border:1px solid var(--grid,#dde3ec);border-radius:12px;padding:16px 18px;max-width:640px}
+  .demo-box label{display:block;font-weight:700;color:#1F3864;margin:14px 0 4px}.demo-box select{width:100%;font:inherit;padding:8px 10px;border-radius:8px;border:1px solid #b9c3d3;background:#fff}
+  .demo-box .aide{font-size:.88rem;color:var(--muted,#5A6577);margin:5px 2px 0}.demo-box .btn{margin-top:18px}`;
+(() => { const st = document.createElement("style"); st.textContent = DEMO_CSS; document.head.appendChild(st); })();
+function demoBandeau(){
+  const cfg = S.demoCfg; if (!cfg) return null;
+  const g = (CAT.groupes || []).find(x => x.id === cfg.groupe) || {}, n = DEMO_NIVEAUX.find(x => x.id === cfg.niveau) || {}, e = DEMO_ETAPES.find(x => x.id === cfg.etape) || {};
+  const cur = demoDossiers(cfg.groupe).find(ch => ch.titre === cfg.dossier) || demoDossierDefaut(cfg.groupe);
+  const d = document.createElement("div"); d.className = "demo-band"; d.setAttribute("role", "note");
+  d.innerHTML = `<span>🎭 <b>Démonstration</b> · élève ${esc((n.lib || "").toLowerCase())} · ${esc(g.nom || "")}${cur ? " · « " + esc(cur.titre) + " »" : ""} · ${esc(e.lib || "")} · rien n'est enregistré</span><button class="linkbtn" type="button">Changer de profil</button>`;
+  d.querySelector("button").onclick = () => { location.hash = "demo"; };
+  return d;
+}
+function renderDemo(view){
+  const cfg = S.demoCfg || {};
+  const head = document.createElement("div"); head.className = "classhead";
+  head.innerHTML = `<h2>Mode démonstration</h2><span class="status is-open">Rien n'est enregistré</span>`;
+  view.appendChild(head);
+  const box = document.createElement("div"); box.className = "demo-box";
+  const gs = demoGroupes(), g0 = gs.find(x => x.id === cfg.groupe) ? cfg.groupe : (gs[0] || {}).id;
+  box.innerHTML = `<p style="margin-top:0">Ce compte montre le site <b>tel qu'un étudiant le voit</b>. Choisis un profil : l'avancement est simulé dans ce navigateur. Aucune donnée d'élève n'est lue ni modifiée, et tout ce qui est fait pendant la démonstration (test d'entrée, fiches, points de cours, animation) est oublié à la déconnexion.</p>
+    <label for="dg">Classe</label><select id="dg">${gs.map(x => `<option value="${esc(x.id)}"${x.id === g0 ? " selected" : ""}>${esc(x.nom)}</option>`).join("")}</select>
+    <label for="dd">Dossier en cours</label><select id="dd"></select><p class="aide">Les dossiers précédents sont affichés comme terminés, les suivants restent sous cadenas.</p>
+    <label for="dn">Niveau de l'élève</label><select id="dn">${DEMO_NIVEAUX.map(x => `<option value="${x.id}"${x.id === (cfg.niveau || "moyen") ? " selected" : ""}>${esc(x.lib)}</option>`).join("")}</select><p class="aide" id="dna"></p>
+    <label for="de">Étape du dossier</label><select id="de"></select><p class="aide" id="dea"></p>
+    <button class="btn" type="button">Voir le site comme cet élève</button><p class="err"></p>`;
+  view.appendChild(box);
+  const $b = s => box.querySelector(s);
+  const majDossiers = () => { const gid = $b("#dg").value, xs = demoDossiers(gid), def = demoDossierDefaut(gid);
+    const choix = gid === cfg.groupe && xs.some(ch => ch.titre === cfg.dossier) ? cfg.dossier : def ? def.titre : "";
+    $b("#dd").innerHTML = xs.map(ch => `<option value="${esc(ch.titre)}"${ch.titre === choix ? " selected" : ""}>${esc(ch.titre)}${ch.annee ? " (" + (ch.annee === 1 ? "1re" : ch.annee + "e") + " année)" : ""}</option>`).join(""); majEtapes(); };
+  const majEtapes = () => { const g = (CAT.groupes || []).find(x => x.id === $b("#dg").value), ch = demoDossiers($b("#dg").value).find(x => x.titre === $b("#dd").value);
+    const t = g && ch ? demoTest(g.site, ch) : null, cour = $b("#de").value || cfg.etape || "activites";
+    const es = DEMO_ETAPES.filter(e => e.id !== "test" || t).map(e => e.id === "debut" && !t ? { ...e, lib: "Le dossier démarre", aide: "Dossier ouvert : rien n'est encore commencé." } : e);
+    $b("#de").innerHTML = es.map(e => `<option value="${e.id}"${e.id === cour ? " selected" : ""}>${esc(e.lib)}</option>`).join("");
+    const e = es.find(x => x.id === $b("#de").value); $b("#dea").textContent = e ? e.aide : ""; };
+  const majNiveau = () => { const n = DEMO_NIVEAUX.find(x => x.id === $b("#dn").value); $b("#dna").textContent = n ? n.aide : ""; };
+  $b("#dg").onchange = majDossiers; $b("#dd").onchange = majEtapes; $b("#de").onchange = majEtapes; $b("#dn").onchange = majNiveau;
+  majDossiers(); majNiveau();
+  $b(".btn").onclick = async () => {
+    const btn = $b(".btn"); btn.disabled = true; btn.textContent = "Préparation…";
+    const ok = await appliquerDemo({ groupe: $b("#dg").value, dossier: $b("#dd").value, niveau: $b("#dn").value, etape: $b("#de").value });
+    btn.disabled = false; btn.textContent = "Voir le site comme cet élève";
+    if (!ok) { $b(".err").textContent = "Profil impossible à préparer. Rechargez la page."; return; }
+    opened.clear(); fermes.clear();
+    const cur = demoDossiers(S.groupe).find(ch => ch.titre === S.demoCfg.dossier) || demoDossierDefaut(S.groupe);
+    if (cur) opened.add(S.site + "/" + cur.titre);
+    if (location.hash === "#" + S.site) route(); else location.hash = S.site;
+  };
+}
+function demoEvalRow(e){
+  const li = document.createElement("li");
+  li.innerHTML = `<span class="type corr">Ma copie</span><span class="title">${esc(e.titre)}<span class="meta">${esc(fmtDate(e.date))} · copie corrigée (exemple de démonstration)</span></span>
+    <span class="actions"><button class="open" type="button">Ouvrir</button></span>`;
+  li.querySelector("button").onclick = () => toast("Démonstration : ici s'ouvre la copie corrigée de l'étudiant (PDF à son nom). Les vraies copies ne sont pas montrées.");
+  return li;
 }
 
 (async function init(){

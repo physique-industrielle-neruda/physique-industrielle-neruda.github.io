@@ -95,3 +95,29 @@ export function itemDuDoc(ch, num, d){
   if (d && d.type === "Animation") return ch.rythme.items.find(x => x.anim) || null;
   return num ? ch.rythme.items.find(x => x.num === num) || null : null;
 }
+
+/* ================= Mini-oral et tutorat (25/11/2026 : Amplification, Statique des fluides, Sources) =================
+   Mini-oral : une fois par dossier et par élève, à la fin d'une activité (jamais un TP). L'appli répartit la classe
+   (r.oralIdx = rang de l'activité) ; si le corrigé de cette activité est débloqué sans oral, il passe à l'activité suivante.
+   Le professeur note r.oral = { niveau: "clair" | "partiel" | "reprendre", act, date }.
+   Tutorat (à l'essai) : r.tutorats = [dates], un élève en avance explique une notion à un camarade.
+   Les deux alimentent la compétence COM du profil (jamais la note d'investissement). */
+export const ORAL_NIVEAUX = { clair: { lib: "Clair", pts: 3 }, partiel: { lib: "Partiel", pts: 1.5 }, reprendre: { lib: "À reprendre", pts: 0 } };
+export const oralActs = ch => ch && ch.rythme && ch.rythme.oral ? ch.rythme.items.filter(x => x.corrige && !x.tp && /^activit/i.test(x.num.normalize("NFKD").replace(/[̀-ͯ]/g, ""))) : [];
+export function oralCible(ch, r, corrAt){
+  const acts = oralActs(ch); r = r || {}; corrAt = corrAt || {};
+  if (!acts.length) return null;
+  if (r.oral && r.oral.niveau) return { fait: true, niveau: r.oral.niveau, act: r.oral.act };
+  if (r.oralIdx == null) return null;
+  const i0 = Math.max(0, Math.min(acts.length - 1, +r.oralIdx));
+  for (let k = i0; k < acts.length; k++) if (!corrAt[acts[k].corrige]) return { num: acts[k].num, titre: acts[k].titre, corrige: acts[k].corrige, report: k > i0 };
+  return { libre: true, report: true };   // toutes les activités corrigées sans oral : à faire avant l'évaluation
+}
+/* Scores COM pour le profil de compétences : mini-oral (3 / 1,5 / 0) et tutorats (3 chacun, 2 au plus) */
+export function comDe(r){
+  if (!r) return [];
+  const out = [];
+  if (r.oral && ORAL_NIVEAUX[r.oral.niveau]) out.push(ORAL_NIVEAUX[r.oral.niveau].pts);
+  (r.tutorats || []).slice(0, 2).forEach(() => out.push(3));
+  return out;
+}
