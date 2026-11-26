@@ -4652,6 +4652,736 @@
    "chapitres": [
     {
      "num": "",
+     "titre": "Discrétisation et conversion",
+     "docs": [
+      {
+       "titre": "Comment ça marche – profil de compétences",
+       "type": "Document",
+       "fichier": "2dcfaf829059d783f480a982.bin",
+       "taille": 50382,
+       "pages": 1,
+       "cv": "cim-chap-discretisation-et-conversion",
+       "rubrique": "Pour commencer"
+      },
+      {
+       "titre": "Feuille de route du dossier",
+       "type": "Document",
+       "fichier": "cbd8cca25df7fa9b1499f8a0.bin",
+       "taille": 65636,
+       "pages": 1,
+       "cv": "cim-chap-discretisation-et-conversion",
+       "rubrique": "Pour commencer"
+      },
+      {
+       "titre": "Activité 1 – Échantillonner et bloquer un signal",
+       "type": "Activité",
+       "fichier": "3863c5b7be6efcd43d4f77b7.bin",
+       "taille": 337776,
+       "pages": 5,
+       "cv": "cim-chap-discretisation-et-conversion",
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "Activité 1 – Échantillonner et bloquer un signal - coups de pouce",
+       "type": "Activité",
+       "format": "pouce",
+       "fichier": "f5e62f2719849d725a620a49.bin",
+       "taille": 18163,
+       "pouce": "pouce:cim-discretisation-et-conversion-corrige-activite-1-echantillonner-et-bloquer-un-si",
+       "lie": "cim-discretisation-et-conversion-corrige-activite-1-echantillonner-et-bloquer-un-si",
+       "cv": "cim-chap-discretisation-et-conversion",
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "Corrigé Activité 1 – Échantillonner et bloquer un signal",
+       "type": "Corrigé",
+       "fichier": "5a5a668b3059d5540c437604.bin",
+       "taille": 316025,
+       "pages": 3,
+       "corrige": {
+        "id": "cim-discretisation-et-conversion-corrige-activite-1-echantillonner-et-bloquer-un-si",
+        "wk": "nfJiWiRHh2WJQTrygz5LJzkghytofc8t0DCYO5Mxc8g3lXMzmjuwnHArieNb77wTUXrHiLlSBzKwehzl"
+       },
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "Point de cours – Activité 1",
+       "type": "Point de cours",
+       "format": "pdc",
+       "fichier": "3f5daa4fe42bd2d9dd30c576.bin",
+       "taille": 16182,
+       "corrige": {
+        "id": "cim-discretisation-et-conversion-corrige-activite-1-echantillonner-et-bloquer-un-si",
+        "wk": "nfJiWiRHh2WJQTrygz5LJzkghytofc8t0DCYO5Mxc8g3lXMzmjuwnHArieNb77wTUXrHiLlSBzKwehzl"
+       },
+       "pdc": "cim-discretisation-et-conversion-pdc-activite-1",
+       "activite": "Activité 1",
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "TP 1 – L'astable du buzzer",
+       "type": "TP",
+       "fichier": "7fb2c50404840bf12cea4a2e.bin",
+       "taille": 317721,
+       "pages": 5,
+       "cv": "cim-chap-discretisation-et-conversion",
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "TP 1 – L'astable du buzzer - coups de pouce",
+       "type": "TP",
+       "format": "pouce",
+       "fichier": "8290f426db0bed9e3f00df84.bin",
+       "taille": 19350,
+       "pouce": "pouce:cim-discretisation-et-conversion-corrige-tp-1-l-astable-du-buzzer",
+       "lie": "cim-discretisation-et-conversion-corrige-tp-1-l-astable-du-buzzer",
+       "cv": "cim-chap-discretisation-et-conversion",
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "Corrigé TP 1 – L'astable du buzzer",
+       "type": "Corrigé",
+       "fichier": "bdfcaa37ec19a96c6910ae3e.bin",
+       "taille": 339395,
+       "pages": 4,
+       "corrige": {
+        "id": "cim-discretisation-et-conversion-corrige-tp-1-l-astable-du-buzzer",
+        "wk": "6BRxj4zIVHu+PvLDooBAHa+xOUbMCpZmba71CKkGCVRpup1gzFF/HzieyORuOWbx+dF4MIH/iidq8SUf"
+       },
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "Point de cours – TP 1",
+       "type": "Point de cours",
+       "format": "pdc",
+       "fichier": "004c99e44b01c48c9b06335d.bin",
+       "taille": 15264,
+       "corrige": {
+        "id": "cim-discretisation-et-conversion-corrige-tp-1-l-astable-du-buzzer",
+        "wk": "6BRxj4zIVHu+PvLDooBAHa+xOUbMCpZmba71CKkGCVRpup1gzFF/HzieyORuOWbx+dF4MIH/iidq8SUf"
+       },
+       "pdc": "cim-discretisation-et-conversion-pdc-tp-1",
+       "activite": "TP 1",
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "Activité 2 – Le quartz et la division de fréquence",
+       "type": "Activité",
+       "fichier": "2f472669190daa8693c346de.bin",
+       "taille": 254200,
+       "pages": 4,
+       "cv": "cim-chap-discretisation-et-conversion",
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "Activité 2 – Le quartz et la division de fréquence - coups de pouce",
+       "type": "Activité",
+       "format": "pouce",
+       "fichier": "154495caaf688df0bce3c643.bin",
+       "taille": 15497,
+       "pouce": "pouce:cim-discretisation-et-conversion-corrige-activite-2-le-quartz-et-la-division-de-fre",
+       "lie": "cim-discretisation-et-conversion-corrige-activite-2-le-quartz-et-la-division-de-fre",
+       "cv": "cim-chap-discretisation-et-conversion",
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "Corrigé Activité 2 – Le quartz et la division de fréquence",
+       "type": "Corrigé",
+       "fichier": "3a0ced6b97fdec9c6d519e51.bin",
+       "taille": 197609,
+       "pages": 2,
+       "corrige": {
+        "id": "cim-discretisation-et-conversion-corrige-activite-2-le-quartz-et-la-division-de-fre",
+        "wk": "1BNn9s6gv8JuTLP38pwYcvXOU5O+CHxFnEVKBvQIIQstAIcsasD5s6iGS5ADKETIEQL0XTPQxEvblLx9"
+       },
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "Point de cours – Activité 2",
+       "type": "Point de cours",
+       "format": "pdc",
+       "fichier": "c65588358c7f33bebc1a0d36.bin",
+       "taille": 14528,
+       "corrige": {
+        "id": "cim-discretisation-et-conversion-corrige-activite-2-le-quartz-et-la-division-de-fre",
+        "wk": "1BNn9s6gv8JuTLP38pwYcvXOU5O+CHxFnEVKBvQIIQstAIcsasD5s6iGS5ADKETIEQL0XTPQxEvblLx9"
+       },
+       "pdc": "cim-discretisation-et-conversion-pdc-activite-2",
+       "activite": "Activité 2",
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "TP 2 – Le CAN du banc de force des couronnes",
+       "type": "TP",
+       "fichier": "8374b0d1e0985bb467f38af2.bin",
+       "taille": 570155,
+       "pages": 7,
+       "cv": "cim-chap-discretisation-et-conversion",
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "TP 2 – Le CAN du banc de force des couronnes - coups de pouce",
+       "type": "TP",
+       "format": "pouce",
+       "fichier": "566dc886788afc965f626207.bin",
+       "taille": 19473,
+       "pouce": "pouce:cim-discretisation-et-conversion-corrige-tp-2-le-can-du-banc-de-force-des-couronnes",
+       "lie": "cim-discretisation-et-conversion-corrige-tp-2-le-can-du-banc-de-force-des-couronnes",
+       "cv": "cim-chap-discretisation-et-conversion",
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "Corrigé TP 2 – Le CAN du banc de force des couronnes",
+       "type": "Corrigé",
+       "fichier": "3733589a082df2f15902bb79.bin",
+       "taille": 287072,
+       "pages": 4,
+       "corrige": {
+        "id": "cim-discretisation-et-conversion-corrige-tp-2-le-can-du-banc-de-force-des-couronnes",
+        "wk": "xzDZGJuBxL6wSZLR9vONf3jm7fEC5zVVJcrzy6EbrQrBHmMa0MPWE8+vOH13I4goQK4oeBVKbJnHh+pu"
+       },
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "Point de cours – TP 2",
+       "type": "Point de cours",
+       "format": "pdc",
+       "fichier": "ae167b2820550c6fc95f9e94.bin",
+       "taille": 14518,
+       "corrige": {
+        "id": "cim-discretisation-et-conversion-corrige-tp-2-le-can-du-banc-de-force-des-couronnes",
+        "wk": "xzDZGJuBxL6wSZLR9vONf3jm7fEC5zVVJcrzy6EbrQrBHmMa0MPWE8+vOH13I4goQK4oeBVKbJnHh+pu"
+       },
+       "pdc": "cim-discretisation-et-conversion-pdc-tp-2",
+       "activite": "TP 2",
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "Activité 3 – Le CNA et la carte d'entrées-sorties",
+       "type": "Activité",
+       "fichier": "297d0a410117928900e49104.bin",
+       "taille": 290567,
+       "pages": 5,
+       "cv": "cim-chap-discretisation-et-conversion",
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "Activité 3 – Le CNA et la carte d'entrées-sorties - coups de pouce",
+       "type": "Activité",
+       "format": "pouce",
+       "fichier": "7f373c998a32775aaa7d8c91.bin",
+       "taille": 15387,
+       "pouce": "pouce:cim-discretisation-et-conversion-corrige-activite-3-le-cna-et-la-carte-d-entrees-so",
+       "lie": "cim-discretisation-et-conversion-corrige-activite-3-le-cna-et-la-carte-d-entrees-so",
+       "cv": "cim-chap-discretisation-et-conversion",
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "Corrigé Activité 3 – Le CNA et la carte d'entrées-sorties",
+       "type": "Corrigé",
+       "fichier": "798597cb98ab8f33d1788860.bin",
+       "taille": 245893,
+       "pages": 3,
+       "corrige": {
+        "id": "cim-discretisation-et-conversion-corrige-activite-3-le-cna-et-la-carte-d-entrees-so",
+        "wk": "odTuREX49icocEw5mstFir0bNrr59vmi21ZR6ASZxE7am1KjliPZajsPghExsSHEbkeTrxru27YT2bjF"
+       },
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "Point de cours – Activité 3",
+       "type": "Point de cours",
+       "format": "pdc",
+       "fichier": "a9a8fda1e4ba492d3af1805a.bin",
+       "taille": 14241,
+       "corrige": {
+        "id": "cim-discretisation-et-conversion-corrige-activite-3-le-cna-et-la-carte-d-entrees-so",
+        "wk": "odTuREX49icocEw5mstFir0bNrr59vmi21ZR6ASZxE7am1KjliPZajsPghExsSHEbkeTrxru27YT2bjF"
+       },
+       "pdc": "cim-discretisation-et-conversion-pdc-activite-3",
+       "activite": "Activité 3",
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "L'essentiel du dossier",
+       "type": "Cours",
+       "fichier": "77ee39d1ed7154ef52fb69a7.bin",
+       "taille": 534044,
+       "pages": 8,
+       "cv": "cim-chap-discretisation-et-conversion",
+       "rubrique": "Cours"
+      },
+      {
+       "titre": "Correction des exemples",
+       "type": "Exemples",
+       "format": "exemples",
+       "fichier": "e2e374e126a110ade4fbbcc7.bin",
+       "taille": 9280,
+       "cv": "cim-chap-discretisation-et-conversion",
+       "rubrique": "Cours"
+      },
+      {
+       "titre": "Exercice 1 – La visseuse automatique",
+       "type": "Exercices",
+       "fichier": "9dd7c70347450bf0164e2376.bin",
+       "taille": 141529,
+       "pages": 2,
+       "cv": "cim-chap-discretisation-et-conversion",
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 1 - coups de pouce",
+       "type": "Exercices",
+       "format": "pouce",
+       "fichier": "16d39fc4cb055c42fd54904d.bin",
+       "taille": 12137,
+       "pouce": "pouce:cim-discretisation-et-conversion-corrige-exercice-1",
+       "lie": "cim-discretisation-et-conversion-corrige-exercice-1",
+       "cv": "cim-chap-discretisation-et-conversion",
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Corrigé Exercice 1",
+       "type": "Corrigé",
+       "fichier": "b41b2f560e3a8558c93a5f2e.bin",
+       "taille": 84604,
+       "pages": 1,
+       "corrige": {
+        "id": "cim-discretisation-et-conversion-corrige-exercice-1",
+        "wk": "OTxLWLlmdCGDICWMWkMLgBYdMhS7iohqJUOsl/4YilrnKmdrW5ddSo+NVwNjZMl4JS2eyEdfHidJ7oeN"
+       },
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 2 – L'horloge de la machine de tampographie",
+       "type": "Exercices",
+       "fichier": "528daf331d6b38c2f43837c1.bin",
+       "taille": 153625,
+       "pages": 2,
+       "cv": "cim-chap-discretisation-et-conversion",
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 2 - coups de pouce",
+       "type": "Exercices",
+       "format": "pouce",
+       "fichier": "acd6015261ef9c652195457a.bin",
+       "taille": 12244,
+       "pouce": "pouce:cim-discretisation-et-conversion-corrige-exercice-2",
+       "lie": "cim-discretisation-et-conversion-corrige-exercice-2",
+       "cv": "cim-chap-discretisation-et-conversion",
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Corrigé Exercice 2",
+       "type": "Corrigé",
+       "fichier": "b1c6aff11b53da5db0497bc3.bin",
+       "taille": 85002,
+       "pages": 1,
+       "corrige": {
+        "id": "cim-discretisation-et-conversion-corrige-exercice-2",
+        "wk": "a/WRlLdLtHCr0w3A3V/+OrpHl1rC/HdnKL4hbqz6iymDp4i+PyglDR6CEeD1F/FLUzWfQEluDOfZA6jv"
+       },
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 3 – Le four de refusion des cartes électroniques",
+       "type": "Exercices",
+       "fichier": "44b3c451c50055b854cf280f.bin",
+       "taille": 136786,
+       "pages": 2,
+       "cv": "cim-chap-discretisation-et-conversion",
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 3 - coups de pouce",
+       "type": "Exercices",
+       "format": "pouce",
+       "fichier": "f6f93cec14864bbaa526284a.bin",
+       "taille": 12309,
+       "pouce": "pouce:cim-discretisation-et-conversion-corrige-exercice-3",
+       "lie": "cim-discretisation-et-conversion-corrige-exercice-3",
+       "cv": "cim-chap-discretisation-et-conversion",
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Corrigé Exercice 3",
+       "type": "Corrigé",
+       "fichier": "bcdd83c82e9e93a20eac10d4.bin",
+       "taille": 93626,
+       "pages": 1,
+       "corrige": {
+        "id": "cim-discretisation-et-conversion-corrige-exercice-3",
+        "wk": "568t6UYKrjpdn8MYUDiQHZCrf5KRfH6bP6izOux+uGDvwCJ3FkjvNnGn/iwHN9iDnO733994wZYqxSoJ"
+       },
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 4 – La vitesse du convoyeur de polissage",
+       "type": "Exercices",
+       "fichier": "22f2e99b5d78d0e61555b996.bin",
+       "taille": 146662,
+       "pages": 2,
+       "cv": "cim-chap-discretisation-et-conversion",
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 4 - coups de pouce",
+       "type": "Exercices",
+       "format": "pouce",
+       "fichier": "dc7a422129c90d7c955b795f.bin",
+       "taille": 12363,
+       "pouce": "pouce:cim-discretisation-et-conversion-corrige-exercice-4",
+       "lie": "cim-discretisation-et-conversion-corrige-exercice-4",
+       "cv": "cim-chap-discretisation-et-conversion",
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Corrigé Exercice 4",
+       "type": "Corrigé",
+       "fichier": "5de2f4056e971aa16c3afdac.bin",
+       "taille": 101138,
+       "pages": 1,
+       "corrige": {
+        "id": "cim-discretisation-et-conversion-corrige-exercice-4",
+        "wk": "HFV8OJzjrnNP50uUCReJZm18FPb5SAQY0RKPgNWNqLzr4Qvb/3/Zb/MJ2by2EL5wGHXmBEs/V9aJX/FB"
+       },
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Fiche animation",
+       "type": "Fiche",
+       "fichier": "051f5ff1cff8daadd308cbab.bin",
+       "taille": 106478,
+       "pages": 2,
+       "cv": "cim-chap-discretisation-et-conversion",
+       "rubrique": "Animation"
+      },
+      {
+       "titre": "Animation – Discrétisation et conversion",
+       "type": "Animation",
+       "fichier": "efda0ee5c5f3bb6fee23cb37.bin",
+       "format": "html",
+       "cv": "cim-chap-discretisation-et-conversion",
+       "rubrique": "Animation"
+      },
+      {
+       "titre": "Mon parcours avant l'évaluation",
+       "type": "Parcours",
+       "format": "parcours",
+       "fichier": "a8b42bf91692b886914ae58c.bin",
+       "taille": 29224,
+       "corrige": {
+        "id": "cim-discretisation-et-conversion-parcours",
+        "wk": "L/GMnA41YIjiJtS+FRTBoag5E99PqPB8o8nawfaDcZ8b6MwIUOjrNboOORxZy3/OgHiB7cTLplgwjqEE"
+       },
+       "rubrique": "Mon profil de compétences"
+      },
+      {
+       "titre": "Bilan",
+       "type": "Fiche",
+       "fichier": "a8226bc224adf5786d31a3c3.bin",
+       "taille": 71043,
+       "pages": 1,
+       "cv": "cim-chap-discretisation-et-conversion",
+       "rubrique": "Réviser"
+      },
+      {
+       "titre": "cartes de révision",
+       "type": "Cartes",
+       "nombre": 10,
+       "fichier": "2aaafbf0377081268fe79030.bin",
+       "format": "cartes",
+       "ch": "discretisation-et-conversion",
+       "cv": "cim-chap-discretisation-et-conversion",
+       "rubrique": "Réviser"
+      }
+     ],
+     "verrou": {
+      "id": "cim-chap-discretisation-et-conversion",
+      "wk": "45dV0CdQ2eerBEBQ5+/bmNlMHz5Wugdm4L+l/+nyLq+XQCKnQ86lOVQTnpa77rerbBWjBAI6x285cyYb"
+     },
+     "competences": {
+      "referentiel": "BTS CIM",
+      "questions": {
+       "Activité 1": {
+        "A1": "APP",
+        "A2": "REA",
+        "A3": "REA",
+        "A4": "ANA",
+        "A5": "REA",
+        "A6": "VAL",
+        "B1": "REA",
+        "B2": "VAL",
+        "B3": "APP",
+        "B4": "REA",
+        "B5": "COM"
+       },
+       "TP 1": {
+        "A1": "REA",
+        "A2": "REA",
+        "A3": "VAL",
+        "A4": "ANA",
+        "A5": "REA",
+        "B1": "REA",
+        "B2": "REA",
+        "B3": "VAL",
+        "C1": "ANA",
+        "C3": "VAL",
+        "C4": "COM"
+       },
+       "Activité 2": {
+        "A1": "REA",
+        "A2": "REA",
+        "A3": "ANA",
+        "A4": "ANA",
+        "B1": "REA",
+        "B2": "REA",
+        "B3": "REA",
+        "B4": "VAL",
+        "B5": "COM"
+       },
+       "TP 2": {
+        "A1": "REA",
+        "A2": "APP",
+        "A3": "REA",
+        "A4": "VAL",
+        "B1": "REA",
+        "B2": "REA",
+        "B3": "VAL",
+        "B4": "ANA",
+        "C1": "REA",
+        "C3": "ANA",
+        "D1": "REA",
+        "D2": "REA",
+        "D3": "COM"
+       },
+       "Activité 3": {
+        "A1": "APP",
+        "A2": "REA",
+        "A3": "REA",
+        "A4": "VAL",
+        "B1": "REA",
+        "B2": "REA",
+        "B3": "APP",
+        "B4": "COM"
+       },
+       "Exercice 1": {
+        "Q1": "REA",
+        "Q2": "ANA",
+        "Q3": "REA",
+        "Q4": "VAL"
+       },
+       "Exercice 2": {
+        "Q1": "REA",
+        "Q2": "REA",
+        "Q3": "ANA",
+        "Q4": "REA",
+        "Q5": "VAL"
+       },
+       "Exercice 3": {
+        "Q1": "REA",
+        "Q2": "REA",
+        "Q3": "VAL",
+        "Q4": "REA",
+        "Q5": "APP"
+       },
+       "Exercice 4": {
+        "Q1": "APP",
+        "Q2": "REA",
+        "Q3": "VAL",
+        "Q4": "REA",
+        "Q5": "ANA",
+        "Q6": "REA"
+       },
+       "Animation": {
+        "1.1": "REA",
+        "1.2": "APP",
+        "1.3": "REA",
+        "1.4": "REA",
+        "2.1": "REA",
+        "2.2": "REA",
+        "2.3": "ANA",
+        "2.4": "ANA",
+        "3.1": "REA",
+        "3.2": "REA",
+        "3.3": "ANA",
+        "3.4": "ANA",
+        "3.5": "REA",
+        "4.1": "REA",
+        "4.2": "REA",
+        "4.3": "APP",
+        "4.4": "REA",
+        "4.5": "APP",
+        "5.1": "REA",
+        "5.2": "REA",
+        "5.3": "ANA",
+        "5.4": "VAL"
+       }
+      }
+     },
+     "rythme": {
+      "marge": 1.0,
+      "seances": [
+       1,
+       2
+      ],
+      "items": [
+       {
+        "num": "Activité 1",
+        "titre": "Activité 1 – Échantillonner et bloquer un signal",
+        "duree": 0.75,
+        "corrige": "cim-discretisation-et-conversion-corrige-activite-1-echantillonner-et-bloquer-un-si"
+       },
+       {
+        "num": "Point de cours – Activité 1",
+        "titre": "Point de cours – Activité 1",
+        "duree": 0.1667,
+        "pdc": "cim-discretisation-et-conversion-pdc-activite-1"
+       },
+       {
+        "num": "Exemple 1",
+        "titre": "Cours partie 1 et EXEMPLE 1",
+        "duree": 0.1667,
+        "exemple": 1
+       },
+       {
+        "num": "Exemple 2",
+        "titre": "Cours partie 1 et EXEMPLE 2",
+        "duree": 0.1667,
+        "exemple": 2
+       },
+       {
+        "num": "Exercice 1",
+        "titre": "Exercice 1 – La visseuse automatique",
+        "duree": 0.1667,
+        "corrige": "cim-discretisation-et-conversion-corrige-exercice-1"
+       },
+       {
+        "num": "TP 1",
+        "titre": "TP 1 – L'astable du buzzer",
+        "duree": 2.0,
+        "corrige": "cim-discretisation-et-conversion-corrige-tp-1-l-astable-du-buzzer",
+        "tp": true
+       },
+       {
+        "num": "Point de cours – TP 1",
+        "titre": "Point de cours – TP 1",
+        "duree": 0.1667,
+        "pdc": "cim-discretisation-et-conversion-pdc-tp-1"
+       },
+       {
+        "num": "Exemple 3",
+        "titre": "Cours partie 2 et EXEMPLE 3",
+        "duree": 0.25,
+        "exemple": 3
+       },
+       {
+        "num": "Activité 2",
+        "titre": "Activité 2 – Le quartz et la division de fréquence",
+        "duree": 0.75,
+        "corrige": "cim-discretisation-et-conversion-corrige-activite-2-le-quartz-et-la-division-de-fre"
+       },
+       {
+        "num": "Point de cours – Activité 2",
+        "titre": "Point de cours – Activité 2",
+        "duree": 0.1667,
+        "pdc": "cim-discretisation-et-conversion-pdc-activite-2"
+       },
+       {
+        "num": "Exemple 4",
+        "titre": "Cours partie 3 et EXEMPLE 4",
+        "duree": 0.25,
+        "exemple": 4
+       },
+       {
+        "num": "Exercice 2",
+        "titre": "Exercice 2 – L'horloge de la machine de tampographie",
+        "duree": 0.25,
+        "corrige": "cim-discretisation-et-conversion-corrige-exercice-2",
+        "horsEss": true
+       },
+       {
+        "num": "TP 2",
+        "titre": "TP 2 – Le CAN du banc de force des couronnes",
+        "duree": 2.0,
+        "corrige": "cim-discretisation-et-conversion-corrige-tp-2-le-can-du-banc-de-force-des-couronnes",
+        "tp": true
+       },
+       {
+        "num": "Point de cours – TP 2",
+        "titre": "Point de cours – TP 2",
+        "duree": 0.1667,
+        "pdc": "cim-discretisation-et-conversion-pdc-tp-2"
+       },
+       {
+        "num": "Exemple 5",
+        "titre": "Cours partie 4 et EXEMPLE 5",
+        "duree": 0.1667,
+        "exemple": 5
+       },
+       {
+        "num": "Exemple 6",
+        "titre": "Cours partie 4 et EXEMPLE 6",
+        "duree": 0.1667,
+        "exemple": 6
+       },
+       {
+        "num": "Exercice 3",
+        "titre": "Exercice 3 – Le four de refusion des cartes électroniques",
+        "duree": 0.25,
+        "corrige": "cim-discretisation-et-conversion-corrige-exercice-3",
+        "horsEss": true
+       },
+       {
+        "num": "Activité 3",
+        "titre": "Activité 3 – Le CNA et la carte d'entrées-sorties",
+        "duree": 0.75,
+        "corrige": "cim-discretisation-et-conversion-corrige-activite-3-le-cna-et-la-carte-d-entrees-so"
+       },
+       {
+        "num": "Point de cours – Activité 3",
+        "titre": "Point de cours – Activité 3",
+        "duree": 0.1667,
+        "pdc": "cim-discretisation-et-conversion-pdc-activite-3"
+       },
+       {
+        "num": "Exemple 7",
+        "titre": "Cours partie 5 et EXEMPLE 7",
+        "duree": 0.25,
+        "exemple": 7
+       },
+       {
+        "num": "Exercice 4",
+        "titre": "Exercice 4 – La vitesse du convoyeur de polissage",
+        "duree": 0.3333,
+        "corrige": "cim-discretisation-et-conversion-corrige-exercice-4"
+       },
+       {
+        "num": "Animation",
+        "titre": "Animation – Discrétisation et conversion",
+        "duree": 1.0,
+        "anim": true,
+        "questions": 22,
+        "horsEss": true
+       },
+       {
+        "num": "Parcours",
+        "titre": "Mon parcours avant l'évaluation",
+        "duree": 1.0,
+        "parcours": "cim-discretisation-et-conversion-parcours"
+       }
+      ],
+      "notions": [
+       "la fréquence d'échantillonnage et le rôle du bloqueur",
+       "le quantum et le nombre N d'un CAN",
+       "la tension de sortie d'un CNA"
+      ],
+      "oral": true
+     }
+    },
+    {
+     "num": "",
      "titre": "Les convertisseurs électromécaniques",
      "docs": [
       {
@@ -5125,9 +5855,9 @@
   }
  ],
  "outilsWk": {
-  "et": "QAHfgKhneA0rX5qqsau5R46so8FpkCwB7CA+8crt2Jgj7IwI99OSrTF30fnmtXFMnmYhHdlbzEGO1et6",
-  "cira": "Cp4j8IFltWKevlkNUVSPm6f65FlWu4W8Q4O++4j9bbKhRhDn+R1ZuXXjoRdDfKQk4mM2xt2H1rlYNN7J",
-  "cim": "QKPKWjjI3wRk7fRuZCSrYe9xhKN6rD7gexaOkvokkAo7/4TwvsI5atf3QCM227+S0G098zKlIPBHlXce"
+  "et": "8Zm9c7ZXLiuf7pMam5ojnQN+AwJymR/WyNG/vS8MsFIQfI9/3V+JSVEtPvqFOgO4v1OlG3UZnVeaip2y",
+  "cira": "Chk91b3lL9GL0IpeXm0ACn2oOAAjtInyVSRPvRTZOWcaEDMqYsFwbV1hWxnpTmevxqqzInfhDOB8PDV6",
+  "cim": "nLeMs7ncTJH9oaAWuGIiE0V6P99AtqXu/vFu65fU8egdua4XdlfrEBgasGeQD3DMQo3zDV1M2Cm9K6nU"
  },
  "outils": [
   {

@@ -2,6 +2,30 @@
  "version": 1,
  "tests": [
   {
+   "id": "cim-discretisation-et-conversion",
+   "site": "cim",
+   "titre": "Test d'entrée – Discrétisation et conversion",
+   "chapitre": "Discrétisation et conversion",
+   "duree": "15 min",
+   "nb": 10,
+   "fiches": [
+    "periode-et-frequence",
+    "puissances-de-10-et-conversions",
+    "systeme-du-premier-ordre",
+    "pont-diviseur-de-tension",
+    "puissances-de-2-et-nombres-binaires",
+    "proportionnalite-et-coefficient",
+    "loi-d-ohm"
+   ],
+   "verrou": {
+    "id": "test-cim-discretisation-et-conversion",
+    "wk": "Q2r/K4jmkEv3cNF/NyQOewCYELh2BWpXJOTkHt+/8NhTX+L1nYknn96yvd6PdJXPcEPerCJPBLYfbPm1",
+    "wkc": "rbH3UW2UUmc9cyTRW4GrVae2K8wpP7KFy/5iKKsyzmsX4DynVHPRwPphNrI3kg5FtGXP1c+fro3+Xhh6",
+    "chap": "cim-chap-discretisation-et-conversion"
+   },
+   "fichier": "4e3bf1f5c1402a98fa6e6b3e.bin"
+  },
+  {
    "id": "cira-amplification",
    "site": "cira",
    "titre": "Test d'entrée – Amplification",
