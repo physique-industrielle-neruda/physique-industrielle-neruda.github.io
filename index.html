@@ -249,7 +249,12 @@ body.nv header{background:#1F3864;border-bottom:0}
 body.nv .head{padding:18px 16px 16px}
 body.nv h1{color:#fff;font-size:clamp(1.7rem,5vw,2.3rem)}
 body.nv .who{color:rgba(255,255,255,.82)}
-body.nv .trace{display:none}
+body.nv .trace{display:block;height:78px;margin-top:0;padding-bottom:6px}
+body.nv .trace .axis{stroke:#fff;stroke-opacity:.16}
+body.nv .trace .h{stroke:#fff;stroke-opacity:.28;stroke-width:1.2}
+body.nv .trace .sum{stroke:#E8772E;stroke-width:2.6}
+@media (max-width:560px){body.nv .trace{height:56px}}
+@media (prefers-reduced-motion: reduce){body.nv .trace .sum{animation:none;stroke-dashoffset:0}}
 body.nv nav.classes{border:0;border-bottom:1px solid var(--grid);border-radius:0;background:transparent;overflow-x:auto;scrollbar-width:none;margin:10px 0 4px;gap:22px}
 body.nv nav.classes::-webkit-scrollbar{display:none}
 body.nv nav.classes button{flex:0 0 auto;border:0;border-bottom:3px solid transparent;border-radius:0;padding:12px 0 9px;text-align:left;background:none}

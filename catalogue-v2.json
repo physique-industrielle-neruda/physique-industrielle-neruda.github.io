@@ -414,8 +414,8 @@
       {
        "titre": "Feuille de route du dossier",
        "type": "Document",
-       "fichier": "13793cefe664956d0d19bdbe.bin",
-       "taille": 57210,
+       "fichier": "ba2e305c0f74b27296b45dd5.bin",
+       "taille": 57201,
        "pages": 1,
        "cv": "et-chap-statique-des-fluides",
        "rubrique": "Pour commencer"
@@ -423,8 +423,8 @@
       {
        "titre": "Activité 1 – La pression dans le filtre à sable",
        "type": "Activité",
-       "fichier": "6b4b6735e1eb8932bab8e0e0.bin",
-       "taille": 323103,
+       "fichier": "e2e64dd883b6260a8a468113.bin",
+       "taille": 323202,
        "pages": 5,
        "cv": "et-chap-statique-des-fluides",
        "rubrique": "Activités et TP"
@@ -456,8 +456,8 @@
        "titre": "Point de cours – Activité 1",
        "type": "Point de cours",
        "format": "pdc",
-       "fichier": "d630da86f38ae61545a7b972.bin",
-       "taille": 15677,
+       "fichier": "4692efebb6b2b58330566e14.bin",
+       "taille": 15678,
        "corrige": {
         "id": "et-statique-des-fluides-corrige-activite-1-la-pression-dans-le-filtre-a-sa",
         "wk": "pxLayu59OS5kcPRVcfwi/KNeOHZqIR+nfebhXBoNUq2Wwm3NZ/vo+VqjFtgVHwjNiFArQYm9yvWgd5um"
@@ -469,8 +469,8 @@
       {
        "titre": "Activité 2 – La pression au robinet du hameau",
        "type": "Activité",
-       "fichier": "f676af5069a030bc8c53cc61.bin",
-       "taille": 361590,
+       "fichier": "e3380d10168535d52e062adf.bin",
+       "taille": 361688,
        "pages": 5,
        "cv": "et-chap-statique-des-fluides",
        "rubrique": "Activités et TP"
@@ -515,8 +515,8 @@
       {
        "titre": "Activité 3 – Le capteur de niveau de la bâche",
        "type": "Activité",
-       "fichier": "a78f4d522dc87a1401cde056.bin",
-       "taille": 346051,
+       "fichier": "aad2af11e7ab9b5b762b0a85.bin",
+       "taille": 346145,
        "pages": 5,
        "cv": "et-chap-statique-des-fluides",
        "rubrique": "Activités et TP"
@@ -559,10 +559,10 @@
        "rubrique": "Activités et TP"
       },
       {
-       "titre": "Essentiel du chapitre",
+       "titre": "L'essentiel du dossier",
        "type": "Cours",
-       "fichier": "c775d7809c9837cd5f52e906.bin",
-       "taille": 366918,
+       "fichier": "1b96ec55fd10b43260f0197c.bin",
+       "taille": 379661,
        "pages": 6,
        "cv": "et-chap-statique-des-fluides",
        "rubrique": "Cours"
@@ -707,8 +707,8 @@
       {
        "titre": "Fiche animation",
        "type": "Fiche",
-       "fichier": "d8eba77dc88d2b26b69e6609.bin",
-       "taille": 124862,
+       "fichier": "a71c13508104dc5587d3d89b.bin",
+       "taille": 124778,
        "pages": 2,
        "cv": "et-chap-statique-des-fluides",
        "rubrique": "Animation"
@@ -2142,8 +2142,8 @@
       {
        "titre": "Exercice 1",
        "type": "Exercices",
-       "fichier": "59154e3edd63e8dc405b5c03.bin",
-       "taille": 123178,
+       "fichier": "0c393ed623c18d38eb2619fa.bin",
+       "taille": 124871,
        "pages": 1,
        "cv": "et-chap-les-chaines-de-mesure-2eta",
        "rubrique": "Exercices"
@@ -2174,8 +2174,8 @@
       {
        "titre": "Exercice 2",
        "type": "Exercices",
-       "fichier": "0434d6111e2125af3d96eb69.bin",
-       "taille": 106949,
+       "fichier": "6a6911c2ab575cd3218c0e66.bin",
+       "taille": 116155,
        "pages": 1,
        "cv": "et-chap-les-chaines-de-mesure-2eta",
        "rubrique": "Exercices"
@@ -2206,8 +2206,8 @@
       {
        "titre": "Exercice 3",
        "type": "Exercices",
-       "fichier": "3fe1d3c0dc1549f54a7759a6.bin",
-       "taille": 140043,
+       "fichier": "fbe4010731a54945fecd7416.bin",
+       "taille": 148855,
        "pages": 1,
        "cv": "et-chap-les-chaines-de-mesure-2eta",
        "rubrique": "Exercices"
@@ -2238,9 +2238,9 @@
       {
        "titre": "Exercice 4",
        "type": "Exercices",
-       "fichier": "ec231479eef20ef2ceaca6a9.bin",
-       "taille": 155791,
-       "pages": 1,
+       "fichier": "e090c5002185af1b07f0e2fa.bin",
+       "taille": 158258,
+       "pages": 2,
        "cv": "et-chap-les-chaines-de-mesure-2eta",
        "rubrique": "Exercices"
       },
@@ -2710,8 +2710,8 @@
       {
        "titre": "Feuille de route du dossier",
        "type": "Document",
-       "fichier": "127dd0aad69b531b21ad43a6.bin",
-       "taille": 60630,
+       "fichier": "1714a1245584d33f1f8ad810.bin",
+       "taille": 60621,
        "pages": 1,
        "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
        "rubrique": "Pour commencer"
@@ -2719,8 +2719,8 @@
       {
        "titre": "Activité 1 – Le facteur de charge d'un réacteur",
        "type": "Activité",
-       "fichier": "11daa36ba9b8d0f9e74112d1.bin",
-       "taille": 261399,
+       "fichier": "f7c719ffa583f5a2858d56b7.bin",
+       "taille": 261502,
        "pages": 5,
        "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
        "rubrique": "Activités et TP"
@@ -2765,8 +2765,8 @@
       {
        "titre": "Activité 2 – Le rendement du diesel d'ultime secours",
        "type": "Activité",
-       "fichier": "4d46b40192cb0a3f8786812a.bin",
-       "taille": 341457,
+       "fichier": "ffd6e9150aedeff9f6948f10.bin",
+       "taille": 341493,
        "pages": 6,
        "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
        "rubrique": "Activités et TP"
@@ -2811,8 +2811,8 @@
       {
        "titre": "Activité 3 – L'autonomie de la batterie 125 V",
        "type": "Activité",
-       "fichier": "b35e9a4bedaf8d7da3cf7857.bin",
-       "taille": 230805,
+       "fichier": "7083541b5e92d541ebdc139f.bin",
+       "taille": 230909,
        "pages": 5,
        "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
        "rubrique": "Activités et TP"
@@ -2857,8 +2857,8 @@
       {
        "titre": "Activité 4 – Un projet d'ombrière solaire",
        "type": "Activité",
-       "fichier": "7b3f7e1c5012667a42dda5c4.bin",
-       "taille": 573911,
+       "fichier": "d0873cf46d0d2255dd1e519e.bin",
+       "taille": 574012,
        "pages": 6,
        "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
        "rubrique": "Activités et TP"
@@ -2903,9 +2903,9 @@
       {
        "titre": "L'essentiel du dossier",
        "type": "Cours",
-       "fichier": "7d8f458ded3ae287ca8af7fd.bin",
-       "taille": 388566,
-       "pages": 7,
+       "fichier": "068878d9a50a38a8485a6562.bin",
+       "taille": 402638,
+       "pages": 8,
        "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
        "rubrique": "Cours"
       },
@@ -3049,8 +3049,8 @@
       {
        "titre": "Fiche animation",
        "type": "Fiche",
-       "fichier": "94dc72f752cebb90df4904c1.bin",
-       "taille": 142795,
+       "fichier": "2669044d17604dace5d2e3ee.bin",
+       "taille": 142733,
        "pages": 2,
        "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
        "rubrique": "Animation"
@@ -3970,8 +3970,8 @@
       {
        "titre": "Feuille de route du dossier",
        "type": "Document",
-       "fichier": "57d983524c5a7dfe69861a1f.bin",
-       "taille": 62107,
+       "fichier": "a4a858d7bb58fe9b8ebf386d.bin",
+       "taille": 62277,
        "pages": 1,
        "cv": "cira-chap-amplification",
        "rubrique": "Pour commencer"
@@ -3979,8 +3979,8 @@
       {
        "titre": "Activité 1 – L'ADI et le montage suiveur",
        "type": "Activité",
-       "fichier": "55dbe455cd5d73d51e12d12f.bin",
-       "taille": 296187,
+       "fichier": "2e7be2110f2dfa092e91c7b4.bin",
+       "taille": 290717,
        "pages": 5,
        "cv": "cira-chap-amplification",
        "rubrique": "Activités et TP"
@@ -4009,11 +4009,25 @@
        "rubrique": "Activités et TP"
       },
       {
+       "titre": "Point de cours – Activité 1",
+       "type": "Point de cours",
+       "format": "pdc",
+       "fichier": "134dcbeb7dc912fee91fb747.bin",
+       "taille": 15282,
+       "corrige": {
+        "id": "cira-amplification-corrige-activite-1-l-adi-et-le-montage-suiveur",
+        "wk": "yRvMzjRo+9H0NFtLaQYKKvkMUKAomQQ+uTZQ6mfyVBaeUu4hZTUdFCJhsjLFKFO86ppsH98pRgaoArOa"
+       },
+       "pdc": "cira-amplification-pdc-activite-1",
+       "activite": "Activité 1",
+       "rubrique": "Activités et TP"
+      },
+      {
        "titre": "TP 1 – Amplificateurs non inverseur et inverseur",
        "type": "TP",
-       "fichier": "e9207e5a106cac68afd23063.bin",
-       "taille": 421931,
-       "pages": 8,
+       "fichier": "b6bfe9acfa3520efe91daee1.bin",
+       "taille": 414558,
+       "pages": 7,
        "cv": "cira-chap-amplification",
        "rubrique": "Activités et TP"
       },
@@ -4041,11 +4055,25 @@
        "rubrique": "Activités et TP"
       },
       {
+       "titre": "Point de cours – TP 1",
+       "type": "Point de cours",
+       "format": "pdc",
+       "fichier": "e8f7c33d625bb6b2f367f5cf.bin",
+       "taille": 15612,
+       "corrige": {
+        "id": "cira-amplification-corrige-tp-1-amplificateurs-non-inverseur-et-inver",
+        "wk": "EP7hFMXcRchOXPN+94Ma5zNTLsLmVWpy/+h1WouWDY/9GC/fkqE/ZpHV8b3D1tvtcW7BY1D2FO0pLUKj"
+       },
+       "pdc": "cira-amplification-pdc-tp-1",
+       "activite": "TP 1",
+       "rubrique": "Activités et TP"
+      },
+      {
        "titre": "Activité 2 – Le soustracteur et le décalage de zéro",
        "type": "Activité",
-       "fichier": "4d1810dfb5bf19a542838b95.bin",
-       "taille": 261033,
-       "pages": 5,
+       "fichier": "6554b39ca0d643c69e0fbe24.bin",
+       "taille": 253936,
+       "pages": 4,
        "cv": "cira-chap-amplification",
        "rubrique": "Activités et TP"
       },
@@ -4073,11 +4101,25 @@
        "rubrique": "Activités et TP"
       },
       {
+       "titre": "Point de cours – Activité 2",
+       "type": "Point de cours",
+       "format": "pdc",
+       "fichier": "8c716d5f5d33fa32c63f45fd.bin",
+       "taille": 15052,
+       "corrige": {
+        "id": "cira-amplification-corrige-activite-2-le-soustracteur-et-le-decalage-",
+        "wk": "sUypAY8rjCOrWumZ/Zpmt8ctIf4OSantCTjRRxLsl6W6IK7bNN6a3orEiA9FtOTdFVyPLDAJZ1M/krPL"
+       },
+       "pdc": "cira-amplification-pdc-activite-2",
+       "activite": "Activité 2",
+       "rubrique": "Activités et TP"
+      },
+      {
        "titre": "TP 2 – Conditionneur à deux ADI pour la sonde Pt100",
        "type": "TP",
-       "fichier": "29125c7b2d1f6e92982b4c30.bin",
-       "taille": 442029,
-       "pages": 7,
+       "fichier": "3e6215ee113fe6d4b99f7887.bin",
+       "taille": 435664,
+       "pages": 6,
        "cv": "cira-chap-amplification",
        "rubrique": "Activités et TP"
       },
@@ -4105,10 +4147,24 @@
        "rubrique": "Activités et TP"
       },
       {
+       "titre": "Point de cours – TP 2",
+       "type": "Point de cours",
+       "format": "pdc",
+       "fichier": "deb6ba87578aed0c9b00f695.bin",
+       "taille": 15019,
+       "corrige": {
+        "id": "cira-amplification-corrige-tp-2-conditionneur-a-deux-adi-pour-la-sond",
+        "wk": "PYh9Bk1cXIAmywer/C4lSPXVXf64QrPnFSlLRvhU5jBBlxDfDpmEahfl7fi+w8fEeI1q7GDPFTX2ATGk"
+       },
+       "pdc": "cira-amplification-pdc-tp-2",
+       "activite": "TP 2",
+       "rubrique": "Activités et TP"
+      },
+      {
        "titre": "Activité 3 – L'amplificateur d'instrumentation",
        "type": "Activité",
-       "fichier": "c02cfd1d9999d14baec90ba1.bin",
-       "taille": 287788,
+       "fichier": "be15c9039ce97e4de655d168.bin",
+       "taille": 282527,
        "pages": 5,
        "cv": "cira-chap-amplification",
        "rubrique": "Activités et TP"
@@ -4137,10 +4193,24 @@
        "rubrique": "Activités et TP"
       },
       {
-       "titre": "Essentiel du chapitre",
+       "titre": "Point de cours – Activité 3",
+       "type": "Point de cours",
+       "format": "pdc",
+       "fichier": "ba8f3bed85ec8b2f6dc711b3.bin",
+       "taille": 14973,
+       "corrige": {
+        "id": "cira-amplification-corrige-activite-3-l-amplificateur-d-instrumentati",
+        "wk": "o8qE+0l1a7k2hcwmlyiOja6vEhfkopcNguJEtBdG0N6GnSTPVxThP9DfmON+uj0bXLnG8/4BzaZk3VOH"
+       },
+       "pdc": "cira-amplification-pdc-activite-3",
+       "activite": "Activité 3",
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "L'essentiel du dossier",
        "type": "Cours",
-       "fichier": "23b3bc9a5a84378cae2deaae.bin",
-       "taille": 560687,
+       "fichier": "bcc80358ca719da32181adfb.bin",
+       "taille": 575634,
        "pages": 8,
        "cv": "cira-chap-amplification",
        "rubrique": "Cours"
@@ -4285,8 +4355,8 @@
       {
        "titre": "Fiche animation",
        "type": "Fiche",
-       "fichier": "e6cc3863721bd399304e20bb.bin",
-       "taille": 135815,
+       "fichier": "259cfe3e400e2f71a0451499.bin",
+       "taille": 136109,
        "pages": 2,
        "cv": "cira-chap-amplification",
        "rubrique": "Animation"
@@ -4438,6 +4508,12 @@
         "corrige": "cira-amplification-corrige-activite-1-l-adi-et-le-montage-suiveur"
        },
        {
+        "num": "Point de cours – Activité 1",
+        "titre": "Point de cours – Activité 1",
+        "duree": 0.1667,
+        "pdc": "cira-amplification-pdc-activite-1"
+       },
+       {
         "num": "Exemple 1",
         "titre": "Cours partie 1 et EXEMPLE 1",
         "duree": 0.25,
@@ -4457,6 +4533,12 @@
         "tp": true
        },
        {
+        "num": "Point de cours – TP 1",
+        "titre": "Point de cours – TP 1",
+        "duree": 0.1667,
+        "pdc": "cira-amplification-pdc-tp-1"
+       },
+       {
         "num": "Exemple 2",
         "titre": "Cours partie 2 et EXEMPLE 2",
         "duree": 0.25,
@@ -4474,6 +4556,12 @@
         "titre": "Activité 2 – Le soustracteur et le décalage de zéro",
         "duree": 0.75,
         "corrige": "cira-amplification-corrige-activite-2-le-soustracteur-et-le-decalage-"
+       },
+       {
+        "num": "Point de cours – Activité 2",
+        "titre": "Point de cours – Activité 2",
+        "duree": 0.1667,
+        "pdc": "cira-amplification-pdc-activite-2"
        },
        {
         "num": "Exemple 3",
@@ -4496,6 +4584,12 @@
         "tp": true
        },
        {
+        "num": "Point de cours – TP 2",
+        "titre": "Point de cours – TP 2",
+        "duree": 0.1667,
+        "pdc": "cira-amplification-pdc-tp-2"
+       },
+       {
         "num": "Exemple 4",
         "titre": "Cours partie 4 et EXEMPLE 4",
         "duree": 0.1667,
@@ -4506,6 +4600,12 @@
         "titre": "Activité 3 – L'amplificateur d'instrumentation",
         "duree": 0.75,
         "corrige": "cira-amplification-corrige-activite-3-l-amplificateur-d-instrumentati"
+       },
+       {
+        "num": "Point de cours – Activité 3",
+        "titre": "Point de cours – Activité 3",
+        "duree": 0.1667,
+        "pdc": "cira-amplification-pdc-activite-3"
        },
        {
         "num": "Exemple 5",
@@ -5025,9 +5125,9 @@
   }
  ],
  "outilsWk": {
-  "et": "/EtT5zEeLt9bB8tpNpbd/4NAH9TwZRvX5FISBu1kQReal9zDw9AtvrDLZiyVv9GEmM4w3VxjTR6m7hT1",
-  "cira": "W2iEt185F4+66rk7w/2ymWmu8a7DpvpCVywM4SijlW2Q2g+2VRp2py2uKFbaca0ktCYBVUaPokJzRkEx",
-  "cim": "SEBBSzcLWk5scHsVIhjuZIpZNak8A39RUORSFD4thi0/KHtH5p9wbfd5Iirb15oawvslmoFOzICr1I7X"
+  "et": "QAHfgKhneA0rX5qqsau5R46so8FpkCwB7CA+8crt2Jgj7IwI99OSrTF30fnmtXFMnmYhHdlbzEGO1et6",
+  "cira": "Cp4j8IFltWKevlkNUVSPm6f65FlWu4W8Q4O++4j9bbKhRhDn+R1ZuXXjoRdDfKQk4mM2xt2H1rlYNN7J",
+  "cim": "QKPKWjjI3wRk7fRuZCSrYe9xhKN6rD7gexaOkvokkAo7/4TwvsI5atf3QCM227+S0G098zKlIPBHlXce"
  },
  "outils": [
   {
