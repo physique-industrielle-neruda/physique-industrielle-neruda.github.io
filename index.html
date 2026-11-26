@@ -385,6 +385,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut, setPersistence, browserLocalPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore, doc, getDoc, getDocs, setDoc as fbSetDoc, collection, query, where, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { profil as calcProfil, profilHtml, synthese, PROFIL_CSS, bilanAnnee, anneeHtml, ANNEE_CSS } from "./competences.js";
+import { creerBinomes } from "./binomes.js";
 import { etat as etatRythme, STATUTS, heures, exemplesId, itemDuDoc, rythmeDoc, oralCible, comDe, prevision } from "./rythme.js";
 
 const FB = {"apiKey":"AIzaSyDH32Ma0shVbsIHR0xNJbahb5MO0RKHRS0","authDomain":"physique-neruda.firebaseapp.com","projectId":"physique-neruda","storageBucket":"physique-neruda.firebasestorage.app","messagingSenderId":"62730174289","appId":"1:62730174289:web:588c846aadd4eec2109d70"};
@@ -414,6 +415,9 @@ const opened = new Set();
 const fermes = new Set(); // dossiers d'année refermés par l'élève (sinon le sien s'ouvre tout seul)
 
 function toast(msg){ const t = $("#toast"); t.textContent = msg; t.style.display = "block"; clearTimeout(toast.t); toast.t = setTimeout(() => t.style.display = "none", 4500); }
+/* Binômes et trinômes de TP (26/11/2026) : voir binomes.js */
+const BIN = creerBinomes({ db, doc, setDoc, getDocs, collection, query, where, onSnapshot, serverTimestamp, S: () => S, MP: () => MP, esc, toast, render: () => render() });
+document.head.insertAdjacentHTML("beforeend", "<style>" + BIN.css + "</style>");
 
 /* Tracé d'en-tête : carré reconstruit à partir de ses harmoniques impairs */
 (function drawTrace(){
@@ -687,7 +691,7 @@ function renderWho(){
   const grp = (CAT.groupes || []).find(g => g.id === S.groupe);
   w.innerHTML = `<span>Connecté : <strong>${esc(S.prof ? "Professeur" : S.nom)}</strong>${grp && !S.prof && !S.premium ? " · " + esc(grp.nom) : ""}</span><span><button class="linkbtn" type="button" data-act="sortie">Se déconnecter</button><button class="linkbtn nv-only nv-theme" type="button" data-act="theme">${nvTheme() ? "Mode clair" : "Mode sombre"}</button></span>`;
   w.querySelector('[data-act="theme"]').onclick = nvBasculeTheme;
-  w.querySelector('[data-act="sortie"]').onclick = async () => { await signOut(auth); location.hash = ""; };
+  w.querySelector('[data-act="sortie"]').onclick = async () => { BIN.deconnexion(); await signOut(auth); location.hash = ""; };
 }
 
 function docRow(c, d){
@@ -1630,6 +1634,7 @@ function pouceRow(c, d){
   li.innerHTML = `<span class="type pouce">Coup de pouce</span><span class="title">${esc(d.titre)}<span class="meta">${esc(meta)}</span></span>
     <span class="actions"><button class="open" type="button">Ouvrir</button></span>`;
   li.querySelector("button").onclick = () => ouvrirPouce(c, d);
+  const grp = BIN.bloc(c, d); if (grp) li.querySelector(".title").appendChild(grp);
   return li;
 }
 async function ouvrirPouce(c, d){
@@ -1640,12 +1645,14 @@ async function ouvrirPouce(c, d){
     html = await (await decryptBlob(BASE + "docs/" + c.id + "/" + d.fichier, key, "text/html;charset=utf-8")).text();
   } catch(e) { toast(e.message === "chapitre" ? "Ce chapitre n'est pas encore ouvert." : "Impossible d'ouvrir les coups de pouce. Rechargez la page."); return; }
   const eleve = eleveRev(), st = MP[d.pouce];
-  const init = "<script>window.POUCE_ID = " + JSON.stringify((S.user ? S.user.uid : "") + "|" + d.pouce) + "; window.POUCE_INIT = " + JSON.stringify(eleve && st && st.niveaux ? st.niveaux : {})
+  const init = "<script>window.POUCE_ID = " + JSON.stringify((S.user ? S.user.uid : "") + "|" + d.pouce) + "; window.POUCE_INIT = " + JSON.stringify(eleve ? BIN.niveauxInit(d, st && st.niveaux ? st.niveaux : {}) : {})
     + (eleve ? "" : "; window.POUCE_PROF = true") + (compDe(chapDe(c.id, d)) || !(chapDe(c.id, d) || {}).competences ? "" : "; window.POUCE_SANS_COMP = true") + ";<\/script></head>";
   html = html.replace("</head>", () => init);
+  if (eleve) html = html.replace("</body>", () => BIN.script + "</body>");
   const ov = document.createElement("div"); ov.className = "fiche-ov";
   ov.innerHTML = `<div class="bar"><b>${esc(d.titre)}</b><button type="button">Fermer</button></div><iframe title="${esc(d.titre)}"></iframe>`;
   const fr = ov.querySelector("iframe"); fr.srcdoc = html;
+  const debrancher = BIN.brancher(c, d, fr);
   document.body.appendChild(ov); document.body.style.overflow = "hidden";
   const onMsg = async e => {
     if (e.source !== fr.contentWindow || !e.data || e.data.type !== "pouce-niveau" || !eleve) return;
@@ -1659,7 +1666,7 @@ async function ouvrirPouce(c, d){
     try { await setDoc(doc(db, "pointsdecours", S.user.uid + "__" + d.pouce), v); } catch(_) {}
   };
   window.addEventListener("message", onMsg);
-  ov.querySelector("button").onclick = () => { window.removeEventListener("message", onMsg); ov.remove(); document.body.style.overflow = ""; render(); };
+  ov.querySelector("button").onclick = () => { debrancher(); window.removeEventListener("message", onMsg); ov.remove(); document.body.style.overflow = ""; render(); };
 }
 
 
@@ -2163,6 +2170,7 @@ async function startSession(user){
       first = false; S.corr = now; S.corrAt = at; S.rythme = ry; render();
     }, () => {});
     suivreRevisions(user.uid);
+    BIN.connexion();
     suivrePdc(user.uid);
   } catch(x) {
     toast("Problème de connexion au serveur. Rechargez la page.");
