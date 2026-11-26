@@ -51,6 +51,31 @@
    "fichier": "56aec5bfadbf84f8f4cd2fe7.bin"
   },
   {
+   "id": "cira-acides-bases-et-ph",
+   "site": "cira",
+   "titre": "Test d'entrée – Acides, bases et pH",
+   "chapitre": "Acides, bases et pH",
+   "duree": "15 min",
+   "nb": 10,
+   "fiches": [
+    "puissances-de-10-et-conversions",
+    "logarithme-decimal-et-puissances-de-10",
+    "quantite-de-matiere-et-masse-molaire",
+    "concentration-molaire-et-concentration-massique",
+    "dilution",
+    "fonction-affine",
+    "equilibrer-une-equation-de-reaction",
+    "isoler-une-grandeur-dans-une-formule"
+   ],
+   "verrou": {
+    "id": "test-cira-acides-bases-et-ph",
+    "wk": "9DyRBio8uKkC3uQtu70tbXBw57oG7VE7dLNIUPtUiaHoeZ3Mbg/gtJGKAf8+8GCnzqtxRfGvsRRgDtVv",
+    "wkc": "MwfqcG7PSt3w5vBBFxU2c2O9d1BAR9pkDO6ns5cb/1jsOBEoiZ173afSxxPzVJ+TNd6nMzFLiFvkFHzf",
+    "chap": "cira-chap-acides-bases-et-ph"
+   },
+   "fichier": "513fa1515eda62e3bd941934.bin"
+  },
+  {
    "id": "et-les-chaines-de-mesure",
    "site": "et",
    "titre": "Test d'entrée – Les chaînes de mesure",
@@ -131,6 +156,10 @@
    "titre": "Aire d'un rectangle et d'un triangle",
    "fichier": "3b69ddbbdc20a0302e0d1927.bin"
   },
+  "concentration-molaire-et-concentration-massique": {
+   "titre": "Concentration molaire et concentration massique",
+   "fichier": "3e5468118b9f996b8161311e.bin"
+  },
   "conversions-de-surfaces-et-de-volumes": {
    "titre": "Conversions de surfaces et de volumes",
    "fichier": "063a7c5937f5f3edba027ded.bin"
@@ -138,6 +167,10 @@
   "conversions-de-vitesses": {
    "titre": "Conversions de vitesses",
    "fichier": "effd9d37bbe08efde3f6f5a8.bin"
+  },
+  "dilution": {
+   "titre": "Dilution",
+   "fichier": "fe8c792657fbe3b4f63b873f.bin"
   },
   "decalage-de-zero-et-gain": {
    "titre": "Décalage de zéro et gain",
@@ -150,6 +183,10 @@
   "isoler-une-grandeur-dans-une-formule": {
    "titre": "Isoler une grandeur dans une formule",
    "fichier": "70d21d9367539976c4d5e4bc.bin"
+  },
+  "logarithme-decimal-et-puissances-de-10": {
+   "titre": "Logarithme décimal et puissances de 10",
+   "fichier": "31f8b62fcbac429c20ccf43b.bin"
   },
   "logarithme-et-decibels": {
    "titre": "Logarithme et décibels",
@@ -207,6 +244,10 @@
    "titre": "Période et fréquence",
    "fichier": "6b448ed48d0f0516340b3f88.bin"
   },
+  "quantite-de-matiere-et-masse-molaire": {
+   "titre": "Quantité de matière et masse molaire",
+   "fichier": "8d70f2c747abf2d05f7de932.bin"
+  },
   "rendement": {
    "titre": "Rendement",
    "fichier": "2e1117de8bb090d1fd51f776.bin"
@@ -222,6 +263,10 @@
   "energie-puissance-et-duree": {
    "titre": "Énergie, puissance et durée",
    "fichier": "0e72e289f562403f2a123590.bin"
+  },
+  "equilibrer-une-equation-de-reaction": {
+   "titre": "Équilibrer une équation de réaction",
+   "fichier": "e058fa4ef5d5901c2a112924.bin"
   }
  }
 }

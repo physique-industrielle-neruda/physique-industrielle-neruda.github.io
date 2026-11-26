@@ -4641,6 +4641,714 @@
       ],
       "oral": true
      }
+    },
+    {
+     "num": "7",
+     "titre": "Acides, bases et pH",
+     "docs": [
+      {
+       "titre": "Comment ça marche – profil de compétences",
+       "type": "Document",
+       "fichier": "79ce1ae61b95b6f6c41af7ba.bin",
+       "taille": 59629,
+       "pages": 2,
+       "cv": "cira-chap-acides-bases-et-ph",
+       "rubrique": "Pour commencer"
+      },
+      {
+       "titre": "Feuille de route du dossier",
+       "type": "Document",
+       "fichier": "2488dd20211c522706f37f6d.bin",
+       "taille": 62877,
+       "pages": 1,
+       "cv": "cira-chap-acides-bases-et-ph",
+       "rubrique": "Pour commencer"
+      },
+      {
+       "titre": "Activité 1 – Le pH, une mesure de l'acidité",
+       "type": "Activité",
+       "fichier": "0a69eb891985f8bfe81d908d.bin",
+       "taille": 272131,
+       "pages": 5,
+       "cv": "cira-chap-acides-bases-et-ph",
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "Activité 1 – Le pH, une mesure de l'acidité - coups de pouce",
+       "type": "Activité",
+       "format": "pouce",
+       "fichier": "719636e947d316b4b3479a4a.bin",
+       "taille": 13221,
+       "pouce": "pouce:cira-acides-bases-et-ph-corrige-activite-1-le-ph-une-mesure-de-l-acidite",
+       "lie": "cira-acides-bases-et-ph-corrige-activite-1-le-ph-une-mesure-de-l-acidite",
+       "cv": "cira-chap-acides-bases-et-ph",
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "Corrigé Activité 1 – Le pH, une mesure de l'acidité",
+       "type": "Corrigé",
+       "fichier": "d79ec58be62d41ad9aea4f93.bin",
+       "taille": 140063,
+       "pages": 3,
+       "corrige": {
+        "id": "cira-acides-bases-et-ph-corrige-activite-1-le-ph-une-mesure-de-l-acidite",
+        "wk": "4jKejB/7IN0xO2fO8+bxnnmZB6fsv2dHIP+6u2xLT2Jk1zU9CruAl7TowXysE34Yo4LyH9Kd944cueeQ"
+       },
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "Point de cours – Activité 1",
+       "type": "Point de cours",
+       "format": "pdc",
+       "fichier": "640aaf32623b3c4589775c70.bin",
+       "taille": 14942,
+       "corrige": {
+        "id": "cira-acides-bases-et-ph-corrige-activite-1-le-ph-une-mesure-de-l-acidite",
+        "wk": "4jKejB/7IN0xO2fO8+bxnnmZB6fsv2dHIP+6u2xLT2Jk1zU9CruAl7TowXysE34Yo4LyH9Kd944cueeQ"
+       },
+       "pdc": "cira-acides-bases-et-ph-pdc-activite-1",
+       "activite": "Activité 1",
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "Activité 2 – Acide fort, acide faible",
+       "type": "Activité",
+       "fichier": "db65da6ea614980ac3aa5c62.bin",
+       "taille": 182064,
+       "pages": 4,
+       "cv": "cira-chap-acides-bases-et-ph",
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "Activité 2 – Acide fort, acide faible - coups de pouce",
+       "type": "Activité",
+       "format": "pouce",
+       "fichier": "aba8d54654293cfce86cc4ea.bin",
+       "taille": 12169,
+       "pouce": "pouce:cira-acides-bases-et-ph-corrige-activite-2-acide-fort-acide-faible",
+       "lie": "cira-acides-bases-et-ph-corrige-activite-2-acide-fort-acide-faible",
+       "cv": "cira-chap-acides-bases-et-ph",
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "Corrigé Activité 2 – Acide fort, acide faible",
+       "type": "Corrigé",
+       "fichier": "89cfc8d7efbc69b7e38e74d1.bin",
+       "taille": 103163,
+       "pages": 2,
+       "corrige": {
+        "id": "cira-acides-bases-et-ph-corrige-activite-2-acide-fort-acide-faible",
+        "wk": "bJJuwRaIaRvbwq8fXhG4f2Lo16YL+NV6vl2O87xElK4yTQRhsLbIHeCl9owisaa4zsPdWwyf1BD+vCYX"
+       },
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "Point de cours – Activité 2",
+       "type": "Point de cours",
+       "format": "pdc",
+       "fichier": "7ff8bb216c6cc77e10efc167.bin",
+       "taille": 14945,
+       "corrige": {
+        "id": "cira-acides-bases-et-ph-corrige-activite-2-acide-fort-acide-faible",
+        "wk": "bJJuwRaIaRvbwq8fXhG4f2Lo16YL+NV6vl2O87xElK4yTQRhsLbIHeCl9owisaa4zsPdWwyf1BD+vCYX"
+       },
+       "pdc": "cira-acides-bases-et-ph-pdc-activite-2",
+       "activite": "Activité 2",
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "TP 1 – Étalonner et utiliser un pH-mètre",
+       "type": "TP",
+       "fichier": "512de0ec0405982672945515.bin",
+       "taille": 249639,
+       "pages": 5,
+       "cv": "cira-chap-acides-bases-et-ph",
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "TP 1 – Étalonner et utiliser un pH-mètre - coups de pouce",
+       "type": "TP",
+       "format": "pouce",
+       "fichier": "a4ab097a729d1505f460929e.bin",
+       "taille": 13146,
+       "pouce": "pouce:cira-acides-bases-et-ph-corrige-tp-1-etalonner-et-utiliser-un-ph-metre",
+       "lie": "cira-acides-bases-et-ph-corrige-tp-1-etalonner-et-utiliser-un-ph-metre",
+       "cv": "cira-chap-acides-bases-et-ph",
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "Corrigé TP 1 – Étalonner et utiliser un pH-mètre",
+       "type": "Corrigé",
+       "fichier": "2c8e09a8e866533b2690ce4e.bin",
+       "taille": 128762,
+       "pages": 3,
+       "corrige": {
+        "id": "cira-acides-bases-et-ph-corrige-tp-1-etalonner-et-utiliser-un-ph-metre",
+        "wk": "Dnkzu8yunAHMhB/nlf9OuN4rdZkt77eHu1hfrBTdoqXl/Q2V8zScMySMMAdftxPTEPcJW9wWExxbiZuj"
+       },
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "Point de cours – TP 1",
+       "type": "Point de cours",
+       "format": "pdc",
+       "fichier": "cc76de452b9ba7135f769bd5.bin",
+       "taille": 14640,
+       "corrige": {
+        "id": "cira-acides-bases-et-ph-corrige-tp-1-etalonner-et-utiliser-un-ph-metre",
+        "wk": "Dnkzu8yunAHMhB/nlf9OuN4rdZkt77eHu1hfrBTdoqXl/Q2V8zScMySMMAdftxPTEPcJW9wWExxbiZuj"
+       },
+       "pdc": "cira-acides-bases-et-ph-pdc-tp-1",
+       "activite": "TP 1",
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "Activité 3 – Neutraliser les eaux de lavage",
+       "type": "Activité",
+       "fichier": "6394883166af27d09543c6db.bin",
+       "taille": 300964,
+       "pages": 4,
+       "cv": "cira-chap-acides-bases-et-ph",
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "Activité 3 – Neutraliser les eaux de lavage - coups de pouce",
+       "type": "Activité",
+       "format": "pouce",
+       "fichier": "9347117a21034ac451efc584.bin",
+       "taille": 12589,
+       "pouce": "pouce:cira-acides-bases-et-ph-corrige-activite-3-neutraliser-les-eaux-de-lavage",
+       "lie": "cira-acides-bases-et-ph-corrige-activite-3-neutraliser-les-eaux-de-lavage",
+       "cv": "cira-chap-acides-bases-et-ph",
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "Corrigé Activité 3 – Neutraliser les eaux de lavage",
+       "type": "Corrigé",
+       "fichier": "b5969ba35b9194bc4fb7512e.bin",
+       "taille": 109918,
+       "pages": 2,
+       "corrige": {
+        "id": "cira-acides-bases-et-ph-corrige-activite-3-neutraliser-les-eaux-de-lavage",
+        "wk": "Ib4GmC5qw8VV2baAsLQqlUua6BmrBY5TKKmpH9o7VjgL+w1Rfy8yHbjxNeca4H654vXRdoYcGBAHtVAf"
+       },
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "Point de cours – Activité 3",
+       "type": "Point de cours",
+       "format": "pdc",
+       "fichier": "7277f83af5e146295c48f022.bin",
+       "taille": 14810,
+       "corrige": {
+        "id": "cira-acides-bases-et-ph-corrige-activite-3-neutraliser-les-eaux-de-lavage",
+        "wk": "Ib4GmC5qw8VV2baAsLQqlUua6BmrBY5TKKmpH9o7VjgL+w1Rfy8yHbjxNeca4H654vXRdoYcGBAHtVAf"
+       },
+       "pdc": "cira-acides-bases-et-ph-pdc-activite-3",
+       "activite": "Activité 3",
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "TP 2 – Doser la soude du bain de NEP",
+       "type": "TP",
+       "fichier": "2bbdbccbd208bc1fe269bce1.bin",
+       "taille": 299039,
+       "pages": 5,
+       "cv": "cira-chap-acides-bases-et-ph",
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "TP 2 – Doser la soude du bain de NEP - coups de pouce",
+       "type": "TP",
+       "format": "pouce",
+       "fichier": "cded3fa604ac4d328b6572a7.bin",
+       "taille": 13014,
+       "pouce": "pouce:cira-acides-bases-et-ph-corrige-tp-2-doser-la-soude-du-bain-de-nep",
+       "lie": "cira-acides-bases-et-ph-corrige-tp-2-doser-la-soude-du-bain-de-nep",
+       "cv": "cira-chap-acides-bases-et-ph",
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "Corrigé TP 2 – Doser la soude du bain de NEP",
+       "type": "Corrigé",
+       "fichier": "dad37c83bf789f59c72d91bc.bin",
+       "taille": 263939,
+       "pages": 3,
+       "corrige": {
+        "id": "cira-acides-bases-et-ph-corrige-tp-2-doser-la-soude-du-bain-de-nep",
+        "wk": "RJhSk1WpDJkW0drQpVMalfPhX7wGjl9uUlRqu/QDnhi6xjJbN2hW2npe5RQpyOVPBCMnMOO1a8mIemy6"
+       },
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "Point de cours – TP 2",
+       "type": "Point de cours",
+       "format": "pdc",
+       "fichier": "152cb7c051afeb1b2fa00d5e.bin",
+       "taille": 14294,
+       "corrige": {
+        "id": "cira-acides-bases-et-ph-corrige-tp-2-doser-la-soude-du-bain-de-nep",
+        "wk": "RJhSk1WpDJkW0drQpVMalfPhX7wGjl9uUlRqu/QDnhi6xjJbN2hW2npe5RQpyOVPBCMnMOO1a8mIemy6"
+       },
+       "pdc": "cira-acides-bases-et-ph-pdc-tp-2",
+       "activite": "TP 2",
+       "rubrique": "Activités et TP"
+      },
+      {
+       "titre": "L'essentiel du dossier",
+       "type": "Cours",
+       "fichier": "4ee638affc91e0238c29e7f5.bin",
+       "taille": 370189,
+       "pages": 8,
+       "cv": "cira-chap-acides-bases-et-ph",
+       "rubrique": "Cours"
+      },
+      {
+       "titre": "Correction des exemples",
+       "type": "Exemples",
+       "format": "exemples",
+       "fichier": "d6b1d4cadf2d951e1330fe8f.bin",
+       "taille": 114058,
+       "cv": "cira-chap-acides-bases-et-ph",
+       "rubrique": "Cours"
+      },
+      {
+       "titre": "Exercice 1 – L'eau de la chaudière d'une sucrerie",
+       "type": "Exercices",
+       "fichier": "fad06658689e541ebea0b835.bin",
+       "taille": 141686,
+       "pages": 2,
+       "cv": "cira-chap-acides-bases-et-ph",
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 1 - coups de pouce",
+       "type": "Exercices",
+       "format": "pouce",
+       "fichier": "ac689ac721b44c542ea774ca.bin",
+       "taille": 11048,
+       "pouce": "pouce:cira-acides-bases-et-ph-corrige-exercice-1",
+       "lie": "cira-acides-bases-et-ph-corrige-exercice-1",
+       "cv": "cira-chap-acides-bases-et-ph",
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Corrigé Exercice 1",
+       "type": "Corrigé",
+       "fichier": "5c8f8c7c7fde89c4cd77d28f.bin",
+       "taille": 84139,
+       "pages": 1,
+       "corrige": {
+        "id": "cira-acides-bases-et-ph-corrige-exercice-1",
+        "wk": "P6YEnNqkbDKcdJv2ZeRxfwLOkUmsCY8coXSBNgPbGM4LN0/XZ8cIFiCFXv88ZRUSVznWTZJK7SOV0sUJ"
+       },
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 2 – L'ammoniac dans les bassins d'une pisciculture",
+       "type": "Exercices",
+       "fichier": "5c3e222af326735711826ded.bin",
+       "taille": 93830,
+       "pages": 2,
+       "cv": "cira-chap-acides-bases-et-ph",
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 2 - coups de pouce",
+       "type": "Exercices",
+       "format": "pouce",
+       "fichier": "0c4ef276697108e9dddd3202.bin",
+       "taille": 11043,
+       "pouce": "pouce:cira-acides-bases-et-ph-corrige-exercice-2",
+       "lie": "cira-acides-bases-et-ph-corrige-exercice-2",
+       "cv": "cira-chap-acides-bases-et-ph",
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Corrigé Exercice 2",
+       "type": "Corrigé",
+       "fichier": "e655b89df82546922a8eed6d.bin",
+       "taille": 107915,
+       "pages": 2,
+       "corrige": {
+        "id": "cira-acides-bases-et-ph-corrige-exercice-2",
+        "wk": "cWYfe2M4MbpIOQUGPokPMiHJ0y1mBXrsgAjXSuqcDKLsK5g1Nkdl9e3qjmZ230TjheJ8xoPAljBmLqZa"
+       },
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 3 – Les eaux de régénération d'une centrale",
+       "type": "Exercices",
+       "fichier": "b99436cdefa789569cafb8ec.bin",
+       "taille": 142574,
+       "pages": 2,
+       "cv": "cira-chap-acides-bases-et-ph",
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 3 - coups de pouce",
+       "type": "Exercices",
+       "format": "pouce",
+       "fichier": "333292cd85c1676d5ff579ac.bin",
+       "taille": 11436,
+       "pouce": "pouce:cira-acides-bases-et-ph-corrige-exercice-3",
+       "lie": "cira-acides-bases-et-ph-corrige-exercice-3",
+       "cv": "cira-chap-acides-bases-et-ph",
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Corrigé Exercice 3",
+       "type": "Corrigé",
+       "fichier": "70b22aa1a4bfc6df26680a01.bin",
+       "taille": 83616,
+       "pages": 1,
+       "corrige": {
+        "id": "cira-acides-bases-et-ph-corrige-exercice-3",
+        "wk": "fJphFJNKhINlYPwYREDIC4Mv4Y+UmH3x8830Q8oRa7F7Shw2OONxgPkPDyCKyEEUheCYhatiEAmgAK4Z"
+       },
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 4 – Le TAC de l'eau d'appoint d'une tour aéroréfrigérante",
+       "type": "Exercices",
+       "fichier": "9d0632c77a9d04b320c9418e.bin",
+       "taille": 173864,
+       "pages": 2,
+       "cv": "cira-chap-acides-bases-et-ph",
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Exercice 4 - coups de pouce",
+       "type": "Exercices",
+       "format": "pouce",
+       "fichier": "88bee145f14e62b70069825e.bin",
+       "taille": 11299,
+       "pouce": "pouce:cira-acides-bases-et-ph-corrige-exercice-4",
+       "lie": "cira-acides-bases-et-ph-corrige-exercice-4",
+       "cv": "cira-chap-acides-bases-et-ph",
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Corrigé Exercice 4",
+       "type": "Corrigé",
+       "fichier": "33e2f319f3f1c07d4e15ee75.bin",
+       "taille": 211195,
+       "pages": 2,
+       "corrige": {
+        "id": "cira-acides-bases-et-ph-corrige-exercice-4",
+        "wk": "Sj7YKGizHaQD6zAAQxNR+U/3UXMuoQmxoE2NDKqt7P/EsvKSXj8Zm0/C2T0iZlqrd+Ci1/oxIaQNWej9"
+       },
+       "rubrique": "Exercices"
+      },
+      {
+       "titre": "Fiche animation",
+       "type": "Fiche",
+       "fichier": "d49b5ea58b071697342a3b7a.bin",
+       "taille": 126369,
+       "pages": 2,
+       "cv": "cira-chap-acides-bases-et-ph",
+       "rubrique": "Animation"
+      },
+      {
+       "titre": "Animation – Acides, bases et pH",
+       "type": "Animation",
+       "fichier": "13b98cbc0cc3e3a2d6814f37.bin",
+       "format": "html",
+       "cv": "cira-chap-acides-bases-et-ph",
+       "rubrique": "Animation"
+      },
+      {
+       "titre": "Mon parcours avant l'évaluation",
+       "type": "Parcours",
+       "format": "parcours",
+       "fichier": "1daf3107cab44f84c8bb3f86.bin",
+       "taille": 32903,
+       "corrige": {
+        "id": "cira-acides-bases-et-ph-parcours",
+        "wk": "5P7fRktKyaspmCJx5obPH8OnxJLmJ1W28CSiqPKycl62io58xwf4vdlaQEbFRKMbsX9rbGNzaI2lGIxX"
+       },
+       "rubrique": "Mon profil de compétences"
+      },
+      {
+       "titre": "Bilan",
+       "type": "Fiche",
+       "fichier": "8764fadf1e98698f41693ad6.bin",
+       "taille": 95479,
+       "pages": 1,
+       "cv": "cira-chap-acides-bases-et-ph",
+       "rubrique": "Réviser"
+      },
+      {
+       "titre": "cartes de révision",
+       "type": "Cartes",
+       "nombre": 10,
+       "fichier": "84cdde1f9fc8ab423d2b3dcc.bin",
+       "format": "cartes",
+       "ch": "acides-bases-et-ph",
+       "cv": "cira-chap-acides-bases-et-ph",
+       "rubrique": "Réviser"
+      }
+     ],
+     "verrou": {
+      "id": "cira-chap-acides-bases-et-ph",
+      "wk": "gZ13kIJ8/7uyobuls/Lr1Z+y1wSicedKdQrdqXbRvKp04/AQNW9jFgTgthkDPCZQ9FI9OXTw0m9TtSrO"
+     },
+     "competences": {
+      "referentiel": "BTS CIRA",
+      "questions": {
+       "Activité 1": {
+        "A1": "APP",
+        "A2": "REA",
+        "A3": "REA",
+        "A4": "ANA",
+        "B1": "REA",
+        "B2": "REA",
+        "B3": "ANA",
+        "B5": "COM"
+       },
+       "Activité 2": {
+        "A1": "APP",
+        "A2": "REA",
+        "A3": "ANA",
+        "A4": "REA",
+        "B1": "ANA",
+        "B3": "ANA",
+        "B5": "COM"
+       },
+       "TP 1": {
+        "A1": "REA",
+        "A3": "VAL",
+        "B1": "REA",
+        "B2": "REA",
+        "B3": "REA",
+        "C1": "REA",
+        "C3": "REA",
+        "C4": "VAL",
+        "D1": "COM"
+       },
+       "Activité 3": {
+        "A1": "REA",
+        "A2": "REA",
+        "A3": "ANA",
+        "B1": "ANA",
+        "B2": "REA",
+        "B3": "VAL",
+        "B5": "COM"
+       },
+       "TP 2": {
+        "A1": "APP",
+        "A2": "ANA",
+        "B1": "REA",
+        "C2": "REA",
+        "C3": "REA",
+        "C4": "REA",
+        "C5": "REA",
+        "C6": "ANA",
+        "D1": "VAL"
+       },
+       "Exercice 1": {
+        "Q2": "REA",
+        "Q3": "REA",
+        "Q4": "ANA"
+       },
+       "Exercice 2": {
+        "Q1": "APP",
+        "Q2": "REA",
+        "Q3": "ANA",
+        "Q5": "ANA"
+       },
+       "Exercice 3": {
+        "Q1": "REA",
+        "Q3": "REA",
+        "Q4": "VAL",
+        "Q5": "ANA"
+       },
+       "Exercice 4": {
+        "Q1": "REA",
+        "Q2": "ANA",
+        "Q3": "REA",
+        "Q4": "VAL",
+        "Q5": "VAL"
+       },
+       "Animation": {
+        "1.1": "REA",
+        "1.2": "REA",
+        "1.3": "REA",
+        "1.4": "ANA",
+        "1.5": "ANA",
+        "2.1": "APP",
+        "2.2": "ANA",
+        "2.3": "ANA",
+        "2.4": "ANA",
+        "2.5": "VAL",
+        "3.1": "REA",
+        "3.2": "REA",
+        "3.3": "REA",
+        "3.4": "ANA",
+        "3.5": "REA",
+        "3.6": "ANA"
+       }
+      }
+     },
+     "rythme": {
+      "marge": 1.0,
+      "seances": [
+       1,
+       2
+      ],
+      "items": [
+       {
+        "num": "Activité 1",
+        "titre": "Activité 1 – Le pH, une mesure de l'acidité",
+        "duree": 0.75,
+        "corrige": "cira-acides-bases-et-ph-corrige-activite-1-le-ph-une-mesure-de-l-acidite"
+       },
+       {
+        "num": "Point de cours – Activité 1",
+        "titre": "Point de cours – Activité 1",
+        "duree": 0.1667,
+        "pdc": "cira-acides-bases-et-ph-pdc-activite-1"
+       },
+       {
+        "num": "Exemple 1",
+        "titre": "Cours partie 1 et EXEMPLE 1",
+        "duree": 0.1333,
+        "exemple": 1
+       },
+       {
+        "num": "Exemple 2",
+        "titre": "Cours partie 1 et EXEMPLE 2",
+        "duree": 0.1167,
+        "exemple": 2
+       },
+       {
+        "num": "Exercice 1",
+        "titre": "Exercice 1 – L'eau de la chaudière d'une sucrerie",
+        "duree": 0.1667,
+        "corrige": "cira-acides-bases-et-ph-corrige-exercice-1"
+       },
+       {
+        "num": "Activité 2",
+        "titre": "Activité 2 – Acide fort, acide faible",
+        "duree": 0.75,
+        "corrige": "cira-acides-bases-et-ph-corrige-activite-2-acide-fort-acide-faible"
+       },
+       {
+        "num": "Point de cours – Activité 2",
+        "titre": "Point de cours – Activité 2",
+        "duree": 0.1667,
+        "pdc": "cira-acides-bases-et-ph-pdc-activite-2"
+       },
+       {
+        "num": "Exemple 3",
+        "titre": "Cours partie 2 et EXEMPLE 3",
+        "duree": 0.1667,
+        "exemple": 3
+       },
+       {
+        "num": "Exemple 4",
+        "titre": "Cours partie 2 et EXEMPLE 4",
+        "duree": 0.1667,
+        "exemple": 4
+       },
+       {
+        "num": "Exercice 2",
+        "titre": "Exercice 2 – L'ammoniac dans les bassins d'une pisciculture",
+        "duree": 0.25,
+        "corrige": "cira-acides-bases-et-ph-corrige-exercice-2",
+        "horsEss": true
+       },
+       {
+        "num": "TP 1",
+        "titre": "TP 1 – Étalonner et utiliser un pH-mètre",
+        "duree": 2.0,
+        "corrige": "cira-acides-bases-et-ph-corrige-tp-1-etalonner-et-utiliser-un-ph-metre",
+        "tp": true
+       },
+       {
+        "num": "Point de cours – TP 1",
+        "titre": "Point de cours – TP 1",
+        "duree": 0.1667,
+        "pdc": "cira-acides-bases-et-ph-pdc-tp-1"
+       },
+       {
+        "num": "Exemple 5",
+        "titre": "Cours partie 3 et EXEMPLE 5",
+        "duree": 0.25,
+        "exemple": 5
+       },
+       {
+        "num": "Activité 3",
+        "titre": "Activité 3 – Neutraliser les eaux de lavage",
+        "duree": 0.75,
+        "corrige": "cira-acides-bases-et-ph-corrige-activite-3-neutraliser-les-eaux-de-lavage"
+       },
+       {
+        "num": "Point de cours – Activité 3",
+        "titre": "Point de cours – Activité 3",
+        "duree": 0.1667,
+        "pdc": "cira-acides-bases-et-ph-pdc-activite-3"
+       },
+       {
+        "num": "Exemple 6",
+        "titre": "Cours partie 4 et EXEMPLE 6",
+        "duree": 0.25,
+        "exemple": 6
+       },
+       {
+        "num": "Exercice 3",
+        "titre": "Exercice 3 – Les eaux de régénération d'une centrale",
+        "duree": 0.25,
+        "corrige": "cira-acides-bases-et-ph-corrige-exercice-3",
+        "horsEss": true
+       },
+       {
+        "num": "TP 2",
+        "titre": "TP 2 – Doser la soude du bain de NEP",
+        "duree": 2.0,
+        "corrige": "cira-acides-bases-et-ph-corrige-tp-2-doser-la-soude-du-bain-de-nep",
+        "tp": true
+       },
+       {
+        "num": "Point de cours – TP 2",
+        "titre": "Point de cours – TP 2",
+        "duree": 0.1667,
+        "pdc": "cira-acides-bases-et-ph-pdc-tp-2"
+       },
+       {
+        "num": "Exemple 7",
+        "titre": "Cours partie 5 et EXEMPLE 7",
+        "duree": 0.4167,
+        "exemple": 7
+       },
+       {
+        "num": "Exercice 4",
+        "titre": "Exercice 4 – Le TAC de l'eau d'appoint d'une tour aéroréfrigérante",
+        "duree": 0.3333,
+        "corrige": "cira-acides-bases-et-ph-corrige-exercice-4"
+       },
+       {
+        "num": "Animation",
+        "titre": "Animation – Acides, bases et pH",
+        "duree": 1.0,
+        "anim": true,
+        "questions": 16,
+        "horsEss": true
+       },
+       {
+        "num": "Parcours",
+        "titre": "Mon parcours avant l'évaluation",
+        "duree": 1.0,
+        "parcours": "cira-acides-bases-et-ph-parcours"
+       }
+      ],
+      "notions": [
+       "le pH et le passage pH ↔ concentrations (produit ionique de l'eau)",
+       "la prédominance d'une espèce selon le pH et le pKa",
+       "le dosage pH-métrique : volume équivalent et relation à l'équivalence"
+      ],
+      "oral": true
+     }
     }
    ]
   },
@@ -5855,9 +6563,9 @@
   }
  ],
  "outilsWk": {
-  "et": "8Zm9c7ZXLiuf7pMam5ojnQN+AwJymR/WyNG/vS8MsFIQfI9/3V+JSVEtPvqFOgO4v1OlG3UZnVeaip2y",
-  "cira": "Chk91b3lL9GL0IpeXm0ACn2oOAAjtInyVSRPvRTZOWcaEDMqYsFwbV1hWxnpTmevxqqzInfhDOB8PDV6",
-  "cim": "nLeMs7ncTJH9oaAWuGIiE0V6P99AtqXu/vFu65fU8egdua4XdlfrEBgasGeQD3DMQo3zDV1M2Cm9K6nU"
+  "et": "Rs0JnxX2WJUZ2UvSr4r3wGeH+tmAB7ZTPwMmPeulXDbZWAAGfR1AKrjNmPHFnuyW5UX4y4Y9e6GrQsri",
+  "cira": "/z+bFtXyKwMEbKiQaNZpdPp1JlZuafWw9Bbr0EQ7z+SZatI9rKGVBKazMTvubKCIeztW7G4rIHUi0Jcr",
+  "cim": "r+OlGhqjuzkCKqLSXG92SAx7MTIlzlDyQfDAdGSIamvfz9DR6srhR+/66yiTT+vgtWz0Yma9BR5WwNaM"
  },
  "outils": [
   {
