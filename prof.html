@@ -318,11 +318,11 @@ function home(){
 /* ---------- Une classe ---------- */
 function classe(id, tab){
   const c = CLASSES.find(x => x.id === id); if (!c) return home();
-  setBar(c.nom, tab === "jour" ? "Tableau de bord de la séance" : tab === "corriges" ? "Corrigés à débloquer" : tab === "evaluations" ? "Évaluations corrigées" : tab === "tests" ? "Tests d'entrée" : tab === "pdc" ? "Points de cours" : tab === "competences" ? "Profils de compétences" : "Élèves et comptes", true);
-  const tabs = `<div class="tabs" role="tablist">${chapsJour(c).length ? `<button role="tab" aria-selected="${tab==="jour"}" data-t="jour">Aujourd'hui</button>` : ""}<button role="tab" aria-selected="${tab==="corriges"}" data-t="corriges">Corrigés</button><button role="tab" aria-selected="${tab==="evaluations"}" data-t="evaluations">Évaluations</button>${testsClasse(c).length ? `<button role="tab" aria-selected="${tab==="tests"}" data-t="tests">Tests</button>` : ""}${chapsCompetences(c).length ? `<button role="tab" aria-selected="${tab==="competences"}" data-t="competences">Compétences</button>` : ""}<button role="tab" aria-selected="${tab==="eleves"}" data-t="eleves">Élèves</button></div>`;
+  setBar(c.nom, tab === "jour" ? "Tableau de bord de la séance" : tab === "rythme" ? "Jauges de la classe" : tab === "corriges" ? "Corrigés à débloquer" : tab === "evaluations" ? "Évaluations corrigées" : tab === "tests" ? "Tests d'entrée" : tab === "pdc" ? "Points de cours" : tab === "competences" ? "Profils de compétences" : "Élèves et comptes", true);
+  const tabs = `<div class="tabs" role="tablist">${chapsJour(c).length ? `<button role="tab" aria-selected="${tab==="jour"}" data-t="jour">Aujourd'hui</button><button role="tab" aria-selected="${tab==="rythme"}" data-t="rythme">Rythme</button>` : ""}<button role="tab" aria-selected="${tab==="corriges"}" data-t="corriges">Corrigés</button><button role="tab" aria-selected="${tab==="evaluations"}" data-t="evaluations">Évaluations</button>${testsClasse(c).length ? `<button role="tab" aria-selected="${tab==="tests"}" data-t="tests">Tests</button>` : ""}${chapsCompetences(c).length ? `<button role="tab" aria-selected="${tab==="competences"}" data-t="competences">Compétences</button>` : ""}<button role="tab" aria-selected="${tab==="eleves"}" data-t="eleves">Élèves</button></div>`;
   $("#app").innerHTML = tabs + `<div id="pane"></div>`;
   $("#app").querySelectorAll(".tabs button").forEach(b => b.onclick = () => { stack[stack.length-1] = [classe, [id, b.dataset.t]]; stopLive(); classe(id, b.dataset.t); });
-  if (tab === "jour") paneJour(c); else if (tab === "corriges") paneCorriges(c); else if (tab === "evaluations") paneEvals(c); else if (tab === "tests") paneTests(c); else if (tab === "pdc") panePdc(c); else if (tab === "competences") paneCompetences(c); else paneEleves(c);
+  if (tab === "jour") paneJour(c); else if (tab === "rythme") paneRythme(c); else if (tab === "corriges") paneCorriges(c); else if (tab === "evaluations") paneEvals(c); else if (tab === "tests") paneTests(c); else if (tab === "pdc") panePdc(c); else if (tab === "competences") paneCompetences(c); else paneEleves(c);
 }
 
 /* Rubrique d'un corrigé (Activités, TP, Exercices) : celle du catalogue, sinon devinée d'après le titre */
@@ -929,6 +929,80 @@ function paneJour(c){
   const t1 = onSnapshot(collection(db, "tests"), snap => { T = []; snap.forEach(x => T.push({ id: x.id, ...x.data() })); majT(); }, () => {});
   const t2 = onSnapshot(collection(db, "revisions"), snap => { F = []; snap.forEach(x => F.push(x.data())); majT(); }, () => {});
   unsub = () => { a(); b(); t1(); t2(); if (RY) RY.stop(); };
+}
+
+/* ================= Onglet « Rythme » (26/11/2026) : vue d'ensemble des jauges de la classe =================
+   Une jauge par élève, toutes sur la même échelle (durée du dossier + marge), calculées comme sur le site
+   (rythme.js, via rythmePanel). Lecture seule : rien n'est écrit depuis cet onglet. */
+(() => { const st = document.createElement("style");
+  st.textContent = ".rv-res{display:flex;flex-wrap:wrap;gap:6px;padding:12px 14px}.rv-tri{display:flex;gap:6px;margin:10px 4px 0;align-items:center;font-size:.85rem;color:var(--muted)}"
+  + ".rv-tri button{border:1px solid var(--grid);background:var(--surface);border-radius:8px;padding:5px 10px;font:inherit;cursor:pointer;color:var(--ink)}.rv-tri button[aria-pressed=true]{background:var(--ink);color:var(--surface)}"
+  + ".rv details{border-top:1px solid var(--grid)}.rv details:first-child{border-top:0}.rv summary{list-style:none;cursor:pointer;padding:10px 14px}.rv summary::-webkit-details-marker{display:none}"
+  + ".rv-l1{display:flex;gap:8px;align-items:center;margin-bottom:7px}.rv-l1 b{flex:1;min-width:0}.rv-l1 small{color:var(--muted);font-weight:400}"
+  + ".rv-bar{position:relative;height:12px;border-radius:6px;background:var(--grid)}.rv-fill{position:absolute;left:0;top:0;bottom:0;border-radius:6px}"
+  + ".rv-marge{position:absolute;top:0;bottom:0;right:0;border-radius:0 6px 6px 0;background:repeating-linear-gradient(45deg,transparent 0 4px,rgba(90,101,119,.35) 4px 6px)}"
+  + ".rv-now{position:absolute;top:-4px;bottom:-4px;width:3px;margin-left:-1.5px;background:var(--ink);border-radius:2px}"
+  + ".rv-det{padding:0 14px 12px;font-size:.88rem}.rv-det ol{margin:6px 0 0 20px;padding:0}.rv-det li span{color:var(--muted)}.rv-det li.ok{color:var(--ok)}.rv-det li.part{color:#C55A11}"
+  + ".rv-leg{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.8rem;color:var(--muted);padding:0 4px;margin-top:8px}.rv-k{display:inline-block;width:12px;height:9px;border-radius:3px;margin-right:4px;vertical-align:-1px}";
+  document.head.appendChild(st); })();
+const RVTRI = {};   // tri choisi, par classe
+function paneRythme(c){
+  const el = elevesDe(c), mesUid = new Set(el.map(e => e.uid)), an = anDeClasse(c), chs = chapsJour(c);
+  if (!el.length) { $("#pane").innerHTML = `<p class="empty">Créez d'abord les comptes des élèves (onglet « Élèves et comptes »).</p>`; return; }
+  if (!chs.length) { $("#pane").innerHTML = `<p class="empty">Pas encore de dossier de la nouvelle méthode pour cette classe.</p>`; return; }
+  $("#pane").innerHTML = `<p class="empty">Chargement…</p>`;
+  let PREM = {}, P = {}, RY = null, chCur = null, pret = false;
+  const ouverts = () => chs.filter(ch => PREM[ch.verrou.id]).sort((a, b) => PREM[b.verrou.id] - PREM[a.verrou.id]);
+  const choisir = () => chs.find(ch => ch.titre === JOUR[c.id]) || ouverts()[0] || chs.find(ch => !ch.annee || !an || ch.annee === an) || null;
+  const ouverts_ = new Set();   // élèves dont le détail est déplié (gardé entre deux mises à jour)
+  const pc = (x, tot) => Math.max(0, Math.min(100, 100 * x / tot)).toFixed(1);
+  const pill = s => { const st = STATUTS[s.statut];
+    return `<span class="ry-pill" style="color:${st.couleur};background:${st.fond}">${s.statut === "avance" ? "+" + heures(s.avance) : s.statut === "vert" ? "à jour" : "−" + heures(s.retard)}</span>`; };
+  const render = () => {
+    if (!pret) return;
+    const ch = choisir();
+    if (!ch) { $("#pane").innerHTML = `<p class="empty">Pas encore de dossier de la nouvelle méthode pour cette classe.</p>`; return; }
+    if (ch !== chCur) { if (RY) RY.stop(); chCur = ch; const g = corriges(c.site, c.id).find(x => x.ch.titre === ch.titre) || { ch, docs: [] };
+      RY = rythmePanel(c, g, el, () => P, () => render()); }
+    const A = RY.api, DOCS = A.docs(), elR = A.el(), lance = Object.keys(DOCS).length > 0, k = A.commun();
+    const opts = [...new Set(ouverts().concat([ch]))];
+    let h = opts.length > 1 ? `<label class="j-dos">Dossier <select id="rvdos">${opts.map((x, i) => `<option value="${i}"${x === ch ? " selected" : ""}>${esc(x.titre)}${PREM[x.verrou.id] ? "" : " (fermé)"}</option>`).join("")}</select></label>`
+      : `<p class="sec" style="margin-top:14px">Dossier en cours</p><p class="note" style="margin-top:2px"><b style="color:var(--ink)">${esc(ch.titre)}</b></p>`;
+    if (!A.charge()) { $("#pane").innerHTML = h + `<p class="empty">Chargement du rythme…</p>`; bindSel(opts); return; }
+    if (!lance) { $("#pane").innerHTML = h + `<div class="card"><p class="note" style="padding:0 12px">Le suivi du rythme n'est pas encore démarré pour ce dossier : démarre-le dans l'onglet « Aujourd'hui ». Les jauges apparaîtront ici.</p></div>`; bindSel(opts); return; }
+    const S = elR.map(e => ({ e, s: A.etatDe(e) }));
+    const tri = RVTRI[c.id] || "retard";
+    if (tri === "retard") S.sort((a, b) => b.s.retard - a.s.retard || a.e.nom.localeCompare(b.e.nom, "fr"));
+    else S.sort((a, b) => a.e.nom.localeCompare(b.e.nom, "fr"));
+    const nb = st => S.filter(x => x.s.statut === st).length, nFrein = S.filter(x => x.s.frein).length, nEss = S.filter(x => x.s.ess).length;
+    const auto = k.seances.filter(x => !x.tp), ecoule = auto.reduce((s, x) => s + (+x.h || 0), 0);
+    const tot = S.length ? S[0].s.total : 1, contenu = S.length ? S[0].s.contenuTout : 0;
+    const chip = (st, n) => n ? `<span class="ry-pill" style="color:${STATUTS[st].couleur};background:${STATUTS[st].fond}">${n} ${STATUTS[st].lib.toLowerCase()}</span>` : "";
+    h += `<p class="sec">Vue d'ensemble</p><div class="card"><div class="rv-res">${chip("avance", nb("avance"))}${chip("vert", nb("vert"))}${chip("orange", nb("orange"))}${chip("rouge", nb("rouge"))}${nFrein ? `<span class="ry-pill" style="background:var(--grid)">🔒 ${nFrein} freiné${nFrein > 1 ? "s" : ""}</span>` : ""}${nEss ? `<span class="ry-pill" style="background:var(--grid)">${nEss} sur le chemin essentiel</span>` : ""}</div>
+      <p class="note" style="padding:0 12px;margin-top:0">Cours écoulés : <b>${heures(ecoule)}</b> sur ${heures(tot)} (${heures(contenu)} de travail + ${heures(tot - contenu)} de marge)${k.evalDate ? ` · évaluation le ${esc(new Date(k.evalDate + "T12:00:00").toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" }))}` : ""}${S.some(x => x.s.deuxTiers) ? ' · <b style="color:#C55A11">⚠ deux tiers du dossier écoulés</b>' : ""}.</p></div>`;
+    h += `<div class="rv-tri">Trier : <button data-tri="retard" aria-pressed="${tri === "retard"}">du plus en retard au plus en avance</button><button data-tri="nom" aria-pressed="${tri === "nom"}">par nom</button></div>`;
+    h += `<div class="card rv" style="margin-top:8px">` + S.map(({ e, s }) => { const st = STATUTS[s.statut];
+      const items = s.items.filter(x => !x.tp);
+      return `<details data-uid="${esc(e.uid)}"${ouverts_.has(e.uid) ? " open" : ""}><summary><div class="rv-l1"><b>${esc(e.nom)} <small>· ${heures(s.fait)} faites${s.ess ? " · chemin essentiel" : ""}</small></b>${s.frein ? '<span title="Freiné : plus d\'1 h d\'avance">🔒</span>' : ""}${pill(s)}</div>
+        <div class="rv-bar" role="img" aria-label="${esc(e.nom)} : travail fait ${heures(s.fait)}, cours écoulés ${heures(s.ecoule)} sur ${heures(s.total)}"><span class="rv-fill" style="width:${pc(s.fait, tot)}%;background:${st.couleur}"></span><span class="rv-marge" style="left:${pc(s.contenuTout, tot)}%"></span><span class="rv-now" style="left:${pc(s.ecoule, tot)}%"></span></div></summary>
+        <div class="rv-det">Reste <b>${heures(s.reste)}</b> de travail pour ${heures(s.resteCours)} de cours.<ol>${items.map(x => `<li class="${x.fait ? "ok" : x.part ? "part" : ""}">${x.fait ? "✓ " : ""}${esc(x.titre || x.num)} <span>(${heures(x.duree)}${s.ess && x.horsEss ? ", facultatif" : ""}${x.part && !x.fait ? ", " + Math.round(100 * x.part) + " % fait" : ""})</span></li>`).join("")}</ol></div></details>`; }).join("") + `</div>`;
+    h += `<div class="rv-leg"><span><i class="rv-k" style="background:#3F7A3A"></i>travail fait (couleur = rythme)</span><span><i class="rv-k" style="width:3px;background:var(--ink)"></i>cours écoulés</span><span><i class="rv-k" style="background:repeating-linear-gradient(45deg,transparent 0 3px,rgba(90,101,119,.5) 3px 5px)"></i>marge</span></div>
+      <p class="note">Toutes les jauges sont à la même échelle, hors TP (faits en classe tous ensemble). Touche un élève pour voir ce qu'il a fait et ce qui lui reste. Cet onglet ne modifie rien : séances, chemin essentiel et déblocages se gèrent dans « Aujourd'hui » ou dans le tableau du dossier.${A.ailleurs.length ? " " + A.ailleurs.map(x => esc(x.nom)).join(", ") + " : suivi" + (A.ailleurs.length > 1 ? "s" : "") + " avec la classe " + esc(A.kc.nom) + "." : ""}</p>`;
+    $("#pane").innerHTML = h;
+    bindSel(opts);
+    $("#pane").querySelectorAll("[data-tri]").forEach(b => b.onclick = () => { RVTRI[c.id] = b.dataset.tri; render(); });
+    $("#pane").querySelectorAll(".rv details").forEach(d => d.addEventListener("toggle", () => { if (d.open) ouverts_.add(d.dataset.uid); else ouverts_.delete(d.dataset.uid); }));
+  };
+  const bindSel = opts => { const sel = $("#rvdos"); if (sel) sel.onchange = () => { JOUR[c.id] = opts[+sel.value].titre; render(); }; };
+  const ids = new Set(chs.map(ch => ch.verrou.id));
+  const a = onSnapshot(collection(db, "deblocages"), snap => {
+    PREM = {};
+    snap.forEach(x => { const v = x.data(); if (!mesUid.has(v.uid) || !ids.has(v.doc)) return;
+      const t = v.at && v.at.toMillis ? v.at.toMillis() : Date.now(); if (!PREM[v.doc] || t < PREM[v.doc]) PREM[v.doc] = t; });
+    pret = true; render();
+  }, e => toast("Lecture impossible : " + e.code));
+  const b = onSnapshot(collection(db, "pointsdecours"), snap => { P = {}; snap.forEach(x => { const v = x.data(); if (mesUid.has(v.uid)) P[v.uid + "__" + v.pdc] = v; }); render(); }, () => {});
+  unsub = () => { a(); b(); if (RY) RY.stop(); };
 }
 
 /* ================= Onglet « Compétences » (24/11/2026, prototype BTS CIRA « Amplification ») =================
