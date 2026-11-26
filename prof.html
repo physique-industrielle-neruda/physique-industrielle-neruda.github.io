@@ -195,7 +195,7 @@ const tob64 = buf => btoa(String.fromCharCode(...new Uint8Array(buf)));
 const enc = new TextEncoder();
 function toast(m){ const t = $("#toast"); t.textContent = m; t.style.display = "block"; clearTimeout(toast.t); toast.t = setTimeout(() => t.style.display = "none", 3500); }
 
-let CAT = null, CLASSES = [], MAITRE = null, unsub = null, EVAL = { evaluations: [] };
+let CAT = null, CLASSES = [], MAITRE = null, EVK = null, unsub = null, EVAL = { evaluations: [] };
 let REV = { tests: [], fiches: {} }, SITES = {}, KOUT = null;   // tests d'entrée (revisions.json) et clés des BTS
 let stack = [];   // pile d'écrans pour le bouton retour
 
@@ -260,6 +260,9 @@ async function loadAll(){
   if (p.exists()) { const o = p.data().ouvertures || {}; OUVERT_ENR = JSON.stringify(Object.keys(o).sort().map(k => [k, o[k]])); }
   getDocs(collection(db, "deblocages")).then(syncOuvertures).catch(() => {});
   MAITRE = p.exists() && p.data().corriges ? await crypto.subtle.importKey("raw", b64(p.data().corriges), "AES-GCM", false, ["decrypt"]) : null;
+  /* 26/11/2026 : clé propre aux évaluations (copies nominatives), distincte de la clé maître donnée aux invités premium */
+  try { const pe = await getDoc(doc(db, "prive", "evaluations"));
+    EVK = pe.exists() && pe.data().cle ? await crypto.subtle.importKey("raw", b64(pe.data().cle), "AES-GCM", false, ["decrypt"]) : null; } catch(_) { EVK = null; }
 }
 /* Élèves inscrits dans deux classes (ex. 2ET / 2ETA) : leur compte (uid) n'est enregistré que dans une classe ;
    on le retrouve par l'identifiant pour qu'ils reçoivent aussi les corrigés et évaluations de l'autre classe. */
@@ -290,6 +293,11 @@ function corriges(site, cid){
   return c.chapitres.map(ch => { const t = testDe(ch);
     return { ch, docs: (t ? [{ titre: "🔒 Accès au test d'entrée", chapitre: true, test: true, corrige: t.verrou }] : [])
       .concat(ch.verrou ? [{ titre: "🔒 Accès au chapitre (dossier verrouillé)", chapitre: true, corrige: ch.verrou }] : []).concat(ch.docs.filter(d => d.corrige && d.type !== "Point de cours" && !horsProfil(ch, d)).map(d => { const p = ch.docs.find(p => p.type === "Point de cours" && p.corrige.id === d.corrige.id); return p ? { ...d, avecPdc: true, pdc: p.pdc } : d; })) }; }).filter(x => x.docs.length);
+}
+async function unwrapEv(d){
+  if (!EVK) throw new Error("cles");
+  const w = b64(d.corrige.wk);
+  return tob64(await crypto.subtle.decrypt({name:"AES-GCM", iv:w.slice(0,12), additionalData:enc.encode(d.corrige.id)}, EVK, w.slice(12)));
 }
 async function unwrap(d){
   const w = b64(d.corrige.wk);
@@ -1041,7 +1049,7 @@ async function evalTauxProf(c, ch, e){
   const evs = (EVAL.evaluations || []).filter(v => v.site === c.site && v.dossier && n(v.dossier) === n(ch.titre)), tous = {};
   for (const v of evs) {
     const cp = (v.copies || []).find(x => x.login === e.login && x.cp); if (!cp) continue;
-    if (!EVCP[cp.corrige.id]) { try { const k = await crypto.subtle.importKey("raw", b64(await unwrap(cp)), "AES-GCM", false, ["decrypt"]), w = b64(cp.cp);
+    if (!EVCP[cp.corrige.id]) { try { const k = await crypto.subtle.importKey("raw", b64(await unwrapEv(cp)), "AES-GCM", false, ["decrypt"]), w = b64(cp.cp);
       EVCP[cp.corrige.id] = JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({ name: "AES-GCM", iv: w.slice(0, 12) }, k, w.slice(12)))).taux || {}; } catch(_) { continue; } }
     Object.entries(EVCP[cp.corrige.id]).forEach(([k, x]) => (tous[k] = tous[k] || []).push(x));
   }
@@ -1212,8 +1220,8 @@ function evalsDe(cid){ return (EVAL.evaluations || []).filter(e => e.classe === 
 async function voirPdf(item, titre){
   const w = window.open("", "_blank");
   try {
-    if (!MAITRE) throw new Error("cles");
-    const k = await crypto.subtle.importKey("raw", b64(await unwrap(item)), "AES-GCM", false, ["decrypt"]);
+    if (!EVK) throw new Error("cles");
+    const k = await crypto.subtle.importKey("raw", b64(await unwrapEv(item)), "AES-GCM", false, ["decrypt"]);
     const r = await fetch(BASE + "docs/evaluations/" + item.fichier, {cache:"no-cache"}); if (!r.ok) throw new Error("x");
     const buf = new Uint8Array(await r.arrayBuffer());
     const url = URL.createObjectURL(new Blob([await crypto.subtle.decrypt({name:"AES-GCM", iv:buf.slice(0,12)}, k, buf.slice(12))], {type:"application/pdf"}));
@@ -1257,10 +1265,10 @@ function evalEleves(cid, ev){
     $("#pn").textContent = `${on.size} / ${avec.length} copies publiées.`;
   };
   const ref = (uid, login) => doc(db, "deblocages", cp[login].corrige.id + "_" + uid);
-  const data = async (uid, login) => ({ uid, doc: cp[login].corrige.id, classe: cid, cle: await unwrap(cp[login]), at: serverTimestamp() });
+  const data = async (uid, login) => ({ uid, doc: cp[login].corrige.id, classe: cid, cle: await unwrapEv(cp[login]), at: serverTimestamp() });
   boxes.forEach(b => b.onchange = async () => {
     const uid = b.dataset.uid, login = b.dataset.login, val = b.checked; b.disabled = true;
-    try { if (!MAITRE) throw new Error("cles"); if (val) { await setDoc(ref(uid, login), await data(uid, login)); on.add(uid); } else { await deleteDoc(ref(uid, login)); on.delete(uid); } }
+    try { if (!EVK) throw new Error("cles"); if (val) { await setDoc(ref(uid, login), await data(uid, login)); on.add(uid); } else { await deleteDoc(ref(uid, login)); on.delete(uid); } }
     catch(e){ b.checked = !val; toast(e.message === "cles" ? "Clés absentes : importez le fichier dans Réglages." : "Échec, vérifiez la connexion."); }
     b.disabled = false; paint();
   });
@@ -1268,7 +1276,7 @@ function evalEleves(cid, ev){
   if (ev.bilan) $("#bil").onclick = () => voirPdf(ev.bilan, "bilan");
   const bulk = async val => {
     try {
-      if (!MAITRE) throw new Error("cles");
+      if (!EVK) throw new Error("cles");
       const batch = writeBatch(db);
       for (const e of avec) { if (val) batch.set(ref(e.uid, e.login), await data(e.uid, e.login)); else batch.delete(ref(e.uid, e.login)); }
       await batch.commit(); toast(val ? "Copies publiées : chaque élève voit la sienne." : "Copies retirées.");
@@ -1533,6 +1541,7 @@ function settings(){
       if (j.format !== "appli-prof-1") throw new Error("Ce n'est pas le bon fichier.");
       const batch = writeBatch(db);
       batch.set(doc(db, "prive", "cles"), { sites:j.cles, corriges:j.corriges });
+      if (j.evaluations) batch.set(doc(db, "prive", "evaluations"), { cle:j.evaluations });
       for (const s in j.cles) batch.set(doc(db, "clesSite", s), { cle:j.cles[s] });
       const old = {}; CLASSES.forEach(c => (c.eleves || []).forEach(e => { if (e.uid) old[e.login] = e.uid; }));
       j.classes.forEach((c, i) => batch.set(doc(db, "classes", c.id), { nom:c.nom, site:c.site, ordre:i,

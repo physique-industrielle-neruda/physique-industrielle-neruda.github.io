@@ -405,7 +405,7 @@ const size = n => n > 1e6 ? (n/1e6).toFixed(1).replace(".", ",") + " Mo" : Math.
 let CAT = null, current = null, booted = false;
 let EVAL = { evaluations: [] }, NOMS = {};
 /* Session : rôle, classe, clés */
-let S = { user:null, prof:false, evals:false, premium:false, tous:false, nom:"", site:null, groupe:null, keys:{}, maitre:null, corr:{}, corrAt:{}, rythme:{} };
+let S = { user:null, prof:false, evals:false, premium:false, tous:false, nom:"", site:null, groupe:null, keys:{}, maitre:null, evk:null, corr:{}, corrAt:{}, rythme:{} };
 let unsubCorr = null, fresh = new Set();
 /* Mes révisions : tests d'entrée et fiches de révision (revisions.json, Firestore « tests » et « revisions ») */
 let REV = { tests: [], fiches: {} }, MT = {}, MF = {}, unsubRev = [], VUE_REV = null;
@@ -545,12 +545,18 @@ async function openDoc(cls, d, download){
 }
 
 /* == Évaluations == */
+/* 26/11/2026 : clé propre aux évaluations (copies nominatives, bilans, noms), distincte de la clé maître des corrigés.
+   Firestore prive/evaluations : lisible seulement par le compte prof et le compte « professeur » (pas les autres invités ni la démo). */
+async function chargerEvk(){
+  try { const d = await getDoc(doc(db, "prive", "evaluations"));
+    if (d.exists() && d.data().cle) S.evk = await crypto.subtle.importKey("raw", b64(d.data().cle), "AES-GCM", false, ["decrypt"]); } catch(_){}
+}
 /* Noms des élèves (chiffrés dans evaluations.json, lisibles avec la clé maître) */
 async function nomsEvals(){
   try {
-    if (!EVAL.noms || !S.maitre) return;
+    if (!EVAL.noms || !S.evk) return;
     const w = b64(EVAL.noms);
-    const raw = await crypto.subtle.decrypt({name:"AES-GCM", iv:w.slice(0,12), additionalData:enc.encode("noms")}, S.maitre, w.slice(12));
+    const raw = await crypto.subtle.decrypt({name:"AES-GCM", iv:w.slice(0,12), additionalData:enc.encode("noms")}, S.evk, w.slice(12));
     const n = JSON.parse(new TextDecoder().decode(raw));
     for (const id in n) NOMS[id] = { nom: n[id].nom, eleves: { ...(NOMS[id] || {}).eleves, ...n[id].eleves } };
   } catch(_){}
@@ -559,9 +565,9 @@ const fmtDate = d => d ? d.split("-").reverse().join("/") : "";
 async function evalKey(item){
   const id = item.corrige.id;
   if (S.corr[id]) return importKey(b64(S.corr[id]));
-  if (S.evals && S.maitre) {
+  if (S.evals && S.evk) {
     const w = b64(item.corrige.wk);
-    return importKey(await crypto.subtle.decrypt({name:"AES-GCM", iv:w.slice(0,12), additionalData:enc.encode(id)}, S.maitre, w.slice(12)));
+    return importKey(await crypto.subtle.decrypt({name:"AES-GCM", iv:w.slice(0,12), additionalData:enc.encode(id)}, S.evk, w.slice(12)));
   }
   return null;
 }
@@ -2107,7 +2113,7 @@ function route(){
 async function startSession(user){
   if (unsubCorr) { unsubCorr(); unsubCorr = null; }
   unsubRev.forEach(f => f()); unsubRev = []; MT = {}; MF = {}; MP = {}; VUE_REV = null; S.mpCharge = false; donneesOuvert = false;
-  S = { user:null, prof:false, evals:false, premium:false, tous:false, nom:"", site:null, groupe:null, keys:{}, maitre:null, corr:{}, corrAt:{}, rythme:{} };
+  S = { user:null, prof:false, evals:false, premium:false, tous:false, nom:"", site:null, groupe:null, keys:{}, maitre:null, evk:null, corr:{}, corrAt:{}, rythme:{} };
   KO = null;
   if (!user) return;
   try {
@@ -2120,6 +2126,7 @@ async function startSession(user){
         if (k.corriges) S.maitre = await crypto.subtle.importKey("raw", b64(k.corriges), "AES-GCM", false, ["decrypt"]);
       }
       Object.assign(S, { user, prof:true, evals:true, nom:"Professeur" });
+      await chargerEvk();
       await chargerOuvertures(p.exists() ? p.data().ouvertures : null);
       await nomsEvals();
       try { const cs = await getDocs(collection(db, "classes")); cs.forEach(x => { const v = x.data(); NOMS[x.id] = { nom: v.nom || x.id, eleves: Object.fromEntries((v.eleves || []).map(e => [e.login, e.nom])) }; }); } catch(_){}
@@ -2149,7 +2156,7 @@ async function startSession(user){
         if (k.corriges) S.maitre = await crypto.subtle.importKey("raw", b64(k.corriges), "AES-GCM", false, ["decrypt"]);
       }
       Object.assign(S, { user, nom, site:null, tous:true, premium:true, groupe:classe, evals: user.email === "professeur" + DOMAINE });
-      if (S.evals) await nomsEvals();
+      if (S.evals) { await chargerEvk(); await nomsEvals(); }
       await chargerOuvertures(p.exists() ? p.data().ouvertures : null);
       return;
     }
