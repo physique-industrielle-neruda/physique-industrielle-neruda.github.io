@@ -1019,16 +1019,24 @@ function paneJour(c){
       : `<div class="jr"><span class="n j-n">Aucune question bloquante pour la moitié de la classe.</span></div>`)
       + `<div class="jr"><span class="n"><small>Détail par élève et par question</small></span>${btn("Tableau des coups de pouce", () => { go(chapitreCorriges, c.id, ch.titre); setTimeout(() => { const x = document.getElementById("cpTab"); if (x) x.scrollIntoView({ block: "start" }); }, 600); })}</div></div>`;
 
-    /* 8. Fiches de révision non faites (test d'entrée du dossier) */
-    const test = (REV.tests || []).find(t => t.site === c.site && t.verrou && t.verrou.chap === ch.verrou.id);
-    if (test) {
-      const fiches = TE.filter(t => t.test === test.id && mesUid.has(t.uid) && !t.pret);
-      const pasFait = lockT ? el.filter(e => D.has(lockT.corrige.id + "_" + e.uid) && !TE.some(t => t.test === test.id && t.uid === e.uid)) : [];
-      if (fiches.length || pasFait.length) h += `<p class="sec">Fiches non faites</p><div class="card">`
-        + pasFait.map(e => `<div class="jr"><span class="n"><b>${esc(e.nom)}</b><small>Test d'entrée ouvert, pas encore fait</small></span></div>`).join("")
-        + fiches.map(t => { const nf = t.fiches.filter(x => x.fait).length;
-            return `<div class="jr"><span class="n"><b>${esc(nomDe(t.uid) || t.nom)}</b><small>Fiches de révision : ${nf}/${t.fiches.length} terminée${nf > 1 ? "s" : ""}</small></span></div>`; }).join("") + `</div>`;
-    }
+    /* 8. Tests d'entrée en direct (27/11/2026) : le test du dossier en cours ET ceux des dossiers suivants
+       ouverts pendant ce dossier ; chaque élève reste affiché (pas fait / fiches en cours / prêt ✅). */
+    const testsVus = testsClasse(c).filter(t => (t.verrou && t.verrou.chap === ch.verrou.id)
+      || el.some(e => (t.verrou && D.has(t.verrou.id + "_" + e.uid)) || TE.some(x => x.test === t.id && x.uid === e.uid)));
+    testsVus.forEach(test => {
+      const ouv = e => !test.verrou || D.has(test.verrou.id + "_" + e.uid);
+      const faits = TE.filter(t => t.test === test.id && mesUid.has(t.uid));
+      const pasFait = el.filter(e => ouv(e) && !faits.some(t => t.uid === e.uid));
+      if (!faits.length && !pasFait.length) return;
+      const prets = faits.filter(t => t.pret), enCours = faits.filter(t => !t.pret);
+      const lig = t => { const nf = t.fiches.filter(x => x.fait).length;
+        return `<div class="jr"><span class="n"><b>${esc(nomDe(t.uid) || t.nom)}</b><small>Test ${esc(t.score + "/" + t.sur)} · `
+          + (t.pret ? (t.fiches.length ? "fiches terminées " + nf + "/" + t.fiches.length : "aucune fiche à revoir") + ` · <span class="j-ok">✅ prêt</span>` : "fiches de révision " + nf + "/" + t.fiches.length)
+          + `</small></span>${t.pret && !t.vuProf ? btn("Vu", () => setDoc(doc(db, "tests", t.id), { vuProf: true }, { merge: true }).catch(e => toast("Impossible : " + e.code))) : ""}</div>`; };
+      h += `<p class="sec">Test d'entrée – ${esc(test.chapitre || test.titre)} <span class="j-n">· faits ${faits.length}/${el.length} · prêts ${prets.length}/${el.length}</span></p><div class="card">`
+        + enCours.map(lig).join("") + prets.map(lig).join("")
+        + pasFait.map(e => `<div class="jr"><span class="n"><b>${esc(e.nom)}</b><small>Test ouvert, pas encore fait</small></span></div>`).join("") + `</div>`;
+    });
 
     /* 9. Raccourcis vers les tableaux habituels */
     h += `<p class="sec">Tableaux</p><div class="card">`
