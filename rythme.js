@@ -30,6 +30,17 @@ export function estApprenti(ch, classe, login, r){
   return CLASSES_APPRENTIS.includes(classe) || (R.aussi || []).includes(login);
 }
 export const devoirId = chapId => "devoir:" + chapId;
+/* Absences (27/11/2026) : r.absences = { <séance t>: true }, posé par le professeur après « J'ai cours »
+   (l'appli propose « absent ? » pour chaque élève sans aucune trace de travail sur le site pendant la séance).
+   Effets : la séance ne compte pas dans sa régularité ; sa jauge continue (la date d'évaluation ne bouge pas) ;
+   le devoir de cette séance devient un rattrapage non compté, et le devoir précédent se vérifie à sa séance suivante où il est présent. */
+export const absentA = (r, t) => !!(r && r.absences && r.absences[t]);
+export const FENETRE_AVANT = 10 * 60e3;   // marge avant le début de la séance
+/* Présent pendant la séance (t = fin, h heures) si au moins une trace de travail tombe dans la séance */
+export function traceDansSeance(t, h, traces){
+  const debut = t - (+h || 1) * 3600e3 - FENETRE_AVANT;
+  return traces.some(x => x && x >= debut && x <= t + 5 * 60e3);
+}
 const finJourMs = t => { const d = new Date(t); d.setHours(23, 59, 59, 999); return d.getTime(); };
 /* Travail à la maison (27/11/2026) : statut de chaque devoir donné en fin de séance.
    Le devoir de la séance t se vérifie à la séance de cours suivante (jusqu'à la fin de ce jour-là).
@@ -38,13 +49,15 @@ const finJourMs = t => { const d = new Date(t); d.setHours(23, 59, 59, 999); ret
    Devoirs « avance » (facultatif) et « attente » (rien de nouveau) : jamais comptés. */
 export function statutsMaison(items, devDoc, r, seancesCours, now){
   const liste = (devDoc && devDoc.liste) || {}, prof = (r && r.maison) || {}, perso = (r && r.devoirProf) || {};
-  const ts = seancesCours.map(s => s.t);
+  const ts = seancesCours.filter(s => !absentA(r, s.t)).map(s => s.t);   // vérification à la séance suivante où l'élève est présent
   return Object.keys(liste).map(Number).filter(t => t > 0).sort((a, b) => a - b).map(t => {
     const d = { ...liste[t] }, p = perso[t];
     if (p) { d.taches = [{ quoi: p.quoi, min: +p.min || 15, prof: true }]; d.min = +p.min || 15; d.type = "travail"; }
+    const abs = absentA(r, t) || d.type === "rattrapage";
+    if (abs && d.type === "travail") d.type = "rattrapage";
     const suiv = ts.find(x => x > t + 60e3), evaluable = d.type === "travail";
     let statut = "attente";
-    if (!evaluable) statut = "libre";
+    if (!evaluable) statut = abs ? "rattrapage" : "libre";
     else if (prof[t]) statut = prof[t];
     else if (suiv) {
       const fin = finJourMs(suiv), tch = d.taches || [];
@@ -57,7 +70,7 @@ export function statutsMaison(items, devDoc, r, seancesCours, now){
 }
 export const MAISON = { fait: { lib: "Fait", pts: 1, couleur: "#3F7A3A", fond: "#E6F1E3" }, partiel: { lib: "En partie", pts: 0.5, couleur: "#C55A11", fond: "#FBE5D6" },
   non: { lib: "Pas fait", pts: 0, couleur: "#C0392B", fond: "#FBE5E1" }, verifier: { lib: "À vérifier", couleur: "#2E75B6", fond: "#DEEAF6" },
-  attente: { lib: "Pour la prochaine séance", couleur: "#5A6577", fond: "#EEF1F5" }, libre: { lib: "Non compté", couleur: "#5A6577", fond: "#EEF1F5" } };
+  attente: { lib: "Pour la prochaine séance", couleur: "#5A6577", fond: "#EEF1F5" }, rattrapage: { lib: "Rattrapage (absent)", couleur: "#5A6577", fond: "#EEF1F5" }, libre: { lib: "Non compté", couleur: "#5A6577", fond: "#EEF1F5" } };
 export const exemplesId = chapId => "exemples:" + chapId;
 export const rythmeDocId = (chapId, uid) => "rythme_" + chapId + "_" + uid;
 export const rythmeDoc = chapId => "rythme:" + chapId;
@@ -107,6 +120,7 @@ export function etat(ch, src){
   const scores = []; let cum = 0;
   const sv = seances.filter(s => s.t <= limite);
   sv.forEach((s, k) => { cum += s.h; const tn = k + 1 < sv.length ? sv[k + 1].t : Math.min(now, limite);
+    if (absentA(r, s.t)) return;   // absent à cette séance : elle ne compte pas dans sa régularité
     const e = ess && s.t >= essDepuis, rr = attendu(cum, e) - faitA(tn, e); scores.push(rr <= 0 ? 1 : rr <= 1 ? 0.5 : 0); });
   const corr = items.filter(x => x.corrige), avant = x => x.t && x.t <= limite;
   const B = baremeDe(ch, !!src.apprenti);
@@ -123,7 +137,8 @@ export function etat(ch, src){
   if (B.maison) pts.maison = mv.length ? B.maison * mv.reduce((a, x) => a + MAISON[x.statut].pts, 0) / mv.length : B.maison;
   const brut = Object.values(pts).reduce((a, b) => a + b, 0) + (+r.ajust || 0);
   const note = Math.max(0, Math.min(20, Math.round(brut * 2) / 2));
-  return { bareme: B, maison, apprenti: !!src.apprenti, toutes, items, contenu, contenuTout, contenuEss, ess, deuxTiers, marge, total, ecoule, fait, retard, statut, avance, frein, reste, resteCours, seances, scores, pts, note, limite, evalDate: r.evalDate || "" };
+  const absences = seances.filter(s => absentA(r, s.t)).map(s => s.t);
+  return { bareme: B, maison, absences, apprenti: !!src.apprenti, toutes, items, contenu, contenuTout, contenuEss, ess, deuxTiers, marge, total, ecoule, fait, retard, statut, avance, frein, reste, resteCours, seances, scores, pts, note, limite, evalDate: r.evalDate || "" };
 }
 export const STATUTS = {
   avance: { lib: "En avance",      couleur: "#2E75B6", fond: "#DEEAF6" },

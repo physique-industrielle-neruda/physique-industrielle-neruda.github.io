@@ -188,7 +188,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore, doc, getDoc, getDocs, setDoc, deleteDoc, collection, query, where, onSnapshot, serverTimestamp, writeBatch, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { profil as calcProfil, profilHtml, synthese, PROFIL_CSS, COMPS, LIBS as CLIBS, NIVEAUX, niveauDe, pointsAnim, bilanAnnee, anneeHtml, ANNEE_CSS } from "./competences.js";
-import { etat as etatRythme, STATUTS, heures, baremeDe, rythmeDoc, rythmeDocId, oralActs, oralCible, comDe, ORAL_NIVEAUX, estApprenti, MAISON } from "./rythme.js";
+import { etat as etatRythme, STATUTS, heures, baremeDe, rythmeDoc, rythmeDocId, oralActs, oralCible, comDe, ORAL_NIVEAUX, estApprenti, MAISON, absentA, traceDansSeance } from "./rythme.js";
 import { texteTache } from "./devoirs.js";
 /* Documents « rythme » de chaque élève (mini-oral, tutorats) pour le profil de compétences (25/11/2026) */
 const RYD = {};
@@ -561,6 +561,26 @@ function choisirOral(nom, act, fini, avecDeblocage){
   + ".or-btns{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}.btn.or-clair,.or-clair{background:#E2EFDA;color:#3F7A3A}.btn.or-partiel,.or-partiel{background:#FBE5D6;color:#C55A11}"
   + ".btn.or-reprendre,.or-reprendre{background:#FBE5E1;color:#C0392B}.ry-or{white-space:nowrap;font-size:.82rem}.ry-dv{font-size:.82rem;min-width:130px;line-height:1.5}.ry-dv .ry-pill{font-size:.75rem}";
   document.head.appendChild(st); })();
+/* Absents à une séance (27/11/2026) : « absent ? » pré-coché pour les élèves sans aucune trace de travail sur le site
+   pendant la séance (corrigé débloqué, coup de pouce, point de cours, exemple, animation, test…). Le professeur confirme. */
+function choisirAbsents(lignes, quand, fini){
+  const ov = document.createElement("div"); ov.className = "or-ov";
+  const tri = lignes.slice().sort((a, b) => (b.suspect - a.suspect) || a.e.nom.localeCompare(b.e.nom));
+  const nS = lignes.filter(x => x.suspect).length;
+  ov.innerHTML = `<div class="or-box ab-box"><b>Absents – séance du ${esc(quand)}</b>
+    <p class="note">${nS ? "Pré-cochés : aucune trace de travail sur le site pendant la séance. Décoche ceux qui étaient là (travail sur papier, par exemple)." : "Tout le monde a laissé une trace de travail sur le site pendant la séance. Coche un élève s'il était absent."}</p>
+    <div class="ab-list">${tri.map(x => `<label class="ab-l${x.suspect ? " ab-s" : ""}"><input type="checkbox" data-i="${lignes.indexOf(x)}"${x.coche ? " checked" : ""}> ${esc(x.e.nom)}${x.suspect ? ' <small class="tsc">aucune trace</small>' : ""}</label>`).join("")}</div>
+    <p class="note">Un absent : la séance ne compte pas dans sa régularité, sa jauge continue, et le site lui donne un rattrapage d'environ 15 min (non noté).</p>
+    <div class="or-btns"><button class="btn ok" data-v="1">Valider</button><button class="btn ghost" data-v="0">Plus tard</button></div></div>`;
+  document.body.appendChild(ov);
+  ov.querySelectorAll("button").forEach(b => b.onclick = () => {
+    const abs = b.dataset.v === "1" ? [...ov.querySelectorAll("input[data-i]")].filter(x => x.checked).map(x => lignes[+x.dataset.i].e.uid) : null;
+    ov.remove(); fini(abs); });
+}
+(() => { const st = document.createElement("style");
+  st.textContent = ".ab-box{max-height:90dvh;overflow:auto}.ab-list{display:flex;flex-direction:column;gap:2px;margin:8px 0}.ab-l{display:flex;gap:8px;align-items:center;padding:6px 8px;border-radius:8px;cursor:pointer}"
+  + ".ab-l.ab-s{background:#FBE5D6}.ab-l input{width:18px;height:18px}.ry-abs{font-size:.75rem;color:#5A6577;background:#EEF1F5}";
+  document.head.appendChild(st); })();
 function rythmePanel(c, g, el, getP, rerender){
   const ch = g.ch, R = ch.rythme, BAREME_C = baremeDe(ch);
   if (!R) return { html: () => "", bind: () => {}, stop: () => {} };
@@ -610,10 +630,39 @@ function rythmePanel(c, g, el, getP, rerender){
     if (busy) return; busy = true;
     try { const batch = writeBatch(db);
       el.forEach(e => batch.set(ref(e.uid), { uid: e.uid, doc: docId, classe: c.id, ...data, ...(parEleve ? parEleve(e) : {}), maj: serverTimestamp() }, { merge: true }));
-      await batch.commit(); if (msg) toast(msg); }
+      await batch.commit(); if (msg) toast(msg); busy = false; return true; }
     catch(x){ toast("Échec (" + (x.code || x.message) + ") : vérifiez la connexion ou les règles Firestore."); }
-    busy = false;
+    busy = false; return false;
   };
+  /* Absences (27/11/2026) : traces de travail de l'élève (dates), pour proposer « absent ? » après « J'ai cours » */
+  const ms = x => x == null ? null : typeof x === "number" ? x : x.toMillis ? x.toMillis() : null;
+  const traces = uid => { const out = Object.values(AT[uid] || {});
+    Object.values(mpDe(uid)).forEach(v => { out.push(ms(v.date)); if (v.vus) Object.values(v.vus).forEach(y => out.push(ms(y))); });
+    return out.filter(Boolean); };
+  const absentsDe = t => el.filter(e => absentA(DOCS[e.uid], t));
+  const quandS = t => new Date(t).toLocaleString("fr-FR", { weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" });
+  const noterAbsences = (t, h, premier) => {
+    const lignes = el.map(e => { const suspect = !traceDansSeance(t, h, traces(e.uid));
+      return { e, suspect, coche: premier ? suspect : absentA(DOCS[e.uid], t) }; });
+    choisirAbsents(lignes, quandS(t), async abs => {
+      if (!abs) { if (premier) toast("Absents à noter plus tard : lien sous les boutons de séance."); return; }
+      try { const batch = writeBatch(db);
+        el.forEach(e => { const a = abs.includes(e.uid); if (a || absentA(DOCS[e.uid], t))
+          batch.set(ref(e.uid), { uid: e.uid, doc: docId, classe: c.id, absences: { [t]: a }, maj: serverTimestamp() }, { merge: true }); });
+        await batch.commit(); toast(abs.length ? abs.length + " absent" + (abs.length > 1 ? "s notés." : " noté.") : "Tout le monde présent."); }
+      catch(x){ toast("Échec (" + (x.code || x.message) + ")."); }
+    });
+  };
+  /* Séance de cours cochée : enregistrement puis choix des absents (pas pour les TP, hors jauge) */
+  const cocher = async (h, tp) => {
+    const t = Date.now(), k = commun();
+    const ok = await ecrireTous({ seances: k.seances.concat([{ t, h, ...(tp ? { tp: true } : {}) }]) }, (tp ? "Séance de TP" : "Séance de " + h + " h") + " enregistrée.");
+    if (ok && !tp) noterAbsences(t, h, true);
+  };
+  const absHtml = () => { const k = commun(), der = k.seances.filter(x => !x.tp).slice(-1)[0]; if (!der) return "";
+    const a = absentsDe(der.t);
+    return `<p class="note">Absents à la dernière séance de cours : ${a.length ? a.map(e => `<span class="ry-pill ry-abs">${esc(e.nom)}</span>`).join(" ") : "<b>aucun</b>"} · <button class="linkbtn" data-abs="${der.t}" data-absh="${der.h}">${a.length ? "modifier" : "noter des absents"}</button></p>`; };
+  const bindAbs = () => document.querySelectorAll("[data-abs]").forEach(b => b.onclick = () => noterAbsences(+b.dataset.abs, +b.dataset.absh, false));
   const f1 = x => (Math.round(x * 10) / 10).toLocaleString("fr-FR");
   const tpH = Math.max(2, ...R.items.filter(x => x.tp).map(x => x.duree));
   const jour = t => new Date(t).toLocaleString("fr-FR", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
@@ -641,7 +690,7 @@ function rythmePanel(c, g, el, getP, rerender){
     const sc = Array.isArray(R.seances) ? R.seances : ((R.seances || {})[c.id] || [1, 2]);
     h += `<p class="note">Travail en autonomie prévu : ${heures(contenu)} + ${heures(marge)} de marge = <b>${heures(contenu + marge)}</b> · Cours écoulés : <b>${heures(ecoule)}</b> (${auto.length} séance${auto.length > 1 ? "s" : ""})${tps.length ? ` · TP faits : ${tps.length}` : ""}</p>
       <div class="btns">${sc.map(x => `<button class="btn ok" data-h="${x}"${bloque}>J'ai cours : ${x} h</button>`).join("")}${aTP ? `<button class="btn ok" data-h="${tpH}" data-tp="1"${bloque}>J'ai TP : ${tpH} h</button>` : ""}</div>${msgBloque}
-      <p class="note">Coche la séance <b>en fin de cours</b>.${aDev ? " Chaque élève voit alors la fenêtre « Où t'es-tu arrêté ? » et reçoit son travail à la maison (environ 15 min), visible dans la colonne « Maison »." : ""}${aTP ? " Une séance de TP ne fait pas avancer la jauge." : ""}${ailleurs.length ? ` ${ailleurs.map(e => esc(e.nom)).join(", ")} : suivi${ailleurs.length > 1 ? "s" : ""} avec la classe ${esc(kc.nom)} (séances cochées là-bas).` : ""} ${der ? `Dernière : ${jour(der.t)} (${der.tp ? "TP, " : ""}${der.h} h) · <button class="linkbtn" id="ryUndo">annuler la dernière séance</button>` : ""}</p>
+      <p class="note">Coche la séance <b>en fin de cours</b>.${aDev ? " Chaque élève voit alors la fenêtre « Où t'es-tu arrêté ? » et reçoit son travail à la maison (environ 15 min), visible dans la colonne « Maison »." : ""}${aTP ? " Une séance de TP ne fait pas avancer la jauge." : ""}${ailleurs.length ? ` ${ailleurs.map(e => esc(e.nom)).join(", ")} : suivi${ailleurs.length > 1 ? "s" : ""} avec la classe ${esc(kc.nom)} (séances cochées là-bas).` : ""} ${der ? `Dernière : ${jour(der.t)} (${der.tp ? "TP, " : ""}${der.h} h) · <button class="linkbtn" id="ryUndo">annuler la dernière séance</button>` : ""}</p>${absHtml()}
       <label class="note ry-date">Date de l'évaluation (la note est arrêtée ce jour-là) : <input type="date" id="ryEval" value="${esc(k.evalDate)}"></label></div>`;
     const lignes = el.map(e => ({ e, ...valeurs(e), v: DOCS[e.uid] || {} }));
     /* 25/11/2026 : alerte aux deux tiers du dossier (chemin essentiel + 20 min de reprise avec le professeur) */
@@ -694,8 +743,9 @@ function rythmePanel(c, g, el, getP, rerender){
     document.querySelectorAll(".ry [data-h]").forEach(b => b.onclick = () => {
       const h = +b.dataset.h, tp = !!b.dataset.tp, k = commun();
       if (!confirm("Enregistrer une séance " + (tp ? "de TP " : "") + "de " + h + " h pour la classe ?")) return;
-      ecrireTous({ seances: k.seances.concat([{ t: Date.now(), h, ...(tp ? { tp: true } : {}) }]) }, (tp ? "Séance de TP" : "Séance de " + h + " h") + " enregistrée.");
+      cocher(h, tp);
     });
+    bindAbs();
     const u = $("#ryUndo"); if (u) u.onclick = () => { const k = commun(); if (!k.seances.length || !confirm("Annuler la dernière séance cochée ?")) return; ecrireTous({ seances: k.seances.slice(0, -1) }, "Dernière séance annulée."); };
     const d = $("#ryEval"); if (d) d.onchange = () => ecrireTous({ evalDate: d.value || "" }, d.value ? "Date de l'évaluation enregistrée." : "Date de l'évaluation effacée.");
     document.querySelectorAll(".ryg [data-ess]").forEach(b => b.onclick = async () => {
@@ -782,7 +832,7 @@ function rythmePanel(c, g, el, getP, rerender){
       catch(x){ toast("Échec (" + (x.code || x.message) + ")."); } });
   };
   /* Accès pour l'onglet « Aujourd'hui » (25/11/2026) : mêmes données et mêmes écritures que ce tableau */
-  const api = { charge: () => charge, el: () => el, docs: () => DOCS, etatDe, commun, ecrireTous, ref, docId, tpH, aTP, aEss, ailleurs, kc,
+  const api = { charge: () => charge, el: () => el, docs: () => DOCS, etatDe, commun, ecrireTous, ref, docId, tpH, aTP, aEss, ailleurs, kc, cocher, absHtml, bindAbs,
     sc: () => Array.isArray(R.seances) ? R.seances : ((R.seances || {})[c.id] || [1, 2]) };
   return { html, bind: () => { bind(); if (aOral) bindOral(); }, stop, cibleDe, noterOral, aOral, api };
 }
@@ -886,9 +936,9 @@ function paneJour(c){
     else {
       const auto = k.seances.filter(x => !x.tp), ecoule = auto.reduce((s, x) => s + (+x.h || 0), 0), der = k.seances[k.seances.length - 1];
       const seance = (hh, tp) => { if (!confirm("Enregistrer une séance " + (tp ? "de TP " : "") + "de " + hh + " h pour la classe ?")) return;
-        A.ecrireTous({ seances: A.commun().seances.concat([{ t: Date.now(), h: hh, ...(tp ? { tp: true } : {}) }]) }, (tp ? "Séance de TP" : "Séance de " + hh + " h") + " enregistrée."); };
+        A.cocher(hh, tp); };
       h += `<div class="btns">${A.sc().map(x => btn("J'ai cours : " + x + " h", () => seance(x, false), "btn ok", !dosOuvert)).join("")}${A.aTP ? btn("J'ai TP : " + A.tpH + " h", () => seance(A.tpH, true), "btn ok", !dosOuvert) : ""}</div>`
-        + `<p class="note">Coche la séance <b>en fin de cours</b>. Cours écoulés : <b>${heures(ecoule)}</b>${der ? ` · dernière : ${new Date(der.t).toLocaleString("fr-FR", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })} (${der.tp ? "TP, " : ""}${der.h} h)` : ""}.${A.ailleurs.length ? " " + A.ailleurs.map(e => esc(e.nom)).join(", ") + " : séances cochées avec la classe " + esc(A.kc.nom) + "." : ""}</p>`;
+        + `<p class="note">Coche la séance <b>en fin de cours</b>. Cours écoulés : <b>${heures(ecoule)}</b>${der ? ` · dernière : ${new Date(der.t).toLocaleString("fr-FR", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })} (${der.tp ? "TP, " : ""}${der.h} h)` : ""}.${A.ailleurs.length ? " " + A.ailleurs.map(e => esc(e.nom)).join(", ") + " : séances cochées avec la classe " + esc(A.kc.nom) + "." : ""}</p>${A.absHtml()}`;
     }
     if (!dosOuvert) h += `<p class="note" style="color:#C55A11"><b>🔒 Ouvre d'abord le dossier</b> (Déblocages ci-dessus) : tant qu'il est verrouillé, les séances ne sont pas comptées.</p>`;
     h += `</div>`;
@@ -971,6 +1021,7 @@ function paneJour(c){
 
     $("#pane").innerHTML = h;
     $("#pane").querySelectorAll("[data-act]").forEach(b => b.onclick = () => acts[+b.dataset.act]());
+    if (RY && RY.api.bindAbs) RY.api.bindAbs();
     const sel = $("#jdos"); if (sel) sel.onchange = () => { JOUR[c.id] = opts[+sel.value].titre; render(); };
     $("#pane").querySelectorAll("[data-go]").forEach(b => b.onclick = () => {
       if (b.dataset.go === "dos") go(chapitreCorriges, c.id, ch.titre);

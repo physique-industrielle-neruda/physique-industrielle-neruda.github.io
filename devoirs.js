@@ -8,7 +8,7 @@
    - Enregistrement : pointsdecours/<uid>__devoir:<dossier>  { type: "devoir", liste: { <séance t>: { arret, taches, min, type, at } } }.
      La partie déclarée ne fait JAMAIS avancer la jauge (seul le travail vérifié compte).
    - Vérification et note : rythme.js (statutsMaison, critère « Maison »). Pronote garde la trace collective et l'annonce de l'évaluation. */
-import { toMs, heures, devoirId } from "./rythme.js";
+import { toMs, heures, devoirId, absentA } from "./rythme.js";
 
 export const BUDGET = 15, MAX = 20;
 const arrondi = m => Math.max(5, Math.round(m / 5) * 5);
@@ -148,26 +148,29 @@ export function creerDevoirs(ctx){
     let q = avant.q || "", etat = avant.etat || "pas", attente = !!avant.attente && !avant.num;
     const ov = document.createElement("div"); ov.className = "dv-ov";
     const jour = new Date(s.t).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" });
+    const abs = absentA(ctx.S().rythme[ctx.chapIdDe(ch)], s.t);   // absence notée par le professeur (27/11/2026)
     const dessine = () => {
       const x = pieces.find(y => y.num === num), arret = attente ? { attente: true } : x && x.parties ? { num, q: q || questions(x)[0].q } : { num, etat };
       const dv = calculer(ch, e, arret);
       ov.innerHTML = `<div class="dv-box" role="dialog" aria-modal="true" aria-label="Où t'es-tu arrêté ?">
-        <h2>📝 Fin de séance : où t'es-tu arrêté ?</h2>
-        <p class="dv-sous">${esc(ch.titre)} · séance du ${esc(jour)}. Ta réponse sert seulement à calculer ton travail pour la prochaine séance : elle ne fait pas avancer ta jauge (seul ton travail vérifié compte).</p>
+        ${abs ? `<h2>📝 Tu n'étais pas en cours le ${esc(jour)}</h2>
+        <p class="dv-sous">${esc(ch.titre)}. Cette séance ne compte pas contre toi dans ta note d'investissement. Ta jauge, elle, continue d'avancer (la date de l'évaluation ne change pas) : voici un rattrapage d'environ 15 min pour revenir à jour. Indique où tu en es.</p>`
+        : `<h2>📝 Fin de séance : où t'es-tu arrêté ?</h2>
+        <p class="dv-sous">${esc(ch.titre)} · séance du ${esc(jour)}. Ta réponse sert seulement à calculer ton travail pour la prochaine séance : elle ne fait pas avancer ta jauge (seul ton travail vérifié compte).</p>`}
         <label for="dv-p">Je travaille sur</label>
         <select id="dv-p">${pieces.map(y => `<option value="${esc(y.num)}"${!attente && y.num === num ? " selected" : ""}>${esc(libelle(y))}</option>`).join("")}
           <option value="__attente"${attente ? " selected" : ""}>J'ai fini ce que j'avais commencé : j'attends la vérification du professeur</option></select>
         ${attente || !x ? "" : x.parties ? `<label for="dv-q">Prochaine question à faire</label><select id="dv-q">${questions(x).map(y => `<option value="${y.q}"${y.q === (q || questions(x)[0].q) ? " selected" : ""}>${y.q} (partie ${y.partie})</option>`).join("")}<option value="fini"${q === "fini" ? " selected" : ""}>J'ai fini l'activité</option></select>`
           : x.corrige ? `<label>Où en es-tu ?</label><div class="dv-et">${[["pas", "Pas commencé"], ["commence", "Commencé, pas fini"], ["fini", "Fini"]].map(([k, l]) => `<button type="button" data-e="${k}" aria-pressed="${etat === k}">${l}</button>`).join("")}</div>`
           : `<p class="dv-sous" style="margin-top:8px">Le site suit cette pièce tout seul (en ligne) : rien d'autre à indiquer.</p>`}
-        <div class="dv-prev"><b>Ton travail pour la prochaine séance : environ ${dv.min} min</b><ul>${dv.taches.map(t => `<li>${esc(texteTache(t))} <span class="dv-d">(≈ ${t.min} min)</span></li>`).join("")}</ul></div>
-        <p class="dv-sous">Les coups de pouce sont sur le site, comme en classe. Ton professeur vérifiera au début de la prochaine séance.</p>
+        <div class="dv-prev"><b>${abs ? "Ton rattrapage" : "Ton travail pour la prochaine séance"} : environ ${dv.min} min</b><ul>${dv.taches.map(t => `<li>${esc(texteTache(t))} <span class="dv-d">(≈ ${t.min} min)</span></li>`).join("")}</ul></div>
+        <p class="dv-sous">Les coups de pouce sont sur le site, comme en classe.${abs ? " Ce rattrapage n'est pas noté." : " Ton professeur vérifiera au début de la prochaine séance."}</p>
         <div class="dv-btns">${modif ? "" : `<button type="button" class="dv-plus">Plus tard</button>`}<button type="button" class="dv-ok">${modif ? "Enregistrer" : "Valider"}</button></div></div>`;
       ov.querySelector("#dv-p").onchange = ev => { const v = ev.target.value; attente = v === "__attente"; if (!attente) { num = v; q = ""; etat = "pas"; } dessine(); };
       const sq = ov.querySelector("#dv-q"); if (sq) sq.onchange = ev => { q = ev.target.value; dessine(); };
       ov.querySelectorAll("[data-e]").forEach(b => b.onclick = () => { etat = b.dataset.e; dessine(); });
       const pl = ov.querySelector(".dv-plus"); if (pl) pl.onclick = () => { reporte.add(ch.titre + s.t); fermer(); toast("D'accord : la question reviendra à ta prochaine connexion."); };
-      ov.querySelector(".dv-ok").onclick = async ev => { ev.target.disabled = true; await enregistrer(c, ch, s, arret, dv); fermer(); };
+      ov.querySelector(".dv-ok").onclick = async ev => { ev.target.disabled = true; await enregistrer(c, ch, s, arret, abs && dv.type === "travail" ? { ...dv, type: "rattrapage" } : dv); fermer(); };
     };
     const fermer = () => { ov.remove(); document.body.style.overflow = ""; ouvert = false; ctx.render(); };
     dessine(); document.body.appendChild(ov); document.body.style.overflow = "hidden";
@@ -194,10 +197,11 @@ export function creerDevoirs(ctx){
     if (der && (!s || der.t >= s.t)) {
       const jour = new Date(der.t).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" });
       h += `<span class="dv-d">donné le ${esc(jour)} · environ <b>${der.min} min</b></span></div><ul>${(der.taches || []).map(t => `<li>${esc(texteTache(t))} <span class="dv-d">(≈ ${t.min} min)</span></li>`).join("")}</ul>
-        ${der.type === "travail" ? `<p class="dv-d">Ton professeur le vérifiera au début de la prochaine séance.</p>` : ""}
+        ${der.type === "travail" ? `<p class="dv-d">Ton professeur le vérifiera au début de la prochaine séance.</p>` : der.type === "rattrapage" ? `<p class="dv-d">Rattrapage de ton absence : pas noté, mais il te remet à jour.</p>` : ""}
         ${!der.taches || !der.taches.some(t => t.prof) ? `<button type="button" class="dv-lien" data-dv-modif>Je me suis trompé : modifier où je me suis arrêté</button>` : `<p class="dv-d">Devoir donné par ton professeur.</p>`}`;
     } else h += `</div><p class="dv-d">${manque ? "" : "Pas encore de travail : il sera calculé à la fin de la prochaine séance, quand ton professeur la cochera."}</p>`;
-    if (manque) h += `<button type="button" class="dv-lien" data-dv-dire>➜ Dire où je me suis arrêté à la dernière séance</button>`;
+    if (manque) h += `<button type="button" class="dv-lien" data-dv-dire>${absentA(r, s.t) ? "➜ Absent à la dernière séance : voir mon rattrapage" : "➜ Dire où je me suis arrêté à la dernière séance"}</button>`;
+    if (e.absences && e.absences.length) h += `<p class="dv-d">Absence${e.absences.length > 1 ? "s" : ""} notée${e.absences.length > 1 ? "s" : ""} : ${e.absences.map(t => esc(new Date(t).toLocaleDateString("fr-FR", { day: "numeric", month: "numeric" }))).join(", ")} · ces séances ne comptent pas dans ta régularité.</p>`;
     const vus = lst.filter(x => x.evaluable && x.suiv && M[x.statut]).slice(-4);
     if (vus.length) h += `<p class="dv-d">Derniers devoirs : ${vus.map(x => `<span class="dv-st" style="color:${M[x.statut].couleur};background:${M[x.statut].fond}">${esc(new Date(x.t).toLocaleDateString("fr-FR", { day: "numeric", month: "numeric" }))} · ${esc(M[x.statut].lib)}</span>`).join(" ")}${e.apprenti ? " · alternant : le travail à la maison ne compte pas dans ta note" : ""}</p>`;
     return h + `</div>`;
