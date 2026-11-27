@@ -280,7 +280,7 @@ function buildCtrl() {
   if (m === 'o') {
     h = slider('lg', 'Longueur d\'onde λ (échelle logarithmique)', '', -12, 3, 0.005, o.lg, sci(10 ** o.lg) + ' m')
       + `<div class="row"><label class="small" for="s-nm" style="margin:0">ou saisir λ en nm</label><input type="text" id="s-nm" style="width:8em" inputmode="decimal" value="${fmt(10 ** o.lg * 1e9, 1)}"></div>`
-      + `<div class="row"><label class="small" for="s-hz" style="margin:0">ou saisir f en Hz</label><input type="text" id="s-hz" style="width:10em" inputmode="decimal" placeholder="ex : 446e6"></div>`;
+      + `<div class="row"><label class="small" for="s-hzm" style="margin:0">ou saisir f en Hz</label><span style="display:inline-flex;align-items:center;gap:4px;flex-wrap:wrap">f = <input type="text" id="s-hzm" data-nosigne style="width:5em" inputmode="decimal" placeholder="446" aria-label="Fréquence : nombre"> × 10<sup><input type="text" id="s-hze" style="width:3.2em" inputmode="numeric" placeholder="6" aria-label="Fréquence : puissance de 10"></sup> Hz <button class="btn ghost" id="s-hzok" type="button">OK</button></span></div>`;
   } else if (m === 's') {
     h = sel('src', 'Source', Object.fromEntries(Object.entries(SRC).map(([k, v]) => [k, v.n])), o.src);
     if (o.src === 'hal') h += slider('T', 'Température du filament T', 'K', 1500, 3600, 10, o.T);
@@ -303,7 +303,14 @@ function buildCtrl() {
   $('#ctrl').querySelectorAll('input[type=range]').forEach((r) => r.addEventListener('input', () => { st[m][r.dataset.k] = +r.value; draw(); }));
   $('#ctrl').querySelectorAll('select').forEach((s) => s.addEventListener('change', () => { const v = s.value; st[m][s.dataset.k] = isNaN(+v) ? v : +v; buildCtrl(); draw(); }));
   const nm = $('#s-nm'); if (nm) nm.addEventListener('change', () => { const v = parseNum(nm.value); if (v > 0) { st.o.lg = Math.min(3, Math.max(-12, Math.log10(v * 1e-9))); buildCtrl(); draw(); } });
-  const hz = $('#s-hz'); if (hz) hz.addEventListener('change', () => { const v = parseNum(hz.value); if (v > 0) { st.o.lg = Math.min(3, Math.max(-12, Math.log10(C / v))); buildCtrl(); $('#s-hz').value = hz.value; draw(); } });
+  const hzm = $('#s-hzm'), hze = $('#s-hze');
+  if (hzm && hze) {
+    const appli = (force) => { if (force !== true && String(hze.value).trim() === '') return; const mv = parseNum(hzm.value), es = String(hze.value).replace(/\s/g, '').replace(/[−–]/, '-'), ev = es === '' ? 0 : parseInt(es, 10);
+      if (!(mv > 0) || isNaN(ev)) return; const v = mv * 10 ** ev; const a = hzm.value, b = hze.value;
+      st.o.lg = Math.min(3, Math.max(-12, Math.log10(C / v))); buildCtrl(); $('#s-hzm').value = a; $('#s-hze').value = b; draw(); };
+    [hzm, hze].forEach((e) => { e.addEventListener('keydown', (k) => { if (k.key === 'Enter') { k.preventDefault(); appli(true); } }); });
+    $('#s-hzok').addEventListener('click', () => appli(true));
+  }
   const cv = $('#s-v'); if (cv) cv.addEventListener('change', () => { st.s.v = cv.checked; draw(); });
   const ca = $('#s-amb'); if (ca) ca.addEventListener('change', () => { st.l.amb = ca.checked; draw(); });
   const nb = $('#note'); if (nb) nb.addEventListener('click', () => { st.pins.push({ d: st.l.d, E: luxE(), lamp: st.l.lamp, a: st.l.a }); draw(); });
@@ -442,7 +449,7 @@ const PARTS = [
   { title: 'A · Ondes et photons', mode: 'o', set: { ...DEF.o },
     intro: 'Module « Ondes ». Les rondiers de la centrale utilisent des radios à 446 MHz ; les soudures sont contrôlées par ressuage sous lampe UV et par gammagraphie. Données : c = 3,00 × 10⁸ m/s ; h = 6,63 × 10⁻³⁴ J·s ; 1 eV = 1,60 × 10⁻¹⁹ J.',
     qs: [
-      { q: 'Saisir f = 446e6 Hz sur le pupitre. Calculer la longueur d\'onde de la radio des rondiers.', u: 'm', a: 0.673, tol: 0.006, hint: '$\\lambda = c / f$', ex: 'λ = 3,00 × 10⁸ / 446 × 10⁶ ≈ 0,673 m : ondes radio.' },
+      { q: 'Saisir f = 446 × 10⁶ Hz sur le pupitre (446 dans la première case, 6 dans la case de la puissance de 10). Calculer la longueur d\'onde de la radio des rondiers.', u: 'm', a: 0.673, tol: 0.006, hint: '$\\lambda = c / f$', ex: 'λ = 3,00 × 10⁸ / 446 × 10⁶ ≈ 0,673 m : ondes radio.' },
       { q: 'La lampe de ressuage émet à λ = 365 nm. Dans quel domaine se trouve ce rayonnement ?', set: { lg: Math.log10(365e-9) }, opts: ['Infrarouge', 'Visible', 'Ultraviolet', 'Micro-ondes'], a: 2, ex: '365 nm < 400 nm : ultraviolet (UV-A). Il fait briller le produit fluorescent dans les fissures.' },
       { q: 'Calculer l\'énergie, en eV, d\'un photon de longueur d\'onde 589 nm (raie du sodium).', u: 'eV', a: 2.11, tol: 0.03, hint: '$E = \\dfrac{h\\,c}{\\lambda}$ en J, puis diviser par 1,60 × 10⁻¹⁹', ex: 'E = 6,63 × 10⁻³⁴ × 3,00 × 10⁸ / 589 × 10⁻⁹ = 3,38 × 10⁻¹⁹ J = 2,11 eV.' },
       { star: true, q: 'Un photon UV du mercure transporte 4,89 eV. Calculer sa longueur d\'onde.', u: 'nm', a: 254, tol: 3, hint: '$\\lambda = \\dfrac{h\\,c}{E}$ avec E en joules', ex: 'E = 4,89 × 1,60 × 10⁻¹⁹ = 7,82 × 10⁻¹⁹ J ; λ = 1,99 × 10⁻²⁵ / 7,82 × 10⁻¹⁹ ≈ 2,54 × 10⁻⁷ m = 254 nm.' },
