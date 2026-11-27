@@ -1038,8 +1038,8 @@
        "la relation fondamentale de la statique des fluides (Δp = ρ g Δh)",
        "capteur de pression relatif ou absolu"
       ],
-      "oral": true,
-      "devoirs": true
+      "devoirs": true,
+      "oral": true
      }
     },
     {
@@ -2718,6 +2718,7 @@
        "le quantum et le nombre de bits d'un CAN",
        "le temps de réponse d'un capteur (τ et t₅ %)"
       ],
+      "devoirs": true,
       "oral": true,
       "classeCours": "et2a",
       "groupes": [
@@ -2726,8 +2727,7 @@
       "aussi": [
        "donovan.f",
        "mathis.c"
-      ],
-      "devoirs": true
+      ]
      }
     },
     {
@@ -3226,6 +3226,286 @@
        "rubrique": "Animation"
       },
       {
+       "titre": "Pour aller plus loin 1.1 – Les pompes primaires",
+       "type": "Document",
+       "fichier": "6c90a76022b3ae8e1376128b.bin",
+       "taille": 148235,
+       "pages": 2,
+       "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
+       "rubrique": "Pour aller plus loin",
+       "plusloin": "1.1"
+      },
+      {
+       "titre": "Pour aller plus loin 1.1 - coups de pouce",
+       "type": "Document",
+       "format": "pouce",
+       "fichier": "bc9e3664fd7bdef5500af9c1.bin",
+       "taille": 11137,
+       "pouce": "pouce:et-sources-conversions-et-stockage-de-l-ene-corrige-pour-aller-plus-loin-1-1",
+       "lie": "et-sources-conversions-et-stockage-de-l-ene-corrige-pour-aller-plus-loin-1-1",
+       "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
+       "rubrique": "Pour aller plus loin",
+       "plusloin": "1.1"
+      },
+      {
+       "titre": "Corrigé Pour aller plus loin 1.1",
+       "type": "Corrigé",
+       "fichier": "392051795e0b5d1465c0ee5d.bin",
+       "taille": 84393,
+       "pages": 2,
+       "corrige": {
+        "id": "et-sources-conversions-et-stockage-de-l-ene-corrige-pour-aller-plus-loin-1-1",
+        "wk": "U65lbLFkQLRlauYKD7PmWf4skoJhmbjE/QE1qQJJmVcZgRVNo++FUDe5XTbz2A/i4xYosR0+xCQtV1bP"
+       },
+       "rubrique": "Pour aller plus loin",
+       "plusloin": "1.1"
+      },
+      {
+       "titre": "Pour aller plus loin 1.2 – Le couvercle de cuve",
+       "type": "Document",
+       "fichier": "7d094d3558baa482de851fc0.bin",
+       "taille": 123248,
+       "pages": 2,
+       "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
+       "rubrique": "Pour aller plus loin",
+       "plusloin": "1.2"
+      },
+      {
+       "titre": "Pour aller plus loin 1.2 - coups de pouce",
+       "type": "Document",
+       "format": "pouce",
+       "fichier": "2289f19704a0168ca12e9dc5.bin",
+       "taille": 10169,
+       "pouce": "pouce:et-sources-conversions-et-stockage-de-l-ene-corrige-pour-aller-plus-loin-1-2",
+       "lie": "et-sources-conversions-et-stockage-de-l-ene-corrige-pour-aller-plus-loin-1-2",
+       "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
+       "rubrique": "Pour aller plus loin",
+       "plusloin": "1.2"
+      },
+      {
+       "titre": "Corrigé Pour aller plus loin 1.2",
+       "type": "Corrigé",
+       "fichier": "434e24685766561958e3bb6c.bin",
+       "taille": 74184,
+       "pages": 1,
+       "corrige": {
+        "id": "et-sources-conversions-et-stockage-de-l-ene-corrige-pour-aller-plus-loin-1-2",
+        "wk": "DK/hjZBsFVvtPV7IizCBesxsJTA5K3cplAMpfgB7uAWMqLHrldKTcuCGsWgL/5oMhcOy6ENw8pjd7GM2"
+       },
+       "rubrique": "Pour aller plus loin",
+       "plusloin": "1.2"
+      },
+      {
+       "titre": "Pour aller plus loin 2.1 – La chaîne énergétique d'une tranche",
+       "type": "Document",
+       "fichier": "0e02ed79b07ccb9e7482cb83.bin",
+       "taille": 134877,
+       "pages": 2,
+       "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
+       "rubrique": "Pour aller plus loin",
+       "plusloin": "2.1"
+      },
+      {
+       "titre": "Pour aller plus loin 2.1 - coups de pouce",
+       "type": "Document",
+       "format": "pouce",
+       "fichier": "223de04e54919d743a3eddc0.bin",
+       "taille": 10810,
+       "pouce": "pouce:et-sources-conversions-et-stockage-de-l-ene-corrige-pour-aller-plus-loin-2-1",
+       "lie": "et-sources-conversions-et-stockage-de-l-ene-corrige-pour-aller-plus-loin-2-1",
+       "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
+       "rubrique": "Pour aller plus loin",
+       "plusloin": "2.1"
+      },
+      {
+       "titre": "Corrigé Pour aller plus loin 2.1",
+       "type": "Corrigé",
+       "fichier": "9850b73c9984e439e665429a.bin",
+       "taille": 132670,
+       "pages": 2,
+       "corrige": {
+        "id": "et-sources-conversions-et-stockage-de-l-ene-corrige-pour-aller-plus-loin-2-1",
+        "wk": "w+Em31LNiuUT1+mYp4yrdymgD8zoFB1xOO67nMJDqy8YzcsRqGjt4fa5LFooqrgXDiCJk+rg+7d/XYfS"
+       },
+       "rubrique": "Pour aller plus loin",
+       "plusloin": "2.1"
+      },
+      {
+       "titre": "Pour aller plus loin 2.2 – La chaleur du groupe froid",
+       "type": "Document",
+       "fichier": "ab00381805220386cfa3be0e.bin",
+       "taille": 128604,
+       "pages": 2,
+       "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
+       "rubrique": "Pour aller plus loin",
+       "plusloin": "2.2"
+      },
+      {
+       "titre": "Pour aller plus loin 2.2 - coups de pouce",
+       "type": "Document",
+       "format": "pouce",
+       "fichier": "402a7d1269aca87a0d9da3cd.bin",
+       "taille": 10116,
+       "pouce": "pouce:et-sources-conversions-et-stockage-de-l-ene-corrige-pour-aller-plus-loin-2-2",
+       "lie": "et-sources-conversions-et-stockage-de-l-ene-corrige-pour-aller-plus-loin-2-2",
+       "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
+       "rubrique": "Pour aller plus loin",
+       "plusloin": "2.2"
+      },
+      {
+       "titre": "Corrigé Pour aller plus loin 2.2",
+       "type": "Corrigé",
+       "fichier": "c71fedfe429e5c9efb7416df.bin",
+       "taille": 69973,
+       "pages": 1,
+       "corrige": {
+        "id": "et-sources-conversions-et-stockage-de-l-ene-corrige-pour-aller-plus-loin-2-2",
+        "wk": "ukYrWqH6/0w3KDYclymuDgh+HGsGRMq9tLIQ6X0WfUHbq50lI3BS+7EtYiGNfSgE2lV72RBspgVjTL7d"
+       },
+       "rubrique": "Pour aller plus loin",
+       "plusloin": "2.2"
+      },
+      {
+       "titre": "Pour aller plus loin 3.1 – Le robot d'inspection",
+       "type": "Document",
+       "fichier": "c867cde1785357646ff4d50b.bin",
+       "taille": 132458,
+       "pages": 2,
+       "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
+       "rubrique": "Pour aller plus loin",
+       "plusloin": "3.1"
+      },
+      {
+       "titre": "Pour aller plus loin 3.1 - coups de pouce",
+       "type": "Document",
+       "format": "pouce",
+       "fichier": "b18002ea2d7f58623710542b.bin",
+       "taille": 10346,
+       "pouce": "pouce:et-sources-conversions-et-stockage-de-l-ene-corrige-pour-aller-plus-loin-3-1",
+       "lie": "et-sources-conversions-et-stockage-de-l-ene-corrige-pour-aller-plus-loin-3-1",
+       "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
+       "rubrique": "Pour aller plus loin",
+       "plusloin": "3.1"
+      },
+      {
+       "titre": "Corrigé Pour aller plus loin 3.1",
+       "type": "Corrigé",
+       "fichier": "9af7570facc46836ad1c3e70.bin",
+       "taille": 73625,
+       "pages": 1,
+       "corrige": {
+        "id": "et-sources-conversions-et-stockage-de-l-ene-corrige-pour-aller-plus-loin-3-1",
+        "wk": "OpoUIvljmQiMHNYn2Ovr5uls6nq81CWSV12R6OlaI2BUrT+d3G8nSIln8vA8f64f9rwkjHnNk8z0acwV"
+       },
+       "rubrique": "Pour aller plus loin",
+       "plusloin": "3.1"
+      },
+      {
+       "titre": "Pour aller plus loin 3.2 – Stocker le soleil de midi",
+       "type": "Document",
+       "fichier": "1a4a62ed0bf92d4368243478.bin",
+       "taille": 117944,
+       "pages": 2,
+       "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
+       "rubrique": "Pour aller plus loin",
+       "plusloin": "3.2"
+      },
+      {
+       "titre": "Pour aller plus loin 3.2 - coups de pouce",
+       "type": "Document",
+       "format": "pouce",
+       "fichier": "3961425f57102d3d8cb1df20.bin",
+       "taille": 10134,
+       "pouce": "pouce:et-sources-conversions-et-stockage-de-l-ene-corrige-pour-aller-plus-loin-3-2",
+       "lie": "et-sources-conversions-et-stockage-de-l-ene-corrige-pour-aller-plus-loin-3-2",
+       "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
+       "rubrique": "Pour aller plus loin",
+       "plusloin": "3.2"
+      },
+      {
+       "titre": "Corrigé Pour aller plus loin 3.2",
+       "type": "Corrigé",
+       "fichier": "23e22555e57a8413ed8b859f.bin",
+       "taille": 74506,
+       "pages": 1,
+       "corrige": {
+        "id": "et-sources-conversions-et-stockage-de-l-ene-corrige-pour-aller-plus-loin-3-2",
+        "wk": "VqXG4fxADBSoUaGSvcVWHnIzMYsJx2K/8+Jt/+kRdzrPsJBbNRKIv4TZvohyNbbrfbVcm4eQdAGh5pSF"
+       },
+       "rubrique": "Pour aller plus loin",
+       "plusloin": "3.2"
+      },
+      {
+       "titre": "Pour aller plus loin 4.1 – Les panneaux de l'atelier ferroviaire",
+       "type": "Document",
+       "fichier": "22a9d995336c9f3024e518d4.bin",
+       "taille": 185345,
+       "pages": 2,
+       "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
+       "rubrique": "Pour aller plus loin",
+       "plusloin": "4.1"
+      },
+      {
+       "titre": "Pour aller plus loin 4.1 - coups de pouce",
+       "type": "Document",
+       "format": "pouce",
+       "fichier": "8e819afe0c324e4af3d58f24.bin",
+       "taille": 11134,
+       "pouce": "pouce:et-sources-conversions-et-stockage-de-l-ene-corrige-pour-aller-plus-loin-4-1",
+       "lie": "et-sources-conversions-et-stockage-de-l-ene-corrige-pour-aller-plus-loin-4-1",
+       "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
+       "rubrique": "Pour aller plus loin",
+       "plusloin": "4.1"
+      },
+      {
+       "titre": "Corrigé Pour aller plus loin 4.1",
+       "type": "Corrigé",
+       "fichier": "62214fd1d6c47386774d8c2a.bin",
+       "taille": 80551,
+       "pages": 2,
+       "corrige": {
+        "id": "et-sources-conversions-et-stockage-de-l-ene-corrige-pour-aller-plus-loin-4-1",
+        "wk": "CvPm9J7+iwbkQ4POMOxedJtADyWnDPmX7smyb8EXomvCJeFcxED531ngWwPV7AfqEEb5pyAMCds1AglS"
+       },
+       "rubrique": "Pour aller plus loin",
+       "plusloin": "4.1"
+      },
+      {
+       "titre": "Pour aller plus loin 4.2 – Le soleil pour la blanchisserie",
+       "type": "Document",
+       "fichier": "baf1b33207de0b5a87b9b2e6.bin",
+       "taille": 148097,
+       "pages": 2,
+       "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
+       "rubrique": "Pour aller plus loin",
+       "plusloin": "4.2"
+      },
+      {
+       "titre": "Pour aller plus loin 4.2 - coups de pouce",
+       "type": "Document",
+       "format": "pouce",
+       "fichier": "d4043d67dcb78e55ebac105f.bin",
+       "taille": 10069,
+       "pouce": "pouce:et-sources-conversions-et-stockage-de-l-ene-corrige-pour-aller-plus-loin-4-2",
+       "lie": "et-sources-conversions-et-stockage-de-l-ene-corrige-pour-aller-plus-loin-4-2",
+       "cv": "et-chap-sources-conversions-et-stockage-de-l-energie",
+       "rubrique": "Pour aller plus loin",
+       "plusloin": "4.2"
+      },
+      {
+       "titre": "Corrigé Pour aller plus loin 4.2",
+       "type": "Corrigé",
+       "fichier": "7b65bad84473debc748cfec4.bin",
+       "taille": 77168,
+       "pages": 1,
+       "corrige": {
+        "id": "et-sources-conversions-et-stockage-de-l-ene-corrige-pour-aller-plus-loin-4-2",
+        "wk": "pgNOyQBxeQT3XGqQdtTOPwyJ7uE5tD9I/GCubDmsz22zcR5siX0x3S4WqpIhJzpFshCCNtwjH9EK4qf+"
+       },
+       "rubrique": "Pour aller plus loin",
+       "plusloin": "4.2"
+      },
+      {
        "titre": "Mon parcours avant l'évaluation",
        "type": "Parcours",
        "format": "parcours",
@@ -3623,9 +3903,9 @@
        "le rendement d'une chaîne de conversion et le COP",
        "l'autonomie d'un stockage"
       ],
+      "devoirs": true,
       "oral": true,
-      "classeCours": "et2a",
-      "devoirs": true
+      "classeCours": "et2a"
      }
     }
    ]
@@ -5001,8 +5281,8 @@
        "le soustracteur pour décaler le zéro",
        "la mise à l'échelle du conditionneur complet"
       ],
-      "oral": true,
-      "devoirs": true
+      "devoirs": true,
+      "oral": true
      }
     },
     {
@@ -5785,8 +6065,8 @@
        "la prédominance d'une espèce selon le pH et le pKa",
        "le dosage pH-métrique : volume équivalent et relation à l'équivalence"
       ],
-      "oral": true,
-      "devoirs": true
+      "devoirs": true,
+      "oral": true
      }
     }
    ]
@@ -6600,8 +6880,8 @@
        "le quantum et le nombre N d'un CAN",
        "la tension de sortie d'un CNA"
       ],
-      "oral": true,
-      "devoirs": true
+      "devoirs": true,
+      "oral": true
      }
     },
     {
@@ -7079,9 +7359,9 @@
   }
  ],
  "outilsWk": {
-  "et": "jy/MIXtBts5va8BA3javN0klmoYTXTgqBD2pODSCr9e8oe4b3xXaQYomV7gmrZmlq0e1qCUMxK8JbFVu",
-  "cira": "cVWTnY1Acd2VnnDDWHvh3Wm3eTeHYfB5mYjDhoT/775MlhAEhYkdHj5J4k5KRH89oGcBjZfJ9xal3oGL",
-  "cim": "1jsTsBfXdwXEmJ8QTNHx1GkKJ0/TvRmT8O3ONCg1TLmJ4tpdBtR3O3II/dKalXNP7mrCN2eARScpYpRB"
+  "et": "YkqGDAeXhsRnLxHXJzpe7icuCMLLrh7gCyDMHg5G+j82qMBbVvvadPDdsG9Oe+FB/3LJ/kWbAR0/kqja",
+  "cira": "vRLGPQOkfeq/xulIFFk9nv/7aomuf+jNosaRM4YAGAf4XFCK5OeSsIr2Vgcy4GHGS52R5ClSr/BUxmsI",
+  "cim": "cl9b5VwwMkTQ9YV5fBPMZEecPwEmghgdyM/AFvo9c/Q0TB138k8dCPUmKc7FQ+pc+807e9gpVG9xonD+"
  },
  "outils": [
   {

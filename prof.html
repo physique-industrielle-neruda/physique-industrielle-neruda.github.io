@@ -459,6 +459,7 @@ function chapitreCorriges(cid, titre){
    Une case = débloquer / reverrouiller le corrigé de cet élève (et son point de cours).
    Pastille : gris pas commencé, orange en cours, vert terminé. Titre de colonne = toute la classe. */
 const courtDe = d => { const t = d.titre || ""; let m, b;
+  if ((m = /plus\s+loin\s*(\d+)\.(\d+)/i.exec(t))) return "★" + m[1] + "." + m[2];   // « Pour aller plus loin » (27/11/2026)
   if ((m = /activit[ée]\s*(\d+)/i.exec(t))) b = "A" + m[1];
   else if ((m = /\btp\s*(\d+)/i.exec(t))) b = "TP" + m[1];
   else if ((m = /exercice\s*(\d+)/i.exec(t))) b = "Ex" + m[1];
@@ -470,7 +471,7 @@ const courtDe = d => { const t = d.titre || ""; let m, b;
   if (/compte\s*rendu/i.test(t)) return b + " CR";
   return b; };
 /* Ordre des colonnes : activités et TP dans l'ordre du dossier, puis exercices (annale en dernier) ; pour un même TP : préparation, compte rendu, résultats */
-const rangDe = d => { const b = baseDe(d); return /^Ex/.test(b) ? 1 : b === "Annale" ? 2 : b === "Parcours" ? 3 : 0; };
+const rangDe = d => { const b = baseDe(d); return /^Ex/.test(b) ? 1 : b === "Annale" ? 2 : b === "Parcours" ? 3 : /^★/.test(b) ? 4 : 0; };
 const baseDe = d => courtDe(d).split(" ")[0];
 const subDe = d => /pr[ée]paration/i.test(d.titre) ? 0 : /r[ée]sultat/i.test(d.titre) ? 2 : 1;
 const ordonner = ds => { const first = {}; ds.forEach((d, i) => { const b = baseDe(d); if (!(b in first)) first[b] = i; });
@@ -506,7 +507,7 @@ function chapitreGrille(c, g){
     let html = (aPouce ? `<button class="saut" type="button" onclick="document.getElementById('cpTab').scrollIntoView({behavior:'smooth'})">↓ Coups de pouce utilisés</button>` : "") + `<div class="card grille"><table><tr><th class="nom">Élève</th>${cols.map((d, j) => `<th class="col${d.chapitre ? " lk" : ""}${sep(j)}" data-j="${j}" title="${esc(d.titre)}">${d.chapitre ? (d.test ? "Test" : "Dossier") : esc(courtDe(d))}</th>`).join("")}</tr>`
       + el.map(e => `<tr><td class="nom">${esc(e.nom)}</td>${cols.map((d, j) => `<td class="c${d.chapitre ? " lk" : ""}${sep(j)}${busy.has(d.corrige.id + "_" + e.uid) ? " busy" : ""}" data-j="${j}" data-uid="${esc(e.uid)}">${caseDe(d, e.uid)}</td>`).join("")}</tr>`).join("")
       + `<tr class="tot"><td class="nom">Ouverts</td>${cols.map((d, j) => `<td class="${sep(j)}">${counts[d.corrige.id] || 0}/${el.length}</td>`).join("")}</tr></table></div>`
-      + `<p class="note">Touche une case pour ouvrir à l'élève ; touche-la à nouveau pour refermer (une confirmation est demandée pour refermer le dossier ou le test). Touche le titre d'une colonne pour toute la classe.${locks.length ? " Les premières colonnes sont les cadenas du " + (locks.some(d => d.test) ? "test d'entrée et du " : "") + "dossier." : ""}<br>🔓 dossier ou test ouvert · 🔒 verrouillé · <span class="dot non"></span> point de cours pas commencé · <span class="dot cours"></span> en cours · <span class="dot fini"></span> terminé · ✓ corrigé ouvert (sans point de cours)</p>`
+      + `<p class="note">Touche une case pour ouvrir à l'élève ; touche-la à nouveau pour refermer (une confirmation est demandée pour refermer le dossier ou le test). Touche le titre d'une colonne pour toute la classe.${locks.length ? " Les premières colonnes sont les cadenas du " + (locks.some(d => d.test) ? "test d'entrée et du " : "") + "dossier." : ""}<br>🔓 dossier ou test ouvert · 🔒 verrouillé · <span class="dot non"></span> point de cours pas commencé · <span class="dot cours"></span> en cours · <span class="dot fini"></span> terminé · ✓ corrigé ouvert (sans point de cours)${docs.some(d => /^★/.test(courtDe(d))) ? "<br>★1.1, ★1.2… : exercices « Pour aller plus loin » (2 par boucle), visibles seulement pour les élèves freinés qui ont fini la boucle. Facultatifs : hors jauge, hors note, hors profil." : ""}</p>`
       + (aPouce ? `<p class="sec" id="cpTab">Coups de pouce utilisés <button class="saut" type="button" style="margin-left:8px" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑ Haut</button></p><div class="card grille cpg"><table><tr><th class="nom">Élève</th>${docs.map(d => `<th title="${esc(d.titre)}">${esc(courtDe(d))}</th>`).join("")}</tr>`
         + el.map(e => `<tr><td class="nom">${esc(e.nom)}</td>${docs.map(d => `<td>${pouceDe(d, e.uid)}</td>`).join("")}</tr>`).join("")
         + `</table></div><p class="note">Pour chaque élève, les questions où il a débloqué un coup de pouce supplémentaire : <span class="cp n2">B5 2</span> niveau 2 · <span class="cp n3">B5 3</span> niveau 3. <span class="cp vu">lu</span> fiche ouverte, niveau 1 seulement · – fiche jamais ouverte.</p>` : "");

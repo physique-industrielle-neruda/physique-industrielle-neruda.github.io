@@ -733,7 +733,7 @@ function docRow(c, d){
   if (freine(c, d)) {
     li.className = "freine";
     li.innerHTML = `<span class="type locked">${LOCK}${esc(d.type)}</span>
-      <span class="title">${esc(d.titre)}<span class="meta">Tu as plus d'1 h d'avance sur le dossier : cette partie s'ouvrira après la prochaine séance. En attendant, fais les « Côté terrain ★ » ou les cartes de révision.</span></span>
+      <span class="title">${esc(d.titre)}<span class="meta">Tu as plus d'1 h d'avance sur le dossier : cette partie s'ouvrira après la prochaine séance. En attendant, fais ${aPlusLoin(chapDe(c.id, d)) ? "les exercices « Pour aller plus loin », " : ""}les « Côté terrain ★ » ou les cartes de révision.</span></span>
       <span class="actions"><span class="open locked">${LOCK}Bientôt</span></span>`;
     return li;
   }
@@ -778,6 +778,7 @@ function docRow(c, d){
 
 const FOLDER = '<svg class="folder" viewBox="0 0 34 28" aria-hidden="true"><path d="M2 5a3 3 0 0 1 3-3h8l3 4h13a3 3 0 0 1 3 3v14a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3z" fill="currentColor" fill-opacity=".15" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>';
 function chapBlock(c, ch, docs, forceOpen, outil){
+  if (!outil) docs = plusLoinFiltre(c, ch, docs);
   const key = c.id + "/" + ch.titre;
   const tEntree = !outil && !forceOpen ? testDuChapitre(c, ch) : null;
   if (!outil && ch.verrou && !chapOK(ch) && tEntree) {
@@ -916,7 +917,8 @@ const NV_TYPES = {
   "Réviser":        { ico: '<rect x="3" y="7" width="13" height="13" rx="2"/><path d="M8 3h11a2 2 0 0 1 2 2v11"/>', c: "#7A4FB5", lab: "Réviser" },
   "Profil":         { ico: '<path d="M4 20V11M10 20V5M16 20v-6M2 20h20"/>', c: "#2E75B6", lab: "Profil de compétences" },
   "Points de cours":{ ico: '<path d="M10 6h10M10 12h10M10 18h10"/><path d="M4 6l1.2 1.2L7.5 5M4 12l1.2 1.2 2.3-2.2M4 18l1.2 1.2 2.3-2.2"/>', c: "#3F7A3A", lab: "Points de cours" },
-  "Autres":         { ico: '<path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4"/>', c: "#5A6577", lab: "Documents" }
+  "Autres":         { ico: '<path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4"/>', c: "#5A6577", lab: "Documents" },
+  "PlusLoin":       { ico: '<path d="M12 3l2.6 5.6 6.1.7-4.5 4.2 1.2 6L12 16.6 6.6 19.5l1.2-6-4.5-4.2 6.1-.7z"/>', c: "#7F6000", lab: "Pour aller plus loin" }
 };
 const nvTuile = (ico, c, t, r) => `<span class="nv-tuile" style="--c:${c};width:${t}px;height:${t}px;border-radius:${r || 12}px">${nvSvg(ico, Math.round(t * 0.56))}</span>`;
 function nvAnneau(pc, t, ep, txt){
@@ -934,6 +936,7 @@ const nvSansNum = t => String(t).replace(/^(activit[ée]|tp|td|exercice)\s*\d+\s
 /* Étapes du dossier, dans l'ordre du dossier élève. Chaque étape : { cle, type, lab, titre, docs, sous, test, etat }
    etat (élève seulement) : "fait", "encours", "afaire", ou null (documents à consulter, sans suivi) */
 function nvEtapes(c, ch, docs){
+  docs = plusLoinFiltre(c, ch, docs);
   const key = c.id + "/" + ch.titre, eleve = eleveRev();
   const tEntree = testDuChapitre(c, ch);
   const its = eleve && rythmeDe(ch) ? etatRythme(ch, { corrAt: S.corrAt, mp: MP, r: {} }).items : null;
@@ -1007,6 +1010,13 @@ function nvEtapes(c, ch, docs){
     if (g.r === "Pour commencer") {
       E.push({ cle: k, type: "Pour commencer", lab: "Pour commencer", titre: g.test ? "Test d'entrée" : "Pour commencer", docs: g.docs, test: g.test,
         etat: eleve && g.test ? (MT[g.test.id] ? "fait" : "afaire") : null });
+      return;
+    }
+    if (g.r === "Pour aller plus loin") {   // 27/11/2026 : exercices facultatifs des élèves freinés, hors jauge et hors note
+      const paquets = [];
+      g.docs.forEach(d => { const id = d.plusloin || "?"; let p = paquets.find(x => x.id === id); if (!p) paquets.push(p = { id, docs: [] }); p.docs.push(d); });
+      paquets.forEach(p => { const en = p.docs.find(d => !d.corrige && d.format !== "pouce"); p.titre = en ? en.titre : "Pour aller plus loin " + p.id; });
+      E.push({ cle: k, type: "PlusLoin", lab: "Pour aller plus loin · facultatif", titre: eleve ? "En attendant la suite du dossier" : "Exercices des élèves freinés (2 par boucle)", docs: [], sous: paquets, etat: null });
       return;
     }
     const type = g.r === "Réviser" ? "Réviser" : g.r === "Points de cours" ? "Points de cours" : "Autres";
@@ -1275,6 +1285,45 @@ function apercuRythme(ch){
   const r = { seances: [{ t: t0, h: 1 }, { t: t0 + 2 * 864e5, h: 2, tp: true }, { t: t0 + 4 * 864e5, h: 1 }], evalDate: "" };
   return etatRythme(ch, { corrAt, mp: {}, r });
 }
+/* ================= Pour aller plus loin (27/11/2026, essai sur « Sources, conversions et stockage de l'énergie », 2ET) =================
+   Deux exercices facultatifs par boucle (documents « Pour aller plus loin b.k »). Un élève les voit quand il est freiné
+   (plus d'1 h d'avance) et que la boucle b est terminée ; ensuite ils restent visibles pour lui
+   (Firestore « pointsdecours/<uid>__plusloin:<dossier> », vus : boucle → date). Hors jauge, hors note, hors profil. */
+const plId = chapId => "plusloin:" + chapId;
+const aPlusLoin = ch => !!(ch && ch.docs && ch.docs.some(d => d.plusloin));
+function bouclesFinies(e){
+  const fin = new Set(); let b = 0, ok = true;
+  for (const x of e.items) {
+    const n = sansAccent(x.num);
+    if (x.anim || x.parcours || /^(animation|parcours)/.test(n)) break;
+    if (/^(activite|tp)\s*\d/.test(n)) { if (b && ok) fin.add(String(b)); b++; ok = true; }
+    if (b && !x.fait) ok = false;
+  }
+  if (b && ok) fin.add(String(b));
+  return fin;
+}
+const PL_ECRIT = {};
+function plusLoinFiltre(c, ch, docs){
+  if (!docs.some(d => d.plusloin) || !eleveRev()) return docs;
+  const id = plId(chapIdDe(ch)), st = MP[id], vus = Object.assign({}, st && st.vus);
+  let e = null;
+  try { e = rythmeDe(ch) && chapOK(ch) ? etatEleve(ch) : null; } catch(_) {}
+  let neuf = false;
+  if (e && e.frein) bouclesFinies(e).forEach(b => { if (!vus[b]) { vus[b] = Date.now(); neuf = true; } });
+  if (neuf && S.mpCharge && !S.demo && S.user) {
+    const k = Object.keys(vus).sort().join(",");
+    if (PL_ECRIT[id] !== k) {
+      PL_ECRIT[id] = k;
+      const v = { uid: S.user.uid, pdc: id, type: "plusloin", site: c.id, chap: ch.verrou ? ch.verrou.id : "", titre: "Pour aller plus loin", activite: "",
+        nom: S.nom, classe: S.groupe || "", vus, etape: Object.keys(vus).length, total: 0, erreurs: 0, termine: false, date: serverTimestamp() };
+      MP[id] = { ...v, date: Date.now() };
+      setDoc(doc(db, "pointsdecours", S.user.uid + "__" + id), v).catch(() => {});
+    }
+  }
+  const ouvertes = new Set(Object.keys(vus));
+  docs.forEach(d => { if (d.plusloin && d.corrige && S.corr[d.corrige.id]) ouvertes.add(String(d.plusloin).split(".")[0]); });
+  return docs.filter(d => !d.plusloin || ouvertes.has(String(d.plusloin).split(".")[0]));
+}
 function freine(c, d){
   if (!eleveRev() || d.corrige || d.lien || /coups?\s+de\s+pouce/i.test(d.titre)) return false;
   const ch = chapDe(c.id, d); if (!ch || !rythmeDe(ch) || !chapOK(ch)) return false;
@@ -1302,7 +1351,7 @@ function jaugeBox(c, ch){
   /* 25/11/2026 : date d'évaluation prévue d'après le calendrier de la classe (séances de cours seulement), ou fixée par le professeur */
   const pvE = apercu ? null : previsionEleve(ch, e);
   const evTxt = pvE ? ` <span class="ry-eval">📅 Évaluation ${pvE.fixe ? "le" : "prévue vers le"} <b>${esc(new Date(pvE.ev).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" }))}</b> : encore ${pvE.n} séance${pvE.n > 1 ? "s" : ""} de cours d'ici là${pvE.fixe ? "" : " (date prévisionnelle, ton professeur la confirmera)"}.</span>` : "";
-  const conseil = e.frein ? "Tu as plus d'1 h d'avance : la suite s'ouvrira après la prochaine séance. Profites-en pour les « Côté terrain ★ » ou les cartes de révision, ou propose au professeur d'aider un camarade en retard (tutorat)."
+  const conseil = e.frein ? "Tu as plus d'1 h d'avance : la suite s'ouvrira après la prochaine séance. Profites-en pour " + (aPlusLoin(ch) ? "les exercices « Pour aller plus loin » (étape en bas du dossier, ouverte pour chaque boucle terminée), " : "") + "les « Côté terrain ★ » ou les cartes de révision, ou propose au professeur d'aider un camarade en retard (tutorat)."
     : e.statut === "avance" ? "Tu es en avance, continue comme ça." : e.statut === "vert" ? "Tu es à jour, continue comme ça."
     : e.statut === "orange" ? "Prévois un peu de travail à la maison pour rattraper avant la prochaine séance."
     : "Tu as pris du retard : organise-toi dès maintenant (maison, coups de pouce, appel au professeur).";
