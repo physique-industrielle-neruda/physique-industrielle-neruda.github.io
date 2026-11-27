@@ -50,8 +50,16 @@ const finJourMs = t => { const d = new Date(t); d.setHours(23, 59, 59, 999); ret
 export function statutsMaison(items, devDoc, r, seancesCours, now){
   const liste = (devDoc && devDoc.liste) || {}, prof = (r && r.maison) || {}, perso = (r && r.devoirProf) || {};
   const ts = seancesCours.filter(s => !absentA(r, s.t)).map(s => s.t);   // vérification à la séance suivante où l'élève est présent
-  return Object.keys(liste).map(Number).filter(t => t > 0).sort((a, b) => a - b).map(t => {
-    const d = { ...liste[t] }, p = perso[t];
+  /* 27/11/2026 : séance de cours où l'élève était présent sans répondre à « Où t'es-tu arrêté ? » → devoir « pas fait (sans réponse) »
+     dès que le professeur coche la séance de cours suivante (une réponse donnée après compte de même) ; modifiable par le professeur. */
+  const tous = seancesCours.map(s => s.t).sort((a, b) => a - b);
+  const limiteRep = t => tous.find(x => x > t + 60e3) || null;
+  const cles = new Set(Object.keys(liste).map(Number).filter(t => t > 0));
+  tous.forEach(t => { if (!absentA(r, t) && !perso[t]) cles.add(t); });
+  return [...cles].sort((a, b) => a - b).map(t => {
+    const sansRep = !liste[t] && !perso[t], lr = limiteRep(t);
+    const tard = !sansRep && !perso[t] && lr && (toMs(liste[t].at) || 0) > lr;
+    const d = sansRep ? { type: "travail", taches: [], min: 0, sansReponse: true } : { ...liste[t] }, p = perso[t];
     if (p) { d.taches = [{ quoi: p.quoi, min: +p.min || 15, prof: true }]; d.min = +p.min || 15; d.type = "travail"; }
     const abs = absentA(r, t) || d.type === "rattrapage";
     if (abs && d.type === "travail") d.type = "rattrapage";
@@ -59,17 +67,18 @@ export function statutsMaison(items, devDoc, r, seancesCours, now){
     let statut = "attente";
     if (!evaluable) statut = abs ? "rattrapage" : "libre";
     else if (prof[t]) statut = prof[t];
+    else if (sansRep || tard) statut = lr ? "sansrep" : "attente";
     else if (suiv) {
       const fin = finJourMs(suiv), tch = d.taches || [];
       if (tch.some(x => !x.num || !x.complet)) statut = "verifier";
       else { const ok = tch.filter(x => { const it = items.find(y => y.num === x.num); return it && it.t && it.t <= fin; }).length;
         statut = ok === tch.length ? "fait" : ok ? "partiel" : "non"; }
     }
-    return { t, suiv: suiv || null, ...d, statut, evaluable };
+    return { t, suiv: suiv || ((sansRep || tard) ? lr : null), ...d, statut, evaluable };
   });
 }
 export const MAISON = { fait: { lib: "Fait", pts: 1, couleur: "#3F7A3A", fond: "#E6F1E3" }, partiel: { lib: "En partie", pts: 0.5, couleur: "#C55A11", fond: "#FBE5D6" },
-  non: { lib: "Pas fait", pts: 0, couleur: "#C0392B", fond: "#FBE5E1" }, verifier: { lib: "À vérifier", couleur: "#2E75B6", fond: "#DEEAF6" },
+  non: { lib: "Pas fait", pts: 0, couleur: "#C0392B", fond: "#FBE5E1" }, sansrep: { lib: "Pas fait (sans réponse)", pts: 0, couleur: "#C0392B", fond: "#FBE5E1" }, verifier: { lib: "À vérifier", couleur: "#2E75B6", fond: "#DEEAF6" },
   attente: { lib: "Pour la prochaine séance", couleur: "#5A6577", fond: "#EEF1F5" }, rattrapage: { lib: "Rattrapage (absent)", couleur: "#5A6577", fond: "#EEF1F5" }, libre: { lib: "Non compté", couleur: "#5A6577", fond: "#EEF1F5" } };
 export const exemplesId = chapId => "exemples:" + chapId;
 export const rythmeDocId = (chapId, uid) => "rythme_" + chapId + "_" + uid;

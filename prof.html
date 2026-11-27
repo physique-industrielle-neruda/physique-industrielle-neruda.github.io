@@ -192,8 +192,8 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore, doc, getDoc, getDocs, setDoc, deleteDoc, collection, query, where, onSnapshot, serverTimestamp, writeBatch, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { profil as calcProfil, profilHtml, synthese, PROFIL_CSS, COMPS, LIBS as CLIBS, NIVEAUX, niveauDe, pointsAnim, bilanAnnee, anneeHtml, ANNEE_CSS } from "./competences.js";
-import { etat as etatRythme, STATUTS, heures, baremeDe, rythmeDoc, rythmeDocId, oralActs, oralCible, comDe, ORAL_NIVEAUX, estApprenti, MAISON, absentA, traceDansSeance, devoirId } from "./rythme.js?v=20261127e";
-import { texteTache } from "./devoirs.js?v=20261127e";
+import { etat as etatRythme, STATUTS, heures, baremeDe, rythmeDoc, rythmeDocId, oralActs, oralCible, comDe, ORAL_NIVEAUX, estApprenti, MAISON, absentA, traceDansSeance, devoirId } from "./rythme.js?v=20261127f";
+import { texteTache } from "./devoirs.js?v=20261127f";
 /* Documents « rythme » de chaque élève (mini-oral, tutorats) pour le profil de compétences (25/11/2026) */
 const RYD = {};
 const noterRyd = v => { if (v && v.uid && String(v.doc || "").startsWith("rythme:")) RYD[v.uid + "|" + v.doc] = v; };
@@ -650,7 +650,7 @@ function rythmePanel(c, g, el, getP, rerender){
   const aDev = !!R.devoirs;
   const jourC = t => new Date(t).toLocaleDateString("fr-FR", { day: "numeric", month: "numeric" });
   const maisonCellule = (e, s, fige) => {
-    const lst = s.maison || [], der = lst[lst.length - 1], v = DOCS[e.uid] || {}, kser = commun().seances.filter(x => !x.tp);
+    const lst = s.maison || [], lr = lst.filter(x => !x.sansReponse), der = lr[lr.length - 1], v = DOCS[e.uid] || {}, kser = commun().seances.filter(x => !x.tp);
     const derS = kser.length ? kser[kser.length - 1].t : 0;
     let h = "";
     if (der && der.t >= derS) h += `<button class="linkbtn" data-dvedit="${esc(e.uid)}" data-t="${der.t}" title="${esc((der.taches || []).map(texteTache).join(" · "))}">📝 ≈ ${der.min} min${der.taches && der.taches.some(x => x.prof) ? " (toi)" : ""}</button>`;

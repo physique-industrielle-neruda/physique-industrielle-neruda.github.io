@@ -8,7 +8,7 @@
    - Enregistrement : pointsdecours/<uid>__devoir:<dossier>  { type: "devoir", liste: { <séance t>: { arret, taches, min, type, at } } }.
      La partie déclarée ne fait JAMAIS avancer la jauge (seul le travail vérifié compte).
    - Vérification et note : rythme.js (statutsMaison, critère « Maison »). Pronote garde la trace collective et l'annonce de l'évaluation. */
-import { toMs, heures, devoirId, absentA } from "./rythme.js?v=20261127e";
+import { toMs, heures, devoirId, absentA } from "./rythme.js?v=20261127f";
 
 export const BUDGET = 15, MAX = 20;
 const arrondi = m => Math.max(5, Math.round(m / 5) * 5);
@@ -190,7 +190,7 @@ export function creerDevoirs(ctx){
     if (!ch.rythme || !ch.rythme.devoirs || !ctx.eleveRev()) return "";
     const r = ctx.S().rythme[ctx.chapIdDe(ch)]; if (!r) return "";
     const s = derniereSeance(r), d = docDe(ch), lst = (e.maison || []);
-    const der = lst[lst.length - 1];
+    const der = lst.filter(x => !x.sansReponse)[lst.filter(x => !x.sansReponse).length - 1];
     const manque = s && !reponse(ch, s.t);
     const M = ctx.MAISON;
     let h = `<div class="dv-bloc"><div class="dv-h"><b>📝 Mon travail à faire</b>`;
@@ -200,7 +200,7 @@ export function creerDevoirs(ctx){
         ${der.type === "travail" ? `<p class="dv-d">Ton professeur le vérifiera au début de la prochaine séance.</p>` : der.type === "rattrapage" ? `<p class="dv-d">Rattrapage de ton absence : pas noté, mais il te remet à jour.</p>` : ""}
         ${!der.taches || !der.taches.some(t => t.prof) ? `<button type="button" class="dv-lien" data-dv-modif>Je me suis trompé : modifier où je me suis arrêté</button>` : `<p class="dv-d">Devoir donné par ton professeur.</p>`}`;
     } else h += `</div><p class="dv-d">${manque ? "" : "Pas encore de travail : il sera calculé à la fin de la prochaine séance, quand ton professeur la cochera."}</p>`;
-    if (manque) h += `<button type="button" class="dv-lien" data-dv-dire>${absentA(r, s.t) ? "➜ Absent à la dernière séance : voir mon rattrapage" : "➜ Dire où je me suis arrêté à la dernière séance"}</button>`;
+    if (manque) h += `<button type="button" class="dv-lien" data-dv-dire>${absentA(r, s.t) ? "➜ Absent à la dernière séance : voir mon rattrapage" : "➜ Dire où je me suis arrêté à la dernière séance"}</button>${absentA(r, s.t) ? "" : `<p class="dv-d" style="color:#C0392B">Sans réponse avant le prochain cours, cette séance compte comme un devoir non fait.</p>`}`;
     if (e.absences && e.absences.length) h += `<p class="dv-d">Absence${e.absences.length > 1 ? "s" : ""} notée${e.absences.length > 1 ? "s" : ""} : ${e.absences.map(t => esc(new Date(t).toLocaleDateString("fr-FR", { day: "numeric", month: "numeric" }))).join(", ")} · ces séances ne comptent pas dans ta régularité.</p>`;
     const vus = lst.filter(x => x.evaluable && x.suiv && M[x.statut]).slice(-4);
     if (vus.length) h += `<p class="dv-d">Derniers devoirs : ${vus.map(x => `<span class="dv-st" style="color:${M[x.statut].couleur};background:${M[x.statut].fond}">${esc(new Date(x.t).toLocaleDateString("fr-FR", { day: "numeric", month: "numeric" }))} · ${esc(M[x.statut].lib)}</span>`).join(" ")}${e.apprenti ? " · alternant : le travail à la maison ne compte pas dans ta note" : ""}</p>`;
