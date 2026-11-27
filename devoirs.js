@@ -122,7 +122,7 @@ export function creerDevoirs(ctx){
   const { db, doc, setDoc, serverTimestamp, esc, toast } = ctx;
   let ouvert = false; const reporte = new Set();
   const actifs = () => {
-    const S = ctx.S(); if (!ctx.eleveRev() || S.demo || !S.mpCharge || !ctx.CAT()) return [];
+    const S = ctx.S(); if (!ctx.eleveRev() || (!S.mpCharge && !S.demo) || !ctx.CAT()) return [];
     return ctx.CAT().classes.filter(c => !S.site || c.id === S.site).flatMap(c => c.chapitres.map(ch => ({ c, ch })))
       .filter(({ ch }) => ch.rythme && ch.rythme.devoirs && ctx.rythmeDe(ch) && ctx.chapOK(ch) && S.rythme[ctx.chapIdDe(ch)]);
   };
@@ -130,7 +130,7 @@ export function creerDevoirs(ctx){
   const reponse = (ch, t) => { const d = docDe(ch); return d && d.liste && d.liste[t]; };
   /* Appelé après chaque affichage : fenêtre si une séance vient d'être cochée sans réponse */
   function verifier(){
-    if (ouvert) return;
+    if (ouvert || ctx.S().demo) return;   // compte de démonstration : pas d'ouverture automatique, lien dans l'encadré
     for (const { c, ch } of actifs()) {
       const s = derniereSeance(ctx.S().rythme[ctx.chapIdDe(ch)]);
       if (!s || Date.now() - s.t > 5 * 864e5 || reponse(ch, s.t) || reporte.has(ch.titre + s.t)) continue;
@@ -184,7 +184,7 @@ export function creerDevoirs(ctx){
   }
   /* Encadré « Mon travail à faire » (dans la jauge du dossier) */
   function bloc(c, ch, e){
-    if (!ch.rythme || !ch.rythme.devoirs || !ctx.eleveRev() || ctx.S().demo) return "";
+    if (!ch.rythme || !ch.rythme.devoirs || !ctx.eleveRev()) return "";
     const r = ctx.S().rythme[ctx.chapIdDe(ch)]; if (!r) return "";
     const s = derniereSeance(r), d = docDe(ch), lst = (e.maison || []);
     const der = lst[lst.length - 1];
