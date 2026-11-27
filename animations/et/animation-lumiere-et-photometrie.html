@@ -273,7 +273,7 @@ const st = { mode: 'o', o: { ...DEF.o }, s: { ...DEF.s }, l: { ...DEF.l }, h: { 
 /* ---------- pupitre ---------- */
 const slider = (k, lab, unit, min, max, step, val, show) => `
   <div class="slider"><label for="s-${k}">${lab}</label><output id="o-${k}">${show ?? fmt(val, 3) + ' ' + unit}</output>
-  <input type="range" id="s-${k}" data-k="${k}" min="${min}" max="${max}" step="${step}" value="${val}"></div>`;
+  <input type="range" id="s-${k}" data-k="${k}" data-u="${unit}" min="${min}" max="${max}" step="${step}" value="${val}"></div>`;
 const sel = (k, lab, opts, val) => `<label class="small" for="s-${k}" style="margin:0">${lab}</label><select id="s-${k}" data-k="${k}">${Object.entries(opts).map(([v, n]) => `<option value="${v}" ${String(v) === String(val) ? 'selected' : ''}>${n}</option>`).join('')}</select>`;
 function buildCtrl() {
   const m = st.mode, o = st[m]; let h = '';
@@ -300,7 +300,8 @@ function buildCtrl() {
       + slider('Tc', 'Température de couleur Tc', 'K', 2000, 7000, 100, o.Tc);
   }
   $('#ctrl').innerHTML = h;
-  $('#ctrl').querySelectorAll('input[type=range]').forEach((r) => r.addEventListener('input', () => { st[m][r.dataset.k] = +r.value; draw(); }));
+  $('#ctrl').querySelectorAll('input[type=range]').forEach((r) => r.addEventListener('input', () => { st[m][r.dataset.k] = +r.value; draw();
+    const out = document.getElementById('o-' + r.dataset.k); if (out && out.textContent.trim() !== 'masqué') { const lab = r.closest('.slider'), un = r.dataset.u ?? ''; out.textContent = r.dataset.k === 'lg' ? sci(10 ** +r.value) + ' m' : fmt(+r.value, 3) + (un ? ' ' + un : ''); } }));
   $('#ctrl').querySelectorAll('select').forEach((s) => s.addEventListener('change', () => { const v = s.value; st[m][s.dataset.k] = isNaN(+v) ? v : +v; buildCtrl(); draw(); }));
   const nm = $('#s-nm'); if (nm) nm.addEventListener('change', () => { const v = parseNum(nm.value); if (v > 0) { st.o.lg = Math.min(3, Math.max(-12, Math.log10(v * 1e-9))); buildCtrl(); draw(); } });
   const hzm = $('#s-hzm'), hze = $('#s-hze');
