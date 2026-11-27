@@ -8,7 +8,7 @@
    - Enregistrement : pointsdecours/<uid>__devoir:<dossier>  { type: "devoir", liste: { <séance t>: { arret, taches, min, type, at } } }.
      La partie déclarée ne fait JAMAIS avancer la jauge (seul le travail vérifié compte).
    - Vérification et note : rythme.js (statutsMaison, critère « Maison »). Pronote garde la trace collective et l'annonce de l'évaluation. */
-import { toMs, heures, devoirId, absentA } from "./rythme.js?v=20261127c";
+import { toMs, heures, devoirId, absentA } from "./rythme.js?v=20261127e";
 
 export const BUDGET = 15, MAX = 20;
 const arrondi = m => Math.max(5, Math.round(m / 5) * 5);
@@ -156,7 +156,7 @@ export function creerDevoirs(ctx){
         ${abs ? `<h2>📝 Tu n'étais pas en cours le ${esc(jour)}</h2>
         <p class="dv-sous">${esc(ch.titre)}. Cette séance ne compte pas contre toi dans ta note d'investissement. Ta jauge, elle, continue d'avancer (la date de l'évaluation ne change pas) : voici un rattrapage d'environ 15 min pour revenir à jour. Indique où tu en es.</p>`
         : `<h2>📝 Fin de séance : où t'es-tu arrêté ?</h2>
-        <p class="dv-sous">${esc(ch.titre)} · séance du ${esc(jour)}. Ta réponse sert seulement à calculer ton travail pour la prochaine séance : elle ne fait pas avancer ta jauge (seul ton travail vérifié compte).</p>`}
+        <p class="dv-sous">${esc(ch.titre)} · séance du ${esc(jour)}. Ta réponse fait avancer ta jauge (en clair, jusqu'à la vérification par ton professeur) et sert à calculer ton travail pour la prochaine séance. Indique bien la prochaine question à faire.</p>`}
         <label for="dv-p">Je travaille sur</label>
         <select id="dv-p">${pieces.map(y => `<option value="${esc(y.num)}"${!attente && y.num === num ? " selected" : ""}>${esc(libelle(y))}</option>`).join("")}
           <option value="__attente"${attente ? " selected" : ""}>J'ai fini ce que j'avais commencé : j'attends la vérification du professeur</option></select>

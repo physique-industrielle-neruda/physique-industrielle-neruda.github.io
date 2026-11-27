@@ -192,8 +192,8 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore, doc, getDoc, getDocs, setDoc, deleteDoc, collection, query, where, onSnapshot, serverTimestamp, writeBatch, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { profil as calcProfil, profilHtml, synthese, PROFIL_CSS, COMPS, LIBS as CLIBS, NIVEAUX, niveauDe, pointsAnim, bilanAnnee, anneeHtml, ANNEE_CSS } from "./competences.js";
-import { etat as etatRythme, STATUTS, heures, baremeDe, rythmeDoc, rythmeDocId, oralActs, oralCible, comDe, ORAL_NIVEAUX, estApprenti, MAISON, absentA, traceDansSeance, devoirId } from "./rythme.js?v=20261127c";
-import { texteTache } from "./devoirs.js?v=20261127c";
+import { etat as etatRythme, STATUTS, heures, baremeDe, rythmeDoc, rythmeDocId, oralActs, oralCible, comDe, ORAL_NIVEAUX, estApprenti, MAISON, absentA, traceDansSeance, devoirId } from "./rythme.js?v=20261127e";
+import { texteTache } from "./devoirs.js?v=20261127e";
 /* Documents « rythme » de chaque élève (mini-oral, tutorats) pour le profil de compétences (25/11/2026) */
 const RYD = {};
 const noterRyd = v => { if (v && v.uid && String(v.doc || "").startsWith("rythme:")) RYD[v.uid + "|" + v.doc] = v; };
@@ -570,6 +570,12 @@ function choisirOral(nom, act, fini, avecDeblocage){
    pendant la séance (corrigé débloqué, coup de pouce, point de cours, exemple, animation, test…). Le professeur confirme. */
 /* 27/11/2026 : durée réelle d'un créneau Pronote de x h (1 h → 50 min, 2 h → 1 h 50) et grille de 15 min à 2 h */
 const reel = x => (x * 60 - 10) / 60;
+/* 27/11/2026 : ce que l'élève a indiqué en fin de cours (« Où t'es-tu arrêté ? ») */
+const arretLib = s => { const a = s && s.arret; if (!a) return "";
+  return a.attente ? "a fini, attend la vérification" : a.q ? (a.q === "fini" ? a.num + " finie" : a.num + " · reprend à " + a.q) : a.num + " · " + ({ pas: "pas commencé", commence: "commencé", fini: "fini" }[a.etat] || ""); };
+const arretTxt = s => { if (!s || !s.arret) return `<br><small class="tsc">📍 pas encore de réponse</small>`;
+  const quand = s.arretAt ? new Date(s.arretAt).toLocaleString("fr-FR", { weekday: "short", hour: "2-digit", minute: "2-digit" }) : "";
+  return `<br><small class="tsc" title="Réponse à « Où t'es-tu arrêté ? »${quand ? " (" + quand + ")" : ""}">📍 ${esc(arretLib(s))}</small>`; };
 const GRILLE_H = [15, 30, 45, 60, 75, 90, 105, 120].map(m => m / 60);
 const grilleHtml = (ouverte, b) => `<details class="ry-gr"${ouverte ? " open" : ""}><summary>${ouverte ? "Premier cours du dossier : temps réellement passé dessus" : "Autre durée (cours partiel)"}</summary><div class="btns">${GRILLE_H.map(b).join("")}</div></details>`;
 function choisirDuree(titre, pleins, fini){
@@ -751,7 +757,7 @@ function rythmePanel(c, g, el, getP, rerender){
       <div class="card grille ryg"><table><tr><th class="nom">Élève</th><th>Rythme</th><th>Corrigés<small class="tsc">/${BAREME_C.corriges}</small></th><th>Cours<small class="tsc">/${BAREME_C.cours}</small></th><th>Anim.<small class="tsc">/${BAREME_C.anim}</small></th><th>Régul.<small class="tsc">/${BAREME_C.regularite}</small></th>${aDev ? `<th title="Travail à la maison : devoirs vérifiés à la séance suivante (alternants : hors note, régularité sur 5)">Maison<small class="tsc">/${BAREME_C.maison}</small></th>` : ""}<th>Ajust.</th><th>Note<small class="tsc">/20</small></th>${aOral ? `<th title="Mini-oral (une fois par dossier) et tutorats : compétence Communiquer, hors note">Oral · tutorat</th>` : ""}</tr>`
       + lignes.map(({ e, s, pts, note, fige, v }) => { const st = STATUTS[s.statut];
         const pill = s.statut === "avance" ? "+" + heures(s.avance) : heures(s.fait) + " / " + heures(Math.min(s.ecoule, s.contenu));
-        const decl = s.declare > 1e-6 ? `<br><small class="tsc" title="Indiqué par l'élève en fin de cours, pas encore vérifié (compte dans la jauge, pas dans la note)">dont ${heures(s.declare)} déclarées</small>` : "";
+        const decl = (s.declare > 1e-6 ? `<br><small class="tsc" title="Indiqué par l'élève en fin de cours, pas encore vérifié">dont ${heures(s.declare)} déclarées</small>` : "") + arretTxt(s);
         const ctl = (attr, val, lib) => fige ? "" : `<button ${attr}="${val}" data-uid="${esc(e.uid)}" aria-label="${lib}">${val > 0 ? "+" : "−"}</button>`;
         const autre = (R.aussi || []).includes(e.login) ? CLASSES.filter(k => k.id !== c.id && (k.eleves || []).some(x => x.login === e.login)).map(k => k.nom).join(", ") : "";
         return `<tr><td class="nom">${esc(e.nom)}${autre ? `<br><small class="tsc" title="Cours avec cette classe, TP avec ${esc(autre)}">cours ici · TP avec ${esc(autre.replace(/^BTS ET – /, ""))}</small>` : ""}</td>
@@ -1152,7 +1158,7 @@ function paneRythme(c){
     h += `<div class="rv-tri">Trier : <button data-tri="retard" aria-pressed="${tri === "retard"}">du plus en retard au plus en avance</button><button data-tri="nom" aria-pressed="${tri === "nom"}">par nom</button></div>`;
     h += `<div class="card rv" style="margin-top:8px">` + S.map(({ e, s }) => { const st = STATUTS[s.statut];
       const items = s.items.filter(x => !x.tp);
-      return `<details data-uid="${esc(e.uid)}"${ouverts_.has(e.uid) ? " open" : ""}><summary><div class="rv-l1"><b>${esc(e.nom)} <small>· ${heures(s.fait)} faites${s.declare > 1e-6 ? " (dont " + heures(s.declare) + " déclarées)" : ""}${s.ess ? " · chemin essentiel" : ""}</small></b>${s.frein ? '<span title="Freiné : plus d\'1 h d\'avance">🔒</span>' : ""}${pill(s)}</div>
+      return `<details data-uid="${esc(e.uid)}"${ouverts_.has(e.uid) ? " open" : ""}><summary><div class="rv-l1"><b>${esc(e.nom)} <small>· ${heures(s.fait)} faites${s.declare > 1e-6 ? " (dont " + heures(s.declare) + " déclarées)" : ""}${s.arret ? " · 📍 " + esc(arretLib(s)) : " · 📍 pas de réponse"}${s.ess ? " · chemin essentiel" : ""}</small></b>${s.frein ? '<span title="Freiné : plus d\'1 h d\'avance">🔒</span>' : ""}${pill(s)}</div>
         <div class="rv-bar" role="img" aria-label="${esc(e.nom)} : travail fait ${heures(s.fait)}, cours écoulés ${heures(s.ecoule)} sur ${heures(s.total)}"><span class="rv-fill" style="width:${pc(s.fait, tot)}%;background:${st.couleur};opacity:.4"></span><span class="rv-fill" style="width:${pc(s.verifie ?? s.fait, tot)}%;background:${st.couleur}"></span><span class="rv-marge" style="left:${pc(s.contenuTout, tot)}%"></span><span class="rv-now" style="left:${pc(s.ecoule, tot)}%"></span></div></summary>
         <div class="rv-det">Reste <b>${heures(s.reste)}</b> de travail pour ${heures(s.resteCours)} de cours.<ol>${items.map(x => `<li class="${x.fait ? "ok" : x.part ? "part" : ""}">${x.fait ? "✓ " : ""}${esc(x.titre || x.num)} <span>(${heures(x.duree)}${s.ess && x.horsEss ? ", facultatif" : ""}${x.part && !x.fait ? ", " + Math.round(100 * x.part) + " % fait" : ""})</span></li>`).join("")}</ol></div></details>`; }).join("") + `</div>`;
     h += `<div class="rv-leg"><span><i class="rv-k" style="background:#3F7A3A"></i>travail fait (couleur = rythme)</span><span><i class="rv-k" style="width:3px;background:var(--ink)"></i>cours écoulés</span><span><i class="rv-k" style="background:repeating-linear-gradient(45deg,transparent 0 3px,rgba(90,101,119,.5) 3px 5px)"></i>marge</span></div>

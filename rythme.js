@@ -189,7 +189,7 @@ export function etat(ch, src){
   const brut = Object.values(pts).reduce((a, b) => a + b, 0) + (+r.ajust || 0);
   const note = Math.max(0, Math.min(20, Math.round(brut * 2) / 2));
   const absences = seances.filter(s => absentA(r, s.t)).map(s => s.t);
-  return { bareme: B, maison, absences, apprenti: !!src.apprenti, toutes, items, contenu, contenuTout, contenuEss, ess, deuxTiers, marge, total, ecoule, fait, verifie, declare, retard, statut, avance, frein, reste, resteCours, seances, scores, pts, note, limite, evalDate: r.evalDate || "" };
+  return { bareme: B, maison, absences, apprenti: !!src.apprenti, toutes, items, contenu, contenuTout, contenuEss, ess, deuxTiers, marge, total, ecoule, fait, verifie, declare, arret: decls.length ? decls[decls.length - 1].arret : null, arretAt: decls.length ? decls[decls.length - 1].at : null, retard, statut, avance, frein, reste, resteCours, seances, scores, pts, note, limite, evalDate: r.evalDate || "" };
 }
 export const STATUTS = {
   avance: { lib: "En avance",      couleur: "#2E75B6", fond: "#DEEAF6" },
