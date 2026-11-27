@@ -188,7 +188,8 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore, doc, getDoc, getDocs, setDoc, deleteDoc, collection, query, where, onSnapshot, serverTimestamp, writeBatch, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { profil as calcProfil, profilHtml, synthese, PROFIL_CSS, COMPS, LIBS as CLIBS, NIVEAUX, niveauDe, pointsAnim, bilanAnnee, anneeHtml, ANNEE_CSS } from "./competences.js";
-import { etat as etatRythme, STATUTS, heures, baremeDe, rythmeDoc, rythmeDocId, oralActs, oralCible, comDe, ORAL_NIVEAUX } from "./rythme.js";
+import { etat as etatRythme, STATUTS, heures, baremeDe, rythmeDoc, rythmeDocId, oralActs, oralCible, comDe, ORAL_NIVEAUX, estApprenti, MAISON } from "./rythme.js";
+import { texteTache } from "./devoirs.js";
 /* Documents « rythme » de chaque élève (mini-oral, tutorats) pour le profil de compétences (25/11/2026) */
 const RYD = {};
 const noterRyd = v => { if (v && v.uid && String(v.doc || "").startsWith("rythme:")) RYD[v.uid + "|" + v.doc] = v; };
@@ -558,7 +559,7 @@ function choisirOral(nom, act, fini, avecDeblocage){
   st.textContent = ".or-ov{position:fixed;inset:0;background:rgba(15,25,40,.45);display:flex;align-items:center;justify-content:center;z-index:99;padding:16px}"
   + ".or-box{background:var(--surface,#fff);border-radius:10px;padding:16px;max-width:460px;width:100%}.or-box p{margin:8px 0}"
   + ".or-btns{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}.btn.or-clair,.or-clair{background:#E2EFDA;color:#3F7A3A}.btn.or-partiel,.or-partiel{background:#FBE5D6;color:#C55A11}"
-  + ".btn.or-reprendre,.or-reprendre{background:#FBE5E1;color:#C0392B}.ry-or{white-space:nowrap;font-size:.82rem}";
+  + ".btn.or-reprendre,.or-reprendre{background:#FBE5E1;color:#C0392B}.ry-or{white-space:nowrap;font-size:.82rem}.ry-dv{font-size:.82rem;min-width:130px;line-height:1.5}.ry-dv .ry-pill{font-size:.75rem}";
   document.head.appendChild(st); })();
 function rythmePanel(c, g, el, getP, rerender){
   const ch = g.ch, R = ch.rythme, BAREME_C = baremeDe(ch);
@@ -586,7 +587,23 @@ function rythmePanel(c, g, el, getP, rerender){
     rerender();
   }, e => toast("Lecture du rythme impossible : " + e.code));
   const mpDe = uid => { const P = getP(), o = {}; for (const k in P) if (k.startsWith(uid + "__")) o[P[k].pdc] = P[k]; return o; };
-  const etatDe = e => etatRythme(ch, { corrAt: AT[e.uid] || {}, mp: mpDe(e.uid), r: DOCS[e.uid] || {} });
+  const etatDe = e => etatRythme(ch, { corrAt: AT[e.uid] || {}, mp: mpDe(e.uid), r: DOCS[e.uid] || {}, apprenti: estApprenti(ch, c.id, e.login, DOCS[e.uid]) });
+  /* Travail à la maison (27/11/2026) : dernier devoir, statut des précédents (clic : fait → en partie → pas fait → automatique), alternant hors note */
+  const aDev = !!R.devoirs;
+  const jourC = t => new Date(t).toLocaleDateString("fr-FR", { day: "numeric", month: "numeric" });
+  const maisonCellule = (e, s, fige) => {
+    const lst = s.maison || [], der = lst[lst.length - 1], v = DOCS[e.uid] || {}, kser = commun().seances.filter(x => !x.tp);
+    const derS = kser.length ? kser[kser.length - 1].t : 0;
+    let h = "";
+    if (der && der.t >= derS) h += `<button class="linkbtn" data-dvedit="${esc(e.uid)}" data-t="${der.t}" title="${esc((der.taches || []).map(texteTache).join(" · "))}">📝 ≈ ${der.min} min${der.taches && der.taches.some(x => x.prof) ? " (toi)" : ""}</button>`;
+    else if (derS) h += `<span class="tsc" title="L'élève n'a pas encore dit où il s'est arrêté">📝 en attente</span> <button class="linkbtn" data-dvedit="${esc(e.uid)}" data-t="${derS}">✎</button>`;
+    const vus = lst.filter(x => x.evaluable && x.suiv).slice(-3);
+    if (vus.length) h += "<br>" + vus.map(x => { const m = MAISON[x.statut] || MAISON.verifier;
+      return fige ? `<span class="ry-pill" style="color:${m.couleur};background:${m.fond}">${jourC(x.t)} ${esc(m.lib)}</span>`
+        : `<button class="ry-pill dv-cyc" data-dvst="${esc(e.uid)}" data-t="${x.t}" style="color:${m.couleur};background:${m.fond};border:0;cursor:pointer" title="${esc((x.taches || []).map(texteTache).join(" · "))} — clic : fait / en partie / pas fait / automatique${v.maison && v.maison[x.t] ? " (choisi par toi)" : " (automatique)"}">${jourC(x.t)} ${esc(m.lib)}</button>`; }).join(" ");
+    h += `<br><button class="linkbtn" data-dvapp="${esc(e.uid)}" title="Alternant : même devoir, mais hors note (régularité sur 5)">${s.apprenti ? "alternant · hors note" : "+ alternant ?"}</button>`;
+    return h;
+  };
   const commun = () => { const v = Object.values(DOCS)[0] || {}; return { seances: v.seances || [], evalDate: v.evalDate || "" }; };
   const figee = () => { const f = Object.values(DOCS).map(v => v.fige).find(Boolean); return f || null; };
   const ecrireTous = async (data, msg, parEleve) => {
@@ -624,7 +641,7 @@ function rythmePanel(c, g, el, getP, rerender){
     const sc = Array.isArray(R.seances) ? R.seances : ((R.seances || {})[c.id] || [1, 2]);
     h += `<p class="note">Travail en autonomie prévu : ${heures(contenu)} + ${heures(marge)} de marge = <b>${heures(contenu + marge)}</b> · Cours écoulés : <b>${heures(ecoule)}</b> (${auto.length} séance${auto.length > 1 ? "s" : ""})${tps.length ? ` · TP faits : ${tps.length}` : ""}</p>
       <div class="btns">${sc.map(x => `<button class="btn ok" data-h="${x}"${bloque}>J'ai cours : ${x} h</button>`).join("")}${aTP ? `<button class="btn ok" data-h="${tpH}" data-tp="1"${bloque}>J'ai TP : ${tpH} h</button>` : ""}</div>${msgBloque}
-      <p class="note">Coche la séance <b>en fin de cours</b>.${aTP ? " Une séance de TP ne fait pas avancer la jauge." : ""}${ailleurs.length ? ` ${ailleurs.map(e => esc(e.nom)).join(", ")} : suivi${ailleurs.length > 1 ? "s" : ""} avec la classe ${esc(kc.nom)} (séances cochées là-bas).` : ""} ${der ? `Dernière : ${jour(der.t)} (${der.tp ? "TP, " : ""}${der.h} h) · <button class="linkbtn" id="ryUndo">annuler la dernière séance</button>` : ""}</p>
+      <p class="note">Coche la séance <b>en fin de cours</b>.${aDev ? " Chaque élève voit alors la fenêtre « Où t'es-tu arrêté ? » et reçoit son travail à la maison (environ 15 min), visible dans la colonne « Maison »." : ""}${aTP ? " Une séance de TP ne fait pas avancer la jauge." : ""}${ailleurs.length ? ` ${ailleurs.map(e => esc(e.nom)).join(", ")} : suivi${ailleurs.length > 1 ? "s" : ""} avec la classe ${esc(kc.nom)} (séances cochées là-bas).` : ""} ${der ? `Dernière : ${jour(der.t)} (${der.tp ? "TP, " : ""}${der.h} h) · <button class="linkbtn" id="ryUndo">annuler la dernière séance</button>` : ""}</p>
       <label class="note ry-date">Date de l'évaluation (la note est arrêtée ce jour-là) : <input type="date" id="ryEval" value="${esc(k.evalDate)}"></label></div>`;
     const lignes = el.map(e => ({ e, ...valeurs(e), v: DOCS[e.uid] || {} }));
     /* 25/11/2026 : alerte aux deux tiers du dossier (chemin essentiel + 20 min de reprise avec le professeur) */
@@ -636,14 +653,14 @@ function rythmePanel(c, g, el, getP, rerender){
         : `<p>Personne n'est en retard pour l'instant.</p>`}</div>`;
     }
     h += `${fg ? `<p class="note ry-fige">🔒 Notes figées le ${esc(jour(fg.date))} : elles ne bougent plus. <button class="linkbtn" id="ryDefige">Défiger</button></p>` : ""}
-      <div class="card grille ryg"><table><tr><th class="nom">Élève</th><th>Rythme</th><th>Corrigés<small class="tsc">/${BAREME_C.corriges}</small></th><th>Cours<small class="tsc">/${BAREME_C.cours}</small></th><th>Anim.<small class="tsc">/${BAREME_C.anim}</small></th><th>Régul.<small class="tsc">/${BAREME_C.regularite}</small></th><th>Ajust.</th><th>Note<small class="tsc">/20</small></th>${aOral ? `<th title="Mini-oral (une fois par dossier) et tutorats : compétence Communiquer, hors note">Oral · tutorat</th>` : ""}</tr>`
+      <div class="card grille ryg"><table><tr><th class="nom">Élève</th><th>Rythme</th><th>Corrigés<small class="tsc">/${BAREME_C.corriges}</small></th><th>Cours<small class="tsc">/${BAREME_C.cours}</small></th><th>Anim.<small class="tsc">/${BAREME_C.anim}</small></th><th>Régul.<small class="tsc">/${BAREME_C.regularite}</small></th>${aDev ? `<th title="Travail à la maison : devoirs vérifiés à la séance suivante (alternants : hors note, régularité sur 5)">Maison<small class="tsc">/${BAREME_C.maison}</small></th>` : ""}<th>Ajust.</th><th>Note<small class="tsc">/20</small></th>${aOral ? `<th title="Mini-oral (une fois par dossier) et tutorats : compétence Communiquer, hors note">Oral · tutorat</th>` : ""}</tr>`
       + lignes.map(({ e, s, pts, note, fige, v }) => { const st = STATUTS[s.statut];
         const pill = s.statut === "avance" ? "+" + heures(s.avance) : heures(s.fait) + " / " + heures(Math.min(s.ecoule, s.contenu));
         const ctl = (attr, val, lib) => fige ? "" : `<button ${attr}="${val}" data-uid="${esc(e.uid)}" aria-label="${lib}">${val > 0 ? "+" : "−"}</button>`;
         const autre = (R.aussi || []).includes(e.login) ? CLASSES.filter(k => k.id !== c.id && (k.eleves || []).some(x => x.login === e.login)).map(k => k.nom).join(", ") : "";
         return `<tr><td class="nom">${esc(e.nom)}${autre ? `<br><small class="tsc" title="Cours avec cette classe, TP avec ${esc(autre)}">cours ici · TP avec ${esc(autre.replace(/^BTS ET – /, ""))}</small>` : ""}</td>
         <td><span class="ry-pill" style="color:${st.couleur};background:${st.fond}" title="${st.lib} : ${heures(s.fait)} faites pour ${heures(s.ecoule)} de cours">${pill}</span>${s.frein ? ' <span title="Frein : plus d\'1 h d\'avance, la suite attend la prochaine séance">🔒</span>' : ""}${aEss && (s.ess || s.statut === "orange" || s.statut === "rouge") && !fige ? `<br><button class="linkbtn ry-ess" data-ess="${esc(e.uid)}" title="${s.ess ? "Revenir au dossier complet" : "Ouvrir le chemin essentiel : les pièces facultatives sortent de sa jauge"}">${s.ess ? "✓ chemin essentiel" : "→ chemin essentiel"}</button>` : s.ess ? '<br><small class="tsc">chemin essentiel</small>' : ""}</td>
-        <td>${f1(pts.corriges)}</td><td>${exDe(e)}<br>${f1(pts.cours)}</td><td>${f1(pts.anim)}</td><td>${f1(pts.regularite)}</td>
+        <td>${f1(pts.corriges)}</td><td>${exDe(e)}<br>${f1(pts.cours)}</td><td>${f1(pts.anim)}</td><td>${f1(pts.regularite)}${s.apprenti && aDev ? '<small class="tsc">/' + s.bareme.regularite + '</small>' : ""}</td>${aDev ? `<td class="ry-dv">${s.apprenti ? "–" : f1(pts.maison || 0)}<br>${maisonCellule(e, s, fige)}</td>` : ""}
         <td class="ry-ctl">${ctl("data-aj", -0.5, "Ajustement moins")}${(+v.ajust || 0) > 0 ? "+" : ""}${f1(+v.ajust || 0)}${ctl("data-aj", 0.5, "Ajustement plus")}</td>
         <td><b>${f1(note)}</b></td>${aOral ? `<td class="ry-or">${oralCellule(e)}</td>` : ""}</tr>`; }).join("")
       + `</table></div>
@@ -651,16 +668,16 @@ function rythmePanel(c, g, el, getP, rerender){
       <button class="btn ghost" id="ryCopy">Copier les notes pour Pronote</button>
       <p class="note">Rythme (travail en autonomie, hors TP) : <span class="ry-pill" style="color:${STATUTS.avance.couleur};background:${STATUTS.avance.fond}">+1 h</span> en avance · <span class="ry-pill" style="color:${STATUTS.vert.couleur};background:${STATUTS.vert.fond}">à jour</span> · <span class="ry-pill" style="color:${STATUTS.orange.couleur};background:${STATUTS.orange.fond}">jusqu'à 1 h de retard</span> · <span class="ry-pill" style="color:${STATUTS.rouge.couleur};background:${STATUTS.rouge.fond}">plus d'1 h</span> · 🔒 frein : plus d'1 h d'avance, la suite attend la prochaine séance.<br>
       Corrigés : activités, TP et exercices dont tu as débloqué le corrigé avant la fin du jour de l'évaluation. Cours : corrections des exemples ouvertes par l'élève lui-même, sans demande${R.items.some(x => x.pdc) ? ", et points de cours en ligne terminés (pastilles P1, P2…)" : ""} ; pastille verte = fait, date au survol ou en appui long. Animation : part des questions traitées.
-      Régularité : à chaque séance cochée (hors TP), l'élève est-il à jour avant la séance suivante (à jour ou en avance 1, orange ½, rouge 0) ? Ajust. : ta correction manuelle de la note. La note ne porte que sur le travail : les coups de pouce et le comportement ne comptent jamais.${aEss ? "<br>Chemin essentiel : pour un élève en retard, les pièces facultatives (" + esc(R.items.filter(x => x.horsEss).map(x => x.titre).join(", ")) + ") sortent de sa jauge et de sa régularité à partir du jour où tu l'ouvres. Sa note d'investissement compte toujours tout le dossier." : ""}
+      Régularité : à chaque séance cochée (hors TP), l'élève est-il à jour avant la séance suivante (à jour ou en avance 1, orange ½, rouge 0) ? ${aDev ? "Maison : 📝 = devoir donné à la dernière séance (survol : le détail, clic : le remplacer par le tien) ; pastilles = devoirs précédents, vérifiés automatiquement quand le site suit la pièce entière, sinon « À vérifier » : clique pour choisir fait / en partie / pas fait (fait 1, en partie ½, pas fait 0). Alternants : même devoir, hors note. " : ""}Ajust. : ta correction manuelle de la note. La note ne porte que sur le travail : les coups de pouce et le comportement ne comptent jamais.${aEss ? "<br>Chemin essentiel : pour un élève en retard, les pièces facultatives (" + esc(R.items.filter(x => x.horsEss).map(x => x.titre).join(", ")) + ") sortent de sa jauge et de sa régularité à partir du jour où tu l'ouvres. Sa note d'investissement compte toujours tout le dossier." : ""}
       « Figer » enregistre les notes du jour : elles ne changent plus, même si un élève continue l'animation.</p>`;
     return h;
   };
   const imprimer = () => {
     const k = commun(), fg = figee(), w = window.open("", "_blank");
     if (!w) return toast("Autorise l'ouverture des fenêtres pour enregistrer le PDF.");
-    const L = ["corriges", "cours", "anim", "regularite"], T = { corriges: "Corrigés", cours: "Cours", anim: "Animation", regularite: "Régularité" };
+    const L = ["corriges", "cours", "anim", "regularite"].concat(aDev ? ["maison"] : []), T = { corriges: "Corrigés", cours: "Cours", anim: "Animation", regularite: "Régularité", maison: "Maison" };
     const rows = el.map(e => { const x = valeurs(e), v = DOCS[e.uid] || {};
-      return `<tr><td class="n">${esc(e.nom)}</td>${L.map(l => `<td>${f1(x.pts[l])}</td>`).join("")}<td>${(+v.ajust || 0) > 0 ? "+" : ""}${f1(+v.ajust || 0)}</td><td class="b">${f1(x.note)}</td></tr>`; }).join("");
+      return `<tr><td class="n">${esc(e.nom)}</td>${L.map(l => `<td>${x.pts[l] == null ? "–" : f1(x.pts[l])}</td>`).join("")}<td>${(+v.ajust || 0) > 0 ? "+" : ""}${f1(+v.ajust || 0)}</td><td class="b">${f1(x.note)}</td></tr>`; }).join("");
     w.document.write(`<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>Note d'investissement – ${esc(ch.titre)} – ${esc(c.nom)}</title>
       <style>body{font:11pt Arial,Helvetica,sans-serif;color:#18212F;margin:1.27cm}h1{background:#1F3864;color:#fff;font-size:15pt;padding:8px 12px;margin:0 0 6px}
       p{margin:4px 0;font-size:10pt;color:#5A6577}table{border-collapse:collapse;width:100%;margin-top:12px}th{background:#1F3864;color:#fff;padding:6px;font-size:10pt}
@@ -668,7 +685,7 @@ function rythmePanel(c, g, el, getP, rerender){
       <h1>Note d'investissement – ${esc(ch.titre)}</h1>
       <p><b>${esc(c.nom)}</b> · ${fg ? "notes figées le " + esc(jour(fg.date)) : "aperçu du " + esc(jour(Date.now())) + " (non figé)"}${k.evalDate ? " · évaluation le " + esc(new Date(k.evalDate + "T12:00:00").toLocaleDateString("fr-FR")) : ""}</p>
       <table><tr><th>Élève</th>${L.map(l => `<th>${T[l]} /${BAREME_C[l]}</th>`).join("")}<th>Ajust.</th><th>Note /20</th></tr>${rows}</table>
-      <p style="margin-top:10px">Corrigés : corrigés débloqués (activités, TP, exercices) · Cours : corrections des exemples ouvertes${R.items.some(x => x.pdc) ? " et points de cours terminés" : ""} · Animation : questions traitées · Régularité : élève à jour à chaque séance (hors TP). La note ne porte que sur le travail. Note arrondie au demi-point.</p>
+      <p style="margin-top:10px">Corrigés : corrigés débloqués (activités, TP, exercices) · Cours : corrections des exemples ouvertes${R.items.some(x => x.pdc) ? " et points de cours terminés" : ""} · Animation : questions traitées · Régularité : élève à jour à chaque séance (hors TP).${aDev ? " Maison : devoirs vérifiés à la séance suivante (alternants : hors note, régularité sur 5)." : ""} La note ne porte que sur le travail. Note arrondie au demi-point.</p>
       <script>window.onload = () => setTimeout(() => window.print(), 300);<\/script></body></html>`);
     w.document.close();
   };
@@ -692,6 +709,30 @@ function rythmePanel(c, g, el, getP, rerender){
       const data = { ajust: Math.max(-10, Math.min(10, (+v.ajust || 0) + +b.dataset.aj)) };
       try { await setDoc(ref(uid), { uid, doc: docId, classe: c.id, ...data, maj: serverTimestamp() }, { merge: true }); }
       catch(x){ toast("Échec (" + (x.code || x.message) + ")."); }
+    });
+    /* Travail à la maison (27/11/2026) */
+    const ecrire1 = async (uid, data, msg) => { try { await setDoc(ref(uid), { uid, doc: docId, classe: c.id, ...data, maj: serverTimestamp() }, { merge: true }); if (msg) toast(msg); } catch(x){ toast("Échec (" + (x.code || x.message) + ")."); } };
+    const ORDRE = ["fait", "partiel", "non", null];
+    document.querySelectorAll(".ryg [data-dvst]").forEach(b => b.onclick = () => {
+      const uid = b.dataset.dvst, t = b.dataset.t, v = DOCS[uid] || {}, m = { ...(v.maison || {}) }, cur = m[t] || null;
+      const nx = ORDRE[(ORDRE.indexOf(cur) + 1) % ORDRE.length]; if (nx) m[t] = nx; else delete m[t];
+      ecrire1(uid, { maison: m }, nx ? "Devoir : " + MAISON[nx].lib.toLowerCase() + "." : "Devoir : statut automatique.");
+    });
+    document.querySelectorAll(".ryg [data-dvedit]").forEach(b => b.onclick = () => {
+      const uid = b.dataset.dvedit, t = b.dataset.t, v = DOCS[uid] || {}, nom = (el.find(e => e.uid === uid) || {}).nom || "";
+      const perso = (v.devoirProf || {})[t];
+      const txt = prompt("Travail à la maison de " + nom + " (remplace celui calculé par le site).\nLaisse vide pour revenir au devoir calculé.", perso ? perso.quoi : "");
+      if (txt === null) return;
+      const dp = { ...(v.devoirProf || {}) };
+      if (!txt.trim()) { delete dp[t]; return ecrire1(uid, { devoirProf: dp }, "Devoir calculé par le site rétabli."); }
+      const mn = parseInt(prompt("Durée prévue (en minutes) :", perso ? perso.min : 15), 10) || 15;
+      dp[t] = { quoi: txt.trim(), min: Math.max(5, Math.min(60, mn)) };
+      ecrire1(uid, { devoirProf: dp }, "Devoir de " + nom + " modifié.");
+    });
+    document.querySelectorAll(".ryg [data-dvapp]").forEach(b => b.onclick = () => {
+      const uid = b.dataset.dvapp, e = el.find(x => x.uid === uid) || {}, a = estApprenti(ch, c.id, e.login, DOCS[uid]);
+      if (!confirm(a ? "Compter le travail à la maison dans la note de " + e.nom + " (non alternant) ?" : e.nom + " est alternant : même devoir, mais hors note ?")) return;
+      ecrire1(uid, { apprenti: !a }, a ? "Travail à la maison compté." : "Alternant : travail à la maison hors note.");
     });
     const fgb = $("#ryFige"); if (fgb) fgb.onclick = async () => {
       if (!confirm("Figer les notes d'aujourd'hui ? Elles ne changeront plus (tu pourras défiger si besoin).")) return;

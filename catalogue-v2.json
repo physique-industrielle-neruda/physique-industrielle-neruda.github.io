@@ -843,7 +843,32 @@
         "num": "Activité 1",
         "titre": "Activité 1 – La pression dans le filtre à sable",
         "duree": 0.75,
-        "corrige": "et-statique-des-fluides-corrige-activite-1-la-pression-dans-le-filtre-a-sa"
+        "corrige": "et-statique-des-fluides-corrige-activite-1-la-pression-dans-le-filtre-a-sa",
+        "parties": [
+         {
+          "id": "A",
+          "titre": "La force sur le trou d'homme",
+          "min": 20,
+          "questions": [
+           "A1",
+           "A2",
+           "A3",
+           "A4"
+          ]
+         },
+         {
+          "id": "B",
+          "titre": "Pression relative et pression absolue",
+          "min": 25,
+          "questions": [
+           "B1",
+           "B2",
+           "B3",
+           "B4",
+           "B5"
+          ]
+         }
+        ]
        },
        {
         "num": "Point de cours – Activité 1",
@@ -879,7 +904,32 @@
         "num": "Activité 2",
         "titre": "Activité 2 – La pression au robinet du hameau",
         "duree": 0.75,
-        "corrige": "et-statique-des-fluides-corrige-activite-2-la-pression-au-robinet-du-hamea"
+        "corrige": "et-statique-des-fluides-corrige-activite-2-la-pression-au-robinet-du-hamea",
+        "parties": [
+         {
+          "id": "A",
+          "titre": "Pression et profondeur",
+          "min": 20,
+          "questions": [
+           "A1",
+           "A2",
+           "A3",
+           "A4"
+          ]
+         },
+         {
+          "id": "B",
+          "titre": "La pression chez les abonnés",
+          "min": 25,
+          "questions": [
+           "B1",
+           "B2",
+           "B3",
+           "B4",
+           "B5"
+          ]
+         }
+        ]
        },
        {
         "num": "Point de cours – Activité 2",
@@ -923,7 +973,32 @@
         "num": "Activité 3",
         "titre": "Activité 3 – Le capteur de niveau de la bâche",
         "duree": 0.75,
-        "corrige": "et-statique-des-fluides-corrige-activite-3-le-capteur-de-niveau-de-la-bach"
+        "corrige": "et-statique-des-fluides-corrige-activite-3-le-capteur-de-niveau-de-la-bach",
+        "parties": [
+         {
+          "id": "A",
+          "titre": "Le niveau faux de la bâche",
+          "min": 20,
+          "questions": [
+           "A1",
+           "A2",
+           "A3",
+           "A4"
+          ]
+         },
+         {
+          "id": "B",
+          "titre": "Le ballon fermé du surpresseur",
+          "min": 25,
+          "questions": [
+           "B1",
+           "B2",
+           "B3",
+           "B4",
+           "B5"
+          ]
+         }
+        ]
        },
        {
         "num": "Point de cours – Activité 3",
@@ -963,7 +1038,8 @@
        "la relation fondamentale de la statique des fluides (Δp = ρ g Δh)",
        "capteur de pression relatif ou absolu"
       ],
-      "oral": true
+      "oral": true,
+      "devoirs": true
      }
     },
     {
@@ -2438,7 +2514,36 @@
         "num": "Activité 1",
         "titre": "Activité 1 – Boucle 4-20 mA du pressuriseur du réacteur nucléaire",
         "duree": 0.75,
-        "corrige": "et-les-chaines-de-mesure-2eta-corrige-activite-1-boucle-4-20-ma-du-pressuriseur-"
+        "corrige": "et-les-chaines-de-mesure-2eta-corrige-activite-1-boucle-4-20-ma-du-pressuriseur-",
+        "parties": [
+         {
+          "id": "A",
+          "titre": "Mise à l'échelle du signal",
+          "min": 20,
+          "questions": [
+           "A1",
+           "A2",
+           "A3",
+           "A4",
+           "A5",
+           "A6"
+          ]
+         },
+         {
+          "id": "B",
+          "titre": "Pourquoi une liaison 4-20 mA ?",
+          "min": 25,
+          "questions": [
+           "B1",
+           "B2",
+           "B3",
+           "B4",
+           "B5",
+           "B6",
+           "B7"
+          ]
+         }
+        ]
        },
        {
         "num": "Point de cours – Activité 1",
@@ -2468,7 +2573,36 @@
         "num": "Activité 2",
         "titre": "Activité 2 – Numérisation d'une mesure de température",
         "duree": 0.75,
-        "corrige": "et-les-chaines-de-mesure-2eta-corrige-activite-2-numerisation-d-une-mesure-de-te"
+        "corrige": "et-les-chaines-de-mesure-2eta-corrige-activite-2-numerisation-d-une-mesure-de-te",
+        "parties": [
+         {
+          "id": "A",
+          "titre": "Analogique ou numérique ? Nombre de bits et quantum",
+          "min": 25,
+          "questions": [
+           "A1",
+           "A2",
+           "A3",
+           "A4",
+           "A5",
+           "A6",
+           "A7"
+          ]
+         },
+         {
+          "id": "B",
+          "titre": "Fréquence d'échantillonnage",
+          "min": 20,
+          "questions": [
+           "B1",
+           "B2",
+           "B3",
+           "B4",
+           "B5",
+           "B6"
+          ]
+         }
+        ]
        },
        {
         "num": "Point de cours – Activité 2",
@@ -2511,7 +2645,34 @@
         "num": "Activité 3",
         "titre": "Activité 3 – Temps de réponse et précision d'une sonde Pt100",
         "duree": 0.75,
-        "corrige": "et-les-chaines-de-mesure-2eta-corrige-activite-3-temps-de-reponse-et-precision-d"
+        "corrige": "et-les-chaines-de-mesure-2eta-corrige-activite-3-temps-de-reponse-et-precision-d",
+        "parties": [
+         {
+          "id": "A",
+          "titre": "Temps de réponse de la sonde",
+          "min": 25,
+          "questions": [
+           "A1",
+           "A2",
+           "A3",
+           "A4",
+           "A5",
+           "A6"
+          ]
+         },
+         {
+          "id": "B",
+          "titre": "Précision de la chaîne à 329 °C",
+          "min": 20,
+          "questions": [
+           "B1",
+           "B2",
+           "B3",
+           "B4",
+           "B5"
+          ]
+         }
+        ]
        },
        {
         "num": "Point de cours – Activité 3",
@@ -2565,7 +2726,8 @@
       "aussi": [
        "donovan.f",
        "mathis.c"
-      ]
+      ],
+      "devoirs": true
      }
     },
     {
@@ -3211,7 +3373,35 @@
         "num": "Activité 1",
         "titre": "Activité 1 – Le facteur de charge d'un réacteur",
         "duree": 0.75,
-        "corrige": "et-sources-conversions-et-stockage-de-l-ene-corrige-activite-1-le-facteur-de-charge-d-un-react"
+        "corrige": "et-sources-conversions-et-stockage-de-l-ene-corrige-activite-1-le-facteur-de-charge-d-un-react",
+        "parties": [
+         {
+          "id": "A",
+          "titre": "Sources d'énergie et énergie produite",
+          "min": 20,
+          "questions": [
+           "A1",
+           "A2",
+           "A3",
+           "A4",
+           "A5"
+          ]
+         },
+         {
+          "id": "B",
+          "titre": "Le facteur de charge",
+          "min": 25,
+          "questions": [
+           "B1",
+           "B2",
+           "B3",
+           "B4",
+           "B5",
+           "B6",
+           "B7"
+          ]
+         }
+        ]
        },
        {
         "num": "Point de cours – Activité 1",
@@ -3247,7 +3437,35 @@
         "num": "Activité 2",
         "titre": "Activité 2 – Le rendement du diesel d'ultime secours",
         "duree": 0.75,
-        "corrige": "et-sources-conversions-et-stockage-de-l-ene-corrige-activite-2-le-rendement-du-diesel-d-ultime"
+        "corrige": "et-sources-conversions-et-stockage-de-l-ene-corrige-activite-2-le-rendement-du-diesel-d-ultime",
+        "parties": [
+         {
+          "id": "A",
+          "titre": "La chaîne énergétique du diesel",
+          "min": 25,
+          "questions": [
+           "A1",
+           "A2",
+           "A3",
+           "A4",
+           "A5",
+           "A6",
+           "A7"
+          ]
+         },
+         {
+          "id": "B",
+          "titre": "Le COP du groupe froid",
+          "min": 20,
+          "questions": [
+           "B1",
+           "B2",
+           "B3",
+           "B4",
+           "B5"
+          ]
+         }
+        ]
        },
        {
         "num": "Point de cours – Activité 2",
@@ -3285,7 +3503,35 @@
         "num": "Activité 3",
         "titre": "Activité 3 – L'autonomie de la batterie 125 V",
         "duree": 0.75,
-        "corrige": "et-sources-conversions-et-stockage-de-l-ene-corrige-activite-3-l-autonomie-de-la-batterie-125-"
+        "corrige": "et-sources-conversions-et-stockage-de-l-ene-corrige-activite-3-l-autonomie-de-la-batterie-125-",
+        "parties": [
+         {
+          "id": "A",
+          "titre": "L'autonomie de la batterie",
+          "min": 25,
+          "questions": [
+           "A1",
+           "A2",
+           "A3",
+           "A4",
+           "A5",
+           "A6",
+           "A7"
+          ]
+         },
+         {
+          "id": "B",
+          "titre": "Comparer les réservoirs d'énergie",
+          "min": 20,
+          "questions": [
+           "B1",
+           "B2",
+           "B3",
+           "B4",
+           "B5"
+          ]
+         }
+        ]
        },
        {
         "num": "Point de cours – Activité 3",
@@ -3315,7 +3561,35 @@
         "num": "Activité 4",
         "titre": "Activité 4 – Un projet d'ombrière solaire",
         "duree": 0.75,
-        "corrige": "et-sources-conversions-et-stockage-de-l-ene-corrige-activite-4-un-projet-d-ombriere-solaire"
+        "corrige": "et-sources-conversions-et-stockage-de-l-ene-corrige-activite-4-un-projet-d-ombriere-solaire",
+        "parties": [
+         {
+          "id": "A",
+          "titre": "Exploiter le soleil et caractériser un panneau",
+          "min": 20,
+          "questions": [
+           "A1",
+           "A2",
+           "A3",
+           "A4",
+           "A5"
+          ]
+         },
+         {
+          "id": "B",
+          "titre": "Tester l'échantillon et dimensionner l'ombrière",
+          "min": 25,
+          "questions": [
+           "B1",
+           "B2",
+           "B3",
+           "B4",
+           "B5",
+           "B6",
+           "B7"
+          ]
+         }
+        ]
        },
        {
         "num": "Point de cours – Activité 4",
@@ -3350,7 +3624,8 @@
        "l'autonomie d'un stockage"
       ],
       "oral": true,
-      "classeCours": "et2a"
+      "classeCours": "et2a",
+      "devoirs": true
      }
     }
    ]
@@ -4517,7 +4792,32 @@
         "num": "Activité 1",
         "titre": "Activité 1 – L'ADI et le montage suiveur",
         "duree": 0.75,
-        "corrige": "cira-amplification-corrige-activite-1-l-adi-et-le-montage-suiveur"
+        "corrige": "cira-amplification-corrige-activite-1-l-adi-et-le-montage-suiveur",
+        "parties": [
+         {
+          "id": "A",
+          "titre": "Découvrir l'ADI",
+          "min": 20,
+          "questions": [
+           "A1",
+           "A2",
+           "A3",
+           "A4",
+           "A5"
+          ]
+         },
+         {
+          "id": "B",
+          "titre": "Le problème de la sonde et le montage suiveur",
+          "min": 25,
+          "questions": [
+           "B1",
+           "B2",
+           "B3",
+           "B4"
+          ]
+         }
+        ]
        },
        {
         "num": "Point de cours – Activité 1",
@@ -4567,7 +4867,33 @@
         "num": "Activité 2",
         "titre": "Activité 2 – Le soustracteur et le décalage de zéro",
         "duree": 0.75,
-        "corrige": "cira-amplification-corrige-activite-2-le-soustracteur-et-le-decalage-"
+        "corrige": "cira-amplification-corrige-activite-2-le-soustracteur-et-le-decalage-",
+        "parties": [
+         {
+          "id": "A",
+          "titre": "Décaler le zéro",
+          "min": 20,
+          "questions": [
+           "A1",
+           "A2",
+           "A3",
+           "A4",
+           "A5"
+          ]
+         },
+         {
+          "id": "B",
+          "titre": "Décaler et amplifier avec un seul montage",
+          "min": 25,
+          "questions": [
+           "B1",
+           "B2",
+           "B3",
+           "B4",
+           "B5"
+          ]
+         }
+        ]
        },
        {
         "num": "Point de cours – Activité 2",
@@ -4611,7 +4937,31 @@
         "num": "Activité 3",
         "titre": "Activité 3 – L'amplificateur d'instrumentation",
         "duree": 0.75,
-        "corrige": "cira-amplification-corrige-activite-3-l-amplificateur-d-instrumentati"
+        "corrige": "cira-amplification-corrige-activite-3-l-amplificateur-d-instrumentati",
+        "parties": [
+         {
+          "id": "A",
+          "titre": "Mode différentiel et mode commun",
+          "min": 20,
+          "questions": [
+           "A1",
+           "A2",
+           "A3",
+           "A4"
+          ]
+         },
+         {
+          "id": "B",
+          "titre": "Régler l'amplificateur d'instrumentation",
+          "min": 25,
+          "questions": [
+           "B1",
+           "B2",
+           "B3",
+           "B4"
+          ]
+         }
+        ]
        },
        {
         "num": "Point de cours – Activité 3",
@@ -4651,7 +5001,8 @@
        "le soustracteur pour décaler le zéro",
        "la mise à l'échelle du conditionneur complet"
       ],
-      "oral": true
+      "oral": true,
+      "devoirs": true
      }
     },
     {
@@ -5213,7 +5564,32 @@
         "num": "Activité 1",
         "titre": "Activité 1 – Le pH, une mesure de l'acidité",
         "duree": 0.75,
-        "corrige": "cira-acides-bases-et-ph-corrige-activite-1-le-ph-une-mesure-de-l-acidite"
+        "corrige": "cira-acides-bases-et-ph-corrige-activite-1-le-ph-une-mesure-de-l-acidite",
+        "parties": [
+         {
+          "id": "A",
+          "titre": "Le pH et les ions oxonium",
+          "min": 20,
+          "questions": [
+           "A1",
+           "A2",
+           "A3",
+           "A4"
+          ]
+         },
+         {
+          "id": "B",
+          "titre": "Les ions hydroxyde dans l'eau de rinçage",
+          "min": 25,
+          "questions": [
+           "B1",
+           "B2",
+           "B3",
+           "B4",
+           "B5"
+          ]
+         }
+        ]
        },
        {
         "num": "Point de cours – Activité 1",
@@ -5243,7 +5619,32 @@
         "num": "Activité 2",
         "titre": "Activité 2 – Acide fort, acide faible",
         "duree": 0.75,
-        "corrige": "cira-acides-bases-et-ph-corrige-activite-2-acide-fort-acide-faible"
+        "corrige": "cira-acides-bases-et-ph-corrige-activite-2-acide-fort-acide-faible",
+        "parties": [
+         {
+          "id": "A",
+          "titre": "Acide fort ou acide faible ?",
+          "min": 20,
+          "questions": [
+           "A1",
+           "A2",
+           "A3",
+           "A4"
+          ]
+         },
+         {
+          "id": "B",
+          "titre": "Prédominance et indicateur coloré",
+          "min": 25,
+          "questions": [
+           "B1",
+           "B2",
+           "B3",
+           "B4",
+           "B5"
+          ]
+         }
+        ]
        },
        {
         "num": "Point de cours – Activité 2",
@@ -5293,7 +5694,32 @@
         "num": "Activité 3",
         "titre": "Activité 3 – Neutraliser les eaux de lavage",
         "duree": 0.75,
-        "corrige": "cira-acides-bases-et-ph-corrige-activite-3-neutraliser-les-eaux-de-lavage"
+        "corrige": "cira-acides-bases-et-ph-corrige-activite-3-neutraliser-les-eaux-de-lavage",
+        "parties": [
+         {
+          "id": "A",
+          "titre": "Le volume d'acide à l'équivalence",
+          "min": 20,
+          "questions": [
+           "A1",
+           "A2",
+           "A3",
+           "A4"
+          ]
+         },
+         {
+          "id": "B",
+          "titre": "Faut-il réguler le pH ?",
+          "min": 25,
+          "questions": [
+           "B1",
+           "B2",
+           "B3",
+           "B4",
+           "B5"
+          ]
+         }
+        ]
        },
        {
         "num": "Point de cours – Activité 3",
@@ -5359,7 +5785,8 @@
        "la prédominance d'une espèce selon le pH et le pKa",
        "le dosage pH-métrique : volume équivalent et relation à l'équivalence"
       ],
-      "oral": true
+      "oral": true,
+      "devoirs": true
      }
     }
    ]
@@ -5951,7 +6378,34 @@
         "num": "Activité 1",
         "titre": "Activité 1 – Échantillonner et bloquer un signal",
         "duree": 0.75,
-        "corrige": "cim-discretisation-et-conversion-corrige-activite-1-echantillonner-et-bloquer-un-si"
+        "corrige": "cim-discretisation-et-conversion-corrige-activite-1-echantillonner-et-bloquer-un-si",
+        "parties": [
+         {
+          "id": "A",
+          "titre": "Échantillonner l'impulsion",
+          "min": 25,
+          "questions": [
+           "A1",
+           "A2",
+           "A3",
+           "A4",
+           "A5",
+           "A6"
+          ]
+         },
+         {
+          "id": "B",
+          "titre": "Bloquer chaque échantillon",
+          "min": 20,
+          "questions": [
+           "B1",
+           "B2",
+           "B3",
+           "B4",
+           "B5"
+          ]
+         }
+        ]
        },
        {
         "num": "Point de cours – Activité 1",
@@ -6000,7 +6454,32 @@
         "num": "Activité 2",
         "titre": "Activité 2 – Le quartz et la division de fréquence",
         "duree": 0.75,
-        "corrige": "cim-discretisation-et-conversion-corrige-activite-2-le-quartz-et-la-division-de-fre"
+        "corrige": "cim-discretisation-et-conversion-corrige-activite-2-le-quartz-et-la-division-de-fre",
+        "parties": [
+         {
+          "id": "A",
+          "titre": "Du quartz à la seconde",
+          "min": 25,
+          "questions": [
+           "A1",
+           "A2",
+           "A3",
+           "A4"
+          ]
+         },
+         {
+          "id": "B",
+          "titre": "Quel quartz choisir ?",
+          "min": 20,
+          "questions": [
+           "B1",
+           "B2",
+           "B3",
+           "B4",
+           "B5"
+          ]
+         }
+        ]
        },
        {
         "num": "Point de cours – Activité 2",
@@ -6057,7 +6536,31 @@
         "num": "Activité 3",
         "titre": "Activité 3 – Le CNA et la carte d'entrées-sorties",
         "duree": 0.75,
-        "corrige": "cim-discretisation-et-conversion-corrige-activite-3-le-cna-et-la-carte-d-entrees-so"
+        "corrige": "cim-discretisation-et-conversion-corrige-activite-3-le-cna-et-la-carte-d-entrees-so",
+        "parties": [
+         {
+          "id": "A",
+          "titre": "Le CNA vu de l'extérieur",
+          "min": 20,
+          "questions": [
+           "A1",
+           "A2",
+           "A3",
+           "A4"
+          ]
+         },
+         {
+          "id": "B",
+          "titre": "À l'intérieur du CNA et de la carte",
+          "min": 25,
+          "questions": [
+           "B1",
+           "B2",
+           "B3",
+           "B4"
+          ]
+         }
+        ]
        },
        {
         "num": "Point de cours – Activité 3",
@@ -6097,7 +6600,8 @@
        "le quantum et le nombre N d'un CAN",
        "la tension de sortie d'un CNA"
       ],
-      "oral": true
+      "oral": true,
+      "devoirs": true
      }
     },
     {

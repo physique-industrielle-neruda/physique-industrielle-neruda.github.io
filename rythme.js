@@ -19,7 +19,45 @@ export const toMs = x => x == null ? null : typeof x === "number" ? x : x.toMill
 export const BAREME = { corriges: 10, cours: 2, anim: 3, regularite: 5 };
 /* 25/11/2026 : dossier avec points de cours en ligne → corrigés 7, cours 3 (exemples + points de cours) */
 export const BAREME_PDC = { corriges: 9, cours: 3, anim: 3, regularite: 5 };
-export const baremeDe = ch => ch && ch.rythme && ch.rythme.items.some(x => x.pdc) ? BAREME_PDC : BAREME;
+/* 27/11/2026 : dossier avec travail à la maison (rythme.devoirs) → critère « Maison » /2, pris sur la régularité (5 → 3).
+   Apprentis (classes et1a, et2a, élèves inscrits dans deux classes, ou cochés « apprenti » dans l'appli) : même devoir, hors note. */
+export const baremeDe = (ch, sansMaison) => { const b = ch && ch.rythme && ch.rythme.items.some(x => x.pdc) ? BAREME_PDC : BAREME;
+  return ch && ch.rythme && ch.rythme.devoirs && !sansMaison ? { ...b, regularite: b.regularite - 2, maison: 2 } : b; };
+export const CLASSES_APPRENTIS = ["et1a", "et2a"];
+export function estApprenti(ch, classe, login, r){
+  if (r && r.apprenti != null) return !!r.apprenti;   // réglage du professeur, élève par élève
+  const R = (ch && ch.rythme) || {};
+  return CLASSES_APPRENTIS.includes(classe) || (R.aussi || []).includes(login);
+}
+export const devoirId = chapId => "devoir:" + chapId;
+const finJourMs = t => { const d = new Date(t); d.setHours(23, 59, 59, 999); return d.getTime(); };
+/* Travail à la maison (27/11/2026) : statut de chaque devoir donné en fin de séance.
+   Le devoir de la séance t se vérifie à la séance de cours suivante (jusqu'à la fin de ce jour-là).
+   Automatique quand chaque tâche correspond à une pièce entière suivie par le site (corrigé débloqué, point de cours terminé,
+   correction d'exemple ouverte) ; sinon « à vérifier » jusqu'à ce que le professeur choisisse fait / en partie / pas fait.
+   Devoirs « avance » (facultatif) et « attente » (rien de nouveau) : jamais comptés. */
+export function statutsMaison(items, devDoc, r, seancesCours, now){
+  const liste = (devDoc && devDoc.liste) || {}, prof = (r && r.maison) || {}, perso = (r && r.devoirProf) || {};
+  const ts = seancesCours.map(s => s.t);
+  return Object.keys(liste).map(Number).filter(t => t > 0).sort((a, b) => a - b).map(t => {
+    const d = { ...liste[t] }, p = perso[t];
+    if (p) { d.taches = [{ quoi: p.quoi, min: +p.min || 15, prof: true }]; d.min = +p.min || 15; d.type = "travail"; }
+    const suiv = ts.find(x => x > t + 60e3), evaluable = d.type === "travail";
+    let statut = "attente";
+    if (!evaluable) statut = "libre";
+    else if (prof[t]) statut = prof[t];
+    else if (suiv) {
+      const fin = finJourMs(suiv), tch = d.taches || [];
+      if (tch.some(x => !x.num || !x.complet)) statut = "verifier";
+      else { const ok = tch.filter(x => { const it = items.find(y => y.num === x.num); return it && it.t && it.t <= fin; }).length;
+        statut = ok === tch.length ? "fait" : ok ? "partiel" : "non"; }
+    }
+    return { t, suiv: suiv || null, ...d, statut, evaluable };
+  });
+}
+export const MAISON = { fait: { lib: "Fait", pts: 1, couleur: "#3F7A3A", fond: "#E6F1E3" }, partiel: { lib: "En partie", pts: 0.5, couleur: "#C55A11", fond: "#FBE5D6" },
+  non: { lib: "Pas fait", pts: 0, couleur: "#C0392B", fond: "#FBE5E1" }, verifier: { lib: "À vérifier", couleur: "#2E75B6", fond: "#DEEAF6" },
+  attente: { lib: "Pour la prochaine séance", couleur: "#5A6577", fond: "#EEF1F5" }, libre: { lib: "Non compté", couleur: "#5A6577", fond: "#EEF1F5" } };
 export const exemplesId = chapId => "exemples:" + chapId;
 export const rythmeDocId = (chapId, uid) => "rythme_" + chapId + "_" + uid;
 export const rythmeDoc = chapId => "rythme:" + chapId;
@@ -29,7 +67,7 @@ export function heures(h){
 }
 export function finJour(iso){ if (!iso) return Infinity; const d = new Date(iso + "T23:59:59"); return isNaN(d) ? Infinity : d.getTime(); }
 
-/* src = { corrAt: {corrigeId: ms}, mp: {pdc: doc pointsdecours}, r: doc rythme (seances, evalDate, ajust, essentiel), now } */
+/* src = { corrAt: {corrigeId: ms}, mp: {pdc: doc pointsdecours}, r: doc rythme (seances, evalDate, ajust, essentiel, maison, devoirProf, apprenti), now, apprenti } */
 export function etat(ch, src){
   const R = ch.rythme, chapId = ch.verrou ? ch.verrou.id : ch.titre, now = src.now || Date.now();
   const r = src.r || {}, corrAt = src.corrAt || {}, mp = src.mp || {};
@@ -71,7 +109,10 @@ export function etat(ch, src){
   sv.forEach((s, k) => { cum += s.h; const tn = k + 1 < sv.length ? sv[k + 1].t : Math.min(now, limite);
     const e = ess && s.t >= essDepuis, rr = attendu(cum, e) - faitA(tn, e); scores.push(rr <= 0 ? 1 : rr <= 1 ? 0.5 : 0); });
   const corr = items.filter(x => x.corrige), avant = x => x.t && x.t <= limite;
-  const B = baremeDe(ch);
+  const B = baremeDe(ch, !!src.apprenti);
+  /* Maison (27/11/2026) : moyenne des devoirs vérifiés avant la fin du jour de l'évaluation (fait 1, en partie ½, pas fait 0) */
+  const maison = ch.rythme.devoirs ? statutsMaison(items, mp[devoirId(chapId)], r, seances, now) : [];
+  const mv = maison.filter(x => x.evaluable && MAISON[x.statut] && MAISON[x.statut].pts != null && x.t <= limite);
   const anim = items.find(x => x.anim), exs = items.filter(x => x.exemple || x.pdc);   // critère « Cours » : exemples + points de cours en ligne
   const pts = {
     corriges: corr.length ? B.corriges * corr.filter(avant).length / corr.length : B.corriges,
@@ -79,9 +120,10 @@ export function etat(ch, src){
     anim: anim ? B.anim * anim.part : B.anim,
     regularite: scores.length ? B.regularite * scores.reduce((a, b) => a + b, 0) / scores.length : B.regularite
   };
+  if (B.maison) pts.maison = mv.length ? B.maison * mv.reduce((a, x) => a + MAISON[x.statut].pts, 0) / mv.length : B.maison;
   const brut = Object.values(pts).reduce((a, b) => a + b, 0) + (+r.ajust || 0);
   const note = Math.max(0, Math.min(20, Math.round(brut * 2) / 2));
-  return { bareme: B, toutes, items, contenu, contenuTout, contenuEss, ess, deuxTiers, marge, total, ecoule, fait, retard, statut, avance, frein, reste, resteCours, seances, scores, pts, note, limite, evalDate: r.evalDate || "" };
+  return { bareme: B, maison, apprenti: !!src.apprenti, toutes, items, contenu, contenuTout, contenuEss, ess, deuxTiers, marge, total, ecoule, fait, retard, statut, avance, frein, reste, resteCours, seances, scores, pts, note, limite, evalDate: r.evalDate || "" };
 }
 export const STATUTS = {
   avance: { lib: "En avance",      couleur: "#2E75B6", fond: "#DEEAF6" },
