@@ -1312,11 +1312,12 @@ function jaugeBox(c, ch){
     : horsEss && e.deuxTiers && (e.statut === "orange" || e.statut === "rouge") ? " Parle à ton professeur : il peut t'ouvrir le chemin essentiel, plus court, pour être prêt le jour de l'évaluation." : "";
   box.innerHTML = `<div class="ry-head"><b>Mon rythme dans le dossier</b>${apercu ? '<span class="ry-apercu">Aperçu professeur (exemple fictif)</span>' : ""}<span class="ry-st" style="color:${st.couleur};background:${st.fond}">${st.lib}${e.statut === "avance" ? " · +" + heures(e.avance) : ""}${e.frein ? " 🔒" : ""}</span></div>
     <div class="ry-bar" role="img" aria-label="Travail fait ${heures(e.fait)} sur ${heures(e.contenu)}, temps de cours écoulé ${heures(e.ecoule)} sur ${heures(e.total)}">
-      <span class="ry-fill" style="width:${pc(e.fait)}%;background:${st.couleur}"></span>
+      <span class="ry-fill" style="width:${pc(e.fait)}%;background:${st.couleur};opacity:.4"></span>
+      <span class="ry-fill" style="width:${pc(e.verifie ?? e.fait)}%;background:${st.couleur}"></span>
       <span class="ry-marge" style="left:${pc(e.contenu)}%"></span>
       <span class="ry-now" style="left:${pc(e.ecoule)}%"></span>
     </div>
-    <div class="ry-leg"><span><i class="ry-k fill" style="background:${st.couleur}"></i>Travail fait : ${heures(e.fait)} sur ${heures(e.contenu)}</span><span><i class="ry-k now"></i>Cours écoulés : ${heures(e.ecoule)} sur ${heures(e.total)}</span><span><i class="ry-k marge"></i>1 h de marge</span></div>
+    <div class="ry-leg"><span><i class="ry-k fill" style="background:${st.couleur}"></i>Travail fait : ${heures(e.fait)} sur ${heures(e.contenu)}</span>${e.declare > 1e-6 ? `<span><i class="ry-k fill" style="background:${st.couleur};opacity:.4"></i>dont ${heures(e.declare)} indiqué en fin de cours, en attente de vérification</span>` : ""}<span><i class="ry-k now"></i>Cours écoulés : ${heures(e.ecoule)} sur ${heures(e.total)}</span><span><i class="ry-k marge"></i>1 h de marge</span></div>
     <p class="ry-msg">Il te reste <b>${heures(e.reste)}</b> de travail. Il reste <b>${heures(e.resteCours)}</b> de cours avant la fin du dossier${dateEval && !pvE ? ` (évaluation le ${esc(dateEval)})` : ""}. ${conseil}${conseilEss}${evTxt}</p>
     ${apercu ? "" : DEV.bloc(c, ch, e)}
     ${oralBox(ch, apercu)}

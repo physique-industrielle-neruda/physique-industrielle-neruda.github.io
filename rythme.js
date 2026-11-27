@@ -81,6 +81,34 @@ export function heures(h){
 export function finJour(iso){ if (!iso) return Infinity; const d = new Date(iso + "T23:59:59"); return isNaN(d) ? Infinity : d.getTime(); }
 
 /* src = { corrAt: {corrigeId: ms}, mp: {pdc: doc pointsdecours}, r: doc rythme (seances, evalDate, ajust, essentiel, maison, devoirProf, apprenti), now, apprenti } */
+/* 27/11/2026 : travail DÉCLARÉ en fin de cours (« Où t'es-tu arrêté ? », devoirs.js) — compté dans la jauge, jamais dans la note.
+   Seules les pièces « papier » (activités, exercices hors TP) peuvent être déclarées : le reste est suivi par le site.
+   Pièces avant celle déclarée = faites (attendent la vérification) ; activité en cours = questions avant la question déclarée ;
+   exercice « commencé » = moitié ; « fini » ou « j'attends la vérification » = entier. Remplacé par le vérifié dès le corrigé débloqué. */
+function declaration(items, devDoc, ess){
+  const liste = (devDoc && devDoc.liste) || {};
+  const ts = Object.keys(liste).map(Number).filter(t => t > 0 && liste[t] && liste[t].arret).sort((a, b) => a - b);
+  if (!ts.length) return null;
+  const t = ts[ts.length - 1], arret = liste[t].arret, at = toMs(liste[t].at) || t;
+  const papier = x => !!(x.corrige && !x.tp && !x.parcours && !(ess && x.horsEss));
+  const L = items.filter(x => !x.tp && !x.parcours && !(ess && x.horsEss));
+  let iA = arret.num ? L.findIndex(x => x.num === arret.num) : -1, etatA = arret;
+  if (iA < 0 && arret.attente) { iA = L.findIndex(x => papier(x) && !x.fait); etatA = { etat: "fini" }; }
+  if (iA < 0) return null;
+  const part = new Map();
+  L.forEach((x, k) => { if (x.fait || !papier(x) || k > iA) return;
+    if (k < iA) { part.set(x, 1); return; }
+    if (x.parties && etatA.q) {
+      if (etatA.q === "fini") { part.set(x, 1); return; }
+      const qs = []; x.parties.forEach(p => { const q = p.questions && p.questions.length ? p.questions : [p.id + "1"]; q.forEach(y => qs.push({ q: y, min: (+p.min || 0) / q.length })); });
+      const tot = qs.reduce((a, y) => a + y.min, 0), i = qs.findIndex(y => y.q === etatA.q);
+      if (tot > 0 && i > 0) part.set(x, qs.slice(0, i).reduce((a, y) => a + y.min, 0) / tot);
+    }
+    else if (etatA.etat === "fini") part.set(x, 1);
+    else if (etatA.etat === "commence") part.set(x, 0.5);
+  });
+  return { t, at, part };
+}
 export function etat(ch, src){
   const R = ch.rythme, chapId = ch.verrou ? ch.verrou.id : ch.titre, now = src.now || Date.now();
   const r = src.r || {}, corrAt = src.corrAt || {}, mp = src.mp || {};
@@ -107,7 +135,12 @@ export function etat(ch, src){
   const seances = toutes.filter(s => !s.tp);   // séances de TP : hors jauge
   const ecoule = seances.reduce((s, x) => s + x.h, 0);
   const faitA = (t, e = ess) => items.reduce((s, x) => s + (!x.tp && !(e && x.horsEss) && x.t && x.t <= t ? x.duree : 0), 0);
-  const fait = faitA(now);
+  const verifie = faitA(now);
+  /* Jauge = vérifié + déclaré en fin de cours ; régularité et note = vérifié seulement */
+  const dec = ch.rythme.devoirs ? declaration(items, mp[devoirId(chapId)], ess) : null;
+  items.forEach(x => { x.decl = dec ? (dec.part.get(x) || 0) : 0; });
+  const declare = items.reduce((s, x) => s + (x.decl && !x.fait ? x.decl * x.duree : 0), 0);
+  const fait = verifie + declare;
   /* Temps de cours « attendu » : sur le chemin essentiel, l'élève dispose du temps gagné (pièces facultatives) */
   const attendu = (cum, e = ess) => e ? Math.min(Math.max(0, cum - ecart), contenuEss) : Math.min(cum, contenuTout);
   const retard = attendu(ecoule) - fait;
@@ -138,7 +171,7 @@ export function etat(ch, src){
   const brut = Object.values(pts).reduce((a, b) => a + b, 0) + (+r.ajust || 0);
   const note = Math.max(0, Math.min(20, Math.round(brut * 2) / 2));
   const absences = seances.filter(s => absentA(r, s.t)).map(s => s.t);
-  return { bareme: B, maison, absences, apprenti: !!src.apprenti, toutes, items, contenu, contenuTout, contenuEss, ess, deuxTiers, marge, total, ecoule, fait, retard, statut, avance, frein, reste, resteCours, seances, scores, pts, note, limite, evalDate: r.evalDate || "" };
+  return { bareme: B, maison, absences, apprenti: !!src.apprenti, toutes, items, contenu, contenuTout, contenuEss, ess, deuxTiers, marge, total, ecoule, fait, verifie, declare, retard, statut, avance, frein, reste, resteCours, seances, scores, pts, note, limite, evalDate: r.evalDate || "" };
 }
 export const STATUTS = {
   avance: { lib: "En avance",      couleur: "#2E75B6", fond: "#DEEAF6" },
