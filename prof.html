@@ -70,7 +70,11 @@ details.annee>summary::-webkit-details-marker{display:none}
 details.annee>summary::before{content:"▸";color:var(--muted);transition:transform .15s}
 details.annee[open]>summary::before{transform:rotate(90deg)}
 details.annee[open]>summary{margin-bottom:4px}
-.grille{overflow-x:auto;padding:0}
+.grille{overflow:auto;padding:0;max-height:calc(100dvh - 96px - env(safe-area-inset-top));overscroll-behavior:contain}
+/* En-tête des tableaux figé en haut quand on fait défiler les élèves */
+.grille tr:first-child th{position:sticky;top:0;z-index:2;background:var(--surface);box-shadow:inset 0 -2px 0 var(--grid)}
+.grille tr:first-child th.lk{background:linear-gradient(var(--accent-soft),var(--accent-soft)),var(--surface)}
+.grille tr:first-child th.nom{z-index:3}
 .grille table{border-collapse:collapse;width:100%;font-size:.9rem}
 .grille th,.grille td{padding:10px 4px;text-align:center;border-top:1px solid var(--grid);white-space:nowrap}
 .grille tr:first-child th{border-top:0}
@@ -493,8 +497,8 @@ function chapitreGrille(c, g){
       + (aPouce ? `<p class="sec" id="cpTab">Coups de pouce utilisés</p><div class="card grille cpg"><table><tr><th class="nom">Élève</th>${docs.map(d => `<th title="${esc(d.titre)}">${esc(courtDe(d))}</th>`).join("")}</tr>`
         + el.map(e => `<tr><td class="nom">${esc(e.nom)}</td>${docs.map(d => `<td>${pouceDe(d, e.uid)}</td>`).join("")}</tr>`).join("")
         + `</table></div><p class="note">Pour chaque élève, les questions où il a débloqué un coup de pouce supplémentaire : <span class="cp n2">B5 2</span> niveau 2 · <span class="cp n3">B5 3</span> niveau 3. <span class="cp vu">lu</span> fiche ouverte, niveau 1 seulement · – fiche jamais ouverte.</p>` : "");
-    const sx = $(".grille") ? $(".grille").scrollLeft : 0;
-    $("#app").innerHTML = html + (g.ch.rythme ? RY.html() : ""); if ($(".grille")) $(".grille").scrollLeft = sx;
+    const sx = $(".grille") ? $(".grille").scrollLeft : 0, sy = $(".grille") ? $(".grille").scrollTop : 0;
+    $("#app").innerHTML = html + (g.ch.rythme ? RY.html() : ""); if ($(".grille")) { $(".grille").scrollLeft = sx; $(".grille").scrollTop = sy; }
     if (g.ch.rythme) RY.bind();
     $("#app").querySelectorAll("td.c").forEach(td => td.onclick = async () => {
       const d = cols[+td.dataset.j], uid = td.dataset.uid, id = d.corrige.id + "_" + uid; if (busy.has(id)) return;
@@ -1428,7 +1432,7 @@ function paneTests(c){
     return ouvert(t, uid) ? `<span class="dot non" title="Test ouvert, pas encore fait"></span>` : "🔒";
   };
   const render = () => {
-    const sx = $(".grille") ? $(".grille").scrollLeft : 0;
+    const sx = $(".grille") ? $(".grille").scrollLeft : 0, sy = $(".grille") ? $(".grille").scrollTop : 0;
     const tot = t => { const fait = etat.filter(x => x.test === t.id && mesUid.has(x.uid)), prets = fait.filter(x => x.pret).length;
       const ouv = el.filter(e => ouvert(t, e.uid)).length;
       return `${t.verrou ? "🔓 " + ouv + "/" + el.length + "<br>" : ""}faits ${fait.length}/${el.length}<br>prêts ${prets}/${el.length}`; };
@@ -1437,7 +1441,7 @@ function paneTests(c){
       + `<tr class="tot"><td class="nom">Classe</td>${tests.map(t => `<td>${tot(t)}</td>`).join("")}</tr></table></div>`
       + `<p class="note">🔒 test fermé : touche la case pour l'ouvrir à l'élève (touche-la à nouveau pour le refermer tant qu'il ne l'a pas fait). Touche le titre d'une colonne pour toute la classe. Une fois le test fait, touche la case pour voir ses réponses.<br><span class="dot non"></span> ouvert, pas encore fait · <span class="dot cours"></span> fait, fiches de révision en cours · <span class="dot fini"></span> prêt pour le chapitre</p>`
       + `<p class="note">Le test et les fiches se font sur le site, onglet « Mes révisions ». Les fiches des compétences ratées s'ouvrent toutes seules pour l'élève. Une fiche n'est « terminée » que lorsque ses trois questions sont réussies.</p>`;
-    if ($(".grille")) $(".grille").scrollLeft = sx;
+    if ($(".grille")) { $(".grille").scrollLeft = sx; $(".grille").scrollTop = sy; }
     $("#pane").querySelectorAll("td.c").forEach(td => td.onclick = async () => {
       const t = tests[+td.dataset.j], uid = td.dataset.uid, id = t.id + "_" + uid;
       if (etat.some(x => x.uid === uid && x.test === t.id)) return go(testEleve, c.id, t.id, uid);
