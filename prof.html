@@ -164,6 +164,7 @@ label.f{display:block;font-size:.9rem;color:var(--muted);margin-top:10px}
 .notif .it:first-of-type{border-top:0}
 .notif .it span{flex:1}
 .notif .it small{display:block;color:var(--muted)}
+.ry-gr{margin:6px 0}.ry-gr>summary{cursor:pointer;font-size:.9rem;color:var(--muted);font-weight:700;padding:4px 0}.ry-gr .btns{margin-top:4px}.ry-gr .mini{min-width:64px}
 .mini{font:inherit;font-size:.85rem;font-weight:700;border:1px solid var(--ink);background:none;color:var(--ink);border-radius:8px;padding:5px 10px;cursor:pointer}
 .st-ok{color:#1f7a3f;font-weight:700}.st-cours{color:#b45309;font-weight:700}.st-non{color:var(--muted)}
 .qrow{display:flex;gap:10px;padding:8px 14px;border-top:1px solid var(--grid)}
@@ -566,6 +567,23 @@ function choisirOral(nom, act, fini, avecDeblocage){
   document.head.appendChild(st); })();
 /* Absents à une séance (27/11/2026) : « absent ? » pré-coché pour les élèves sans aucune trace de travail sur le site
    pendant la séance (corrigé débloqué, coup de pouce, point de cours, exemple, animation, test…). Le professeur confirme. */
+/* 27/11/2026 : durée réelle d'un créneau Pronote de x h (1 h → 50 min, 2 h → 1 h 50) et grille de 15 min à 2 h */
+const reel = x => (x * 60 - 10) / 60;
+const GRILLE_H = [15, 30, 45, 60, 75, 90, 105, 120].map(m => m / 60);
+const grilleHtml = (ouverte, b) => `<details class="ry-gr"${ouverte ? " open" : ""}><summary>${ouverte ? "Premier cours du dossier : temps réellement passé dessus" : "Autre durée (cours partiel)"}</summary><div class="btns">${GRILLE_H.map(b).join("")}</div></details>`;
+function choisirDuree(titre, pleins, fini){
+  const ov = document.createElement("div"); ov.className = "or-ov";
+  ov.innerHTML = `<div class="or-box"><b>${esc(titre)}</b><p class="note">Temps réellement passé sur le dossier :</p>
+    <div class="btns">${pleins.map((p, i) => `<button class="btn ok" data-p="${i}">${esc(p.lib)}</button>`).join("")}</div>
+    <div class="btns">${GRILLE_H.map((h, i) => `<button class="mini" data-g="${i}">${heures(h)}</button>`).join("")}</div>
+    <div class="btns"><button class="btn" data-x="1">Annuler</button></div></div>`;
+  const fin = h => { ov.remove(); fini(h); };
+  ov.querySelectorAll("[data-p]").forEach(b => b.onclick = () => fin(pleins[+b.dataset.p].h));
+  ov.querySelectorAll("[data-g]").forEach(b => b.onclick = () => fin(GRILLE_H[+b.dataset.g]));
+  ov.querySelector("[data-x]").onclick = () => fin(null);
+  ov.onclick = e => { if (e.target === ov) fin(null); };
+  document.body.appendChild(ov);
+}
 function choisirAbsents(lignes, quand, fini){
   const ov = document.createElement("div"); ov.className = "or-ov";
   const tri = lignes.slice().sort((a, b) => (b.suspect - a.suspect) || a.e.nom.localeCompare(b.e.nom));
@@ -678,20 +696,13 @@ function rythmePanel(c, g, el, getP, rerender){
     const ok = await ecrireTous({ seances: k.seances.concat([{ t, h, ...(tp ? { tp: true } : {}) }]) }, (tp ? "Séance de TP" : "Séance de " + h + " h") + " enregistrée.");
     if (ok && !tp) noterAbsences(t, h, true);
   };
-  /* 27/11/2026 : durée réellement passée sur le dossier (ex. cours de 2 h dont 1 h 20 sur le dossier) */
-  const lireDuree = (txt, def) => { const v = prompt(txt + "\nExemples : 1h20 · 80 (minutes) · 1,5 (heures)", def || ""); if (v == null) return null;
-    const x = v.trim().toLowerCase().replace(",", ".").replace(/\s+/g, ""); let m;
-    if ((m = x.match(/^(\d+)h(\d{1,2})?(min)?$/))) m = +m[1] * 60 + (+m[2] || 0);
-    else if ((m = x.match(/^(\d+)min$/))) m = +m[1];
-    else if (/^\d+(\.\d+)?$/.test(x)) m = +x <= 5 ? +x * 60 : +x;
-    else { alert("Durée non comprise : « " + v + " »."); return null; }
-    m = Math.round(m / 5) * 5; if (m <= 0 || m > 300) { alert("Durée impossible : " + heures(m / 60) + "."); return null; }
-    return m / 60; };
-  const coursLibre = () => { const h = lireDuree("Temps réellement passé sur le dossier pendant ce cours ?"); if (h == null) return;
-    if (confirm("Enregistrer une séance de cours de " + heures(h) + " pour la classe ?")) cocher(h, false); };
+  /* 27/11/2026 : durées de cours. Créneau complet Pronote de x h = x h − 10 min réelles (1 h → 50 min, 2 h → 1 h 50) ;
+     grille de 15 min à 2 h (pas de 15 min) pour un cours partiel, surtout le premier cours du dossier. */
   const modifierDerniere = () => { const k = commun(), i = k.seances.map(x => !x.tp).lastIndexOf(true); if (i < 0) return;
-    const der = k.seances[i], h = lireDuree("Séance du " + jour(der.t) + " (comptée " + heures(+der.h) + ").\nTemps réellement passé sur le dossier ?", heures(+der.h).replace(/\s/g, "")); if (h == null) return;
-    ecrireTous({ seances: k.seances.map((x, j) => j === i ? { ...x, h } : x) }, "Séance corrigée : " + heures(h) + "."); };
+    const der = k.seances[i];
+    choisirDuree("Corriger le cours du " + jour(der.t) + " (compté " + heures(+der.h) + ")", sc_().map(x => ({ lib: "Créneau complet : " + x + " h", h: reel(x) })), h => {
+      if (h != null && Math.abs(h - der.h) > 1e-6) ecrireTous({ seances: k.seances.map((x, j) => j === i ? { ...x, h } : x) }, "Cours corrigé : " + heures(h) + "."); }); };
+  const sc_ = () => Array.isArray(R.seances) ? R.seances : ((R.seances || {})[c.id] || [1, 2]);
   const absHtml = () => { const k = commun(), der = k.seances.filter(x => !x.tp).slice(-1)[0]; if (!der) return "";
     const a = absentsDe(der.t);
     return `<p class="note">Absents à la dernière séance de cours : ${a.length ? a.map(e => `<span class="ry-pill ry-abs">${esc(e.nom)}</span>`).join(" ") : "<b>aucun</b>"} · <button class="linkbtn" data-abs="${der.t}" data-absh="${der.h}">${a.length ? "modifier" : "noter des absents"}</button></p>`; };
@@ -721,10 +732,10 @@ function rythmePanel(c, g, el, getP, rerender){
       ${msgBloque}<button class="btn" id="ryStart"${bloque}>Démarrer le suivi du rythme pour la classe</button></div>`;
     const auto = k.seances.filter(x => !x.tp), tps = k.seances.filter(x => x.tp);
     const ecoule = auto.reduce((s, x) => s + (+x.h || 0), 0), der = k.seances[k.seances.length - 1];
-    const sc = Array.isArray(R.seances) ? R.seances : ((R.seances || {})[c.id] || [1, 2]);
+    const sc = sc_();
     h += `<p class="note">Travail en autonomie prévu : ${heures(contenu)} + ${heures(marge)} de marge = <b>${heures(contenu + marge)}</b> · Cours écoulés : <b>${heures(ecoule)}</b> (${auto.length} séance${auto.length > 1 ? "s" : ""})${tps.length ? ` · TP faits : ${tps.length}` : ""}</p>
-      <div class="btns">${sc.map(x => `<button class="btn ok" data-h="${x}"${bloque}>J'ai cours : ${x} h</button>`).join("")}<button class="btn" id="ryLibre"${bloque}>J'ai cours : autre durée</button>${aTP ? `<button class="btn ok" data-h="${tpH}" data-tp="1"${bloque}>J'ai TP : ${tpH} h</button>` : ""}</div>${msgBloque}
-      <p class="note">Coche la séance <b>en fin de cours</b>.${aDev ? " Chaque élève voit alors la fenêtre « Où t'es-tu arrêté ? » et reçoit son travail à la maison (environ 15 min), visible dans la colonne « Maison »." : ""}${aTP ? " Une séance de TP ne fait pas avancer la jauge." : ""}${ailleurs.length ? ` ${ailleurs.map(e => esc(e.nom)).join(", ")} : suivi${ailleurs.length > 1 ? "s" : ""} avec la classe ${esc(kc.nom)} (séances cochées là-bas).` : ""} ${der ? `Dernière : ${jour(der.t)} (${der.tp ? "TP, " : ""}${heures(+der.h)}) · ${auto.length ? `<button class="linkbtn" id="ryDuree">corriger la durée du dernier cours</button> · ` : ""}<button class="linkbtn" id="ryUndo">annuler la dernière séance</button>` : ""}</p>${absHtml()}
+      <div class="btns">${sc.map(x => `<button class="btn ok" data-h="${reel(x)}"${bloque}>Créneau complet : ${x} h</button>`).join("")}${aTP ? `<button class="btn ok" data-h="${tpH}" data-tp="1"${bloque}>J'ai TP : ${tpH} h</button>` : ""}</div>${grilleHtml(!auto.length, x => `<button class="mini" data-h="${x}"${bloque}>${heures(x)}</button>`)}${msgBloque}
+      <p class="note">Coche la séance <b>en fin de cours</b>. « Créneau complet » compte le temps réel (1 h → 50 min, 2 h → 1 h 50).${aDev ? " Chaque élève voit alors la fenêtre « Où t'es-tu arrêté ? » et reçoit son travail à la maison (environ 15 min), visible dans la colonne « Maison »." : ""}${aTP ? " Une séance de TP ne fait pas avancer la jauge." : ""}${ailleurs.length ? ` ${ailleurs.map(e => esc(e.nom)).join(", ")} : suivi${ailleurs.length > 1 ? "s" : ""} avec la classe ${esc(kc.nom)} (séances cochées là-bas).` : ""} ${der ? `Dernière : ${jour(der.t)} (${der.tp ? "TP, " : ""}${heures(+der.h)}) · ${auto.length ? `<button class="linkbtn" id="ryDuree">corriger la durée du dernier cours</button> · ` : ""}<button class="linkbtn" id="ryUndo">annuler la dernière séance</button>` : ""}</p>${absHtml()}
       <label class="note ry-date">Date de l'évaluation (la note est arrêtée ce jour-là) : <input type="date" id="ryEval" value="${esc(k.evalDate)}"></label></div>`;
     const lignes = el.map(e => ({ e, ...valeurs(e), v: DOCS[e.uid] || {} }));
     /* 25/11/2026 : alerte aux deux tiers du dossier (chemin essentiel + 20 min de reprise avec le professeur) */
@@ -776,11 +787,10 @@ function rythmePanel(c, g, el, getP, rerender){
     const st = $("#ryStart"); if (st) st.onclick = () => { if (confirm("Démarrer le suivi du rythme pour toute la classe ? Les élèves verront la jauge dans le dossier.")) ecrireTous({ seances: [], evalDate: "" }, "Suivi démarré."); };
     document.querySelectorAll(".ry [data-h]").forEach(b => b.onclick = () => {
       const h = +b.dataset.h, tp = !!b.dataset.tp, k = commun();
-      if (!confirm("Enregistrer une séance " + (tp ? "de TP " : "") + "de " + h + " h pour la classe ?")) return;
+      if (!confirm("Enregistrer une séance " + (tp ? "de TP " : "de cours ") + "de " + heures(h) + " pour la classe ?")) return;
       cocher(h, tp);
     });
     bindAbs();
-    const lb = $("#ryLibre"); if (lb) lb.onclick = coursLibre;
     const rd = $("#ryDuree"); if (rd) rd.onclick = modifierDerniere;
     const u = $("#ryUndo"); if (u) u.onclick = () => { const k = commun(); if (!k.seances.length || !confirm("Annuler la dernière séance cochée ?")) return; ecrireTous({ seances: k.seances.slice(0, -1) }, "Dernière séance annulée."); };
     const d = $("#ryEval"); if (d) d.onchange = () => ecrireTous({ evalDate: d.value || "" }, d.value ? "Date de l'évaluation enregistrée." : "Date de l'évaluation effacée.");
@@ -868,8 +878,7 @@ function rythmePanel(c, g, el, getP, rerender){
       catch(x){ toast("Échec (" + (x.code || x.message) + ")."); } });
   };
   /* Accès pour l'onglet « Aujourd'hui » (25/11/2026) : mêmes données et mêmes écritures que ce tableau */
-  const api = { charge: () => charge, el: () => el, docs: () => DOCS, etatDe, commun, ecrireTous, ref, docId, tpH, aTP, aEss, ailleurs, kc, cocher, coursLibre, modifierDerniere, absHtml, bindAbs, live: () => absLive && absLive(),
-    sc: () => Array.isArray(R.seances) ? R.seances : ((R.seances || {})[c.id] || [1, 2]) };
+  const api = { charge: () => charge, el: () => el, docs: () => DOCS, etatDe, commun, ecrireTous, ref, docId, tpH, aTP, aEss, ailleurs, kc, cocher, modifierDerniere, absHtml, bindAbs, live: () => absLive && absLive(), sc: sc_ };
   return { html, bind: () => { bind(); if (aOral) bindOral(); }, stop, cibleDe, noterOral, aOral, api };
 }
 
@@ -971,10 +980,11 @@ function paneJour(c){
       + `<div class="btns">${btn("Démarrer le suivi du rythme", () => { if (confirm("Démarrer le suivi du rythme pour toute la classe ? Les élèves verront la jauge dans le dossier.")) A.ecrireTous({ seances: [], evalDate: "" }, "Suivi démarré."); }, "btn", !dosOuvert)}</div>`;
     else {
       const auto = k.seances.filter(x => !x.tp), ecoule = auto.reduce((s, x) => s + (+x.h || 0), 0), der = k.seances[k.seances.length - 1];
-      const seance = (hh, tp) => { if (!confirm("Enregistrer une séance " + (tp ? "de TP " : "") + "de " + hh + " h pour la classe ?")) return;
+      const seance = (hh, tp) => { if (!confirm("Enregistrer une séance " + (tp ? "de TP " : "de cours ") + "de " + heures(hh) + " pour la classe ?")) return;
         A.cocher(hh, tp); };
-      h += `<div class="btns">${A.sc().map(x => btn("J'ai cours : " + x + " h", () => seance(x, false), "btn ok", !dosOuvert)).join("")}${btn("J'ai cours : autre durée", () => A.coursLibre(), "btn", !dosOuvert)}${A.aTP ? btn("J'ai TP : " + A.tpH + " h", () => seance(A.tpH, true), "btn ok", !dosOuvert) : ""}</div>`
-        + `<p class="note">Coche la séance <b>en fin de cours</b>. Cours écoulés : <b>${heures(ecoule)}</b>${der ? ` · dernière : ${new Date(der.t).toLocaleString("fr-FR", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })} (${der.tp ? "TP, " : ""}${heures(+der.h)})` : ""}.${auto.length ? " " + btn("Corriger la durée du dernier cours", () => A.modifierDerniere(), "linkbtn") : ""}${A.ailleurs.length ? " " + A.ailleurs.map(e => esc(e.nom)).join(", ") + " : séances cochées avec la classe " + esc(A.kc.nom) + "." : ""}</p>${A.absHtml()}`;
+      h += `<div class="btns">${A.sc().map(x => btn("Créneau complet : " + x + " h", () => seance(reel(x), false), "btn ok", !dosOuvert)).join("")}${A.aTP ? btn("J'ai TP : " + A.tpH + " h", () => seance(A.tpH, true), "btn ok", !dosOuvert) : ""}</div>`
+        + grilleHtml(!auto.length, x => btn(heures(x), () => seance(x, false), "mini", !dosOuvert))
+        + `<p class="note">Coche la séance <b>en fin de cours</b>. « Créneau complet » compte le temps réel (1 h → 50 min, 2 h → 1 h 50). Cours écoulés : <b>${heures(ecoule)}</b>${der ? ` · dernière : ${new Date(der.t).toLocaleString("fr-FR", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })} (${der.tp ? "TP, " : ""}${heures(+der.h)})` : ""}.${auto.length ? " " + btn("Corriger la durée du dernier cours", () => A.modifierDerniere(), "linkbtn") : ""}${A.ailleurs.length ? " " + A.ailleurs.map(e => esc(e.nom)).join(", ") + " : séances cochées avec la classe " + esc(A.kc.nom) + "." : ""}</p>${A.absHtml()}`;
     }
     if (!dosOuvert) h += `<p class="note" style="color:#C55A11"><b>🔒 Ouvre d'abord le dossier</b> (Déblocages ci-dessus) : tant qu'il est verrouillé, les séances ne sont pas comptées.</p>`;
     h += `</div>`;

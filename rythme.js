@@ -184,12 +184,14 @@ export function comDe(r){
    ni les cours annulés, ni les absences de classe) jusqu'à couvrir la durée du dossier (travail en autonomie + marge).
    L'évaluation est prévue à la séance de cours suivante. seances = [{ t: début en ms, h: heures, type: "cours" | "tp" }].
    La date saisie par le professeur (evalDate) reste prioritaire. */
+/* 27/11/2026 : un créneau Pronote de x h dure x h − 10 min de travail réel (1 h → 50 min, 2 h → 1 h 50) */
+export const dureeReelle = h => Math.max(0, (+h || 0) - 1 / 6);
 export function prevision(ch, seances, debut){
   const R = ch && ch.rythme; if (!R || !debut || !seances) return null;
   const total = R.items.reduce((s, x) => s + (x.tp ? 0 : x.duree), 0) + (R.marge ?? 1);
   const cours = seances.filter(s => s.type !== "tp" && s.t > debut).sort((a, b) => a.t - b.t);
   let cum = 0, i = 0;
-  for (; i < cours.length && cum < total - 1e-6; i++) cum += cours[i].h;
+  for (; i < cours.length && cum < total - 1e-6; i++) cum += dureeReelle(cours[i].h);
   if (cum < total - 1e-6) return { total, seances: cours, fin: null, eval: null, n: cours.length };
   const evalS = cours[i] || null;
   return { total, seances: cours.slice(0, i), fin: cours[i - 1].t, eval: evalS ? evalS.t : null, n: i };
