@@ -440,8 +440,12 @@ async function decryptBlob(url, key, type){
   if (!r.ok) throw new Error("introuvable");
   const buf = new Uint8Array(await r.arrayBuffer());
   const plain = await crypto.subtle.decrypt({name:"AES-GCM", iv:buf.slice(0,12)}, key, buf.slice(12));
+  if (type && type.indexOf("text/html") === 0) return new Blob([avecSigne(new TextDecoder().decode(plain))], {type});
   return new Blob([plain], {type: type || "application/pdf"});
 }
+/* Bouton ± ajouté aux cases de réponse numériques sur téléphone (27/11/2026) */
+const SIGNE_MOINS = "<script>/* Bouton ± (27/11/2026) : le clavier numérique des téléphones n'a pas toujours le signe moins */\n(function(){\n if(window.__signeMoins)return;window.__signeMoins=1;\n var tactile=window.matchMedia&&matchMedia('(pointer:coarse)').matches;if(!tactile)return;\n var css=document.createElement('style');css.textContent='.btn-signe{font:700 16px Arial,sans-serif;min-width:38px;height:34px;margin:0 4px;padding:0 6px;border:1px solid #9AA6B5;border-radius:6px;background:#fff;color:#1F3864;cursor:pointer;flex:0 0 auto;vertical-align:middle}.btn-signe:active{background:#DEEAF6}';\n (document.head||document.documentElement).appendChild(css);\n function equipe(inp){\n  if(inp.__signe||inp.hasAttribute('data-nosigne'))return;inp.__signe=1;\n  var b=document.createElement('button');b.type='button';b.className='btn-signe';b.textContent='±';\n  b.setAttribute('aria-label','Changer le signe (+ / −)');b.title='Changer le signe';\n  b.addEventListener('mousedown',function(e){e.preventDefault();});\n  b.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();\n   if(inp.disabled||inp.readOnly)return;\n   var v=inp.value.replace(/^\\s+/,'');\n   inp.value=/^[-−–]/.test(v)?v.replace(/^[-−–]\\s*/,''):'-'+v;\n   inp.dispatchEvent(new Event('input',{bubbles:true}));inp.focus();});\n  inp.insertAdjacentElement('afterend',b);\n }\n function scan(r){(r||document).querySelectorAll&&(r||document).querySelectorAll('input[inputmode=\"decimal\"],input[inputmode=\"numeric\"]').forEach(equipe);}\n function go(){scan();new MutationObserver(function(m){m.forEach(function(x){x.addedNodes.forEach(function(n){if(n.nodeType!==1)return;if(n.matches&&n.matches('input'))scan(n.parentNode);else scan(n);});});}).observe(document.body,{childList:true,subtree:true});}\n if(document.body)go();else document.addEventListener('DOMContentLoaded',go);\n})();<\/script>";
+function avecSigne(html){ return html.indexOf("__signeMoins") >= 0 ? html : (/<\/body>/i.test(html) ? html.replace(/<\/body>/i, () => SIGNE_MOINS + "</body>") : html + SIGNE_MOINS); }
 
 /* Clé d'un corrigé : transmise par le professeur (élève) ou extraite de l'enveloppe (professeur) */
 async function corrKey(d){
@@ -1373,7 +1377,7 @@ function suivreRevisions(uid){
 }
 async function lireRev(fichier){
   const key = await outilsKey(); if (!key) throw new Error("cle");
-  return (await decryptBlob(BASE + "docs/revisions/" + fichier, key, "text/plain")).text();
+  return avecSigne(await (await decryptBlob(BASE + "docs/revisions/" + fichier, key, "text/plain")).text());
 }
 let katexP = null;
 function katex(el){

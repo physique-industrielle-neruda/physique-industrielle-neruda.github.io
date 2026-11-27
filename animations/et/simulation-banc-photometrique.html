@@ -324,5 +324,26 @@ window.matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', (
 setPoste(1);
 })();
 </script>
-</body>
+<script>/* Bouton ± (27/11/2026) : le clavier numérique des téléphones n'a pas toujours le signe moins */
+(function(){
+ if(window.__signeMoins)return;window.__signeMoins=1;
+ var tactile=window.matchMedia&&matchMedia('(pointer:coarse)').matches;if(!tactile)return;
+ var css=document.createElement('style');css.textContent='.btn-signe{font:700 16px Arial,sans-serif;min-width:38px;height:34px;margin:0 4px;padding:0 6px;border:1px solid #9AA6B5;border-radius:6px;background:#fff;color:#1F3864;cursor:pointer;flex:0 0 auto;vertical-align:middle}.btn-signe:active{background:#DEEAF6}';
+ (document.head||document.documentElement).appendChild(css);
+ function equipe(inp){
+  if(inp.__signe||inp.hasAttribute('data-nosigne'))return;inp.__signe=1;
+  var b=document.createElement('button');b.type='button';b.className='btn-signe';b.textContent='±';
+  b.setAttribute('aria-label','Changer le signe (+ / −)');b.title='Changer le signe';
+  b.addEventListener('mousedown',function(e){e.preventDefault();});
+  b.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();
+   if(inp.disabled||inp.readOnly)return;
+   var v=inp.value.replace(/^\s+/,'');
+   inp.value=/^[-−–]/.test(v)?v.replace(/^[-−–]\s*/,''):'-'+v;
+   inp.dispatchEvent(new Event('input',{bubbles:true}));inp.focus();});
+  inp.insertAdjacentElement('afterend',b);
+ }
+ function scan(r){(r||document).querySelectorAll&&(r||document).querySelectorAll('input[inputmode="decimal"],input[inputmode="numeric"]').forEach(equipe);}
+ function go(){scan();new MutationObserver(function(m){m.forEach(function(x){x.addedNodes.forEach(function(n){if(n.nodeType!==1)return;if(n.matches&&n.matches('input'))scan(n.parentNode);else scan(n);});});}).observe(document.body,{childList:true,subtree:true});}
+ if(document.body)go();else document.addEventListener('DOMContentLoaded',go);
+})();</script></body>
 </html>
