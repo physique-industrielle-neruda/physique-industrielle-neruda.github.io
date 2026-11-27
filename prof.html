@@ -188,7 +188,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore, doc, getDoc, getDocs, setDoc, deleteDoc, collection, query, where, onSnapshot, serverTimestamp, writeBatch, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { profil as calcProfil, profilHtml, synthese, PROFIL_CSS, COMPS, LIBS as CLIBS, NIVEAUX, niveauDe, pointsAnim, bilanAnnee, anneeHtml, ANNEE_CSS } from "./competences.js";
-import { etat as etatRythme, STATUTS, heures, baremeDe, rythmeDoc, rythmeDocId, oralActs, oralCible, comDe, ORAL_NIVEAUX, estApprenti, MAISON, absentA, traceDansSeance } from "./rythme.js";
+import { etat as etatRythme, STATUTS, heures, baremeDe, rythmeDoc, rythmeDocId, oralActs, oralCible, comDe, ORAL_NIVEAUX, estApprenti, MAISON, absentA, traceDansSeance, devoirId } from "./rythme.js";
 import { texteTache } from "./devoirs.js";
 /* Documents « rythme » de chaque élève (mini-oral, tutorats) pour le profil de compétences (25/11/2026) */
 const RYD = {};
@@ -568,14 +568,24 @@ function choisirAbsents(lignes, quand, fini){
   const tri = lignes.slice().sort((a, b) => (b.suspect - a.suspect) || a.e.nom.localeCompare(b.e.nom));
   const nS = lignes.filter(x => x.suspect).length;
   ov.innerHTML = `<div class="or-box ab-box"><b>Absents – séance du ${esc(quand)}</b>
-    <p class="note">${nS ? "Pré-cochés : aucune trace de travail sur le site pendant la séance. Décoche ceux qui étaient là (travail sur papier, par exemple)." : "Tout le monde a laissé une trace de travail sur le site pendant la séance. Coche un élève s'il était absent."}</p>
-    <div class="ab-list">${tri.map(x => `<label class="ab-l${x.suspect ? " ab-s" : ""}"><input type="checkbox" data-i="${lignes.indexOf(x)}"${x.coche ? " checked" : ""}> ${esc(x.e.nom)}${x.suspect ? ' <small class="tsc">aucune trace</small>' : ""}</label>`).join("")}</div>
+    <p class="note">${nS ? "Pré-cochés : aucune trace de travail sur le site pendant la séance." : "Tout le monde a laissé une trace de travail sur le site pendant la séance. Coche un élève s'il était absent."} <b>Laisse cette fenêtre ouverte une minute</b> : chaque élève qui répond en classe à « Où t'es-tu arrêté ? » se décoche tout seul. Décoche toi-même ceux qui étaient là sans répondre.</p>
+    <div class="ab-list">${tri.map(x => `<label class="ab-l${x.suspect ? " ab-s" : ""}"><input type="checkbox" data-i="${lignes.indexOf(x)}"${x.coche ? " checked" : ""}> ${esc(x.e.nom)} <small class="tsc ab-t" data-t="${lignes.indexOf(x)}">${x.suspect ? "aucune trace" : ""}</small></label>`).join("")}</div>
     <p class="note">Un absent : la séance ne compte pas dans sa régularité, sa jauge continue, et le site lui donne un rattrapage d'environ 15 min (non noté).</p>
     <div class="or-btns"><button class="btn ok" data-v="1">Valider</button><button class="btn ghost" data-v="0">Plus tard</button></div></div>`;
   document.body.appendChild(ov);
+  /* Mise à jour en direct (27/11/2026) : un élève qui répond en classe se décoche tout seul, sauf si le professeur a déjà touché sa case */
+  const touche = new Set();
+  ov.querySelectorAll("input[data-i]").forEach(x => x.onchange = () => touche.add(x.dataset.i));
+  let ouvert = true;
+  const maj = repondu => { if (!ouvert) return;
+    lignes.forEach((x, i) => { if (!repondu(x.e.uid)) return;
+      const cb = ov.querySelector(`input[data-i="${i}"]`), tg = ov.querySelector(`.ab-t[data-t="${i}"]`);
+      if (tg) { tg.textContent = "✓ a répondu"; tg.style.color = "#3F7A3A"; }
+      if (cb && cb.checked && !touche.has(String(i))) { cb.checked = false; cb.closest("label").classList.remove("ab-s"); } }); };
   ov.querySelectorAll("button").forEach(b => b.onclick = () => {
     const abs = b.dataset.v === "1" ? [...ov.querySelectorAll("input[data-i]")].filter(x => x.checked).map(x => lignes[+x.dataset.i].e.uid) : null;
-    ov.remove(); fini(abs); });
+    ouvert = false; ov.remove(); fini(abs); });
+  return { maj, ouvert: () => ouvert };
 }
 (() => { const st = document.createElement("style");
   st.textContent = ".ab-box{max-height:90dvh;overflow:auto}.ab-list{display:flex;flex-direction:column;gap:2px;margin:8px 0}.ab-l{display:flex;gap:8px;align-items:center;padding:6px 8px;border-radius:8px;cursor:pointer}"
@@ -640,11 +650,16 @@ function rythmePanel(c, g, el, getP, rerender){
     Object.values(mpDe(uid)).forEach(v => { out.push(ms(v.date)); if (v.vus) Object.values(v.vus).forEach(y => out.push(ms(y))); });
     return out.filter(Boolean); };
   const absentsDe = t => el.filter(e => absentA(DOCS[e.uid], t));
+  let absLive = null;   // fenêtre « Absents » ouverte : rafraîchie à chaque nouvelle donnée
   const quandS = t => new Date(t).toLocaleString("fr-FR", { weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" });
   const noterAbsences = (t, h, premier) => {
     const lignes = el.map(e => { const suspect = !traceDansSeance(t, h, traces(e.uid));
       return { e, suspect, coche: premier ? suspect : absentA(DOCS[e.uid], t) }; });
-    choisirAbsents(lignes, quandS(t), async abs => {
+    /* Réponse à « Où t'es-tu arrêté ? » donnée dans les 30 min qui suivent la coche (en classe) : l'élève était là */
+    const repondu = uid => { const v = mpDe(uid)[devoirId(chapId)], x = v && v.liste && v.liste[t];
+      return !!x && (!x.at || x.at <= t + 30 * 60e3); };
+    const fen = choisirAbsents(lignes, quandS(t), async abs => {
+      absLive = null;
       if (!abs) { if (premier) toast("Absents à noter plus tard : lien sous les boutons de séance."); return; }
       try { const batch = writeBatch(db);
         el.forEach(e => { const a = abs.includes(e.uid); if (a || absentA(DOCS[e.uid], t))
@@ -652,6 +667,7 @@ function rythmePanel(c, g, el, getP, rerender){
         await batch.commit(); toast(abs.length ? abs.length + " absent" + (abs.length > 1 ? "s notés." : " noté.") : "Tout le monde présent."); }
       catch(x){ toast("Échec (" + (x.code || x.message) + ")."); }
     });
+    absLive = () => fen.maj(repondu); absLive();
   };
   /* Séance de cours cochée : enregistrement puis choix des absents (pas pour les TP, hors jauge) */
   const cocher = async (h, tp) => {
@@ -676,6 +692,7 @@ function rythmePanel(c, g, el, getP, rerender){
       return ok ? `<i class="on" title="${esc(x.titre)} : terminé${v.date ? " le " + esc(jour(v.date.toMillis ? v.date.toMillis() : v.date)) : ""}">P${i + 1}</i>` : `<i title="${esc(x.titre)} : pas encore terminé">P${i + 1}</i>`; });
     return `<span class="ry-ex">${nEx.map(n => vus[n] ? `<i class="on" title="Exemple ${n} : correction ouverte le ${esc(jour(vus[n]))}">${n}</i>` : `<i title="Exemple ${n} : pas encore ouvert">${n}</i>`).join("")}${pd.join("")}</span>`; };
   const html = () => {
+    if (absLive) setTimeout(() => absLive && absLive(), 0);
     const actif = Object.keys(DOCS).length > 0, k = commun(), fg = figee();
     /* 25/11/2026 : garde-fou — tant que le dossier est verrouillé pour toute la classe, pas de démarrage ni de séance cochée */
     const dosOuvert = !ch.verrou || el.some(e => (AT[e.uid] || {})[ch.verrou.id]);
@@ -832,7 +849,7 @@ function rythmePanel(c, g, el, getP, rerender){
       catch(x){ toast("Échec (" + (x.code || x.message) + ")."); } });
   };
   /* Accès pour l'onglet « Aujourd'hui » (25/11/2026) : mêmes données et mêmes écritures que ce tableau */
-  const api = { charge: () => charge, el: () => el, docs: () => DOCS, etatDe, commun, ecrireTous, ref, docId, tpH, aTP, aEss, ailleurs, kc, cocher, absHtml, bindAbs,
+  const api = { charge: () => charge, el: () => el, docs: () => DOCS, etatDe, commun, ecrireTous, ref, docId, tpH, aTP, aEss, ailleurs, kc, cocher, absHtml, bindAbs, live: () => absLive && absLive(),
     sc: () => Array.isArray(R.seances) ? R.seances : ((R.seances || {})[c.id] || [1, 2]) };
   return { html, bind: () => { bind(); if (aOral) bindOral(); }, stop, cibleDe, noterOral, aOral, api };
 }
@@ -1022,6 +1039,7 @@ function paneJour(c){
     $("#pane").innerHTML = h;
     $("#pane").querySelectorAll("[data-act]").forEach(b => b.onclick = () => acts[+b.dataset.act]());
     if (RY && RY.api.bindAbs) RY.api.bindAbs();
+    if (RY && RY.api.live) RY.api.live();
     const sel = $("#jdos"); if (sel) sel.onchange = () => { JOUR[c.id] = opts[+sel.value].titre; render(); };
     $("#pane").querySelectorAll("[data-go]").forEach(b => b.onclick = () => {
       if (b.dataset.go === "dos") go(chapitreCorriges, c.id, ch.titre);
