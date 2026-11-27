@@ -1720,9 +1720,22 @@ onAuthStateChanged(auth, async user => {
     if (!fl) { fl = document.createElement("div"); fl.className = "flottant"; document.body.appendChild(fl);
       fl.addEventListener("click", e => { const th = e.target.closest("th"); if (th && src && src.cells[th.cellIndex]) src.cells[th.cellIndex].click(); }); }
     const tb = document.createElement("table"), tr = row.cloneNode(true);
-    [...row.cells].forEach((c, i) => { const w = c.getBoundingClientRect().width + "px"; tr.cells[i].style.width = w; tr.cells[i].style.minWidth = w; tr.cells[i].style.maxWidth = w; });
-    tb.style.width = t.getBoundingClientRect().width + "px"; tb.appendChild(tr);
-    fl.innerHTML = ""; fl.appendChild(tb); src = row;
+    /* 27/11/2026 : largeurs en border-box (avant, le padding s'ajoutait à chaque colonne et le décalage grandissait vers la droite) */
+    const cg = document.createElement("colgroup");
+    [...row.cells].forEach((c, i) => { const w = c.getBoundingClientRect().width + "px", k = tr.cells[i];
+      k.style.boxSizing = "border-box"; k.style.width = w; k.style.minWidth = w; k.style.maxWidth = w;
+      const col = document.createElement("col"); col.style.width = w; cg.appendChild(col); });
+    tb.style.width = t.getBoundingClientRect().width + "px"; tb.appendChild(cg); tb.appendChild(tr);
+    fl.innerHTML = ""; fl.appendChild(tb); src = row; cale = false;
+  };
+  /* Contrôle : chaque titre doit tomber pile au-dessus de sa colonne, sinon on corrige la largeur */
+  let cale = false;
+  const caler = (row, tb, t) => {
+    const ct = tb.rows[0].cells, cols = tb.querySelectorAll("col"), x0 = t.getBoundingClientRect().left, y0 = tb.getBoundingClientRect().left;
+    [...row.cells].forEach((c, i) => { const d = c.getBoundingClientRect(), e = ct[i].getBoundingClientRect();
+      if (Math.abs((d.right - x0) - (e.right - y0)) > 0.5) { const w = (e.width + (d.right - x0) - (e.right - y0)) + "px";
+        ct[i].style.width = ct[i].style.minWidth = ct[i].style.maxWidth = w; if (cols[i]) cols[i].style.width = w; } });
+    cale = true;
   };
   const maj = () => {
     const bar = document.querySelector(".bar"), haut = bar ? bar.getBoundingClientRect().bottom : 0;
@@ -1735,7 +1748,8 @@ onAuthStateChanged(auth, async user => {
     if (row !== src || !fl || !fl.firstChild) construire(row, t);
     const gr = cible.getBoundingClientRect();
     fl.style.top = haut + "px"; fl.style.left = (gr.left + cible.clientLeft) + "px"; fl.style.width = cible.clientWidth + "px"; fl.style.display = "block";
-    const tb = fl.firstChild, x = cible.scrollLeft; tb.style.transform = "translateX(" + (-x) + "px)";
+    const tb = fl.firstChild; if (!cale) caler(row, tb, t);
+    const x = cible.scrollLeft; tb.style.transform = "translateX(" + (-x) + "px)";
     const n = tb.rows[0].cells[0]; if (n && n.classList.contains("nom")) n.style.transform = "translateX(" + x + "px)";
   };
   let att = false; const plan = () => { if (att) return; att = true; requestAnimationFrame(() => { att = false; maj(); }); };
