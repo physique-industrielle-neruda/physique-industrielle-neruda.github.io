@@ -8,7 +8,7 @@
    - Enregistrement : pointsdecours/<uid>__devoir:<dossier>  { type: "devoir", liste: { <séance t>: { arret, taches, min, type, at } } }.
      La partie déclarée ne fait JAMAIS avancer la jauge (seul le travail vérifié compte).
    - Vérification et note : rythme.js (statutsMaison, critère « Maison »). Pronote garde la trace collective et l'annonce de l'évaluation. */
-import { toMs, heures, devoirId, absentA } from "./rythme.js";
+import { toMs, heures, devoirId, absentA } from "./rythme.js?v=20261127c";
 
 export const BUDGET = 15, MAX = 20;
 const arrondi = m => Math.max(5, Math.round(m / 5) * 5);

@@ -81,22 +81,26 @@ export function heures(h){
 export function finJour(iso){ if (!iso) return Infinity; const d = new Date(iso + "T23:59:59"); return isNaN(d) ? Infinity : d.getTime(); }
 
 /* src = { corrAt: {corrigeId: ms}, mp: {pdc: doc pointsdecours}, r: doc rythme (seances, evalDate, ajust, essentiel, maison, devoirProf, apprenti), now, apprenti } */
-/* 27/11/2026 : travail DÉCLARÉ en fin de cours (« Où t'es-tu arrêté ? », devoirs.js) — compté dans la jauge, jamais dans la note.
+/* 27/11/2026 : travail DÉCLARÉ en fin de cours (« Où t'es-tu arrêté ? », devoirs.js) — compté dans la jauge ET dans la régularité,
+   jamais dans les autres critères de la note (corrigés, cours, animation : vérifié seulement).
    Seules les pièces « papier » (activités, exercices hors TP) peuvent être déclarées : le reste est suivi par le site.
    Pièces avant celle déclarée = faites (attendent la vérification) ; activité en cours = questions avant la question déclarée ;
-   exercice « commencé » = moitié ; « fini » ou « j'attends la vérification » = entier. Remplacé par le vérifié dès le corrigé débloqué. */
-function declaration(items, devDoc, ess){
+   exercice « commencé » = moitié ; « fini » ou « j'attends la vérification » = entier. Remplacé par le vérifié dès le corrigé débloqué.
+   Garde-fou : le déclaré d'une pièce expire s'il n'est toujours pas vérifié après deux séances de cours où l'élève est présent
+   (comptées après la première déclaration de cette pièce). */
+function declarations(devDoc){
   const liste = (devDoc && devDoc.liste) || {};
-  const ts = Object.keys(liste).map(Number).filter(t => t > 0 && liste[t] && liste[t].arret).sort((a, b) => a - b);
-  if (!ts.length) return null;
-  const t = ts[ts.length - 1], arret = liste[t].arret, at = toMs(liste[t].at) || t;
+  return Object.keys(liste).map(Number).filter(t => t > 0 && liste[t] && liste[t].arret)
+    .map(t => ({ t, at: toMs(liste[t].at) || t, arret: liste[t].arret })).sort((a, b) => a.at - b.at);
+}
+function partsDecl(items, d, ess, T){
+  const fait = x => !!(x.t && x.t <= T);
   const papier = x => !!(x.corrige && !x.tp && !x.parcours && !(ess && x.horsEss));
-  const L = items.filter(x => !x.tp && !x.parcours && !(ess && x.horsEss));
+  const L = items.filter(x => !x.tp && !x.parcours && !(ess && x.horsEss)), arret = d.arret || {};
   let iA = arret.num ? L.findIndex(x => x.num === arret.num) : -1, etatA = arret;
-  if (iA < 0 && arret.attente) { iA = L.findIndex(x => papier(x) && !x.fait); etatA = { etat: "fini" }; }
-  if (iA < 0) return null;
-  const part = new Map();
-  L.forEach((x, k) => { if (x.fait || !papier(x) || k > iA) return;
+  if (iA < 0 && arret.attente) { iA = L.findIndex(x => papier(x) && !fait(x)); etatA = { etat: "fini" }; }
+  const part = new Map(); if (iA < 0) return part;
+  L.forEach((x, k) => { if (fait(x) || !papier(x) || k > iA) return;
     if (k < iA) { part.set(x, 1); return; }
     if (x.parties && etatA.q) {
       if (etatA.q === "fini") { part.set(x, 1); return; }
@@ -107,7 +111,18 @@ function declaration(items, devDoc, ess){
     else if (etatA.etat === "fini") part.set(x, 1);
     else if (etatA.etat === "commence") part.set(x, 0.5);
   });
-  return { t, at, part };
+  return part;
+}
+/* Déclaré valable à l'instant T : Map pièce → part (0 à 1). presents = fins des séances de cours où l'élève était présent. */
+function declareA(items, decls, ess, T, presents){
+  const avant = decls.filter(d => d.at <= T); if (!avant.length) return new Map();
+  const part = partsDecl(items, avant[avant.length - 1], ess, T), out = new Map();
+  part.forEach((v, x) => {
+    const prem = avant.find(d => partsDecl(items, d, ess, T).get(x) > 0);
+    const n = presents.filter(t => t > prem.t + 60e3 && t <= T).length;
+    if (n < 2) out.set(x, v);
+  });
+  return out;
 }
 export function etat(ch, src){
   const R = ch.rythme, chapId = ch.verrou ? ch.verrou.id : ch.titre, now = src.now || Date.now();
@@ -137,9 +152,12 @@ export function etat(ch, src){
   const faitA = (t, e = ess) => items.reduce((s, x) => s + (!x.tp && !(e && x.horsEss) && x.t && x.t <= t ? x.duree : 0), 0);
   const verifie = faitA(now);
   /* Jauge = vérifié + déclaré en fin de cours ; régularité et note = vérifié seulement */
-  const dec = ch.rythme.devoirs ? declaration(items, mp[devoirId(chapId)], ess) : null;
-  items.forEach(x => { x.decl = dec ? (dec.part.get(x) || 0) : 0; });
-  const declare = items.reduce((s, x) => s + (x.decl && !x.fait ? x.decl * x.duree : 0), 0);
+  const decls = ch.rythme.devoirs ? declarations(mp[devoirId(chapId)]) : [];
+  const presents = seances.filter(s => !absentA(r, s.t)).map(s => s.t);
+  const declH = (T, e = ess) => { if (!decls.length) return 0; let h = 0; declareA(items, decls, e, T, presents).forEach((v, x) => { h += v * x.duree; }); return h; };
+  const decNow = decls.length ? declareA(items, decls, ess, now, presents) : new Map();
+  items.forEach(x => { x.decl = decNow.get(x) || 0; });
+  const declare = items.reduce((s, x) => s + x.decl * x.duree, 0);
   const fait = verifie + declare;
   /* Temps de cours « attendu » : sur le chemin essentiel, l'élève dispose du temps gagné (pièces facultatives) */
   const attendu = (cum, e = ess) => e ? Math.min(Math.max(0, cum - ecart), contenuEss) : Math.min(cum, contenuTout);
@@ -154,7 +172,7 @@ export function etat(ch, src){
   const sv = seances.filter(s => s.t <= limite);
   sv.forEach((s, k) => { cum += s.h; const tn = k + 1 < sv.length ? sv[k + 1].t : Math.min(now, limite);
     if (absentA(r, s.t)) return;   // absent à cette séance : elle ne compte pas dans sa régularité
-    const e = ess && s.t >= essDepuis, rr = attendu(cum, e) - faitA(tn, e); scores.push(rr <= 0 ? 1 : rr <= 1 ? 0.5 : 0); });
+    const e = ess && s.t >= essDepuis, rr = attendu(cum, e) - faitA(tn, e) - declH(tn, e); scores.push(rr <= 0 ? 1 : rr <= 1 ? 0.5 : 0); });
   const corr = items.filter(x => x.corrige), avant = x => x.t && x.t <= limite;
   const B = baremeDe(ch, !!src.apprenti);
   /* Maison (27/11/2026) : moyenne des devoirs vérifiés avant la fin du jour de l'évaluation (fait 1, en partie ½, pas fait 0) */
