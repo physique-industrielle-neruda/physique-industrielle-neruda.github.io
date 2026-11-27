@@ -234,6 +234,20 @@ li.fresh{animation:fresh 2.4s ease-out}
 .tst .qq input{font:inherit;width:150px;padding:8px 10px;border:1px solid var(--grid);border-radius:8px;background:var(--bg);color:var(--text)}
 .tst .qq .pv{font-weight:700;margin-top:6px}.tst .qq .pv.ok{color:var(--ok)}.tst .qq .pv.ko{color:var(--accent)}
 .tst .act{display:flex;flex-wrap:wrap;gap:10px;margin-top:6px}
+/* Débriefing du test d'entrée (27/11/2026) */
+.dbr-score{font-weight:700;font-size:17px;margin:10px 0}
+.dbr h3{color:#1F3864;margin:18px 0 6px;font-size:16px}
+.dbr .db{border:1px solid var(--grid);border-left:5px solid #C55A11;border-radius:8px;padding:10px 14px;margin:12px 0;background:var(--surface)}
+.dbr .db .en{margin-bottom:8px}.dbr .db .en .n{color:#C55A11;font-weight:700}
+.dbr .db .rp{display:flex;flex-wrap:wrap;gap:6px 18px;margin:6px 0;font-weight:700}
+.dbr .db .rp .ko{color:#C55A11}.dbr .db .rp .ok{color:var(--ok)}
+.dbr .db .bl{border-radius:6px;padding:8px 10px;margin:8px 0 0}
+.dbr .db .bl b{display:block;font-size:12px;letter-spacing:.04em;text-transform:uppercase;margin-bottom:2px}
+.dbr .db .pq{background:#FBE5D6;color:#18212F}.dbr .db .pq b{color:#C55A11}
+.dbr .db .dm{background:#F2F2F2;color:#18212F}.dbr .db .dm b{color:#1F3864}
+.dbr .db .rg{background:#DEEAF6;color:#18212F}.dbr .db .rg b{color:#2E75B6}
+.dbr .db .fi{margin-top:8px;color:var(--muted);font-size:14px}
+.dbr .reussi{background:var(--ok-soft);color:var(--ok);border-radius:8px;padding:8px 12px;font-weight:700;margin:10px 0}
 .fiche-ov{position:fixed;inset:0;z-index:50;background:var(--bg);display:flex;flex-direction:column}
 .fiche-ov .bar{display:flex;align-items:center;gap:10px;padding:10px 14px;background:#1F3864;color:#fff}
 .fiche-ov .bar b{flex:1;font-size:1.05rem}
@@ -1437,8 +1451,9 @@ function carteTest(t){
       location.hash = chT ? t.site + "/" + encodeURIComponent(chT.titre) : t.site; };
     return box;
   }
-  bd.innerHTML = `<p>Test fait le ${esc(dateFr(r.date))}.</p>`;
-  if (!ids.length) { bd.innerHTML += `<div class="msg">Aucune fiche à revoir : tu es prêt pour le chapitre.</div>`; return box; }
+  bd.innerHTML = `<p>Test fait le ${esc(dateFr(r.date))}.</p><div class="act" style="margin:0 0 10px"><button class="btn ghost" type="button" id="voirdb">Voir la correction de mon test</button></div>`;
+  bd.querySelector("#voirdb").onclick = () => ouvrirDebrief(t, r);
+  if (!ids.length) { bd.insertAdjacentHTML("beforeend", `<div class="msg">Aucune fiche à revoir : tu es prêt pour le chapitre.</div>`); return box; }
   bd.innerHTML += `<p>Tes fiches de révision : lis le rappel et l'exemple, puis réussis les trois questions de « Je m'entraîne ».</p>`;
   bd.appendChild(listeFiches(t, ids));
   if (faites === ids.length) bd.insertAdjacentHTML("beforeend", `<div class="msg">Toutes tes fiches sont terminées. Ton professeur est prévenu : tu es prêt pour le chapitre.</div>`);
@@ -1456,6 +1471,51 @@ function listeFiches(t, ids){
     ul.appendChild(li);
   });
   return ul;
+}
+
+/* Débriefing (27/11/2026) : après l'envoi, chaque question ratée est corrigée avec l'explication de l'erreur.
+   Le test ne se passe qu'une fois : la bonne réponse peut être donnée. */
+const nbFr = x => (typeof x === "number" ? x.toLocaleString("fr-FR", { maximumFractionDigits: 6 }) : String(x ?? ""));
+function erreurReconnue(q, v){
+  if (v === null || !q.erreurs) return null;
+  const tol = Math.max(q.tolerance ?? 0.02, 0.01);
+  return q.erreurs.find(e => Math.abs(v - e.valeur) <= Math.max(Math.abs(e.valeur) * tol, 1e-12)) || null;
+}
+function debriefHTML(T, rep, ok){
+  const n = ok.filter(Boolean).length, N = ok.length;
+  const reussies = ok.map((x, i) => x ? i + 1 : 0).filter(Boolean);
+  let h = `<div class="dbr"><p class="dbr-score">${n} question${n > 1 ? "s" : ""} réussie${n > 1 ? "s" : ""} sur ${N}</p>`;
+  if (n === N) return h + `<div class="reussi">Toutes tes réponses sont justes. Bravo !</div></div>`;
+  if (reussies.length) h += `<div class="reussi">✓ Réussie${reussies.length > 1 ? "s" : ""} : question${reussies.length > 1 ? "s" : ""} ${reussies.join(", ")}</div>`;
+  h += `<h3>Correction de tes erreurs</h3><p>Pour chaque question ratée : ta réponse, la bonne réponse, pourquoi tu t'es trompé, puis la démarche.</p>`;
+  T.questions.forEach((q, i) => {
+    if (ok[i]) return;
+    const brut = String(rep[i] ?? "").trim(), v = nombre(brut), u = q.unite ? " " + esc(q.unite) : "";
+    const e = erreurReconnue(q, v);
+    const pourquoi = brut === "" ? "Tu n'as pas répondu à cette question. Lis la démarche ci-dessous."
+      : e ? e.explication
+      : "Ta réponse ne correspond pas à une erreur classique. Reprends la démarche ci-dessous pas à pas et compare avec ton brouillon : vérifie la formule, les conversions d'unités et le calcul.";
+    const fiche = (REV.fiches[q.fiche] || {}).titre;
+    h += `<div class="db"><div class="en"><span class="n">Question ${i + 1}.</span> ${q.enonce}</div>${q.figure || ""}
+      <div class="rp"><span class="ko">✗ Ta réponse : ${brut === "" ? "aucune" : esc(brut) + u}</span><span class="ok">✓ Bonne réponse : ${nbFr(q.reponse)}${u}</span></div>
+      <div class="bl pq"><b>Pourquoi ?</b>${pourquoi}</div>
+      ${q.correction ? `<div class="bl dm"><b>La démarche</b>${q.correction}</div>` : ""}
+      ${q.regle ? `<div class="bl rg"><b>À retenir</b>${q.regle}</div>` : ""}
+      ${fiche ? `<div class="fi">Pour t'entraîner : fiche de révision « ${esc(fiche)} », dans « Mes révisions ».</div>` : ""}</div>`;
+  });
+  return h + `</div>`;
+}
+async function ouvrirDebrief(t, r){
+  let T;
+  try { T = JSON.parse(await (await decryptBlob(BASE + "docs/revisions/" + t.fichier, await testKey(t), "text/plain")).text()); } catch(e) { toast("Impossible d'ouvrir la correction. Rechargez la page."); return; }
+  VUE_REV = "test"; window.scrollTo(0, 0);
+  const view = $("#view"); view.innerHTML = "";
+  const box = document.createElement("div"); box.className = "tst";
+  const ok = r.justes || T.questions.map((q, i) => juste(q, nombre((r.reponses || [])[i])));
+  box.innerHTML = `<div class="classhead"><h2>Correction – ${esc(T.titre)}</h2></div><p>Test fait le ${esc(dateFr(r.date))}.</p>`
+    + debriefHTML(T, r.reponses || [], ok) + `<div class="act"><button class="btn" type="button">Revenir à mes révisions</button></div>`;
+  view.appendChild(box); katex(box);
+  box.querySelector(".act button").onclick = () => { VUE_REV = null; render(); };
 }
 
 async function ouvrirTest(t, apercu){
@@ -1480,6 +1540,8 @@ async function ouvrirTest(t, apercu){
       box.querySelectorAll(".qq .pv").forEach((d, i) => { const q = T.questions[i];
         d.className = "pv " + (ok[i] ? "ok" : "ko");
         d.textContent = (ok[i] ? "✓ Juste" : "✗ Attendu : " + String(q.reponse).replace(".", ",") + " " + (q.unite || "")) + " · fiche « " + (REV.fiches[q.fiche] || {}).titre + " »"; });
+      let db = box.querySelector(".dbr-apercu"); if (!db) { db = document.createElement("div"); db.className = "dbr-apercu"; box.querySelector(".err").before(db); }
+      db.innerHTML = `<h3 style="color:#1F3864">Ce que verra l'étudiant après l'envoi</h3>` + debriefHTML(T, rep, ok); katex(db);
       return;
     }
     const vides = rep.filter(x => x === "").length, err = box.querySelector(".err");
@@ -1496,8 +1558,10 @@ async function ouvrirTest(t, apercu){
     box.innerHTML = `<div class="classhead"><h2>Test envoyé</h2></div>`
       + (aRevoir.length ? `<p>Merci ! ${aRevoir.length} fiche${aRevoir.length > 1 ? "s" : ""} de révision ${aRevoir.length > 1 ? "se sont ouvertes" : "s'est ouverte"} pour toi :</p><ul>${aRevoir.map(f => "<li>" + esc((REV.fiches[f] || {}).titre || f) + "</li>").join("")}</ul><p>Travaille-les avant le début du chapitre.</p>`
         : `<p>Merci ! Aucune fiche à revoir : tu es prêt pour le chapitre.</p>`)
-      + `<button class="btn" type="button">${aRevoir.length ? "Voir mes fiches" : "Terminer"}</button>`;
-    box.querySelector("button").onclick = () => { VUE_REV = null; if (aRevoir.length && location.hash !== "#revisions") location.hash = "revisions"; else render(); };
+      + debriefHTML(T, rep, ok)
+      + `<p>Tu retrouveras cette correction dans « Mes révisions ».</p><button class="btn" type="button" id="suite">${aRevoir.length ? "Voir mes fiches" : "Terminer"}</button>`;
+    katex(box);
+    box.querySelector("#suite").onclick = () => { VUE_REV = null; if (aRevoir.length && location.hash !== "#revisions") location.hash = "revisions"; else render(); };
   };
 }
 

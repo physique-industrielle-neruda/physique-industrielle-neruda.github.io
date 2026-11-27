@@ -75,6 +75,14 @@ details.annee[open]>summary{margin-bottom:4px}
 .grille tr:first-child th{position:sticky;top:0;z-index:2;background:var(--surface);box-shadow:inset 0 -2px 0 var(--grid)}
 .grille tr:first-child th.lk{background:linear-gradient(var(--accent-soft),var(--accent-soft)),var(--surface)}
 .grille tr:first-child th.nom{z-index:3}
+/* En-tête flottant (27/11/2026) : reste sous la barre quand c'est la page qui défile */
+.flottant{position:fixed;z-index:4;overflow:hidden;display:none;background:var(--surface);box-shadow:0 2px 6px rgba(0,0,0,.18);border-radius:0 0 8px 8px}
+.flottant table{border-collapse:collapse;table-layout:fixed;font-size:.9rem}
+.flottant th{padding:10px 4px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:var(--surface);box-shadow:inset 0 -2px 0 var(--grid)}
+.flottant th.col{font-size:.8rem;color:var(--muted);cursor:pointer}
+.flottant th.lk{background:linear-gradient(var(--accent-soft),var(--accent-soft)),var(--surface);color:var(--accent)}
+.flottant th.nom{text-align:left;padding-left:14px;font-weight:700;position:relative;z-index:1}
+.flottant th.sep{border-right:2px solid var(--grid)}
 .grille table{border-collapse:collapse;width:100%;font-size:.9rem}
 .grille th,.grille td{padding:10px 4px;text-align:center;border-top:1px solid var(--grid);white-space:nowrap}
 .grille tr:first-child th{border-top:0}
@@ -1580,6 +1588,40 @@ onAuthStateChanged(auth, async user => {
   }
   const go=()=>{ fix(document.body); new MutationObserver(ms=>ms.forEach(m=>{ if(m.type==="characterData"){ if(m.target.parentNode) fix(m.target.parentNode); } else m.addedNodes.forEach(a=>{ if(a.nodeType===3){ if(a.parentNode) fix(a.parentNode); } else if(a.nodeType===1) fix(a); }); })).observe(document.body,{childList:true,subtree:true,characterData:true}); };
   document.readyState==="loading"?document.addEventListener("DOMContentLoaded",go):go();
+})();
+</script>
+<script>
+/* En-tête flottant des tableaux (27/11/2026) : quand la page défile, la ligne des titres de colonnes reste visible sous la barre */
+(() => {
+  let fl = null, src = null;
+  const cacher = () => { if (fl) fl.style.display = "none"; };
+  const construire = (row, t) => {
+    if (!fl) { fl = document.createElement("div"); fl.className = "flottant"; document.body.appendChild(fl);
+      fl.addEventListener("click", e => { const th = e.target.closest("th"); if (th && src && src.cells[th.cellIndex]) src.cells[th.cellIndex].click(); }); }
+    const tb = document.createElement("table"), tr = row.cloneNode(true);
+    [...row.cells].forEach((c, i) => { const w = c.getBoundingClientRect().width + "px"; tr.cells[i].style.width = w; tr.cells[i].style.minWidth = w; tr.cells[i].style.maxWidth = w; });
+    tb.style.width = t.getBoundingClientRect().width + "px"; tb.appendChild(tr);
+    fl.innerHTML = ""; fl.appendChild(tb); src = row;
+  };
+  const maj = () => {
+    const bar = document.querySelector(".bar"), haut = bar ? bar.getBoundingClientRect().bottom : 0;
+    let cible = null;
+    document.querySelectorAll(".grille").forEach(g => { if (cible) return; const t = g.querySelector("table"); if (!t || !t.rows.length) return;
+      const r0 = t.rows[0].getBoundingClientRect(), gr = g.getBoundingClientRect();
+      if (r0.top < haut - 1 && gr.bottom > haut + 2 * r0.height) cible = g; });
+    if (!cible) return cacher();
+    const t = cible.querySelector("table"), row = t.rows[0];
+    if (row !== src || !fl || !fl.firstChild) construire(row, t);
+    const gr = cible.getBoundingClientRect();
+    fl.style.top = haut + "px"; fl.style.left = (gr.left + cible.clientLeft) + "px"; fl.style.width = cible.clientWidth + "px"; fl.style.display = "block";
+    const tb = fl.firstChild, x = cible.scrollLeft; tb.style.transform = "translateX(" + (-x) + "px)";
+    const n = tb.rows[0].cells[0]; if (n && n.classList.contains("nom")) n.style.transform = "translateX(" + x + "px)";
+  };
+  let att = false; const plan = () => { if (att) return; att = true; requestAnimationFrame(() => { att = false; maj(); }); };
+  document.addEventListener("scroll", plan, { capture: true, passive: true });
+  window.addEventListener("resize", () => { src = null; plan(); });
+  const go = () => { const app = document.getElementById("app"); if (app) new MutationObserver(() => { src = null; plan(); }).observe(app, { childList: true, subtree: true }); };
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", go); else go();
 })();
 </script>
 </body>
