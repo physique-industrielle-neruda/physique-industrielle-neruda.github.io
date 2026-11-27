@@ -70,7 +70,10 @@ details.annee>summary::-webkit-details-marker{display:none}
 details.annee>summary::before{content:"▸";color:var(--muted);transition:transform .15s}
 details.annee[open]>summary::before{transform:rotate(90deg)}
 details.annee[open]>summary{margin-bottom:4px}
-.grille{overflow:auto;padding:0;max-height:calc(100dvh - 96px - env(safe-area-inset-top));overscroll-behavior:contain}
+/* 27/11/2026 : le tableau ne défile plus que de côté ; le glissement vertical fait défiler la page (en-tête flottant) */
+.grille{overflow-x:auto;overflow-y:hidden;padding:0;touch-action:pan-x pan-y;overscroll-behavior-x:contain}
+.saut{display:inline-flex;align-items:center;gap:6px;margin:4px 0 2px;padding:8px 14px;border:1px solid var(--grid);border-radius:20px;background:var(--surface);color:var(--ink);font:inherit;font-weight:600;font-size:.9rem;cursor:pointer}
+#cpTab{scroll-margin-top:calc(80px + env(safe-area-inset-top))}
 /* En-tête des tableaux figé en haut quand on fait défiler les élèves */
 .grille tr:first-child th{position:sticky;top:0;z-index:2;background:var(--surface);box-shadow:inset 0 -2px 0 var(--grid)}
 .grille tr:first-child th.lk{background:linear-gradient(var(--accent-soft),var(--accent-soft)),var(--surface)}
@@ -499,11 +502,11 @@ function chapitreGrille(c, g){
   };
   const render = () => {
     const sep = j => j === locks.length - 1 && docs.length ? " sep" : "";
-    let html = `<div class="card grille"><table><tr><th class="nom">Élève</th>${cols.map((d, j) => `<th class="col${d.chapitre ? " lk" : ""}${sep(j)}" data-j="${j}" title="${esc(d.titre)}">${d.chapitre ? (d.test ? "Test" : "Dossier") : esc(courtDe(d))}</th>`).join("")}</tr>`
+    let html = (aPouce ? `<button class="saut" type="button" onclick="document.getElementById('cpTab').scrollIntoView({behavior:'smooth'})">↓ Coups de pouce utilisés</button>` : "") + `<div class="card grille"><table><tr><th class="nom">Élève</th>${cols.map((d, j) => `<th class="col${d.chapitre ? " lk" : ""}${sep(j)}" data-j="${j}" title="${esc(d.titre)}">${d.chapitre ? (d.test ? "Test" : "Dossier") : esc(courtDe(d))}</th>`).join("")}</tr>`
       + el.map(e => `<tr><td class="nom">${esc(e.nom)}</td>${cols.map((d, j) => `<td class="c${d.chapitre ? " lk" : ""}${sep(j)}${busy.has(d.corrige.id + "_" + e.uid) ? " busy" : ""}" data-j="${j}" data-uid="${esc(e.uid)}">${caseDe(d, e.uid)}</td>`).join("")}</tr>`).join("")
       + `<tr class="tot"><td class="nom">Ouverts</td>${cols.map((d, j) => `<td class="${sep(j)}">${counts[d.corrige.id] || 0}/${el.length}</td>`).join("")}</tr></table></div>`
       + `<p class="note">Touche une case pour ouvrir à l'élève ; touche-la à nouveau pour refermer (une confirmation est demandée pour refermer le dossier ou le test). Touche le titre d'une colonne pour toute la classe.${locks.length ? " Les premières colonnes sont les cadenas du " + (locks.some(d => d.test) ? "test d'entrée et du " : "") + "dossier." : ""}<br>🔓 dossier ou test ouvert · 🔒 verrouillé · <span class="dot non"></span> point de cours pas commencé · <span class="dot cours"></span> en cours · <span class="dot fini"></span> terminé · ✓ corrigé ouvert (sans point de cours)</p>`
-      + (aPouce ? `<p class="sec" id="cpTab">Coups de pouce utilisés</p><div class="card grille cpg"><table><tr><th class="nom">Élève</th>${docs.map(d => `<th title="${esc(d.titre)}">${esc(courtDe(d))}</th>`).join("")}</tr>`
+      + (aPouce ? `<p class="sec" id="cpTab">Coups de pouce utilisés <button class="saut" type="button" style="margin-left:8px" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑ Haut</button></p><div class="card grille cpg"><table><tr><th class="nom">Élève</th>${docs.map(d => `<th title="${esc(d.titre)}">${esc(courtDe(d))}</th>`).join("")}</tr>`
         + el.map(e => `<tr><td class="nom">${esc(e.nom)}</td>${docs.map(d => `<td>${pouceDe(d, e.uid)}</td>`).join("")}</tr>`).join("")
         + `</table></div><p class="note">Pour chaque élève, les questions où il a débloqué un coup de pouce supplémentaire : <span class="cp n2">B5 2</span> niveau 2 · <span class="cp n3">B5 3</span> niveau 3. <span class="cp vu">lu</span> fiche ouverte, niveau 1 seulement · – fiche jamais ouverte.</p>` : "");
     const sx = $(".grille") ? $(".grille").scrollLeft : 0, sy = $(".grille") ? $(".grille").scrollTop : 0;
