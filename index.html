@@ -163,6 +163,40 @@ a.open{text-decoration:none;display:inline-block}
   .open.dl{display:none}
 }
 .empty{color:var(--muted);margin:18px 0}
+/* Onglet Évaluations du professeur (refonte 28/11/2026) */
+.ev-filtres{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 6px}
+.ev-puce{--c:var(--ink);font:inherit;font-weight:700;font-size:.92rem;display:inline-flex;align-items:center;gap:8px;cursor:pointer;
+  border:1px solid var(--grid);background:var(--surface);color:var(--text);border-radius:20px;padding:6px 8px 6px 14px;min-height:38px}
+.ev-puce span{font-weight:400;font-size:.8rem;background:var(--bg);border-radius:12px;padding:1px 8px;color:var(--muted)}
+.ev-puce[aria-pressed="true"]{background:var(--c);border-color:var(--c);color:#fff}
+.ev-puce[aria-pressed="true"] span{background:rgba(255,255,255,.22);color:#fff}
+.ev-mois{font-size:.85rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:22px 0 8px}
+.ev-grille{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:12px}
+.ev-carte{--c:#1F3864;background:var(--surface);border:1px solid var(--grid);border-top:4px solid var(--c);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:6px;box-shadow:var(--shadow)}
+.ev-recent{box-shadow:0 0 0 2px var(--accent) inset, var(--shadow);border-top-color:var(--c)}
+.ev-haut{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.ev-classe{font-size:.78rem;font-weight:700;color:#fff;background:var(--c);border-radius:6px;padding:2px 8px}
+.ev-date{font-size:.85rem;color:var(--muted)}
+.ev-new{margin-left:auto;font-size:.75rem;font-weight:700;color:var(--accent)}
+.ev-titre{font-family:inherit;font-size:1.05rem;font-weight:700;line-height:1.3;margin:2px 0 0;color:var(--ink)}
+.ev-meta{font-size:.82rem;color:var(--muted);margin:0}
+.ev-actions{display:flex;gap:8px;margin-top:6px}
+.ev-bilan{flex:1;font:inherit;font-weight:700;font-size:.95rem;cursor:pointer;border:0;border-radius:8px;padding:9px 12px;background:var(--ink);color:var(--surface);
+  display:flex;align-items:center;justify-content:space-between;gap:8px;text-align:left}
+.ev-bilan small{font-weight:400;font-size:.78rem;opacity:.8}
+.ev-bilan:hover{filter:brightness(1.15)}
+.ev-dl{font:inherit;font-size:.85rem;cursor:pointer;border:1px solid var(--grid);background:var(--surface);color:var(--muted);border-radius:8px;padding:6px 10px}
+.ev-sans{font-size:.85rem;color:var(--muted);font-style:italic}
+.ev-copies{border-top:1px solid var(--grid);margin-top:6px;padding-top:4px}
+.ev-copies>summary{cursor:pointer;font-size:.88rem;font-weight:700;color:var(--ink);padding:6px 0;list-style:none;display:flex;align-items:center;gap:8px}
+.ev-copies>summary::-webkit-details-marker{display:none}
+.ev-copies>summary::after{content:"";width:7px;height:7px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(-45deg);margin-left:auto;transition:transform .15s}
+.ev-copies[open]>summary::after{transform:rotate(45deg)}
+.ev-copies>summary span{font-weight:400;font-size:.78rem;background:var(--bg);border:1px solid var(--grid);border-radius:12px;padding:0 8px;color:var(--muted)}
+.ev-noms{display:flex;flex-wrap:wrap;gap:6px;padding:4px 0 6px}
+.ev-nom{font:inherit;font-size:.82rem;cursor:pointer;border:1px solid var(--grid);background:var(--bg);color:var(--text);border-radius:6px;padding:4px 8px}
+.ev-nom:hover{border-color:var(--ink);color:var(--ink)}
+@media (max-width:560px){.ev-grille{grid-template-columns:1fr}.ev-dl{display:none}}
 .intro-outils{color:var(--muted);margin:4px 0 4px}
 .groupe{font-size:1.25rem;font-weight:600;margin:24px 0 0;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
 .status.libre{color:var(--ok)}
@@ -650,37 +684,70 @@ function mesEvals(c){
   evs.forEach(x => ul.appendChild(evalRow("Ma copie", x.e.titre, (x.e.date ? fmtDate(x.e.date) + " · " : "") + pdfMeta(x.cp), x.cp)));
   s.appendChild(ul); return s;
 }
-/* Professeur : dossier « Évaluations » → classe → évaluation (copies) + « Bilans de correction » */
+/* Professeur : onglet « Évaluations » (refonte 28/11/2026) — tout sur une page :
+   filtre par classe (puces), une carte par évaluation, du plus récent au plus ancien,
+   bilan de correction en bouton principal, copies des élèves dépliables en puces de noms. */
+let EVF = "toutes";
+const EV_COUL = { et: "#1F3864", cira: "#2E75B6", cim: "#3F7A3A" };
+const EV_COURT = { et1a: "1ETA", et2: "2ET", et2a: "2ETA", cira1: "CIRA 1", cim2: "CIM 2" };
+const evMois = d => d ? new Date(d + "T12:00:00").toLocaleDateString("fr-FR", { month: "long", year: "numeric" }) : "Sans date";
 function renderEvaluationsProf(view){
   const head = document.createElement("div"); head.className = "classhead";
   head.innerHTML = `<h2>Évaluations</h2><span class="status is-open">Visible par vous seul</span>`;
   view.appendChild(head);
-  const evs = EVAL.evaluations || [];
+  const evs = (EVAL.evaluations || []).slice().sort((a, b) => (b.date || "").localeCompare(a.date || ""));
   if (!evs.length) { const p = document.createElement("p"); p.className = "empty"; p.textContent = "Aucune évaluation corrigée pour l'instant."; view.appendChild(p); return; }
-  const ids = [...new Set(evs.map(e => e.classe))];
-  ids.forEach(cid => {
-    const info = NOMS[cid] || { nom: cid, eleves: {} };
-    const mine = evs.filter(e => e.classe === cid).sort((a, b) => (b.date || "").localeCompare(a.date || ""));
-    const k = "evals/" + cid;
-    const box = document.createElement("details"); box.className = "annee";
-    if (opened.has(k) || ids.length === 1) box.open = true;
-    box.innerHTML = `<summary>${FOLDER}<h3><span>${esc(info.nom)}</span><span class="count">${mine.length} évaluation${mine.length > 1 ? "s" : ""}</span></h3><span class="chev" aria-hidden="true"></span></summary>`;
-    box.addEventListener("toggle", () => { if (box.open) opened.add(k); else opened.delete(k); });
-    const inner = document.createElement("div"); inner.className = "inner";
-    mine.forEach(e => {
-      const cps = (e.copies || []).map(cp => ({ cp, nom: info.eleves[cp.login] || cp.login })).sort((a, b) => a.nom.localeCompare(b.nom, "fr"));
-      const s = folderBox("chap", k + "/" + e.id, (e.date ? fmtDate(e.date) + " – " : "") + e.titre, cps.length + " copie" + (cps.length > 1 ? "s" : ""));
-      const ul = document.createElement("ul"); ul.className = "docs";
-      cps.forEach(x => ul.appendChild(evalRow("Copie", x.nom, pdfMeta(x.cp), x.cp)));
-      s.appendChild(ul); inner.appendChild(s);
+  const nomC = cid => (NOMS[cid] && NOMS[cid].nom) || CAL_NOMS[cid] || cid;
+  const ordre = (CAT.classes || []).map(c => c.id);
+  const cids = [...new Set(evs.map(e => e.classe))].sort((a, b) => {
+    const sa = ordre.indexOf((evs.find(e => e.classe === a) || {}).site), sb = ordre.indexOf((evs.find(e => e.classe === b) || {}).site);
+    return sa - sb || nomC(a).localeCompare(nomC(b), "fr"); });
+  if (EVF !== "toutes" && !cids.includes(EVF)) EVF = "toutes";
+
+  /* Puces de filtre */
+  const bar = document.createElement("div"); bar.className = "ev-filtres"; bar.setAttribute("role", "toolbar"); bar.setAttribute("aria-label", "Filtrer par classe");
+  const puce = (id, lib, n, coul) => `<button type="button" class="ev-puce" data-f="${esc(id)}" aria-pressed="${EVF === id}"${coul ? ` style="--c:${coul}"` : ""}>${esc(lib)}<span>${n}</span></button>`;
+  bar.innerHTML = puce("toutes", "Toutes les classes", evs.length) + cids.map(cid => { const e0 = evs.find(e => e.classe === cid);
+    return puce(cid, EV_COURT[cid] || nomC(cid), evs.filter(e => e.classe === cid).length, EV_COUL[e0.site]); }).join("");
+  view.appendChild(bar);
+
+  const zone = document.createElement("div"); view.appendChild(zone);
+  const dessiner = () => {
+    bar.querySelectorAll(".ev-puce").forEach(b => b.setAttribute("aria-pressed", b.dataset.f === EVF));
+    zone.innerHTML = "";
+    const liste = evs.filter(e => EVF === "toutes" || e.classe === EVF);
+    let mois = null, grille = null;
+    liste.forEach((e, i) => {
+      const m = evMois(e.date);
+      if (m !== mois) { mois = m; const h = document.createElement("p"); h.className = "ev-mois"; h.textContent = m; zone.appendChild(h);
+        grille = document.createElement("div"); grille.className = "ev-grille"; zone.appendChild(grille); }
+      const info = NOMS[e.classe] || { eleves: {} };
+      const cps = (e.copies || []).map(cp => ({ cp, nom: (info.eleves || {})[cp.login] || cp.login })).sort((a, b) => a.nom.localeCompare(b.nom, "fr"));
+      const nb = cps.length, titreCourt = (e.date ? fmtDate(e.date) + " – " : "") + e.titre;
+      const carte = document.createElement("article"); carte.className = "ev-carte" + (i === 0 && EVF === "toutes" ? " ev-recent" : "");
+      carte.style.setProperty("--c", EV_COUL[e.site] || "#1F3864");
+      carte.innerHTML = `<div class="ev-haut"><span class="ev-classe">${esc(EV_COURT[e.classe] || nomC(e.classe))}</span><span class="ev-date">${e.date ? esc(new Date(e.date + "T12:00:00").toLocaleDateString("fr-FR", { weekday: "short", day: "numeric", month: "short" })) : ""}</span>${i === 0 && EVF === "toutes" ? `<span class="ev-new">Dernière corrigée</span>` : ""}</div>
+        <h3 class="ev-titre">${esc(e.titre)}</h3>
+        <p class="ev-meta">${esc(nomC(e.classe))} · ${nb} copie${nb > 1 ? "s" : ""}${e.dossier ? " · dossier « " + esc(e.dossier) + " »" : ""}</p>
+        <div class="ev-actions">${e.bilan ? `<button type="button" class="ev-bilan" data-a="bo">Bilan de correction<small>PDF${e.bilan.pages ? " · " + e.bilan.pages + " p." : ""}</small></button><button type="button" class="ev-dl" data-a="bd" aria-label="Télécharger le bilan">Télécharger</button>` : `<span class="ev-sans">Pas de bilan</span>`}</div>
+        ${nb ? `<details class="ev-copies"><summary>Copies des élèves <span>${nb}</span></summary><div class="ev-noms"></div></details>` : ""}`;
+      if (e.bilan) {
+        carte.querySelector('[data-a="bo"]').onclick = () => openEval(e.bilan, "Bilan – " + titreCourt, false);
+        carte.querySelector('[data-a="bd"]').onclick = () => openEval(e.bilan, "Bilan – " + titreCourt, true);
+      }
+      const noms = carte.querySelector(".ev-noms");
+      if (noms) {
+        const k = "evals/" + e.id, det = carte.querySelector(".ev-copies");
+        if (opened.has(k)) det.open = true;
+        det.addEventListener("toggle", () => { if (det.open) opened.add(k); else opened.delete(k); });
+        cps.forEach(x => { const b = document.createElement("button"); b.type = "button"; b.className = "ev-nom"; b.textContent = x.nom;
+          b.title = "Ouvrir la copie (" + pdfMeta(x.cp) + ")"; b.onclick = () => openEval(x.cp, x.nom + " – " + titreCourt, false); noms.appendChild(b); });
+      }
+      grille.appendChild(carte);
     });
-    const bil = mine.filter(e => e.bilan);
-    const sb = folderBox("chap", k + "/bilans", "Bilans de correction", bil.length + " bilan" + (bil.length > 1 ? "s" : ""));
-    const ub = document.createElement("ul"); ub.className = "docs";
-    bil.forEach(e => ub.appendChild(evalRow("Bilan", (e.date ? fmtDate(e.date) + " – " : "") + e.titre, pdfMeta(e.bilan), e.bilan)));
-    sb.appendChild(ub); inner.appendChild(sb);
-    box.appendChild(inner); view.appendChild(box);
-  });
+  };
+  bar.querySelectorAll(".ev-puce").forEach(b => b.onclick = () => { EVF = b.dataset.f; dessiner(); });
+  dessiner();
 }
 
 const LOCK = '<svg class="lockico" viewBox="0 0 12 13" aria-hidden="true"><rect x="1" y="5.5" width="10" height="7" rx="1.5" fill="currentColor"/><path d="M3.5 5.5V4a2.5 2.5 0 0 1 5 0v1.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>';
